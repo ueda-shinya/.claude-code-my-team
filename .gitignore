@@ -1,0 +1,32 @@
+# ── 認証情報（絶対にGitHubに上げない）──────────────────
+# Windowsのみ存在。漏洩すると不正利用される
+.credentials.json
+mcp-needs-auth-cache.json
+
+# ── Claude Code が自動管理するもの（不要）───────────────
+# projects配下はmemory/だけ同期、あとは除外
+projects/**
+!projects/
+!projects/*/
+!projects/*/memory/
+!projects/*/memory/**
+cache/
+debug/
+downloads/
+file-history/
+shell-snapshots/
+session-env/
+telemetry/
+backups/
+plans/
+todos/
+ide/
+plugins/
+
+# ── 設定ファイル（秘密情報の可能性）────────────────────
+settings.json
+settings.local.json
+
+# ── OS自動生成 ───────────────────────────────────────────
+.DS_Store
+Thumbs.db
