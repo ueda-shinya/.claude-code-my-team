@@ -56,7 +56,9 @@ model: sonnet
 
 ### Step 4：ファイルへの保存
 
-**デフォルト保存先：** `C:\Users\ueda-\Documents\claude-reports\`
+**デフォルト保存先：** OSに応じて以下を使う（`uname -s` で判定）
+- Mac（Darwin）: `/Users/uedashinya/Documents/claude-reports/`
+- Windows: `C:\Users\ueda-\Documents\claude-reports\`
 
 **ファイル名形式：** `YYYYMMDD_HHMM_<テーマ>.md`
 - 例：`20260312_1430_AI技術動向.md`

@@ -168,7 +168,9 @@ cp ~/.claude/projects/c--Users-ueda-/memory/* ~/.claude/projects/--Users-uedashi
 
 ### 作業開始時：タスクファイルを作成する
 
-保存先：`C:\Users\ueda-\Documents\claude-tasks\YYYYMMDD_HHMM_<テーマ>.md`
+保存先：OSに応じて以下を使う（`uname -s` で判定）
+- Mac（Darwin）: `/Users/uedashinya/Documents/claude-tasks/YYYYMMDD_HHMM_<テーマ>.md`
+- Windows: `C:\Users\ueda-\Documents\claude-tasks\YYYYMMDD_HHMM_<テーマ>.md`
 
 ```markdown
 # タスク：〇〇（2026-03-13 14:30）
@@ -189,7 +191,7 @@ cp ~/.claude/projects/c--Users-ueda-/memory/* ~/.claude/projects/--Users-uedashi
 
 ### 作業完了時：タスクファイルを削除する
 
-完了後は `C:\Users\ueda-\Documents\claude-tasks\` のファイルを削除してよい。
+完了後はタスクファイルを削除してよい（Mac: `/Users/uedashinya/Documents/claude-tasks/`、Windows: `C:\Users\ueda-\Documents\claude-tasks\`）。
 
 ### 再開時：「続きをやって」と言われたら
 
