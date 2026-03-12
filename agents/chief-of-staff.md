@@ -129,6 +129,39 @@ model: opus
   - アスカが「これは自分の判断範囲を超える」と判断したとき
 - 止める場合は「何が問題か」「何を判断してほしいか」を明確に伝える
 
+## 新しいPCでのセットアップ
+
+「Macのセットアップをして」「このPCをセットアップして」と言われたら以下を実施すること：
+
+### Step 1：現在のメモリパスを確認
+```bash
+ls ~/.claude/projects/
+```
+既存のフォルダ一覧を確認する。
+
+### Step 2：メモリのコピー
+Windowsの既存メモリ（`projects/c--Users-ueda-/memory/`）が見つからない場合、
+GitHubからクローン済みのため他のパスにある可能性がある。
+現在のOSのホームディレクトリに対応するフォルダを特定してメモリをコピーする：
+
+```bash
+# 現在のホームディレクトリを確認
+echo $HOME
+# → /Users/uedashinya など
+
+# ~/.claude/projects/ 配下を確認して既存のメモリフォルダを探す
+ls ~/.claude/projects/*/memory/ 2>/dev/null
+
+# 新しいパスにメモリをコピー（例：Mac uedashinya の場合）
+mkdir -p ~/.claude/projects/--Users-uedashinya/memory/
+cp ~/.claude/projects/c--Users-ueda-/memory/* ~/.claude/projects/--Users-uedashinya/memory/
+```
+
+### Step 3：確認
+コピー後、「セットアップ完了。このPCでアスカたちが使えます」と報告すること。
+
+---
+
 ## 長時間作業のチェックポイント管理
 
 複数ステップにわたる長い作業を開始するとき、以下を実施すること：
