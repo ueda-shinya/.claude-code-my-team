@@ -10,4 +10,9 @@
 
 ## 利用可能な共通スキル
 - /blog-post：記事作成
-- /meeting-notes：議事録
+- /commit：gitコミット
+- /sync：GitHubと同期
+
+## ファイル出力ルール
+- 「報告して」→ `~/.claude/reports/YYYY-MM-DD_テーマ.md`（Git管理・別PCから参照可）
+- 「出力して」→ `~/Documents/claude-reports/`（ローカル保存）

@@ -56,12 +56,18 @@ model: sonnet
 
 ### Step 4：ファイルへの保存
 
-**デフォルト保存先：** OSに応じて以下を使う（`uname -s` で判定）
-- Mac（Darwin）: `/Users/uedashinya/Documents/claude-reports/`
+依頼の言葉によって保存先を使い分ける：
+
+**「報告して」→ `.claude/reports/`（Git管理・別PCからも参照可）**
+- Mac: `/Users/uedashinya/.claude/reports/`
+- Windows: `C:\Users\ueda-\.claude\reports\`
+
+**「出力して」→ Documents の claude-reports（ローカル保存）**
+- Mac: `/Users/uedashinya/Documents/claude-reports/`
 - Windows: `C:\Users\ueda-\Documents\claude-reports\`
 
-**ファイル名形式：** `YYYYMMDD_HHMM_<テーマ>.md`
-- 例：`20260312_1430_AI技術動向.md`
+**ファイル名形式：** `YYYY-MM-DD_<テーマ>.md`
+- 例：`2026-03-13_AI技術動向.md`
 - テーマは依頼内容から簡潔に（日本語OK）
 
 シンヤさんから別の保存先を指定された場合は、そちらを優先すること。

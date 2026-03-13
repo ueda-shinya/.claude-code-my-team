@@ -21,3 +21,6 @@
 
 ## エージェント設計の知見
 → 詳細は [agent-design.md](agent-design.md) を参照
+
+## 保留タスク
+→ 詳細は [pending-tasks.md](pending-tasks.md) を参照
