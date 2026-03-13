@@ -4,8 +4,8 @@
       "command": "npx",
       "args": ["-y", "@cocal/google-calendar-mcp"],
       "env": {
-        "GOOGLE_OAUTH_CREDENTIALS": "C:\\Users\\ueda-\\.claude\\google-oauth-credentials.json",
-        "GOOGLE_CALENDAR_MCP_TOKEN_PATH": "C:\\Users\\ueda-\\.claude\\mcp-google-calendar-token.json"
+        "GOOGLE_OAUTH_CREDENTIALS": "/Users/uedashinya/.claude/google-oauth-credentials.json",
+        "GOOGLE_CALENDAR_MCP_TOKEN_PATH": "/Users/uedashinya/.claude/mcp-google-calendar-token.json"
       }
     }
   }
