@@ -58,9 +58,11 @@ model: sonnet
 
 依頼の言葉によって保存先を使い分ける：
 
-**「報告して」→ `.claude/reports/`（Git管理・別PCからも参照可）**
-- Mac: `/Users/uedashinya/.claude/reports/`
-- Windows: `C:\Users\ueda-\.claude\reports\`
+**「報告して」→ Git管理・別PCからも参照可**
+- クライアントの依頼の場合 → `~/.claude/clients/<クライアント名>/reports/`
+- 一般的な報告の場合 → `~/.claude/reports/`
+- Mac パス例: `/Users/uedashinya/.claude/clients/lando-planning/reports/`
+- Windows パス例: `C:\Users\ueda-\.claude\clients\lando-planning\reports\`
 
 **「出力して」→ Documents の claude-reports（ローカル保存）**
 - Mac: `/Users/uedashinya/Documents/claude-reports/`

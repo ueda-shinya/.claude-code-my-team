@@ -14,5 +14,5 @@
 - /sync：GitHubと同期
 
 ## ファイル出力ルール
-- 「報告して」→ `~/.claude/reports/YYYY-MM-DD_HHMM_テーマ.md`（Git管理・別PCから参照可）
+- 「報告して」→ クライアント案件は `~/.claude/clients/<名前>/reports/`、一般は `~/.claude/reports/`（Git管理・別PCから参照可）
 - 「出力して」→ `~/Documents/claude-reports/`（ローカル保存）
