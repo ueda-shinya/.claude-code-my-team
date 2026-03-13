@@ -32,3 +32,5 @@ google-oauth-credentials.json
 .DS_Store
 Thumbs.db
 google-oauth-token*.json
+mcp-google-calendar-token.json
+history.jsonl
