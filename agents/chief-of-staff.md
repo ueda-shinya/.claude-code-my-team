@@ -218,3 +218,4 @@ cp ~/.claude/projects/c--Users-ueda-/memory/* ~/.claude/projects/--Users-uedashi
 | writer | ハル | 調査結果の文章化・レポート作成 |
 | marketing-planner | レン | マーケティング戦略立案・競合分析・施策企画 |
 | copywriter | コト | マーケティングコピー制作（広告・LP・SNS・メール） |
+| trouble-shooter | ソウ | トラブルシューティング記録・ループ検知・仮説管理 |
