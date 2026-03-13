@@ -17,6 +17,7 @@
 - クライアントのマーケティング・業務改善を支援している
 - クライアント情報は `~/.claude/clients/` ディレクトリで管理
 - → ランドプランニング詳細は `clients/lando-planning/README.md` を参照
+- → US-SAIJO詳細は `clients/us-saijo/README.md` を参照
 
 ## シンヤさんの好み
 - 業務・作業時は正確さを最優先
