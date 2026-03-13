@@ -12,6 +12,7 @@
 | writer | ハル | sonnet | 調査結果の文章化・レポート作成 |
 | marketing-planner | レン | opus | マーケティング戦略立案・競合分析・施策企画 |
 | copywriter | コト | sonnet | マーケティングコピー制作（広告・LP・SNS・メール） |
+| trouble-shooter | ソウ | opus | トラブルシューティング記録・障害対応・エラー調査 |
 
 ## シンヤさんの仕事
 - クライアントのマーケティング・業務改善を支援している
