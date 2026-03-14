@@ -1,12 +1,12 @@
 # /morning-briefing スキル
 
-モーニングブリーフィング。「おはよ」トリガーまたは `MORNING_BRIEFING_TRIGGER=1` がコンテキストに含まれる場合に実行する。
+モーニングブリーフィング。「おはよ」トリガーで hook から additionalContext が注入された場合に実行する。
 
 ## トリガー条件
 
 以下のいずれかに該当する場合にこのスキルを実行してください：
 
-- コンテキストに `MORNING_BRIEFING_TRIGGER=1` が含まれている
+- コンテキストに「/morning-briefing スキルを実行してください」が含まれている
 - ユーザーが「おはよ」「おはよう」「おはようございます」と発言した
 
 ## 実行手順
@@ -26,17 +26,18 @@ cd /Users/uedashinya/.claude && git pull 2>&1
 
 ### ステップ 2: 今日のカレンダー予定を取得
 
-Bash ツールで以下を実行してください。`TODAY` の部分は実行時の日付（YYYY-MM-DD 形式）に置き換えてください：
+`mcp__google-calendar__list-events` ツールを使って今日の予定を取得してください。
 
-```bash
-printf '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list-events","arguments":{"calendarId":"primary","timeMin":"TODAY T00:00:00+09:00","timeMax":"TODAYT23:59:59+09:00","timeZone":"Asia/Tokyo"}}}\n' | GOOGLE_OAUTH_CREDENTIALS="/Users/uedashinya/.claude/google-oauth-credentials.json" GOOGLE_CALENDAR_MCP_TOKEN_PATH="/Users/uedashinya/.claude/mcp-google-calendar-token.json" npx -y @cocal/google-calendar-mcp 2>/dev/null
-```
+- calendarId: `primary`
+- timeMin: 今日の `00:00:00+09:00`
+- timeMax: 今日の `23:59:59+09:00`
+- timeZone: `Asia/Tokyo`
 
-注意事項：
-- `TODAY` は `date +%Y-%m-%d` の結果に置き換える（例: `2026-03-14`）
-- timeMin と timeMax のスペースは入れない（`2026-03-14T00:00:00+09:00` の形式）
-- カレンダー取得に失敗した場合は「カレンダーの取得に失敗しました」と報告し、トークン再認証の可能性を示唆する
-- 月曜日の場合は、今週分（月曜から日曜まで）の予定も追加で取得する
+現在日時は `mcp__google-calendar__get-current-time` で確認してから実行すること。
+
+カレンダー取得に失敗した場合は「カレンダーの取得に失敗しました」と報告し、トークン再認証の可能性を示唆する。他のステップは継続すること。
+
+月曜日の場合は、今週分（月曜から日曜まで）の予定も追加で取得する。
 
 ### ステップ 3: セッション引き継ぎ確認
 

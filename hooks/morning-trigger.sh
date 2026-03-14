@@ -8,6 +8,11 @@ set -o pipefail
 # stdin から JSON を読み取る（エラーは無視）
 INPUT=$(cat 2>/dev/null) || exit 0
 
+# デバッグログ（問題解決後に削除）
+LOG_FILE="/tmp/morning-trigger-debug.log"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] --- hook 起動 ---" >> "$LOG_FILE"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] INPUT: $INPUT" >> "$LOG_FILE"
+
 # transcript の最新ユーザーメッセージを取得
 # Claude Code hooks の UserPromptSubmit では、
 # prompt フィールドにユーザー入力が入る
@@ -36,6 +41,8 @@ except:
     pass
 " 2>/dev/null) || exit 0
 
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] MESSAGE: $MESSAGE" >> "$LOG_FILE"
+
 # 空の場合は何もしない
 [ -z "$MESSAGE" ] && exit 0
 
@@ -55,8 +62,15 @@ else:
     print('no')
 " 2>/dev/null) || exit 0
 
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] IS_GREETING: $IS_GREETING" >> "$LOG_FILE"
+
 if [ "$IS_GREETING" = "yes" ]; then
-    echo "MORNING_BRIEFING_TRIGGER=1"
+    python3 -c "
+import json
+print(json.dumps({
+    'additionalContext': '/morning-briefing スキルを実行してください。ユーザーの挨拶への返答はブリーフィング完了後に行うこと。'
+}))
+"
 fi
 
 exit 0
