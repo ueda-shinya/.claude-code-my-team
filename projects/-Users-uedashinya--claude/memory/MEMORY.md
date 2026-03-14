@@ -4,22 +4,29 @@
 
 | ファイル名 | 愛称 | モデル | 役割 |
 |---|---|---|---|
-| chief-of-staff | アスカ | opus | 全体統括・最終承認・月次達成判定・インシデント対応指揮 |
-| researcher | ミオ | sonnet | 情報収集・調査・ベストプラクティス調査 |
-| agent-builder | カナタ | opus | エージェント・スキル設計・技術実装（ログ・バリデーション・スキーマ） |
-| code-reviewer | サクラ | opus | 品質基準策定・テンプレート設計・レビュー実施・規約作成 |
-| fact-checker | リク | opus | 情報の正確性検証・ペアレビュー時の正確性補完・矛盾検出 |
-| writer | ハル | sonnet | 調査結果の文章化・レポート作成 |
-| marketing-planner | レン | opus | マーケティング戦略立案・競合分析・施策企画 |
-| copywriter | コト | sonnet | マーケティングコピー制作（広告・LP・SNS・メール） |
-| trouble-shooter | ソウ | opus | 障害記録・インシデント切り分け・チェックリスト補完・過去知見管理 |
-| nano-banana | ルナ | sonnet | デザイン・画像生成（Gemini 2.5 Flash Image） |
+| chief-of-staff | アスカ（明日香） | opus | 全体統括・最終承認・月次達成判定・インシデント対応指揮 |
+| researcher | ミオ（澪） | sonnet | 情報収集・調査・ベストプラクティス調査 |
+| agent-builder | カナタ（彼方） | opus | エージェント・スキル設計・技術実装（ログ・バリデーション・スキーマ） |
+| code-reviewer | サクラ（桜） | opus | 品質基準策定・テンプレート設計・レビュー実施・規約作成 |
+| fact-checker | リク（陸） | opus | 情報の正確性検証・ペアレビュー時の正確性補完・矛盾検出 |
+| writer | ハル（晴） | sonnet | 調査結果の文章化・レポート作成 |
+| marketing-planner | レン（蓮） | opus | マーケティング戦略立案・競合分析・施策企画 |
+| copywriter | コト（琴） | sonnet | マーケティングコピー制作（広告・LP・SNS・メール） |
+| trouble-shooter | ソウ（颯） | opus | 障害記録・インシデント切り分け・チェックリスト補完・過去知見管理 |
+| nano-banana | ルナ（月） | sonnet | デザイン・画像生成（Gemini 2.5 Flash Image） |
+| web-designer | ユイ（結衣） | sonnet | Webデザイン・UI/UX設計 |
+| lp-designer | カイ（凱） | sonnet | LP設計・CVR最大化 |
+| frontend-engineer | ツバサ（翼） | sonnet | フロントエンド実装（HTML/CSS/JS） |
+| backend-engineer | シュウ（修） | sonnet | バックエンド実装（API/DB設計） |
 
 ## シンヤさんの仕事
 - クライアントのマーケティング・業務改善を支援している
 - クライアント情報は `~/.claude/clients/` ディレクトリで管理
 - → ランドプランニング詳細は `clients/lando-planning/README.md` を参照
 - → US-SAIJO詳細は `clients/us-saijo/README.md` を参照
+
+## シンヤさんの人物像
+→ 詳細は [user-shinya.md](user-shinya.md) を参照（思考スタイル・アスカへの期待）
 
 ## シンヤさんの好み
 - 業務・作業時は正確さを最優先
@@ -35,6 +42,9 @@
 
 ## 言葉遣いフィードバック
 → 詳細は [feedback-language.md](feedback-language.md) を参照
+
+## 編集スコープのフィードバック
+→ 詳細は [feedback-edits.md](feedback-edits.md) を参照（依頼外の変更を加えない）
 
 ## 質問スタイルのフィードバック
 → 詳細は [feedback-questions.md](feedback-questions.md) を参照（漠然とした依頼への質問の仕方）
