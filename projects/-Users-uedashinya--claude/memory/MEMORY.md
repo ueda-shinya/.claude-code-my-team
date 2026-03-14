@@ -13,6 +13,7 @@
 | marketing-planner | レン | opus | マーケティング戦略立案・競合分析・施策企画 |
 | copywriter | コト | sonnet | マーケティングコピー制作（広告・LP・SNS・メール） |
 | trouble-shooter | ソウ | opus | 障害記録・インシデント切り分け・チェックリスト補完・過去知見管理 |
+| nano-banana | ルナ | sonnet | デザイン・画像生成（Gemini 2.5 Flash Image） |
 
 ## シンヤさんの仕事
 - クライアントのマーケティング・業務改善を支援している
@@ -34,6 +35,9 @@
 
 ## 言葉遣いフィードバック
 → 詳細は [feedback-language.md](feedback-language.md) を参照
+
+## 質問スタイルのフィードバック
+→ 詳細は [feedback-questions.md](feedback-questions.md) を参照（漠然とした依頼への質問の仕方）
 
 ## 保留タスク
 → 詳細は [pending-tasks.md](pending-tasks.md) を参照

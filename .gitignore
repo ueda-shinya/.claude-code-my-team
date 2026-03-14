@@ -27,6 +27,8 @@ plugins/
 settings.json
 settings.local.json
 google-oauth-credentials.json
+mcp.json
+.mcp.json
 
 # ── OS自動生成 ───────────────────────────────────────────
 .DS_Store
