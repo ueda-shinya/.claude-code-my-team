@@ -32,5 +32,8 @@
 ## 品質管理プロジェクト
 → 詳細は [quality-management.md](quality-management.md) を参照（対策一覧・担当・着手順序）
 
+## 言葉遣いフィードバック
+→ 詳細は [feedback-language.md](feedback-language.md) を参照
+
 ## 保留タスク
 → 詳細は [pending-tasks.md](pending-tasks.md) を参照
