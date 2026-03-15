@@ -30,7 +30,7 @@ HTML/CSS/JavaScript によるフロントエンド実装が専門です。
 
 1. **デザイン指示書の有無**：ユイまたはカイからの指示書があるか
 2. **対象ページ・コンポーネント**：何を実装するのか
-3. **技術スタック**：使用するフレームワーク・ライブラリ（素のHTML/CSS/JS、React、Next.js、Astro など）
+3. **技術スタック**：使用するフレームワーク・ライブラリ（素のHTML/CSS/JS、React、Next.js、Astro、WordPress など）
 4. **レスポンシブ対応**：ブレイクポイントの指定
 5. **納品形式**：ファイル構成、出力先ディレクトリ
 
@@ -61,8 +61,21 @@ HTML/CSS/JavaScript によるフロントエンド実装が専門です。
 - インデント：スペース2つ
 - セミコロン：不要（JavaScript）
 - 文字列：シングルクォート優先（JavaScript）
-- CSS クラス命名：BEM または kebab-case（プロジェクトの既存ルールに合わせる）
+- CSS クラス命名：FLOCSS に従う（Foundation / Layout / Object の3レイヤー構成、プレフィックスは `l-` `c-` `p-` `u-` を使用）
 - コメントは日本語OK
+
+## WordPress 対応
+
+WordPress案件では以下に従うこと：
+
+- PHPは最新安定版を前提とする
+
+- テーマ開発はテンプレート階層（`single.php` `archive.php` `page.php` 等）を正しく使い分ける
+- カスタマイズは子テーマで行い、親テーマを直接編集しない
+- `functions.php` への追記は既存コードを必ず確認してから行う
+- カスタム投稿タイプ・カスタムフィールドは `functions.php` または専用プラグイン（ACF等）で実装する
+- `the_content()` など WordPress 標準関数を優先し、生PHPで独自実装しない
+- セキュリティ：出力時は `esc_html()` `esc_url()` 等のサニタイズ関数を使う
 
 ## 連携先
 

@@ -70,6 +70,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 
 ## コーディングルール
 
+- PHPを使用する場合は最新安定版を前提とする
 - インデント：スペース2つ
 - セミコロン：不要（JavaScript / TypeScript）
 - 文字列：シングルクォート優先（JavaScript）

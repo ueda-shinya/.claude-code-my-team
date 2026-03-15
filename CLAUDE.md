@@ -82,6 +82,15 @@
 - ルナが返した「生成パラメータ」をもとに、アスカが `mcp__gemini-image__gemini-generate-image` を直接呼び出して生成する
 - 生成完了後、gemini の出力先（`~/.config/gemini-mcp/output/`）からルナが指定した `savePath` に手動コピーしてシンヤさんに報告する（ツールが savePath パラメータ非対応のため）
 
+### MCPが使えない場合のCLIフォールバック
+- `mcp__gemini-image__gemini-generate-image` が以下のいずれかで失敗した場合、リトライせず即座にCLIに切り替える：ツールが一覧に表示されない／`fetch failed`／その他接続エラー
+- エンドポイント：`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=$GEMINI_API_KEY`
+- APIキー：`~/.claude/.env` から読み込む（CLI実行前に `source ~/.claude/.env` または `export $(cat ~/.claude/.env | xargs)` を実行）
+- `.env` が存在しない場合・期限切れの場合は `API_KEY_INVALID` エラーが返る → `~/.claude/.env` を更新すること（Mac・Windows それぞれのPCで個別管理）
+- リクエスト：`instances[0].prompt` にプロンプト、`parameters.sampleCount=1`、`parameters.aspectRatio` を指定
+- サポートされるアスペクト比：`1:1`, `9:16`, `16:9`, `4:3`, `3:4`（`4:5` は非対応）
+- レスポンス：`predictions[0].bytesBase64Encoded` を base64 デコードしてルナが指定した `savePath` に保存
+
 ### 画像の保存先ルール
 - `~/Pictures/` は macOS のシステム保護で書き込み不可になる場合があるため**使用禁止**
 - 一般用途（デフォルト）：`~/.claude/images/<ファイル名>.webp`
@@ -90,6 +99,32 @@
 - ローカル保存を明示指定されたとき：`~/Documents/claude-images/<ファイル名>.webp`
 - 拡張子は `.webp` に統一（gemini 出力が JPEG でもファイル名は `.webp` で統一）
 - ルナへの依頼時も上記パスで savePath を指定すること
+
+## 動画生成フロー（Veo CLI）
+
+- シンヤさんから動画生成依頼が来たら、ルナにプロンプト設計を委譲する（savePath の拡張子は `.mp4`）
+- アスカが以下の手順でCLI生成を実行する（Veoは常にCLI。MCP非対応）
+
+### 手順
+
+**① ジョブ投入：**
+- APIキーは `~/.claude/.env` から読み込む（実行前に `source ~/.claude/.env` を実行）
+- エンドポイント：`https://generativelanguage.googleapis.com/v1beta/models/veo-2.0-generate-001:predictLongRunning?key=$GEMINI_API_KEY`
+- リクエスト：`instances[0].prompt` にプロンプト、`parameters.aspectRatio`（`9:16` / `16:9` / `1:1`）、`parameters.durationSeconds`（秒数）
+- レスポンス：`name`（オペレーションID）が返る
+
+**② 完了ポーリング：**
+- `https://generativelanguage.googleapis.com/v1beta/<operationName>?key=$GEMINI_API_KEY` を10秒間隔でポーリング
+- `done: true` になったら `response.generateVideoResponse.generatedSamples[0].video.uri` を取得
+
+**③ ダウンロード：**
+- URIに `&key=$GEMINI_API_KEY` を付けて curl でダウンロードし、`savePath` に保存
+- 生成時間の目安：約20〜30秒
+
+### 動画の保存先ルール
+- 一般用途：`~/.claude/images/<ファイル名>.mp4`
+- クライアント案件：`~/.claude/clients/<クライアント名>/images/<ファイル名>.mp4`
+- 拡張子は `.mp4` に統一
 
 ## ナレッジ化確認プロトコル
 

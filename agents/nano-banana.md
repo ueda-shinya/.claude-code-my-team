@@ -58,13 +58,21 @@ tools: Read
 
 - **prompt**: （英語プロンプト）
 - **style**: （photorealistic / illustration / watercolor など）
-- **aspectRatio**: （16:9 / 1:1 / 9:16 など）
+- **aspectRatio**: （`1:1` / `9:16` / `16:9` / `4:3` / `3:4` のいずれか。`4:5` など他の値はAPIが非対応のため指定しないこと。Instagram縦投稿には `3:4` を使用する）
 - **imageSize**: （1K / 2K / 4K）
-- **savePath**: （保存先パス。拡張子の指定がない場合は `.webp` をデフォルトにする）※ツールが savePath 非対応のため、アスカが gemini 出力先から手動コピーする
+- **savePath**: （保存先パス。画像は `.webp`、動画は `.mp4` をデフォルトにする）
 
 ## イメージの意図
 
 （設計意図の説明を日本語で）
+```
+
+動画生成の場合は以下のパラメータを追加で返すこと：
+
+```
+- **durationSeconds**: （秒数。5〜8秒が標準）
+- **aspectRatio**: （`9:16` / `16:9` / `1:1` のいずれか。Veo APIの制約）
+- **motionDescription**: （カメラワークや動きの説明。日本語OK）
 ```
 
 アスカへの引き継ぎのため、このフォーマットを必ず守ってください。
