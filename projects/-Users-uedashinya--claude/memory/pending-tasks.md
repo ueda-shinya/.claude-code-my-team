@@ -39,14 +39,19 @@ type: project
 - **登録日**: 2026-03-15
 - **対応**: Windows PC を触るタイミングでリマインドする
 
-### Windows PC に Gemini API キーを設定する
-- **内容**: Windows PC の Claude Code 環境に Gemini API キーを設定する
-  - Mac では設定済みで画像生成フロー（ルナ連携）が動作確認済み
-  - Windows PC でも同様に `mcp__gemini-image` が使えるようにする
-  - 設定後、gemini の画像出力先ディレクトリを確認する（Mac: `~/.config/gemini-mcp/output/`、Windows は未確認）
-- **保留理由**: 未設定のまま
+### Windows PC に画像生成を移植する
+- **内容**: MacのGemini画像生成フローをWindowsに移植する
+  - Mac では `mcp__gemini-image__gemini-generate-image` が動作確認済み
+  - Macのsettings.jsonにgemini-imageのMCP設定あり（記録なし・要確認）
+  - CLIフォールバックがMacで検証済みのはずだが記録なし（要確認）
+- **進め方（合意済み）**:
+  1. Macで画像生成を実行し、アスカが動きをチェック
+  2. その場でsettings.jsonの設定内容・APIキー保存場所・出力先を確認
+  3. VSCode拡張 or ターミナルどちらで動いているかも確認
+  4. 確認内容をもとにWindows側に同じ設定を反映
+- **保留理由**: Mac側の確認が先
 - **登録日**: 2026-03-15
-- **対応**: Windows PC を触るタイミングでリマインドする
+- **対応**: Macで画像生成依頼が来たタイミングでアスカがチェックを実施する
 
 ### メール確認・下書き自動化
 - **内容**: 受信メールをチェックして必要なものだけ通知し、返信が必要なものは下書きまで作成する
