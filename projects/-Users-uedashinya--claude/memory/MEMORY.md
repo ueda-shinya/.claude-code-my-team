@@ -18,10 +18,12 @@
 | lp-designer | カイ（凱） | sonnet | LP設計・CVR最大化 |
 | frontend-engineer | ツバサ（翼） | sonnet | フロントエンド実装（HTML/CSS/JS） |
 | backend-engineer | シュウ（修） | sonnet | バックエンド実装（API/DB設計） |
+| process-designer | ツムギ（紬） | opus | 業務プロセス改善・再発防止策設計・役割の曖昧さ解消 |
 
 ## シンヤさんの仕事
 - クライアントのマーケティング・業務改善を支援している
 - クライアント情報は `~/.claude/clients/` ディレクトリで管理
+- → オフィスウエダ詳細は `clients/officeueda/README.md` を参照（biz-web/ と biz-ai/ の2事業）
 - → ランドプランニング詳細は `clients/lando-planning/README.md` を参照
 - → US-SAIJO詳細は `clients/us-saijo/README.md` を参照
 
