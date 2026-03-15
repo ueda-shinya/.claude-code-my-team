@@ -9,6 +9,10 @@
 - コンテキストに「/morning-briefing スキルを実行してください」が含まれている
 - ユーザーが「おはよ」「おはよう」「おはようございます」と発言した
 
+## 運用制約（暫定）
+- [20260313] Google Calendar MCP（mcp__google-calendar）はVSCode拡張機能環境で使用不可。方法B（CLIフォールバック）を優先すること（参照: troubleshooting/active/20260313_google-calendar-mcp.md）
+- 障害解決時にこのセクションを削除すること
+
 ## 実行手順
 
 以下の3つのステップを実行してください。各ステップが失敗しても、他のステップは止めずに続行してください。
@@ -18,7 +22,7 @@
 Bash ツールで以下を実行してください：
 
 ```bash
-cd /Users/uedashinya/.claude && git pull 2>&1
+cd ~/.claude && git pull 2>&1
 ```
 
 - 結果が正常（Already up to date / ファイル取得成功）の場合 → 結果を記憶するが報告には含めない
@@ -26,7 +30,9 @@ cd /Users/uedashinya/.claude && git pull 2>&1
 
 ### ステップ 2: 今日のカレンダー予定を取得
 
-`mcp__google-calendar__list-events` ツールを使って今日の予定を取得してください。
+#### 方法A: MCP ツール（優先）
+
+`mcp__google-calendar__list-events` ツールが使える場合はこちらを優先してください。
 
 - calendarId: `primary`
 - timeMin: 今日の `00:00:00+09:00`
@@ -35,13 +41,41 @@ cd /Users/uedashinya/.claude && git pull 2>&1
 
 現在日時は `mcp__google-calendar__get-current-time` で確認してから実行すること。
 
-カレンダー取得に失敗した場合は「カレンダーの取得に失敗しました」と報告し、トークン再認証の可能性を示唆する。他のステップは継続すること。
+#### 方法B: CLI フォールバック（MCP が使えない場合）
+
+MCP ツールが見つからない・エラーになった場合は、以下の手順で直接 Google Calendar API を叩いてください。
+
+**① アクセストークンをリフレッシュ：**
+
+```bash
+CREDENTIALS=~/.claude/google-oauth-credentials.json
+TOKEN_FILE=~/.claude/mcp-google-calendar-token.json
+
+CLIENT_ID=$(python3 -c "import json; d=json.load(open('$CREDENTIALS')); print(d['installed']['client_id'])")
+CLIENT_SECRET=$(python3 -c "import json; d=json.load(open('$CREDENTIALS')); print(d['installed']['client_secret'])")
+REFRESH_TOKEN=$(python3 -c "import json; d=json.load(open('$TOKEN_FILE')); print(d['normal']['refresh_token'])")
+
+curl -s -X POST https://oauth2.googleapis.com/token \
+  -d "client_id=$CLIENT_ID" \
+  -d "client_secret=$CLIENT_SECRET" \
+  -d "refresh_token=$REFRESH_TOKEN" \
+  -d "grant_type=refresh_token"
+```
+
+**② カレンダーイベントを取得：**
+
+```bash
+curl -s "https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=YYYY-MM-DDT00:00:00%2B09:00&timeMax=YYYY-MM-DDT23:59:59%2B09:00&singleEvents=true&orderBy=startTime&timeZone=Asia/Tokyo" \
+  -H "Authorization: Bearer ACCESS_TOKEN"
+```
+
+リフレッシュ自体も失敗した場合は「カレンダーの取得に失敗しました（要再認証）」と報告し、他のステップは継続すること。
 
 月曜日の場合は、今週分（月曜から日曜まで）の予定も追加で取得する。
 
 ### ステップ 3: セッション引き継ぎ確認
 
-Read ツールで `/Users/uedashinya/.claude/session-handoff.md` を読んでください。
+まず Bash で `cd ~/.claude && pwd` を実行してパスを取得し、そのパスに `/session-handoff.md` を付けた絶対パスで Read ツールを使ってください。
 
 - 「作業なし」の場合 → 引き継ぎセクションに「引き継ぎ事項はありません」と表示
 - それ以外の場合 → 内容を引き継ぎセクションに表示
