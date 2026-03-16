@@ -23,6 +23,8 @@
 ## シンヤさんの仕事
 - クライアントのマーケティング・業務改善を支援している
 - クライアント情報は `~/.claude/clients/` ディレクトリで管理
+- 技術ナレッジ（クライアント横断）は `~/.claude/knowledge/` で管理
+  - `knowledge/wordpress-plugin/` ← WPプラグイン開発知見
 - → オフィスウエダ詳細は `clients/officeueda/README.md` を参照（biz-web/ と biz-ai/ の2事業）
 - → ランドプランニング詳細は `clients/lando-planning/README.md` を参照
 - → US-SAIJO詳細は `clients/us-saijo/README.md` を参照
