@@ -23,4 +23,5 @@
 
 | 日付 | 内容 | レポート |
 |---|---|---|
-| （まだなし） | | |
+| 2026-03-16 | officeueda.com 改善案提案（AI除外・Web制作事業のみ） | [20260316_site-improvement.md](reports/20260316_site-improvement.md) |
+| 2026-03-16 | LP（/lp/）テキスト仕様書作成 | [20260316_lp-text-spec.md](reports/20260316_lp-text-spec.md) |
