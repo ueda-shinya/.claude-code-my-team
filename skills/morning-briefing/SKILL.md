@@ -98,6 +98,22 @@ for e in items:
 
 `~/.claude/youtube-digest.md` の最終更新日時を確認し、**24時間以上経過している場合（またはファイルが存在しない場合）のみ**、以下を実行してください。
 
+**検索キーワード（各最大3件）：**
+- `Claude Code`
+- `ChatGPT 最新`
+- `Gemini AI 最新`
+- `NotebookLM`
+- `Genspark`
+- `AI ツール 最新`
+- `WordPress`
+- `ワードプレス`
+
+**ロジック：**
+- 72時間以内にアップロードされた動画のみ対象
+- 2段階API（search → videos/statistics）で実再生数を取得し、再生数の多い順にソート
+- 既出動画除外：`~/.claude/youtube-seen-ids.json` に記録済みの動画IDはスキップ
+- 各クエリで上位3件を採用
+
 **① 24時間チェック＆動画取得（Mac・Windows両対応）：**
 
 ```bash
@@ -107,6 +123,7 @@ from datetime import datetime, timezone, timedelta
 sys.stdout.reconfigure(encoding='utf-8')
 
 digest_path = os.path.expanduser('~/.claude/youtube-digest.md')
+seen_path = os.path.expanduser('~/.claude/youtube-seen-ids.json')
 jst = timezone(timedelta(hours=9))
 now = datetime.now(jst)
 
@@ -129,39 +146,104 @@ with open(env_path) as f:
         if line.startswith('YOUTUBE_API_KEY='):
             api_key = line.strip().split('=', 1)[1]
 
-published_after = (now - timedelta(hours=24)).strftime('%Y-%m-%dT%H:%M:%S+09:00')
+# 既出動画IDを読み込み
+seen_ids = set()
+if os.path.exists(seen_path):
+    with open(seen_path, encoding='utf-8') as f:
+        seen_ids = set(json.load(f))
+
+published_after = (now - timedelta(hours=72)).strftime('%Y-%m-%dT%H:%M:%S+09:00')
+
+queries = [
+    ('Claude Code', 'AI関連'),
+    ('ChatGPT 最新', 'AI関連'),
+    ('Gemini AI 最新', 'AI関連'),
+    ('NotebookLM', 'AI関連'),
+    ('Genspark', 'AI関連'),
+    ('AI ツール 最新', 'AI関連'),
+    ('WordPress', 'WordPress関連'),
+    ('ワードプレス', 'WordPress関連'),
+]
 
 results = []
-for query in ['AI 人工知能 最新', 'WordPress 最新']:
+new_ids = []
+
+for query, category in queries:
+    # ステップ1: search で候補動画IDを取得（多めに取得して絞り込む）
     params = urllib.parse.urlencode({
         'part': 'snippet',
         'q': query,
         'type': 'video',
         'publishedAfter': published_after,
         'order': 'viewCount',
-        'maxResults': 5,
+        'maxResults': 10,
         'relevanceLanguage': 'ja',
+        'regionCode': 'JP',
         'key': api_key
     })
     url = 'https://www.googleapis.com/youtube/v3/search?' + params
     req = urllib.request.Request(url)
     with urllib.request.urlopen(req) as res:
         data = json.loads(res.read())
-    for item in data.get('items', []):
-        vid = item['id'].get('videoId', '')
-        title = item['snippet']['title']
-        channel = item['snippet']['channelTitle']
-        desc = item['snippet']['description'][:100].replace('\n', ' ')
-        results.append({'query': query, 'id': vid, 'title': title, 'channel': channel, 'desc': desc})
+
+    # 既出除外
+    candidate_ids = [
+        item['id']['videoId']
+        for item in data.get('items', [])
+        if item['id'].get('videoId') and item['id']['videoId'] not in seen_ids
+    ]
+    if not candidate_ids:
+        continue
+
+    # ステップ2: videos/statistics で実再生数を取得
+    ids_param = ','.join(candidate_ids)
+    stats_params = urllib.parse.urlencode({
+        'part': 'snippet,statistics',
+        'id': ids_param,
+        'key': api_key
+    })
+    stats_url = 'https://www.googleapis.com/youtube/v3/videos?' + stats_params
+    req2 = urllib.request.Request(stats_url)
+    with urllib.request.urlopen(req2) as res2:
+        stats_data = json.loads(res2.read())
+
+    # 日本語動画のみ・再生数でソートして上位3件
+    videos = []
+    for item in stats_data.get('items', []):
+        snippet = item['snippet']
+        lang = snippet.get('defaultAudioLanguage') or snippet.get('defaultLanguage') or ''
+        # 言語が未設定 or ja の動画のみ採用（英語・韓国語等を除外）
+        if lang and not lang.startswith('ja'):
+            continue
+        vid = item['id']
+        view_count = int(item.get('statistics', {}).get('viewCount', 0))
+        title = snippet['title']
+        channel = snippet['channelTitle']
+        desc = snippet['description'][:100].replace('\n', ' ')
+        videos.append({'id': vid, 'views': view_count, 'title': title, 'channel': channel, 'desc': desc, 'query': query, 'category': category})
+
+    videos.sort(key=lambda x: x['views'], reverse=True)
+    top3 = videos[:3]
+    results.extend(top3)
+    new_ids.extend([v['id'] for v in top3])
+
+# 既出IDを更新（新規採用分を追加）
+updated_seen = list(seen_ids) + new_ids
+with open(seen_path, 'w', encoding='utf-8') as f:
+    json.dump(updated_seen, f)
 
 # ファイル書き出し
-lines = [f'# YouTube ダイジェスト', f'最終更新: {now.isoformat()}', '']
-for q in ['AI 人工知能 最新', 'WordPress 最新']:
-    label = 'AI関連' if 'AI' in q else 'WordPress関連'
-    lines.append(f'## {label}')
-    for r in [x for x in results if x['query'] == q]:
+lines = ['# YouTube ダイジェスト', f'最終更新: {now.isoformat()}', '']
+
+for category in ['AI関連', 'WordPress関連']:
+    cat_results = [r for r in results if r['category'] == category]
+    if not cat_results:
+        continue
+    lines.append(f'## {category}')
+    for r in cat_results:
+        views_str = f'{r[\"views\"]:,}'
         lines.append(f'- [{r[\"title\"]}](https://www.youtube.com/watch?v={r[\"id\"]})')
-        lines.append(f'  - チャンネル：{r[\"channel\"]}')
+        lines.append(f'  - チャンネル：{r[\"channel\"]} / 再生数：{views_str}')
         lines.append(f'  - 概要：{r[\"desc\"]}')
     lines.append('')
 
@@ -177,7 +259,7 @@ print(f'UPDATED: {len(results)}件取得')
 出力が `UPDATED:` で始まる場合のみ以下を実行してください：
 
 ```bash
-cd ~/.claude && git add youtube-digest.md && git commit -m "chore: YouTubeダイジェスト更新" && git push 2>&1
+cd ~/.claude && git add youtube-digest.md youtube-seen-ids.json && git commit -m "chore: YouTubeダイジェスト更新" && git push 2>&1
 ```
 
 - `SKIP:` の場合 → コミット不要。既存ファイルの内容を Read ツールで読み込む
