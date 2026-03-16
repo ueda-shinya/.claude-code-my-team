@@ -45,6 +45,12 @@
 ## 言葉遣いフィードバック
 → 詳細は [feedback-language.md](feedback-language.md) を参照
 
+## 新事業検出のフィードバック
+→ 詳細は [feedback-new-biz-detection.md](feedback-new-biz-detection.md) を参照（新事業の話が出たらアスカから確認・ディレクトリ変更まで自動実施）
+
+## デザイン説明のフィードバック
+→ 詳細は [feedback-design-explanation.md](feedback-design-explanation.md) を参照（OG画像・バナー・FV生成時は必ず意図説明を添える）
+
 ## 編集スコープのフィードバック
 → 詳細は [feedback-edits.md](feedback-edits.md) を参照（依頼外の変更を加えない）
 
