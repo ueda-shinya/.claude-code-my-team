@@ -25,6 +25,7 @@
 - クライアント情報は `~/.claude/clients/` ディレクトリで管理
 - 技術ナレッジ（クライアント横断）は `~/.claude/knowledge/` で管理
   - `knowledge/wordpress-plugin/` ← WPプラグイン開発知見
+  - `knowledge/figma-mcp/` ← Figma MCP Server 活用知見
 - → オフィスウエダ詳細は `clients/officeueda/README.md` を参照（biz-web/ と biz-ai/ の2事業）
 - → ランドプランニング詳細は `clients/lando-planning/README.md` を参照
 - → US-SAIJO詳細は `clients/us-saijo/README.md` を参照
@@ -58,6 +59,9 @@
 
 ## 質問スタイルのフィードバック
 → 詳細は [feedback-questions.md](feedback-questions.md) を参照（漠然とした依頼への質問の仕方）
+
+## ナレッジ化スタイルのフィードバック
+→ 詳細は [feedback-knowledge-style.md](feedback-knowledge-style.md) を参照（要点絞り・元ファイル削除まで一括）
 
 ## 保留タスク
 → 詳細は [pending-tasks.md](pending-tasks.md) を参照
