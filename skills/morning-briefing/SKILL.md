@@ -265,6 +265,17 @@ cd ~/.claude && git add youtube-digest.md youtube-seen-ids.json && git commit -m
 - `SKIP:` の場合 → コミット不要。既存ファイルの内容を Read ツールで読み込む
 - 取得失敗の場合 → 「YouTube動画の取得に失敗しました」と報告し、次のステップへ
 
+**③ 「Claude厳選」プレイリストへ追加：**
+
+ダイジェストが `UPDATED:` の場合も `SKIP:` の場合も、毎回以下を実行してください：
+
+```bash
+python3 ~/.claude/scripts/youtube-add-to-playlist.py 2>&1
+```
+
+- 正常完了（`完了: X件追加`）→ 結果を記憶するが報告には含めない
+- 失敗した場合 → 無視して次のステップへ（プレイリスト追加はオプション扱い）
+
 ### ステップ 4: セッション引き継ぎ確認
 
 まず Bash で `cd ~/.claude && pwd` を実行してパスを取得し、そのパスに `/session-handoff.md` を付けた絶対パスで Read ツールを使ってください。
