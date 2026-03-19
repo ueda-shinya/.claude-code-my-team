@@ -163,6 +163,8 @@ $page_url = get_permalink();
 <?php wp_head(); ?>
 
 <link rel="stylesheet" href="<?php echo esc_url($lp_uri); ?>/style.css">
+<link rel="stylesheet" href="<?php echo esc_url($lp_uri); ?>/contact.css">
+
 </head>
 
 <body class="lp-body">
@@ -508,7 +510,7 @@ $page_url = get_permalink();
     </div>
 
     <div class="lp-reviews__link-wrap">
-      <a href="https://share.google/ZMLDYTYJGYxMwrBSG"
+      <a href="https://www.google.com/search?sca_esv=87c0228ed7e9c332&hl=ja-JP&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOVUKgm6erX-PqI7HpX-SxkscvZKny9rzBYu_O_fnBXYtUbBc3-pcyrsC37cjJmMNMdHvxwqxuKEnKahqCWF_vlsfgae0VW6nALGHjVMOAmj3IvHyiw%3D%3D&q=%E3%82%AA%E3%83%95%E3%82%A3%E3%82%B9%E3%82%A6%E3%82%A8%E3%83%80+%E3%82%AF%E3%83%81%E3%82%B3%E3%83%9F&sa=X&ved=2ahUKEwiG9pzszKuTAxWxsVYBHSQSCLUQ0bkNegQIIRAH"
          target="_blank"
          rel="noopener noreferrer"
          class="lp-reviews__link">
@@ -645,7 +647,7 @@ $page_url = get_permalink();
       ?>
 
       <p class="lp-form__privacy">
-        <a href="/privacy-policy/">個人情報の取り扱いについて</a>に同意の上、送信してください。
+        <a href="/privacy/">個人情報の取り扱いについて</a>に同意の上、送信してください。
       </p>
     </div>
 
