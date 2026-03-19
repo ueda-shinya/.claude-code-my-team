@@ -1,5 +1,8 @@
 # MEMORY INDEX
 
+## user
+- [user_shinya.md](user_shinya.md) — シンヤさんのプロフィール・作業スタイル・コミュニケーション傾向
+
 ## feedback
 - [feedback_cross_platform.md](feedback_cross_platform.md) — スクリプト・スキル修正時はMac・Windows両対応を必ず確認する
 
