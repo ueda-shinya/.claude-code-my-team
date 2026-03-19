@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>officeueda.com/lp/ — HTMLドラフト</title>
+<style>
+/* ============================================================
+   ベース設定
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+  background: #fff;
+}
+
+/* ============================================================
+   共通パーツ
+   ============================================================ */
+.lp-section {
+  padding: 72px 24px;
+}
+.lp-section--light { background: #ebffff; }
+.lp-section--white { background: #ffffff; }
+.lp-section--dark  { background: #0068b7; color: #fff; }
+
+.lp-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+h1, h2, h3 {
+  color: #0068b7;
+  line-height: 1.4;
+}
+.lp-section--dark h1,
+.lp-section--dark h2,
+.lp-section--dark h3 { color: #fff; }
+
+h2 {
+  font-size: clamp(22px, 3vw, 32px);
+  margin-bottom: 16px;
+}
+h3 {
+  font-size: clamp(17px, 2.2vw, 22px);
+  margin-bottom: 10px;
+}
+
+p { margin-bottom: 16px; }
+p:last-child { margin-bottom: 0; }
+
+/* CTAボタン */
+.btn {
+  display: inline-block;
+  background: #0068b7;
+  color: #fff !important;
+  font-size: 17px;
+  font-weight: bold;
+  padding: 16px 40px;
+  border-radius: 50px;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity .2s, transform .2s;
+  cursor: pointer;
+  border: none;
+  letter-spacing: .04em;
+}
+.btn:hover { opacity: .85; transform: translateY(-2px); }
+
+.btn--white {
+  background: #fff;
+  color: #0068b7 !important;
+}
+
+.btn-wrap {
+  text-align: center;
+  margin-top: 32px;
+}
+
+/* カード */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px 24px;
+  box-shadow: 0 2px 12px rgba(0,104,183,.08);
+}
+.lp-section--light .card { background: #fff; }
+.lp-section--white .card { background: #f3faff; border: 1px solid #d0eaff; }
+
+/* グリッド */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  margin-top: 40px;
+  align-items: start;
+}
+
+/* アイコン画像 */
+.card-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* サブリード */
+.sub-lead {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 40px;
+}
+.lp-section--dark .sub-lead { color: rgba(255,255,255,.85); }
+
+/* セクションラベル（開発用） */
+.dev-label {
+  display: inline-block;
+  font-size: 11px;
+  background: #e8f4ff;
+  color: #0068b7;
+  border: 1px solid #0068b7;
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-bottom: 12px;
+  letter-spacing: .06em;
+  font-weight: bold;
+}
+.lp-section--dark .dev-label {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+  border-color: rgba(255,255,255,.5);
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .grid-3, .grid-2 { grid-template-columns: 1fr; gap: 20px; }
+  .lp-section { padding: 52px 20px; }
+  .fv-inner { flex-direction: column-reverse; }
+  .fv-text { text-align: center; }
+  .fv-img { margin-bottom: 24px; }
+  .profile-grid { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     セクション1：FV（ファーストビュー）
+     Swell: フルワイドブロック + 背景画像(fv-bg.webp) + 見出し + 段落 + ボタン
+     ============================================================ -->
+<section class="lp-section" style="
+  background: url('https://example.com/wp-content/uploads/fv-bg.webp') center center / cover no-repeat;
+  /* ↑ WordPressメディアライブラリにfv-bg.webpをアップロード後、URLを差し替えてください */
+  position: relative;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+">
+  <div style="position:absolute;inset:0;background:rgba(235,255,255,.7);"></div><!-- オーバーレイ -->
+  <div class="lp-inner" style="position:relative;z-index:1;">
+    <div class="dev-label">SECTiON 1 — FV</div>
+    <div style="display:flex;align-items:center;gap:48px;" class="fv-inner">
+      <div class="fv-text" style="flex:1;">
+        <h1 style="font-size:clamp(28px,4vw,48px);color:#0068b7;margin-bottom:20px;font-weight:900;">
+          ホームページで、<br>ちゃんと売れるようにする。
+        </h1>
+        <p style="font-size:clamp(15px,2vw,19px);color:#333;margin-bottom:36px;">
+          "あ、ちょっと来てよ"で呼べる、<br>
+          東広島・呉・広島のWeb担当者です。
+        </p>
+        <a href="#contact" class="btn">無料でホームページ相談してみる</a>
+      </div>
+      <div class="fv-img" style="flex:0 0 320px;text-align:center;">
+        <!-- 代表顔写真（shinyaueda.png をメディアライブラリにアップロード後URLを差し替え） -->
+        <img src="https://example.com/wp-content/uploads/shinyaueda.png"
+             alt="オフィスウエダ 代表 上田伸也"
+             style="width:100%;max-width:320px;border-radius:50%;box-shadow:0 4px 24px rgba(0,104,183,.15);">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション2：FV直下CTA
+     Swell: フルワイドブロック（#0068b7 背景）+ 段落 + ボタン
+     ============================================================ -->
+<section class="lp-section lp-section--dark" style="padding: 52px 24px;">
+  <div class="lp-inner" style="text-align:center;">
+    <div class="dev-label">SECTiON 2 — FV直下CTA</div>
+    <p style="font-size:18px;margin-bottom:28px;line-height:2;">
+      専門用語なし・丸投げOK。<br>
+      「何から始めればいいかわからない」という段階でも、一緒に整理します。<br>
+      相談は無料です。
+    </p>
+    <a href="#contact" class="btn btn--white">まず話だけでも聞いてみる</a>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション3：数字バー
+     Swell: リッチカラムブロック（3カラム）
+     ============================================================ -->
+<section class="lp-section lp-section--white">
+  <div class="lp-inner">
+    <div class="dev-label">SECTiON 3 — 数字バー</div>
+    <div class="grid-3">
+
+      <div style="text-align:center;padding:20px 0;">
+        <div style="font-size:56px;font-weight:900;color:#0068b7;line-height:1.1;">2022</div>
+        <div style="font-size:18px;font-weight:bold;color:#0068b7;margin-top:4px;">年〜</div>
+        <div style="font-size:14px;color:#777;margin-top:8px;">サービス開始</div>
+      </div>
+
+      <div style="text-align:center;padding:20px 0;border-left:1px solid #d0eaff;border-right:1px solid #d0eaff;">
+        <div style="font-size:56px;font-weight:900;color:#0068b7;line-height:1.1;">3</div>
+        <div style="font-size:18px;font-weight:bold;color:#0068b7;margin-top:4px;">市</div>
+        <div style="font-size:14px;color:#777;margin-top:8px;">対応エリア（東広島・呉・広島）</div>
+      </div>
+
+      <div style="text-align:center;padding:20px 0;">
+        <div style="font-size:56px;font-weight:900;color:#0068b7;line-height:1.1;">7</div>
+        <div style="font-size:18px;font-weight:bold;color:#0068b7;margin-top:4px;">種類</div>
+        <div style="font-size:14px;color:#777;margin-top:8px;">対応サービス数</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション4：課題提起
+     Swell: フルワイドブロック（#ebffff 背景）+ 見出し(H2) + リストブロック
+     ============================================================ -->
+<section class="lp-section lp-section--light">
+  <div class="lp-inner">
+    <div class="dev-label">SECTiON 4 — 課題提起</div>
+    <h2 style="text-align:center;margin-bottom:36px;">こんなお悩み、ありませんか？</h2>
+    <div style="max-width:640px;margin:0 auto;">
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:16px;">
+        <li style="display:flex;align-items:flex-start;gap:12px;background:#fff;padding:18px 20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,104,183,.06);">
+          <span style="color:#0068b7;font-size:22px;margin-top:1px;">✗</span>
+          <span>ホームページを作ったのに、問い合わせがほとんど来ない</span>
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:12px;background:#fff;padding:18px 20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,104,183,.06);">
+          <span style="color:#0068b7;font-size:22px;margin-top:1px;">✗</span>
+          <span>業者に頼みたいけど、専門用語が多くて話についていけない</span>
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:12px;background:#fff;padding:18px 20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,104,183,.06);">
+          <span style="color:#0068b7;font-size:22px;margin-top:1px;">✗</span>
+          <span>「作って終わり」で、その後のサポートがまったくない</span>
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:12px;background:#fff;padding:18px 20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,104,183,.06);">
+          <span style="color:#0068b7;font-size:22px;margin-top:1px;">✗</span>
+          <span>補助金を使えるか知りたいが、どこに聞けばいいかわからない</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション5：選ばれる3つの理由
+     Swell: フルワイドブロック（白）+ 見出し(H2) + リッチカラム3カラム
+     アイコン画像パス: /wp-content/uploads/icon-local.webp etc.
+     ============================================================ -->
+<section class="lp-section lp-section--white">
+  <div class="lp-inner">
+    <div class="dev-label">SECTiON 5 — 選ばれる3つの理由</div>
+    <h2 style="text-align:center;margin-bottom:48px;">オフィスウエダが選ばれる理由</h2>
+    <div class="grid-3">
+
+      <div class="card" style="text-align:center;">
+        <!-- icon-local.webp をメディアライブラリにアップロード後URLを差し替え -->
+        <img src="https://example.com/wp-content/uploads/icon-local.webp"
+             alt="地域密着アイコン" class="card-icon" style="margin:0 auto 16px;">
+        <h3>顔が見える、話せる。<br>地域密着のWeb担当者。</h3>
+        <p style="font-size:15px;color:#555;margin-top:12px;">
+          東広島を拠点に、呉・広島の事業者様とも対面でお会いして進めます。"あ、ちょっと相談して"と気軽に連絡できる距離感が、長く続くお付き合いにつながっています。
+        </p>
+      </div>
+
+      <div class="card" style="text-align:center;">
+        <!-- icon-easy.webp をメディアライブラリにアップロード後URLを差し替え -->
+        <img src="https://example.com/wp-content/uploads/icon-easy.webp"
+             alt="わかりやすさアイコン" class="card-icon" style="margin:0 auto 16px;">
+        <h3>専門用語なし。<br>丸投げでOKです。</h3>
+        <p style="font-size:15px;color:#555;margin-top:12px;">
+          難しいIT用語はいりません。打ち合わせから原稿作成・更新作業まで、面倒なことはすべて代行します。「何もわからない」という状態からでも、安心してお任せください。
+        </p>
+      </div>
+
+      <div class="card" style="text-align:center;">
+        <!-- icon-result.webp をメディアライブラリにアップロード後URLを差し替え -->
+        <img src="https://example.com/wp-content/uploads/icon-result.webp"
+             alt="成果重視アイコン" class="card-icon" style="margin:0 auto 16px;">
+        <h3>"作る"ではなく<br>"売れる"を目指して設計します。</h3>
+        <p style="font-size:15px;color:#555;margin-top:12px;">
+          見た目だけきれいなサイトでは集客できません。問い合わせが来る・応募が増えるという成果を前提に、マーケティング視点で設計・実装・改善まで伴走します。
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション6：サービス一覧
+     Swell: フルワイドブロック（#ebffff 背景）+ 見出し(H2) + カード7枚（3+3+1）
+     ============================================================ -->
+<section class="lp-section lp-section--light">
+  <div class="lp-inner">
+    <div class="dev-label">SECTiON 6 — サービス一覧</div>
+    <h2 style="text-align:center;">ホームページ制作・Web支援サービス</h2>
+    <p class="sub-lead" style="text-align:center;color:#555;">
+      制作から補助金相談・運用サポートまで。必要なことは、ぜんぶ対応します。
+    </p>
+
+    <div class="grid-3">
+
+      <div class="card">
+        <img src="https://example.com/wp-content/uploads/svc-corporate.webp"
+             alt="コーポレートサイト・店舗サイト制作" class="card-icon">
+        <h3>コーポレートサイト・<br>店舗サイト制作</h3>
+        <p style="font-size:15px;color:#555;margin-top:10px;">
+          会社・お店の顔を、問い合わせが来るデザインに。<br>
+          オリジナルデザイン＋SEO対策込み。中小企業・個人事業主の規模感に合わせた複数プランをご用意しています。
+        </p>
+      </div>
+
+      <div class="card">
+        <img src="https://example.com/wp-content/uploads/svc-recruit.webp"
+             alt="採用サイト制作" class="card-icon">
+        <h3>採用サイト制作</h3>
+        <p style="font-size:15px;color:#555;margin-top:10px;">
+          採りたい人に届く、採用専用サイト。<br>
+          求人に特化したサイト構成で、応募数の改善を目指します。コストを抑えたい方向けのminiプランもあります。
+        </p>
+      </div>
+
+      <div class="card">
+        <img src="https://example.com/wp-content/uploads/svc-lp.webp"
+             alt="LP制作" class="card-icon">
+        <h3>LP制作</h3>
+        <p style="font-size:15px;color:#555;margin-top:10px;">
+          問い合わせを取りに行く、縦スクロールLP。<br>
+          コンバージョン設計に特化したLPを制作。広告と組み合わせた費用対効果の高い集客を実現します。
+        </p>
+      </div>
+
+      <div class="card">
+        <img src="https://example.com/wp-content/uploads/svc-swipe.webp"
+             alt="スワイプLP制作" class="card-icon">
+        <h3>スワイプLP制作</h3>
+        <p style="font-size:15px;color:#555;margin-top:10px;">
+          スマホ世代に届く、スワイプ型LP。<br>
+          横スワイプ操作に最適化したLP。Instagram広告などスマホファーストな集客施策との相性が抜群です。
+        </p>
+      </div>
+
+      <div class="card">
+        <img src="https://example.com/wp-content/uploads/svc-renewal.webp"
+             alt="集客強化リニューアル" class="card-icon">
+        <h3>集客強化リニューアル</h3>
+        <p style="font-size:15px;color:#555;margin-top:10px;">
+          今あるサイトを、問い合わせが増える形に改修。<br>
+          「作り直すほどではないが成果が出ていない」サイトを、マーケティング視点で全面改修します。
+        </p>
+      </div>
+
+      <div class="card">
+        <img src="https://example.com/wp-content/uploads/svc-maintenance.webp"
+             alt="WordPress保守・運用サポート" class="card-icon">
+        <h3>WordPress保守・<br>運用サポート</h3>
+        <p style="font-size:15px;color:#555;margin-top:10px;">
+          作ったあとも、ずっと任せられる。<br>
+          更新・バックアップ・セキュリティ対応・Zoom支援まで継続サポート。「作って終わり」にしない伴走体制です。
+        </p>
+      </div>
+
+    </div>
+
+    <!-- 7枚目：緊急対応（1カラム中央） -->
+    <div style="margin-top:24px;max-width:540px;margin-left:auto;margin-right:auto;">
+      <div class="card" style="display:flex;align-items:flex-start;gap:20px;">
+        <img src="https://example.com/wp-content/uploads/svc-emergency.webp"
+             alt="WP復旧24" class="card-icon" style="flex-shrink:0;">
+        <div>
+          <h3>WP復旧24（緊急対応）</h3>
+          <p style="font-size:15px;color:#555;margin-top:10px;">
+            WordPressが突然動かなくなったら、すぐ呼んでください。<br>
+            表示崩れ・ログインできない・真っ白になったなど、WordPressの緊急トラブルに即対応します。
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション7：サービス後CTA
+     Swell: フルワイドブロック（#0068b7 背景）
+     ============================================================ -->
+<section class="lp-section lp-section--dark" style="padding: 64px 24px;">
+  <div class="lp-inner" style="text-align:center;">
+    <div class="dev-label">SECTiON 7 — サービス後CTA</div>
+    <h2 style="margin-bottom:16px;">どのサービスか迷ったら、<br>まず相談してください。</h2>
+    <p style="font-size:17px;opacity:.9;margin-bottom:32px;">
+      「うちに合うのはどれ？」「予算感を知りたい」だけでも大丈夫です。<br>
+      専門用語なし・押し売りなしでお答えします。
+    </p>
+    <a href="#contact" class="btn btn--white">無料で相談してみる</a>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション8：制作実績
+     Swell: リッチカラムブロック（2カラム）
+     実績サムネイル：iwamotoshoten.com のスクリーンショットをアップロード
+     ============================================================ -->
+<section class="lp-section lp-section--white">
+  <div class="lp-inner">
+    <div class="dev-label">SECTiON 8 — 制作実績</div>
+    <h2 style="text-align:center;">制作実績</h2>
+    <p class="sub-lead" style="text-align:center;color:#555;">
+      公開許可をいただいた一部をご紹介しています。非公開案件を含め、多くのお客様のサイト制作に携わってきました。
+    </p>
+
+    <div class="grid-2">
+
+      <!-- 公開案件 -->
+      <div class="card">
+        <!-- iwamotoshoten.comのスクリーンショットをメディアライブラリにアップロード後URLを差し替え -->
+        <img src="https://example.com/wp-content/uploads/portfolio-iwamoto.jpg"
+             alt="岩本商店「神の里」様サイト"
+             style="width:100%;border-radius:8px;margin-bottom:16px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+          <span style="font-size:12px;background:#e8f4ff;color:#0068b7;border-radius:4px;padding:3px 10px;font-weight:bold;">農産物小売</span>
+          <span style="font-size:12px;background:#e8f4ff;color:#0068b7;border-radius:4px;padding:3px 10px;font-weight:bold;">コーポレートサイト・EC</span>
+        </div>
+        <h3>岩本商店「神の里」様</h3>
+        <p style="font-size:14px;color:#777;margin-top:4px;">担当：コーディング（デザイナーと協業）</p>
+        <p style="font-size:15px;color:#555;margin-top:10px;">
+          島根県産の無農薬米・しめ縄を販売する岩本商店様のサイト。レスポンシブ対応・Instagram連携など、フルコーディングを担当しました。
+        </p>
+        <div style="margin-top:20px;">
+          <a href="https://iwamotoshoten.com/" target="_blank" rel="noopener noreferrer" class="btn" style="font-size:15px;padding:12px 28px;">
+            サイトを見る ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- 非公開まとめ -->
+      <div class="card" style="background:#f8f8f8;border:2px dashed #ddd;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 24px;">
+        <div style="font-size:48px;margin-bottom:16px;color:#ccc;">🔒</div>
+        <h3 style="color:#999;">非公開案件 多数</h3>
+        <p style="font-size:15px;color:#777;margin-top:12px;">
+          その他、非公開案件を含め多数の制作実績があります。<br>
+          業種・規模・予算などの詳細はお問い合わせください。
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション9：お客様の声
+     Swell: スライダープラグイン（Smart Slider 3 推奨）
+     ※ 以下はスライダーなしの静的表示版。本番はプラグインで差し替え。
+     口コミ本文はGoogleマイビジネスから原文転記（編集不可）
+     ============================================================ -->
+<section class="lp-section lp-section--light">
+  <div class="lp-inner">
+    <div class="dev-label">SECTiON 9 — お客様の声</div>
+    <h2 style="text-align:center;">お客様の声</h2>
+    <p class="sub-lead" style="text-align:center;color:#555;">
+      Googleの口コミから、実際にご依頼いただいた方の感想をご紹介します。
+    </p>
+
+    <!-- ↓ スライダープラグインのショートコードをここに挿入 -->
+    <!-- 例: [smartslider3 slider="2"] -->
+    <!-- 静的サンプル表示（実装時は削除してショートコードに差し替え） -->
+    <div style="display:flex;gap:20px;overflow-x:auto;padding-bottom:8px;">
+
+      <div class="card" style="min-width:300px;flex:1;">
+        <div style="color:#f5a623;font-size:20px;margin-bottom:8px;">★★★★★</div>
+        <div style="font-weight:bold;margin-bottom:4px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;
+                       width:36px;height:36px;border-radius:50%;background:#0068b7;
+                       color:#fff;font-size:14px;font-weight:bold;margin-right:8px;">A</span>
+          A様
+        </div>
+        <p style="font-size:15px;color:#555;">
+          ※ Googleマイビジネスから口コミ原文を転記してください（編集・要約は不可）
+        </p>
+      </div>
+
+      <div class="card" style="min-width:300px;flex:1;">
+        <div style="color:#f5a623;font-size:20px;margin-bottom:8px;">★★★★★</div>
+        <div style="font-weight:bold;margin-bottom:4px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;
+                       width:36px;height:36px;border-radius:50%;background:#0068b7;
+                       color:#fff;font-size:14px;font-weight:bold;margin-right:8px;">B</span>
+          B様
+        </div>
+        <p style="font-size:15px;color:#555;">
+          ※ Googleマイビジネスから口コミ原文を転記してください（編集・要約は不可）
+        </p>
+      </div>
+
+      <div class="card" style="min-width:300px;flex:1;">
+        <div style="color:#f5a623;font-size:20px;margin-bottom:8px;">★★★★★</div>
+        <div style="font-weight:bold;margin-bottom:4px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;
+                       width:36px;height:36px;border-radius:50%;background:#0068b7;
+                       color:#fff;font-size:14px;font-weight:bold;margin-right:8px;">C</span>
+          C様
+        </div>
+        <p style="font-size:15px;color:#555;">
+          ※ Googleマイビジネスから口コミ原文を転記してください（編集・要約は不可）
+        </p>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:28px;">
+      <!-- Googleマイビジネスの口コミページURLを差し替え -->
+      <a href="https://g.page/r/XXXXXXXXXXXXXXXX/review" target="_blank" rel="noopener noreferrer"
+         style="color:#0068b7;font-weight:bold;text-decoration:underline;font-size:15px;">
+        Google口コミをすべて見る ↗
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション10：代表プロフィール
+     Swell: 2カラムブロック（画像左・テキスト右）
+     ============================================================ -->
+<section class="lp-section lp-section--white">
+  <div class="lp-inner">
+    <div class="dev-label">SECTiON 10 — 代表プロフィール</div>
+    <div class="grid-2" style="align-items:center;">
+
+      <div style="text-align:center;">
+        <!-- shinyaueda.png をメディアライブラリにアップロード後URLを差し替え -->
+        <img src="https://example.com/wp-content/uploads/shinyaueda.png"
+             alt="オフィスウエダ 代表 上田伸也"
+             style="width:100%;max-width:340px;border-radius:12px;box-shadow:0 4px 20px rgba(0,104,183,.12);">
+      </div>
+
+      <div>
+        <h2>はじめまして。<br>オフィスウエダの上田伸也です。</h2>
+        <p style="margin-top:20px;color:#444;">
+          広島県東広島市を拠点に、地域の中小企業・個人事業主のホームページ制作と活用サポートをしています。
+        </p>
+        <p style="color:#444;">
+          「ホームページを作ったのに問い合わせが来ない」「業者に頼んだら話が通じなかった」——そんな声をたくさん聞いてきました。
+        </p>
+        <p style="color:#444;">
+          私はお客様にとって、"あ、ちょっと来てよ"と気軽に呼んでもらえるWeb担当者でありたいと思っています。専門用語なし、丸投げOK。打ち合わせから納品・運用まで、成果にこだわって一緒に進めます。
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション11：補助金案内
+     Swell: フルワイドブロック（#0068b7 背景）
+     ============================================================ -->
+<section class="lp-section lp-section--dark" style="padding: 64px 24px;">
+  <div class="lp-inner" style="text-align:center;">
+    <div class="dev-label">SECTiON 11 — 補助金案内</div>
+    <h2 style="margin-bottom:20px;">補助金を使って、<br>費用負担を抑えませんか？</h2>
+    <p style="font-size:17px;opacity:.9;max-width:600px;margin:0 auto 32px;">
+      ホームページ制作にも利用できる補助金制度があります。<br>
+      どの補助金が使えるか、申請できそうかどうか——まずはご相談ください。一緒に確認します。
+    </p>
+    <a href="#contact" class="btn btn--white">補助金について相談する</a>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション12：FAQ
+     Swell: 見出しブロック(H2) + アコーディオンブロック（Swell標準）
+     ※ 以下はCSS-onlyアコーディオン（プレビュー用）
+     本番はSwellのアコーディオンブロックに差し替えてください
+     ============================================================ -->
+<section class="lp-section lp-section--light">
+  <div class="lp-inner">
+    <div class="dev-label">SECTiON 12 — FAQ</div>
+    <h2 style="text-align:center;margin-bottom:40px;">よくあるご質問</h2>
+
+    <div style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:12px;">
+
+      <details style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,104,183,.06);overflow:hidden;">
+        <summary style="padding:20px 24px;cursor:pointer;font-weight:bold;color:#0068b7;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          相談だけでも大丈夫ですか？
+          <span style="font-size:20px;font-weight:normal;color:#0068b7;">＋</span>
+        </summary>
+        <div style="padding:0 24px 20px;color:#555;font-size:15px;border-top:1px solid #e8f4ff;">
+          <p>はい、もちろんです。「まだ検討段階」「予算感だけ知りたい」という段階のご相談も大歓迎です。お気軽にお問い合わせください。</p>
+        </div>
+      </details>
+
+      <details style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,104,183,.06);overflow:hidden;">
+        <summary style="padding:20px 24px;cursor:pointer;font-weight:bold;color:#0068b7;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          専門知識がなくても大丈夫ですか？
+          <span style="font-size:20px;font-weight:normal;color:#0068b7;">＋</span>
+        </summary>
+        <div style="padding:0 24px 20px;color:#555;font-size:15px;border-top:1px solid #e8f4ff;">
+          <p>まったく問題ありません。打ち合わせは専門用語を使わず、わかりやすい言葉でご説明します。「ホームページのことは何もわからない」という方からのご相談も多いです。</p>
+        </div>
+      </details>
+
+      <details style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,104,183,.06);overflow:hidden;">
+        <summary style="padding:20px 24px;cursor:pointer;font-weight:bold;color:#0068b7;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          広島県外からの依頼はできますか？
+          <span style="font-size:20px;font-weight:normal;color:#0068b7;">＋</span>
+        </summary>
+        <div style="padding:0 24px 20px;color:#555;font-size:15px;border-top:1px solid #e8f4ff;">
+          <p>はい、対応しています。遠方の方はオンラインでのお打ち合わせも可能ですので、お気軽にご相談ください。</p>
+        </div>
+      </details>
+
+      <details style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,104,183,.06);overflow:hidden;">
+        <summary style="padding:20px 24px;cursor:pointer;font-weight:bold;color:#0068b7;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          制作期間はどれくらいかかりますか？
+          <span style="font-size:20px;font-weight:normal;color:#0068b7;">＋</span>
+        </summary>
+        <div style="padding:0 24px 20px;color:#555;font-size:15px;border-top:1px solid #e8f4ff;">
+          <p>サービスの種類や内容によって異なりますが、コーポレートサイトで1〜2ヶ月程度が目安です。詳しくはご相談の際にお伝えします。</p>
+        </div>
+      </details>
+
+      <details style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,104,183,.06);overflow:hidden;">
+        <summary style="padding:20px 24px;cursor:pointer;font-weight:bold;color:#0068b7;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          補助金を使いたい場合、どうすればいいですか？
+          <span style="font-size:20px;font-weight:normal;color:#0068b7;">＋</span>
+        </summary>
+        <div style="padding:0 24px 20px;color:#555;font-size:15px;border-top:1px solid #e8f4ff;">
+          <p>まずはお問い合わせください。どの補助金が使えそうかを一緒に確認し、申請のサポートをご案内します。</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション13：フッター前CTA（フォーム）
+     Swell: フルワイドブロック（#0068b7 背景）+ Contact Form 7 or WPForms
+     フォームIDは設置後に差し替え
+     ============================================================ -->
+<section id="contact" class="lp-section lp-section--dark" style="padding: 80px 24px;">
+  <div class="lp-inner" style="max-width:640px;">
+    <div class="dev-label">SECTiON 13 — フッター前CTA（フォーム）</div>
+    <h2 style="text-align:center;margin-bottom:16px;font-size:clamp(24px,3.5vw,36px);">
+      まず、話してみませんか。
+    </h2>
+    <p style="text-align:center;font-size:17px;opacity:.9;margin-bottom:40px;">
+      「うちはホームページで売れるようになるの？」<br>
+      そんな疑問から、ぜひ聞かせてください。<br><br>
+      専門用語なし・押し売りなし。<br>
+      ホームページ制作の相談は無料です。
+    </p>
+
+    <!-- ↓ Contact Form 7 ショートコードをここに挿入 -->
+    <!-- 例: [contact-form-7 id="123" title="LP相談フォーム"] -->
+    <!-- フォームが未設置の場合の仮表示 -->
+    <form style="display:flex;flex-direction:column;gap:16px;">
+      <div>
+        <label style="display:block;font-size:14px;margin-bottom:6px;opacity:.8;">
+          お名前 <span style="color:#ffcccc;">*必須</span>
+        </label>
+        <input type="text" placeholder="例：山田 太郎"
+               style="width:100%;padding:14px 16px;border-radius:8px;border:none;font-size:16px;color:#333;">
+      </div>
+      <div>
+        <label style="display:block;font-size:14px;margin-bottom:6px;opacity:.8;">会社名・屋号</label>
+        <input type="text" placeholder="例：株式会社〇〇"
+               style="width:100%;padding:14px 16px;border-radius:8px;border:none;font-size:16px;color:#333;">
+      </div>
+      <div>
+        <label style="display:block;font-size:14px;margin-bottom:6px;opacity:.8;">
+          メールアドレス <span style="color:#ffcccc;">*必須</span>
+        </label>
+        <input type="email" placeholder="例：info@example.com"
+               style="width:100%;padding:14px 16px;border-radius:8px;border:none;font-size:16px;color:#333;">
+      </div>
+      <div>
+        <label style="display:block;font-size:14px;margin-bottom:6px;opacity:.8;">電話番号</label>
+        <input type="tel" placeholder="例：090-0000-0000"
+               style="width:100%;padding:14px 16px;border-radius:8px;border:none;font-size:16px;color:#333;">
+      </div>
+      <div>
+        <label style="display:block;font-size:14px;margin-bottom:6px;opacity:.8;">
+          ご相談内容 <span style="color:#ffcccc;">*必須</span>
+        </label>
+        <textarea rows="5" placeholder="例：コーポレートサイトの制作を検討しています。予算感を教えてほしいです。"
+                  style="width:100%;padding:14px 16px;border-radius:8px;border:none;font-size:16px;color:#333;resize:vertical;"></textarea>
+      </div>
+      <div style="text-align:center;margin-top:8px;">
+        <button type="submit" class="btn btn--white" style="width:100%;max-width:360px;padding:18px;">
+          相談を申し込む（無料）
+        </button>
+      </div>
+      <p style="text-align:center;font-size:13px;opacity:.7;margin-top:8px;">
+        <!-- プライバシーポリシーページURLを差し替え -->
+        <a href="/privacy-policy/" style="color:#fff;text-decoration:underline;">個人情報の取り扱いについて</a>に同意の上、送信してください。
+      </p>
+    </form>
+    <!-- ↑ Contact Form 7 設置後は上記フォームを削除してショートコードに差し替え -->
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     実装チェックリスト（開発用メモ）
+     ============================================================ -->
+<section style="background:#fffbe6;padding:40px 24px;border-top:3px solid #f5a623;">
+  <div style="max-width:800px;margin:0 auto;">
+    <h2 style="color:#b8860b;font-size:18px;margin-bottom:20px;">実装チェックリスト（Swell作業前に確認）</h2>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px;color:#555;">
+      <li>☐ 画像ファイル7種をWordPressメディアライブラリにアップロード済み（fv-bg.webp / icon-local.webp / icon-easy.webp / icon-result.webp / svc-*.webp）</li>
+      <li>☐ 代表顔写真（shinyaueda.png）をメディアライブラリにアップロード済み</li>
+      <li>☐ 岩本商店様サイトのスクリーンショットを撮影しアップロード済み</li>
+      <li>☐ 各画像URLをソースコード内の `https://example.com/wp-content/uploads/...` から差し替え済み</li>
+      <li>☐ セクション9：Googleマイビジネスから口コミ原文を転記済み（文章の変更・要約は不可）</li>
+      <li>☐ セクション9：Google口コミページURLを差し替え済み</li>
+      <li>☐ セクション13：Contact Form 7（またはWPForms）でフォームを作成し、ショートコードに差し替え済み</li>
+      <li>☐ サンクスページを作成しGA4コンバージョン設定済み</li>
+      <li>☐ プライバシーポリシーページURLを差し替え済み</li>
+      <li>☐ スマホ表示で「ちゃんと売れるようにする。」が一行に収まることを確認</li>
+      <li>☐ meta title「広島 ホームページ制作 東広島 | オフィスウエダ」に設定済み</li>
+      <li>☐ FAQをSwellのアコーディオンブロックに差し替え済み（本番）</li>
+      <li>☐ スライダープラグイン設置後、セクション9の口コミ静的表示をショートコードに差し替え済み</li>
+    </ul>
+  </div>
+</section>
+
+</body>
+</html>
