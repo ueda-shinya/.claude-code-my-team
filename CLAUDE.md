@@ -58,6 +58,11 @@
 - インデント：スペース2つ
 - セミコロン：不要（JavaScript）
 
+## Web制作コーディングルール
+- サイト・LP制作時は**JSON-LDを必ず入れる**（指示不要・標準対応）
+- ページの種類に応じてtypeを選択: LocalBusiness / WebPage / FAQPage / Product / Service など
+- JSON-LD1本でSEO・GMC・リッチリザルトをまとめて対応できる
+
 ## 利用可能な共通スキル
 - /blog-post：記事作成
 - /commit：gitコミット
