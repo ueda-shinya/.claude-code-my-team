@@ -9,7 +9,8 @@
 ### 現在のステータス
 - コーディング修正：完了（2026-03-19）
 - サクラによるコードレビュー：完了
-- git push：完了（commit: feat: officeueda LP修正完了・デプロイ準備完了）
+- サービス画像刷新：完了（2026-03-19）
+- git push：完了（commit: feat: officeueda LP サービス画像をシンプルバナーに刷新）
 
 ### 完了した修正
 1. FVキャッチ・サブコピー差し替え ✅
@@ -21,13 +22,22 @@
 7. 岩本商店担当表記修正（「コーディング」）✅
 8. shinyaueda.webp変換・差し替え ✅
 9. portfolio-iwamoto.webp差し替え ✅
+10. svc-*.webp 全7枚をブランドブルーバナーに刷新 ✅
 
 ### 次のアクション
 - WordPressにファイルをデプロイする（シンヤさん作業）
   - `lp-260319/index.php`
   - `lp-260319/style.css`
+  - `lp-260319/contact.css`
   - `lp-260319/images/shinyaueda.webp`
   - `lp-260319/images/portfolio-iwamoto.webp`
+  - `lp-260319/images/svc-corporate.webp`
+  - `lp-260319/images/svc-recruit.webp`
+  - `lp-260319/images/svc-lp.webp`
+  - `lp-260319/images/svc-swipe.webp`
+  - `lp-260319/images/svc-renewal.webp`
+  - `lp-260319/images/svc-maintenance.webp`
+  - `lp-260319/images/svc-emergency.webp`
 
 ### 既存ファイル
 - `clients/officeueda/biz-web/lp-260319/index.php`
