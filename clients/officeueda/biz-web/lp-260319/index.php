@@ -62,8 +62,6 @@ $page_url = get_permalink();
       "name": "オフィスウエダ",
       "description": "東広島・呉・広島を拠点に、中小企業・個人事業主のホームページ制作・Web支援を行うWebデザイン事務所",
       "url": "https://officeueda.com",
-      "telephone": "YOUR_PHONE_NUMBER",
-      "email": "YOUR_EMAIL_ADDRESS",
       "foundingDate": "2022",
       "image": "<?php echo esc_url($lp_uri); ?>/images/shinyaueda.png",
       "logo": "https://officeueda.com/wp-content/uploads/logo.png",
@@ -158,6 +156,10 @@ $page_url = get_permalink();
 }
 </script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+
 <?php wp_head(); ?>
 
 <link rel="stylesheet" href="<?php echo esc_url($lp_uri); ?>/style.css">
@@ -216,21 +218,21 @@ $page_url = get_permalink();
     <div class="lp-numbers__grid">
 
       <div class="lp-number-item">
-        <div class="lp-number-item__num">2022</div>
-        <div class="lp-number-item__unit">年〜</div>
-        <div class="lp-number-item__label">サービス開始</div>
+        <div class="lp-number-item__num">30</div>
+        <div class="lp-number-item__unit">件以上</div>
+        <div class="lp-number-item__label">制作・改修実績</div>
       </div>
 
       <div class="lp-number-item">
-        <div class="lp-number-item__num">3</div>
-        <div class="lp-number-item__unit">市</div>
-        <div class="lp-number-item__label">対応エリア（東広島・呉・広島）</div>
+        <div class="lp-number-item__num">5.0</div>
+        <div class="lp-number-item__unit lp-number-item__unit--star">★ Google口コミ</div>
+        <div class="lp-number-item__label">お客様評価</div>
       </div>
 
       <div class="lp-number-item">
-        <div class="lp-number-item__num">7</div>
-        <div class="lp-number-item__unit">種類</div>
-        <div class="lp-number-item__label">対応サービス数</div>
+        <div class="lp-number-item__num">0</div>
+        <div class="lp-number-item__unit">円</div>
+        <div class="lp-number-item__label">相談料（押し売りなし）</div>
       </div>
 
     </div>
@@ -266,7 +268,7 @@ $page_url = get_permalink();
           src="<?php echo esc_url($lp_uri); ?>/images/icon-local.webp"
           alt="地域密着アイコン"
           class="lp-card__icon"
-          width="64" height="64"
+          width="88" height="88"
           loading="lazy"
         >
         <h3 class="lp-h3">顔が見える、話せる。<br>地域密着のWeb担当者。</h3>
@@ -278,7 +280,7 @@ $page_url = get_permalink();
           src="<?php echo esc_url($lp_uri); ?>/images/icon-easy.webp"
           alt="わかりやすさアイコン"
           class="lp-card__icon"
-          width="64" height="64"
+          width="88" height="88"
           loading="lazy"
         >
         <h3 class="lp-h3">専門用語なし。<br>丸投げでOKです。</h3>
@@ -290,11 +292,11 @@ $page_url = get_permalink();
           src="<?php echo esc_url($lp_uri); ?>/images/icon-result.webp"
           alt="成果重視アイコン"
           class="lp-card__icon"
-          width="64" height="64"
+          width="88" height="88"
           loading="lazy"
         >
-        <h3 class="lp-h3">"作る"ではなく<br>"売れる"を目指して設計します。</h3>
-        <p>見た目だけきれいなサイトでは集客できません。問い合わせが来る・応募が増えるという成果を前提に、マーケティング視点で設計・実装・改善まで伴走します。</p>
+        <h3 class="lp-h3">作って終わりにしない。<br>成果が出るまで、一緒にいます。</h3>
+        <p>納品がゴールではありません。公開後の更新・改善・相談まで、ずっと伴走します。「業者に頼んだら音沙汰なし」にならない、続けられる関係を大切にしています。</p>
       </div>
 
     </div>
@@ -309,57 +311,69 @@ $page_url = get_permalink();
   <div class="lp-inner">
     <h2 class="lp-h2" style="text-align:center;">ホームページ制作・Web支援サービス</h2>
     <p class="lp-lead" style="text-align:center;">
-      制作から補助金相談・運用サポートまで。必要なことは、ぜんぶ対応します。
+      制作から運用サポートまで。必要なことは、ぜんぶ対応します。
     </p>
 
     <div class="lp-grid-3">
 
       <div class="lp-card">
         <img src="<?php echo esc_url($lp_uri); ?>/images/svc-corporate.webp"
-             alt="コーポレートサイト・店舗サイト制作" class="lp-card__icon"
-             width="60" height="60" loading="lazy">
-        <h3 class="lp-h3">コーポレートサイト・<br>店舗サイト制作</h3>
-        <p>会社・お店の顔を、問い合わせが来るデザインに。オリジナルデザイン＋SEO対策込み。中小企業・個人事業主の規模感に合わせた複数プランをご用意しています。</p>
+             alt="コーポレートサイト・店舗サイト制作" class="lp-service-card__img"
+             width="400" height="180" loading="lazy">
+        <div class="lp-service-card__body">
+          <h3 class="lp-h3">コーポレートサイト・<br>店舗サイト制作</h3>
+          <p>会社・お店の顔を、問い合わせが来るデザインに。オリジナルデザイン＋SEO対策込み。中小企業・個人事業主の規模感に合わせた複数プランをご用意しています。</p>
+        </div>
       </div>
 
       <div class="lp-card">
         <img src="<?php echo esc_url($lp_uri); ?>/images/svc-recruit.webp"
-             alt="採用サイト制作" class="lp-card__icon"
-             width="60" height="60" loading="lazy">
-        <h3 class="lp-h3">採用サイト制作</h3>
-        <p>採りたい人に届く、採用専用サイト。求人に特化したサイト構成で、応募数の改善を目指します。コストを抑えたい方向けのminiプランもあります。</p>
+             alt="採用サイト制作" class="lp-service-card__img"
+             width="400" height="180" loading="lazy">
+        <div class="lp-service-card__body">
+          <h3 class="lp-h3">採用サイト制作</h3>
+          <p>採りたい人に届く、採用専用サイト。求人に特化したサイト構成で、応募数の改善を目指します。コストを抑えたい方向けのminiプランもあります。</p>
+        </div>
       </div>
 
       <div class="lp-card">
         <img src="<?php echo esc_url($lp_uri); ?>/images/svc-lp.webp"
-             alt="LP制作" class="lp-card__icon"
-             width="60" height="60" loading="lazy">
-        <h3 class="lp-h3">LP制作</h3>
-        <p>問い合わせを取りに行く、縦スクロールLP。コンバージョン設計に特化したLPを制作。広告と組み合わせた費用対効果の高い集客を実現します。</p>
+             alt="LP制作" class="lp-service-card__img"
+             width="400" height="180" loading="lazy">
+        <div class="lp-service-card__body">
+          <h3 class="lp-h3">LP制作</h3>
+          <p>問い合わせを取りに行く、縦スクロールLP。コンバージョン設計に特化したLPを制作。広告と組み合わせた費用対効果の高い集客を実現します。</p>
+        </div>
       </div>
 
       <div class="lp-card">
         <img src="<?php echo esc_url($lp_uri); ?>/images/svc-swipe.webp"
-             alt="スワイプLP制作" class="lp-card__icon"
-             width="60" height="60" loading="lazy">
-        <h3 class="lp-h3">スワイプLP制作</h3>
-        <p>スマホ世代に届く、スワイプ型LP。横スワイプ操作に最適化したLP。Instagram広告などスマホファーストな集客施策との相性が抜群です。</p>
+             alt="スワイプLP制作" class="lp-service-card__img"
+             width="400" height="180" loading="lazy">
+        <div class="lp-service-card__body">
+          <h3 class="lp-h3">スワイプLP制作</h3>
+          <p>スマホ世代に届く、スワイプ型LP。横スワイプ操作に最適化したLP。Instagram広告などスマホファーストな集客施策との相性が抜群です。</p>
+        </div>
       </div>
 
       <div class="lp-card">
         <img src="<?php echo esc_url($lp_uri); ?>/images/svc-renewal.webp"
-             alt="集客強化リニューアル" class="lp-card__icon"
-             width="60" height="60" loading="lazy">
-        <h3 class="lp-h3">集客強化リニューアル</h3>
-        <p>今あるサイトを、問い合わせが増える形に改修。「作り直すほどではないが成果が出ていない」サイトを、マーケティング視点で全面改修します。</p>
+             alt="集客強化リニューアル" class="lp-service-card__img"
+             width="400" height="180" loading="lazy">
+        <div class="lp-service-card__body">
+          <h3 class="lp-h3">集客強化リニューアル</h3>
+          <p>今あるサイトを、問い合わせが増える形に改修。「作り直すほどではないが成果が出ていない」サイトを、マーケティング視点で全面改修します。</p>
+        </div>
       </div>
 
       <div class="lp-card">
         <img src="<?php echo esc_url($lp_uri); ?>/images/svc-maintenance.webp"
-             alt="WordPress保守・運用サポート" class="lp-card__icon"
-             width="60" height="60" loading="lazy">
-        <h3 class="lp-h3">WordPress保守・<br>運用サポート</h3>
-        <p>作ったあとも、ずっと任せられる。更新・バックアップ・セキュリティ対応・Zoom支援まで継続サポート。「作って終わり」にしない伴走体制です。</p>
+             alt="WordPress保守・運用サポート" class="lp-service-card__img"
+             width="400" height="180" loading="lazy">
+        <div class="lp-service-card__body">
+          <h3 class="lp-h3">WordPress保守・<br>運用サポート</h3>
+          <p>作ったあとも、ずっと任せられる。更新・バックアップ・セキュリティ対応・Zoom支援まで継続サポート。「作って終わり」にしない伴走体制です。</p>
+        </div>
       </div>
 
     </div>
@@ -384,10 +398,10 @@ $page_url = get_permalink();
      ============================================================ -->
 <section class="lp-section lp-section--dark lp-cta-mid">
   <div class="lp-inner">
-    <h2 class="lp-h2">どのサービスか迷ったら、<br>まず相談してください。</h2>
+    <h2 class="lp-h2">何も決まっていなくて、<br>大丈夫です。</h2>
     <p>
-      「うちに合うのはどれ？」「予算感を知りたい」だけでも大丈夫です。<br>
-      専門用語なし・押し売りなしでお答えします。
+      「うちに何が必要かわからない」「そもそも何から始めればいいか」——<br>
+      そんな段階からでも、一緒に整理します。専門用語なし・押し売りなし。
     </p>
     <a href="#contact" class="lp-btn lp-btn--white">無料で相談してみる</a>
   </div>
@@ -395,93 +409,7 @@ $page_url = get_permalink();
 
 
 <!-- ============================================================
-     セクション8：制作実績
-     ============================================================ -->
-<section class="lp-section lp-section--white">
-  <div class="lp-inner">
-    <h2 class="lp-h2" style="text-align:center;">制作実績</h2>
-    <p class="lp-lead" style="text-align:center;">
-      公開許可をいただいた一部をご紹介しています。非公開案件を含め、多くのお客様のサイト制作に携わってきました。
-    </p>
-
-    <div class="lp-grid-2">
-
-      <!-- 公開案件 -->
-      <div class="lp-card lp-works__card">
-        <!--
-          ↓ 岩本商店様サイトのスクリーンショットをWordPressメディアライブラリにアップロードし、
-            URLを差し替えてください。
-            サイズ推奨: 800×500px
-        -->
-        <img
-          src="<?php echo esc_url($lp_uri); ?>/images/portfolio-iwamoto.webp"
-          alt="岩本商店「神の里」様 ホームページ"
-          width="800" height="500"
-          loading="lazy"
-        >
-        <div class="lp-works__badge-wrap">
-          <span class="lp-badge">農産物小売</span>
-          <span class="lp-badge">コーポレートサイト・EC</span>
-        </div>
-        <h3 class="lp-h3">岩本商店「神の里」様</h3>
-        <p class="lp-works__role">担当：コーディング（デザイナーと協業）</p>
-        <p>島根県産の無農薬米・しめ縄を販売する岩本商店様のサイト。レスポンシブ対応・Instagram連携など、フルコーディングを担当しました。</p>
-        <a href="https://iwamotoshoten.com/" target="_blank" rel="noopener noreferrer" class="lp-btn">
-          サイトを見る ↗
-        </a>
-      </div>
-
-      <!-- 非公開案件まとめ -->
-      <div class="lp-works__empty">
-        <div class="lp-works__empty-icon" aria-hidden="true">🔒</div>
-        <h3>非公開案件 多数</h3>
-        <p>その他、非公開案件を含め多数の制作実績があります。業種・規模・予算などの詳細はお問い合わせください。</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     セクション9：お客様の声（Widgets for Google Reviews）
-     ============================================================ -->
-<section class="lp-section lp-section--light">
-  <div class="lp-inner">
-    <h2 class="lp-h2" style="text-align:center;">お客様の声</h2>
-    <p class="lp-lead" style="text-align:center;">
-      Googleの口コミから、実際にご依頼いただいた方の感想をご紹介します。
-    </p>
-
-    <div class="lp-reviews__widget">
-      <?php
-        /*
-         * Widgets for Google Reviews のショートコードをここに入れてください。
-         * 例: [gr-reviews-widget id="1"]
-         * または Googleマイビジネスを接続後、プラグインで生成されたショートコードを使用。
-         */
-        echo do_shortcode('[gr-reviews-widget id="YOUR_WIDGET_ID"]');
-      ?>
-    </div>
-
-    <div class="lp-reviews__link-wrap">
-      <!--
-        GoogleマイビジネスのURLを差し替えてください。
-        例: https://g.page/r/XXXXXXXXXXXXXXXX/review
-      -->
-      <a href="https://g.page/r/YOUR_GOOGLE_BUSINESS_URL/review"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="lp-reviews__link">
-        Google口コミをすべて見る ↗
-      </a>
-    </div>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     セクション10：代表プロフィール
+     セクション8：代表プロフィール（中間CTAの直後・実績の前）
      ============================================================ -->
 <section class="lp-section lp-section--white">
   <div class="lp-inner">
@@ -501,10 +429,136 @@ $page_url = get_permalink();
           はじめまして。<br>オフィスウエダの上田伸也です。
         </h2>
         <p>広島県東広島市を拠点に、地域の中小企業・個人事業主のホームページ制作と活用サポートをしています。</p>
-        <p>「ホームページを作ったのに問い合わせが来ない」「業者に頼んだら話が通じなかった」——そんな声をたくさん聞いてきました。</p>
-        <p>私はお客様にとって、"あ、ちょっと来てよ"と気軽に呼んでもらえるWeb担当者でありたいと思っています。専門用語なし、丸投げOK。打ち合わせから納品・運用まで、成果にこだわって一緒に進めます。</p>
+        <p>「ホームページを作ったのに問い合わせが来ない」「業者に頼んだら話が通じなかった」——そんな声を聞くたびに、悔しいと思ってきました。</p>
+        <p>だから私は、成果が出るまで隣にいることを仕事にしています。"あ、ちょっと来てよ"と気軽に呼んでもらえる、そういうWeb担当者でありたいと思っています。</p>
       </div>
 
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション9：制作の流れ
+     ============================================================ -->
+<section class="lp-section lp-section--light lp-flow">
+  <div class="lp-inner">
+    <h2 class="lp-h2" style="text-align:center;">制作の流れ</h2>
+    <p class="lp-lead" style="text-align:center;">相談から公開まで、安心してお任せください。</p>
+
+    <div class="lp-flow__steps">
+
+      <div class="lp-flow__step">
+        <div class="lp-flow__num">01</div>
+        <h3>無料相談</h3>
+        <p>ご希望・課題・予算感をお聞きします。専門用語なし、押し売りなし。</p>
+      </div>
+
+      <div class="lp-flow__step">
+        <div class="lp-flow__num">02</div>
+        <h3>ヒアリング・お見積もり</h3>
+        <p>詳細をお伺いし、内容と費用をご提案します。納得いただいてから進めます。</p>
+      </div>
+
+      <div class="lp-flow__step">
+        <div class="lp-flow__num">03</div>
+        <h3>制作・確認</h3>
+        <p>デザイン・コーディングを進めながら、随時確認いただけます。</p>
+      </div>
+
+      <div class="lp-flow__step">
+        <div class="lp-flow__num">04</div>
+        <h3>納品・公開</h3>
+        <p>最終確認後、公開します。操作説明もしっかり行います。</p>
+      </div>
+
+      <div class="lp-flow__step">
+        <div class="lp-flow__num">05</div>
+        <h3>運用サポート</h3>
+        <p>公開後も更新・改善・相談をサポート。作って終わりにしません。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション10：制作実績
+     ============================================================ -->
+<section class="lp-section lp-section--white">
+  <div class="lp-inner">
+    <h2 class="lp-h2" style="text-align:center;">制作実績</h2>
+    <p class="lp-lead" style="text-align:center;">
+      これまで30件以上のサイト制作・改修に携わってきました。公開許可をいただいた案件をご紹介します。
+    </p>
+
+    <div class="lp-grid-2">
+
+      <!-- 公開案件 -->
+      <div class="lp-card lp-works__card">
+        <img
+          src="<?php echo esc_url($lp_uri); ?>/images/portfolio-iwamoto.webp"
+          alt="岩本商店「神の里」様 ホームページ"
+          width="800" height="500"
+          loading="lazy"
+        >
+        <div class="lp-works__badge-wrap">
+          <span class="lp-badge">農産物小売</span>
+          <span class="lp-badge">コーポレートサイト・EC</span>
+        </div>
+        <h3 class="lp-h3">岩本商店「神の里」様</h3>
+        <p class="lp-works__role">担当：コーディング（デザイナーと協業）</p>
+        <p>島根県産の無農薬米・しめ縄を販売する岩本商店様のサイト。レスポンシブ対応・Instagram連携など、フルコーディングを担当しました。</p>
+        <a href="https://iwamotoshoten.com/" target="_blank" rel="noopener noreferrer" class="lp-btn">
+          サイトを見る ↗
+        </a>
+      </div>
+
+      <!-- 対応業種まとめ -->
+      <div class="lp-card" style="display:flex;flex-direction:column;justify-content:center;padding:32px 28px;">
+        <h3 class="lp-h3" style="margin-bottom:16px;">対応業種（一部）</h3>
+        <div class="lp-works__badge-wrap" style="margin-bottom:20px;">
+          <span class="lp-badge">飲食・小売</span>
+          <span class="lp-badge">医療・介護</span>
+          <span class="lp-badge">建設・不動産</span>
+          <span class="lp-badge">士業・コンサル</span>
+          <span class="lp-badge">採用・人材</span>
+          <span class="lp-badge">農業・食品</span>
+        </div>
+        <div class="lp-works__result">
+          <p class="lp-works__result-item">採用専用サイト制作後、3ヶ月で採用応募<br><strong>月0件 → 5件</strong>（東広島市・建設業・匿名）</p>
+        </div>
+        <p style="font-size:15px;color:#555;margin-top:16px;">多くは非公開ですが、制作実績は相談時にポートフォリオとしてご覧いただけます。業種・規模・予算など、お気軽にご相談ください。</p>
+        <a href="#contact" class="lp-btn" style="margin-top:24px;display:inline-block;text-align:center;">実績を聞いてみる</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション11：お客様の声（Widgets for Google Reviews）
+     ============================================================ -->
+<section class="lp-section lp-section--light">
+  <div class="lp-inner">
+    <h2 class="lp-h2" style="text-align:center;">お客様の声</h2>
+    <p class="lp-lead" style="text-align:center;">
+      Googleの口コミから、実際にご依頼いただいた方の感想をご紹介します。
+    </p>
+
+    <div class="lp-reviews__widget">
+      <?php echo do_shortcode('[trustindex no-registration=google]'); ?>
+    </div>
+
+    <div class="lp-reviews__link-wrap">
+      <a href="https://share.google/ZMLDYTYJGYxMwrBSG"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="lp-reviews__link">
+        Google口コミをすべて見る ↗
+      </a>
     </div>
   </div>
 </section>
@@ -522,7 +576,14 @@ $page_url = get_permalink();
       <details class="lp-faq__item">
         <summary>相談だけでも大丈夫ですか？</summary>
         <div class="lp-faq__answer">
-          <p>はい、もちろんです。「まだ検討段階」「予算感だけ知りたい」という段階のご相談も大歓迎です。お気軽にお問い合わせください。</p>
+          <p>はい、もちろんです。「まだ検討段階」「予算感だけ知りたい」という段階のご相談も大歓迎です。話を聞いたら断れなくなる、ということはありませんので、安心してご連絡ください。</p>
+        </div>
+      </details>
+
+      <details class="lp-faq__item">
+        <summary>費用はどのくらいかかりますか？</summary>
+        <div class="lp-faq__answer">
+          <p>サービスや規模・ご要望によって異なります。中小企業・個人事業主の方に無理のない複数プランをご用意しており、まずご相談の中で予算感をお伝えします。「金額だけ知りたい」という段階でもお気軽にどうぞ。</p>
         </div>
       </details>
 
@@ -557,7 +618,7 @@ $page_url = get_permalink();
      ============================================================ -->
 <section id="contact" class="lp-section lp-section--dark lp-form-section">
   <div class="lp-inner">
-    <h2>まず、話してみませんか。</h2>
+    <h2 class="lp-h2">まず、話してみませんか。</h2>
     <p class="lp-form-lead">
       「うちはホームページで売れるようになるの？」<br>
       そんな疑問から、ぜひ聞かせてください。<br><br>
@@ -580,12 +641,20 @@ $page_url = get_permalink();
          *   ご相談内容（必須） [textarea* your-message placeholder "例：コーポレートサイトの制作を検討しています..."]
          *   送信ボタン         [submit "相談を申し込む（無料）"]
          */
-        echo do_shortcode('[contact-form-7 id="YOUR_FORM_ID" title="LP相談フォーム"]');
+        echo do_shortcode('[contact-form-7 id="13bab8f" title="LP-260319用"]');
       ?>
 
       <p class="lp-form__privacy">
         <a href="/privacy-policy/">個人情報の取り扱いについて</a>に同意の上、送信してください。
       </p>
+    </div>
+
+    <div class="lp-form-line">
+      <p class="lp-form-line__text">フォームが苦手な方は、LINEでも受け付けています。</p>
+      <a href="YOUR_LINE_URL" target="_blank" rel="noopener noreferrer" class="lp-btn-line">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.038 2 11.019c0 4.49 3.663 8.242 8.61 8.913.334.072.79.22.905.505.104.26.068.667.033.928l-.146.876c-.044.265-.205 1.037.909.565 1.113-.47 6.006-3.538 8.196-6.057C21.418 14.382 22 12.77 22 11.019 22 6.038 17.523 2 12 2z"/></svg>
+        LINEで相談する（無料）
+      </a>
     </div>
   </div>
 </section>
@@ -599,7 +668,7 @@ $page_url = get_permalink();
     <a href="https://officeueda.com/">オフィスウエダ トップページ</a>
     <a href="/privacy-policy/">個人情報の取り扱い</a>
   </div>
-  <p>&copy; <?php echo date('Y'); ?> オフィスウエダ All Rights Reserved.</p>
+  <p>&copy; <?php echo wp_date('Y'); ?> オフィスウエダ All Rights Reserved.</p>
 </footer>
 
 

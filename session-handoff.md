@@ -4,25 +4,37 @@
 
 ---
 
-## 【プロジェクト1】officeueda LP制作（コーディング完了・WordPress実装待ち）
+## 【プロジェクト1】officeueda LP制作（要件定義完了・コピー確定・コーディング修正待ち）
 
-### 完成済みファイル一式
-- コーディング済みテンプレート：`clients/officeueda/biz-web/lp-260319/index.php`
-- スタイル：`clients/officeueda/biz-web/lp-260319/style.css`
-- JS：`clients/officeueda/biz-web/lp-260319/js/main.js`
-- 画像：`clients/officeueda/biz-web/lp-260319/images/`（13ファイル）
+### 現在のステータス
+- 要件定義書：確定済み `clients/officeueda/biz-web/lp-260319-requirements.md`
+- チームレビュー：完了（2026-03-19）
+- 判断：作り直し不要・現状修正で進める
 
-### 本日の変更点
-- 補助金関連コンテンツを全削除（セクション11・FAQ Q5・JSON-LD・課題提起の項目）
+### 確定済みコピー
+- FVキャッチ：「作ったのに成果が出ない。その先から、一緒にやります。東広島・広島のホームページ制作。」
+- FVサブ：「「問い合わせが来ない」「何を直せばいいかわからない」——原因の整理から改善・運用まで、専門用語なしで伴走します。」
+- 選ばれる理由：3項目確定（見出し・本文・アイコン方向性）
 
-### シンヤさんの次のアクション（WordPress側）
-- `lp-260319/` フォルダをテーマディレクトリに配置
-- WordPress でページ新規作成 → テンプレート「LP 2026-03-19」を選択 → スラッグ `lp`
-- CF7 フォーム作成 → `YOUR_FORM_ID` を差し替え
-- Widgets for Google Reviews 設定 → `YOUR_WIDGET_ID` を差し替え
-- GoogleマイビジネスURL → `YOUR_GOOGLE_BUSINESS_URL` を差し替え
-- 電話番号 → `YOUR_PHONE_NUMBER`（JSON-LD）を差し替え
-- 岩本商店サムネイル → 実スクリーンショットに差し替え（現在は AI 生成仮画像）
+### ツバサへの修正指示（次のアクション）
+以下をindex.phpとstyle.cssに反映する：
+1. FVキャッチ・サブコピーの差し替え
+2. セクション順序変更：選ばれる理由→プロフィール→中間CTA→サービス→実績→口コミ→制作フロー→FAQ→フォーム
+3. 選ばれる理由3項目のコピー差し替え
+4. FV人物写真：円形→角丸矩形・スマホ260px以上
+5. 課題提起アイコン「…」→SVGアイコンに変更
+
+### シンヤさんの確認待ち事項
+- LINE URL（YOUR_LINE_URLのまま）
+- 岩本商店の担当表記（正しい表記に修正）
+- 料金FAQ追加するかどうか
+- 代表プロフィール写真（角丸矩形用）
+
+### 既存ファイル
+- `clients/officeueda/biz-web/lp-260319/index.php`
+- `clients/officeueda/biz-web/lp-260319/style.css`
+- `clients/officeueda/biz-web/lp-260319/js/main.js`
+- `clients/officeueda/biz-web/lp-260319/images/`
 
 ---
 

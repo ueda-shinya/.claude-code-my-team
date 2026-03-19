@@ -112,10 +112,10 @@ a { color: inherit; }
   border: 1px solid #c8e6ff;
 }
 
-/* ---------- アイコン ---------- */
+/* ---------- アイコン（選ばれる理由等） ---------- */
 .lp-card__icon {
-  width: 64px;
-  height: 64px;
+  width: 88px;
+  height: 88px;
   object-fit: contain;
   margin: 0 auto 16px;
 }
@@ -223,6 +223,9 @@ a { color: inherit; }
   color: #777;
   margin-top: 10px;
 }
+.lp-number-item__unit--star {
+  color: #dd9933;
+}
 
 /* ── セクション4: 課題提起 ── */
 .lp-troubles__list {
@@ -244,9 +247,9 @@ a { color: inherit; }
   font-size: 16px;
 }
 .lp-troubles__item::before {
-  content: "✗";
+  content: "…";
   color: #0068b7;
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1.2;
   flex-shrink: 0;
 }
@@ -262,22 +265,93 @@ a { color: inherit; }
 }
 
 /* ── セクション6: サービス一覧 ── */
-.lp-services .lp-card__icon { width: 60px; height: 60px; }
-.lp-services .lp-card p { font-size: 14px; color: #555; margin-top: 10px; }
+.lp-services .lp-card {
+  padding: 0;
+  overflow: hidden;
+}
+.lp-service-card__img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 14px 14px 0 0;
+  display: block;
+  margin: 0;
+}
+.lp-service-card__body {
+  padding: 20px 20px 22px;
+}
+.lp-service-card__body h3 { margin-bottom: 8px; }
+.lp-services .lp-card p { font-size: 14px; color: #555; margin-top: 8px; }
+
 .lp-service-emergency {
   max-width: 560px;
   margin: 24px auto 0;
   display: flex;
   align-items: flex-start;
   gap: 20px;
+  padding: 20px 22px;
 }
-.lp-service-emergency .lp-card__icon { flex-shrink: 0; margin: 0; }
+.lp-service-emergency .lp-card__icon {
+  flex-shrink: 0;
+  margin: 0;
+  width: 72px;
+  height: 72px;
+}
 .lp-service-emergency p { font-size: 15px; color: #555; margin-top: 8px; }
 
 /* ── セクション7・11：中間CTA ── */
 .lp-cta-mid { padding: 72px 24px; text-align: center; }
 .lp-cta-mid h2 { margin-bottom: 18px; }
 .lp-cta-mid p { font-size: 17px; opacity: .9; margin-bottom: 32px; max-width: 560px; margin-left: auto; margin-right: auto; }
+
+/* ── 制作フロー ── */
+.lp-flow__steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-top: 48px;
+  position: relative;
+}
+.lp-flow__steps::before {
+  content: "";
+  position: absolute;
+  top: 36px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: #c8e6ff;
+  z-index: 0;
+}
+.lp-flow__step {
+  text-align: center;
+  padding: 0 12px;
+  position: relative;
+  z-index: 1;
+}
+.lp-flow__num {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #0068b7;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 14px rgba(0,104,183,.25);
+}
+.lp-flow__step h3 {
+  font-size: 15px;
+  color: #0068b7;
+  margin-bottom: 8px;
+}
+.lp-flow__step p {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
 
 /* ── セクション8: 制作実績 ── */
 .lp-works__card img {
@@ -441,6 +515,49 @@ a { color: inherit; }
 }
 .lp-form__privacy a { text-decoration: underline; color: #fff; }
 .lp-form__required { color: #ffaaaa; font-size: 12px; margin-left: 4px; }
+.lp-form-line {
+  max-width: 600px;
+  margin: 40px auto 0;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,.2);
+  padding-top: 32px;
+}
+.lp-form-line__text {
+  font-size: 15px;
+  color: rgba(255,255,255,.85);
+  margin-bottom: 16px;
+}
+.lp-btn-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #06c755;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 14px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: opacity .2s;
+}
+.lp-btn-line:hover { opacity: .85; }
+.lp-works__result {
+  background: #ebffff;
+  border-left: 4px solid #0068b7;
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 0;
+}
+.lp-works__result-item {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.7;
+  margin: 0;
+}
+.lp-works__result-item strong {
+  color: #0068b7;
+  font-size: 17px;
+}
 
 /* ============================================================
    フッター（LP専用ミニフッター）
@@ -485,9 +602,12 @@ a { color: inherit; }
    ============================================================ */
 @media (max-width: 900px) {
   .lp-grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .lp-flow__steps { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
+  .lp-flow__steps::before { display: none; }
 }
 
 @media (max-width: 640px) {
+  .lp-flow__steps { grid-template-columns: 1fr; gap: 24px; }
   .lp-section { padding: 52px 20px; }
   .lp-numbers { padding: 40px 20px; }
 
@@ -510,7 +630,7 @@ a { color: inherit; }
 
   /* 固定CTA表示 */
   .lp-fixed-cta { display: block; }
-  body { padding-bottom: 60px; }
+  .lp-body { padding-bottom: 60px; }
 }
 
 @media (max-width: 400px) {
