@@ -151,14 +151,6 @@ $page_url = get_permalink();
             "@type": "Answer",
             "text": "サービスの種類や内容によって異なりますが、コーポレートサイトで1〜2ヶ月程度が目安です。詳しくはご相談の際にお伝えします。"
           }
-        },
-        {
-          "@type": "Question",
-          "name": "補助金を使いたい場合、どうすればいいですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "まずはお問い合わせください。どの補助金が使えそうかを一緒に確認し、申請のサポートをご案内します。"
-          }
         }
       ]
     }
@@ -256,7 +248,6 @@ $page_url = get_permalink();
       <li class="lp-troubles__item">ホームページを作ったのに、問い合わせがほとんど来ない</li>
       <li class="lp-troubles__item">業者に頼みたいけど、専門用語が多くて話についていけない</li>
       <li class="lp-troubles__item">「作って終わり」で、その後のサポートがまったくない</li>
-      <li class="lp-troubles__item">補助金を使えるか知りたいが、どこに聞けばいいかわからない</li>
     </ul>
   </div>
 </section>
@@ -520,22 +511,7 @@ $page_url = get_permalink();
 
 
 <!-- ============================================================
-     セクション11：補助金案内
-     ============================================================ -->
-<section class="lp-section lp-section--dark lp-cta-mid">
-  <div class="lp-inner">
-    <h2 class="lp-h2">補助金を使って、<br>費用負担を抑えませんか？</h2>
-    <p>
-      ホームページ制作にも利用できる補助金制度があります。<br>
-      どの補助金が使えるか、申請できそうかどうか——まずはご相談ください。一緒に確認します。
-    </p>
-    <a href="#contact" class="lp-btn lp-btn--white">補助金について相談する</a>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     セクション12：FAQ
+     セクション11：FAQ
      ============================================================ -->
 <section class="lp-section lp-section--light">
   <div class="lp-inner">
@@ -568,13 +544,6 @@ $page_url = get_permalink();
         <summary>制作期間はどれくらいかかりますか？</summary>
         <div class="lp-faq__answer">
           <p>サービスの種類や内容によって異なりますが、コーポレートサイトで1〜2ヶ月程度が目安です。詳しくはご相談の際にお伝えします。</p>
-        </div>
-      </details>
-
-      <details class="lp-faq__item">
-        <summary>補助金を使いたい場合、どうすればいいですか？</summary>
-        <div class="lp-faq__answer">
-          <p>まずはお問い合わせください。どの補助金が使えそうかを一緒に確認し、申請のサポートをご案内します。</p>
         </div>
       </details>
 
