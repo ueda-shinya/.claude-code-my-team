@@ -37,7 +37,7 @@ $page_url = get_permalink();
 <meta property="og:type"        content="website">
 <meta property="og:url"         content="<?php echo esc_url($page_url); ?>">
 <meta property="og:site_name"   content="オフィスウエダ">
-<meta property="og:title"       content="ホームページで、ちゃんと売れるようにする。| オフィスウエダ">
+<meta property="og:title"       content="作ったのに成果が出ない。その先から、一緒にやります。| オフィスウエダ">
 <meta property="og:description" content="東広島・呉・広島で、問い合わせが来るホームページ制作。専門用語なし・丸投げOK。まず無料でご相談ください。">
 <meta property="og:image"       content="<?php echo esc_url($lp_uri); ?>/images/ogp.webp">
 <meta property="og:image:width"  content="1200">
@@ -45,7 +45,7 @@ $page_url = get_permalink();
 <meta property="og:locale"      content="ja_JP">
 
 <meta name="twitter:card"        content="summary_large_image">
-<meta name="twitter:title"       content="ホームページで、ちゃんと売れるようにする。| オフィスウエダ">
+<meta name="twitter:title"       content="作ったのに成果が出ない。その先から、一緒にやります。| オフィスウエダ">
 <meta name="twitter:description" content="東広島・呉・広島で、問い合わせが来るホームページ制作。専門用語なし・丸投げOK。">
 <meta name="twitter:image"       content="<?php echo esc_url($lp_uri); ?>/images/ogp.webp">
 
@@ -175,19 +175,19 @@ $page_url = get_permalink();
   <div class="lp-fv__inner">
     <div class="lp-fv__text">
       <h1 class="lp-fv__catch">
-        ホームページで、<br>ちゃんと売れるようにする。
+        作ったのに成果が出ない。<br>その先から、一緒にやります。<br><span class="lp-fv__catch-area">東広島・広島のホームページ制作。</span>
       </h1>
       <p class="lp-fv__sub">
-        "あ、ちょっと来てよ"で呼べる、<br>
-        東広島・呉・広島のWeb担当者です。
+        「問い合わせが来ない」「何を直せばいいかわからない」——<br>
+        原因の整理から改善・運用まで、専門用語なしで伴走します。
       </p>
       <a href="#contact" class="lp-btn">無料でホームページ相談してみる</a>
     </div>
     <div class="lp-fv__photo">
       <img
-        src="<?php echo esc_url($lp_uri); ?>/images/shinyaueda.png"
+        src="<?php echo esc_url($lp_uri); ?>/images/shinyaueda.webp"
         alt="オフィスウエダ 代表 上田伸也"
-        width="300" height="300"
+        width="300" height="400"
         loading="eager"
       >
     </div>
@@ -271,8 +271,8 @@ $page_url = get_permalink();
           width="88" height="88"
           loading="lazy"
         >
-        <h3 class="lp-h3">顔が見える、話せる。<br>地域密着のWeb担当者。</h3>
-        <p>東広島を拠点に、呉・広島の事業者様とも対面でお会いして進めます。"あ、ちょっと相談して"と気軽に連絡できる距離感が、長く続くお付き合いにつながっています。</p>
+        <h3 class="lp-h3">東広島在住の上田が、直接伺います。</h3>
+        <p>チームへの丸投げや外注なし。問い合わせから打ち合わせ・制作・納品後のサポートまで、上田伸也が一人で担当します。「あの人に聞けばわかる」という安心感が、長く続くお付き合いにつながっています。東広島を拠点に、呉・広島にも対面で対応しています。</p>
       </div>
 
       <div class="lp-card">
@@ -283,8 +283,8 @@ $page_url = get_permalink();
           width="88" height="88"
           loading="lazy"
         >
-        <h3 class="lp-h3">専門用語なし。<br>丸投げでOKです。</h3>
-        <p>難しいIT用語はいりません。打ち合わせから原稿作成・更新作業まで、面倒なことはすべて代行します。「何もわからない」という状態からでも、安心してお任せください。</p>
+        <h3 class="lp-h3">打ち合わせでIT用語を使いません。</h3>
+        <p>「ドメイン」「レスポンシブ」「CMS」——こういった言葉は、こちらから使いません。「どんな人に来てほしいか」「今困っていること」を普通の言葉で話してもらえれば、あとは全部こちらで整理します。原稿作成・写真選定・更新作業も代行できます。</p>
       </div>
 
       <div class="lp-card">
@@ -295,8 +295,8 @@ $page_url = get_permalink();
           width="88" height="88"
           loading="lazy"
         >
-        <h3 class="lp-h3">作って終わりにしない。<br>成果が出るまで、一緒にいます。</h3>
-        <p>納品がゴールではありません。公開後の更新・改善・相談まで、ずっと伴走します。「業者に頼んだら音沙汰なし」にならない、続けられる関係を大切にしています。</p>
+        <h3 class="lp-h3">公開後に「音沙汰なし」にはなりません。</h3>
+        <p>「業者に作ってもらったあと、連絡が取れなくなった」という経験はありませんか。オフィスウエダでは、納品後も更新・改善・相談の窓口を続けます。「なんか最近問い合わせ減った気がする」そんな一言から、一緒に原因を探します。</p>
       </div>
 
     </div>
@@ -305,7 +305,52 @@ $page_url = get_permalink();
 
 
 <!-- ============================================================
-     セクション6：サービス一覧
+     セクション6：代表プロフィール
+     ============================================================ -->
+<section class="lp-section lp-section--light">
+  <div class="lp-inner">
+    <div class="lp-grid-2 lp-grid-2--center">
+
+      <div class="lp-profile__photo">
+        <img
+          src="<?php echo esc_url($lp_uri); ?>/images/shinyaueda.webp"
+          alt="オフィスウエダ 代表 上田伸也"
+          width="360" height="400"
+          loading="lazy"
+        >
+      </div>
+
+      <div class="lp-profile__text">
+        <h2 class="lp-h2">
+          はじめまして。<br>オフィスウエダの上田伸也です。
+        </h2>
+        <p>広島県東広島市を拠点に、地域の中小企業・個人事業主のホームページ制作と活用サポートをしています。</p>
+        <p>「ホームページを作ったのに問い合わせが来ない」「業者に頼んだら話が通じなかった」——そんな声を聞くたびに、悔しいと思ってきました。</p>
+        <p>だから私は、成果が出るまで隣にいることを仕事にしています。"あ、ちょっと来てよ"と気軽に呼んでもらえる、そういうWeb担当者でありたいと思っています。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション7：中間CTA
+     ============================================================ -->
+<section class="lp-section lp-section--dark lp-cta-mid">
+  <div class="lp-inner">
+    <h2 class="lp-h2">何も決まっていなくて、<br>大丈夫です。</h2>
+    <p>
+      「うちに何が必要かわからない」「そもそも何から始めればいいか」——<br>
+      そんな段階からでも、一緒に整理します。専門用語なし・押し売りなし。
+    </p>
+    <a href="#contact" class="lp-btn lp-btn--white">無料で相談してみる</a>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション8：サービス一覧
      ============================================================ -->
 <section class="lp-section lp-section--light lp-services">
   <div class="lp-inner">
@@ -394,43 +439,53 @@ $page_url = get_permalink();
 
 
 <!-- ============================================================
-     セクション7：サービス後CTA
-     ============================================================ -->
-<section class="lp-section lp-section--dark lp-cta-mid">
-  <div class="lp-inner">
-    <h2 class="lp-h2">何も決まっていなくて、<br>大丈夫です。</h2>
-    <p>
-      「うちに何が必要かわからない」「そもそも何から始めればいいか」——<br>
-      そんな段階からでも、一緒に整理します。専門用語なし・押し売りなし。
-    </p>
-    <a href="#contact" class="lp-btn lp-btn--white">無料で相談してみる</a>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     セクション8：代表プロフィール（中間CTAの直後・実績の前）
+     セクション9：制作実績
      ============================================================ -->
 <section class="lp-section lp-section--white">
   <div class="lp-inner">
-    <div class="lp-grid-2 lp-grid-2--center">
+    <h2 class="lp-h2" style="text-align:center;">制作実績</h2>
+    <p class="lp-lead" style="text-align:center;">
+      これまで30件以上のサイト制作・改修に携わってきました。公開許可をいただいた案件をご紹介します。
+    </p>
 
-      <div class="lp-profile__photo">
+    <div class="lp-grid-2">
+
+      <!-- 公開案件 -->
+      <div class="lp-card lp-works__card">
         <img
-          src="<?php echo esc_url($lp_uri); ?>/images/shinyaueda.png"
-          alt="オフィスウエダ 代表 上田伸也"
-          width="360" height="400"
+          src="<?php echo esc_url($lp_uri); ?>/images/portfolio-iwamoto.webp"
+          alt="岩本商店「神の里」様 ホームページ"
+          width="800" height="500"
           loading="lazy"
         >
+        <div class="lp-works__badge-wrap">
+          <span class="lp-badge">農産物小売</span>
+          <span class="lp-badge">コーポレートサイト・EC</span>
+        </div>
+        <h3 class="lp-h3">岩本商店「神の里」様</h3>
+        <p class="lp-works__role">担当：コーディング</p>
+        <p>島根県産の無農薬米・しめ縄を販売する岩本商店様のサイト。レスポンシブ対応・Instagram連携など、フルコーディングを担当しました。</p>
+        <a href="https://iwamotoshoten.com/" target="_blank" rel="noopener noreferrer" class="lp-btn">
+          サイトを見る ↗
+        </a>
       </div>
 
-      <div class="lp-profile__text">
-        <h2 class="lp-h2">
-          はじめまして。<br>オフィスウエダの上田伸也です。
-        </h2>
-        <p>広島県東広島市を拠点に、地域の中小企業・個人事業主のホームページ制作と活用サポートをしています。</p>
-        <p>「ホームページを作ったのに問い合わせが来ない」「業者に頼んだら話が通じなかった」——そんな声を聞くたびに、悔しいと思ってきました。</p>
-        <p>だから私は、成果が出るまで隣にいることを仕事にしています。"あ、ちょっと来てよ"と気軽に呼んでもらえる、そういうWeb担当者でありたいと思っています。</p>
+      <!-- 対応業種まとめ -->
+      <div class="lp-card" style="display:flex;flex-direction:column;justify-content:center;padding:32px 28px;">
+        <h3 class="lp-h3" style="margin-bottom:16px;">対応業種（一部）</h3>
+        <div class="lp-works__badge-wrap" style="margin-bottom:20px;">
+          <span class="lp-badge">飲食・小売</span>
+          <span class="lp-badge">医療・介護</span>
+          <span class="lp-badge">建設・不動産</span>
+          <span class="lp-badge">士業・コンサル</span>
+          <span class="lp-badge">採用・人材</span>
+          <span class="lp-badge">農業・食品</span>
+        </div>
+        <div class="lp-works__result">
+          <p class="lp-works__result-item">採用専用サイト制作後、3ヶ月で採用応募<br><strong>月0件 → 5件</strong>（東広島市・建設業・匿名）</p>
+        </div>
+        <p style="font-size:15px;color:#555;margin-top:16px;">多くは非公開ですが、制作実績は相談時にポートフォリオとしてご覧いただけます。業種・規模・予算など、お気軽にご相談ください。</p>
+        <a href="#contact" class="lp-btn" style="margin-top:24px;display:inline-block;text-align:center;">実績を聞いてみる</a>
       </div>
 
     </div>
@@ -439,9 +494,35 @@ $page_url = get_permalink();
 
 
 <!-- ============================================================
-     セクション9：制作の流れ
+     セクション10：お客様の声（Widgets for Google Reviews）
      ============================================================ -->
-<section class="lp-section lp-section--light lp-flow">
+<section class="lp-section lp-section--light">
+  <div class="lp-inner">
+    <h2 class="lp-h2" style="text-align:center;">お客様の声</h2>
+    <p class="lp-lead" style="text-align:center;">
+      Googleの口コミから、実際にご依頼いただいた方の感想をご紹介します。
+    </p>
+
+    <div class="lp-reviews__widget">
+      <?php echo do_shortcode('[trustindex no-registration=google]'); ?>
+    </div>
+
+    <div class="lp-reviews__link-wrap">
+      <a href="https://share.google/ZMLDYTYJGYxMwrBSG"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="lp-reviews__link">
+        Google口コミをすべて見る ↗
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     セクション11：制作の流れ
+     ============================================================ -->
+<section class="lp-section lp-section--white lp-flow">
   <div class="lp-inner">
     <h2 class="lp-h2" style="text-align:center;">制作の流れ</h2>
     <p class="lp-lead" style="text-align:center;">相談から公開まで、安心してお任せください。</p>
@@ -478,87 +559,6 @@ $page_url = get_permalink();
         <p>公開後も更新・改善・相談をサポート。作って終わりにしません。</p>
       </div>
 
-    </div>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     セクション10：制作実績
-     ============================================================ -->
-<section class="lp-section lp-section--white">
-  <div class="lp-inner">
-    <h2 class="lp-h2" style="text-align:center;">制作実績</h2>
-    <p class="lp-lead" style="text-align:center;">
-      これまで30件以上のサイト制作・改修に携わってきました。公開許可をいただいた案件をご紹介します。
-    </p>
-
-    <div class="lp-grid-2">
-
-      <!-- 公開案件 -->
-      <div class="lp-card lp-works__card">
-        <img
-          src="<?php echo esc_url($lp_uri); ?>/images/portfolio-iwamoto.webp"
-          alt="岩本商店「神の里」様 ホームページ"
-          width="800" height="500"
-          loading="lazy"
-        >
-        <div class="lp-works__badge-wrap">
-          <span class="lp-badge">農産物小売</span>
-          <span class="lp-badge">コーポレートサイト・EC</span>
-        </div>
-        <h3 class="lp-h3">岩本商店「神の里」様</h3>
-        <p class="lp-works__role">担当：コーディング（デザイナーと協業）</p>
-        <p>島根県産の無農薬米・しめ縄を販売する岩本商店様のサイト。レスポンシブ対応・Instagram連携など、フルコーディングを担当しました。</p>
-        <a href="https://iwamotoshoten.com/" target="_blank" rel="noopener noreferrer" class="lp-btn">
-          サイトを見る ↗
-        </a>
-      </div>
-
-      <!-- 対応業種まとめ -->
-      <div class="lp-card" style="display:flex;flex-direction:column;justify-content:center;padding:32px 28px;">
-        <h3 class="lp-h3" style="margin-bottom:16px;">対応業種（一部）</h3>
-        <div class="lp-works__badge-wrap" style="margin-bottom:20px;">
-          <span class="lp-badge">飲食・小売</span>
-          <span class="lp-badge">医療・介護</span>
-          <span class="lp-badge">建設・不動産</span>
-          <span class="lp-badge">士業・コンサル</span>
-          <span class="lp-badge">採用・人材</span>
-          <span class="lp-badge">農業・食品</span>
-        </div>
-        <div class="lp-works__result">
-          <p class="lp-works__result-item">採用専用サイト制作後、3ヶ月で採用応募<br><strong>月0件 → 5件</strong>（東広島市・建設業・匿名）</p>
-        </div>
-        <p style="font-size:15px;color:#555;margin-top:16px;">多くは非公開ですが、制作実績は相談時にポートフォリオとしてご覧いただけます。業種・規模・予算など、お気軽にご相談ください。</p>
-        <a href="#contact" class="lp-btn" style="margin-top:24px;display:inline-block;text-align:center;">実績を聞いてみる</a>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     セクション11：お客様の声（Widgets for Google Reviews）
-     ============================================================ -->
-<section class="lp-section lp-section--light">
-  <div class="lp-inner">
-    <h2 class="lp-h2" style="text-align:center;">お客様の声</h2>
-    <p class="lp-lead" style="text-align:center;">
-      Googleの口コミから、実際にご依頼いただいた方の感想をご紹介します。
-    </p>
-
-    <div class="lp-reviews__widget">
-      <?php echo do_shortcode('[trustindex no-registration=google]'); ?>
-    </div>
-
-    <div class="lp-reviews__link-wrap">
-      <a href="https://share.google/ZMLDYTYJGYxMwrBSG"
-         target="_blank"
-         rel="noopener noreferrer"
-         class="lp-reviews__link">
-        Google口コミをすべて見る ↗
-      </a>
     </div>
   </div>
 </section>
@@ -651,7 +651,7 @@ $page_url = get_permalink();
 
     <div class="lp-form-line">
       <p class="lp-form-line__text">フォームが苦手な方は、LINEでも受け付けています。</p>
-      <a href="YOUR_LINE_URL" target="_blank" rel="noopener noreferrer" class="lp-btn-line">
+      <a href="https://lin.ee/v7FmZuu" target="_blank" rel="noopener noreferrer" class="lp-btn-line">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.038 2 11.019c0 4.49 3.663 8.242 8.61 8.913.334.072.79.22.905.505.104.26.068.667.033.928l-.146.876c-.044.265-.205 1.037.909.565 1.113-.47 6.006-3.538 8.196-6.057C21.418 14.382 22 12.77 22 11.019 22 6.038 17.523 2 12 2z"/></svg>
         LINEで相談する（無料）
       </a>

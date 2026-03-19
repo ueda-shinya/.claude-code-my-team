@@ -182,9 +182,17 @@ a { color: inherit; }
 .lp-fv__photo img {
   width: 100%;
   max-width: 300px;
-  border-radius: 50%;
+  border-radius: 16px;
   box-shadow: 0 6px 32px rgba(0,104,183,.18);
   margin: 0 auto;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+}
+.lp-fv__catch-area {
+  font-size: .75em;
+  font-weight: 700;
+  display: block;
+  margin-top: 8px;
 }
 
 /* ── セクション2: FV直下CTA ── */
@@ -247,11 +255,19 @@ a { color: inherit; }
   font-size: 16px;
 }
 .lp-troubles__item::before {
-  content: "…";
-  color: #0068b7;
-  font-size: 20px;
-  line-height: 1.2;
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
+  margin-top: 2px;
+  background-color: #0068b7;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 /* ── セクション5: 選ばれる理由 ── */
@@ -614,7 +630,7 @@ a { color: inherit; }
   /* FV */
   .lp-fv__inner { flex-direction: column-reverse; gap: 24px; }
   .lp-fv__photo { flex: none; width: 100%; }
-  .lp-fv__photo img { max-width: 200px; }
+  .lp-fv__photo img { max-width: 260px; }
   .lp-fv__text { text-align: center; }
 
   /* グリッド */
