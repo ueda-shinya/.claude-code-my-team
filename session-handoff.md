@@ -4,26 +4,29 @@
 
 ---
 
-## 【プロジェクト1】officeueda LP制作（継続中・一時停止）
+## 【プロジェクト1】officeueda LP制作（コーディング完了・WordPress実装待ち）
 
-### 完成済み素材
-- テキスト仕様書：`clients/officeueda/biz-web/reports/20260316_lp-text-spec.md`
-- FV背景画像：`clients/officeueda/biz-web/images/fv-bg.webp`
-- 選ばれる理由アイコン×3：`icon-local.webp` / `icon-easy.webp` / `icon-result.webp`
-- サービスカードアイコン×7：`svc-corporate.webp` / `svc-recruit.webp` / `svc-lp.webp` / `svc-swipe.webp` / `svc-renewal.webp` / `svc-maintenance.webp` / `svc-emergency.webp`
-- HTMLドラフト：`clients/officeueda/biz-web/lp-260319/index.php`（および `reports/20260319_lp-html-draft.html`）
+### 完成済みファイル一式
+- コーディング済みテンプレート：`clients/officeueda/biz-web/lp-260319/index.php`
+- スタイル：`clients/officeueda/biz-web/lp-260319/style.css`
+- JS：`clients/officeueda/biz-web/lp-260319/js/main.js`
+- 画像：`clients/officeueda/biz-web/lp-260319/images/`（13ファイル）
 
-### 次のステップ
-- Swellでの実装作業（テキスト仕様書に沿って）
-- または追加素材があれば生成
+### 本日の変更点
+- 補助金関連コンテンツを全削除（セクション11・FAQ Q5・JSON-LD・課題提起の項目）
 
-### 参考
-- 代表顔写真：`clients/officeueda/biz-web/reports/shinyaueda.png`
-- サイト改善提案：`clients/officeueda/biz-web/reports/20260316_site-improvement.md`
+### シンヤさんの次のアクション（WordPress側）
+- `lp-260319/` フォルダをテーマディレクトリに配置
+- WordPress でページ新規作成 → テンプレート「LP 2026-03-19」を選択 → スラッグ `lp`
+- CF7 フォーム作成 → `YOUR_FORM_ID` を差し替え
+- Widgets for Google Reviews 設定 → `YOUR_WIDGET_ID` を差し替え
+- GoogleマイビジネスURL → `YOUR_GOOGLE_BUSINESS_URL` を差し替え
+- 電話番号 → `YOUR_PHONE_NUMBER`（JSON-LD）を差し替え
+- 岩本商店サムネイル → 実スクリーンショットに差し替え（現在は AI 生成仮画像）
 
 ---
 
-## 【プロジェクト2】カラーミー × GMC 自動同期ツール（新規・設計完了）
+## 【プロジェクト2】カラーミー × GMC 自動同期ツール（設計完了・実装待ち）
 
 ### 概要
 カラーミーショップの商品情報を Google Merchant Center（GMC）に自動同期するツール。
@@ -44,19 +47,6 @@ officeueda が導入設定代行・継続フォローサービスとして提供
 | 設定管理 | Cloud Storage（GCS） |
 | GMC API | **Merchant API（v1beta）** ← Content API は 2026年8月廃止のため使用不可 |
 | GCP プロジェクト | 新規作成（officeueda 用） |
-
-### カラーミー OAuth 認証
-- officeueda が US-SAIJO さんのカラーミー管理画面に編集権限アカウントを持っている
-- まず officeueda 側で代理 OAuth 取得を試みる
-- 権限不足であれば US-SAIJO さんに一度だけブラウザ操作をお願いする
-
-### GMC 管理者権限
-- サービスアカウント登録には管理者権限が必要
-- US-SAIJO さんに officeueda の Google アカウントを GMC 管理者として招待してもらう方針
-
-### プロジェクトファイル
-- README：`clients/officeueda/biz-web/gmc-sync/README.md`
-- アーキテクチャ設計書：`clients/officeueda/biz-web/gmc-sync/ARCHITECTURE.md`
 
 ### 次のステップ（実装フェーズ）
 **Phase 1 から着手**
