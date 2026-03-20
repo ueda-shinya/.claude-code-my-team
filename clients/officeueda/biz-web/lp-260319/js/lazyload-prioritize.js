@@ -9,13 +9,17 @@
     })
     sorted.sort(function (a, b) { return a.dist - b.dist })
 
-    // 全lazy画像を100ms刻みで順番にロード
-    sorted.forEach(function (item, i) {
-      setTimeout(function () {
-        item.img.removeAttribute('loading')
-        item.img.src = item.img.src
-      }, 100 * i)
-    })
+    // チェーン方式で100ms刻みにロード（タイマーは常に1つ）
+    var index = 0
+    function loadNext() {
+      if (index >= sorted.length) return
+      var img = sorted[index].img
+      img.removeAttribute('loading')
+      img.src = img.src
+      index++
+      setTimeout(loadNext, 100)
+    }
+    loadNext()
   }
 
   function init() {
@@ -23,9 +27,14 @@
     var eagerImgs = document.querySelectorAll("img:not([loading='lazy'])")
     var count = eagerImgs.length
     var loaded = 0
+    var fired = false
 
     function check() {
-      if (++loaded >= count) prioritizeLazy(lazyImgs)
+      if (fired) return
+      if (++loaded >= count) {
+        fired = true
+        prioritizeLazy(lazyImgs)
+      }
     }
 
     if (count === 0) { prioritizeLazy(lazyImgs); return }
