@@ -425,14 +425,16 @@ $page_url = get_permalink();
 
     </div>
 
-    <!-- 緊急対応（7枚目・横並び） -->
-    <div class="lp-service-emergency lp-card" style="margin-top:24px;">
-      <img src="<?php echo esc_url($lp_uri); ?>/images/svc-emergency.webp"
-           alt="WP復旧24（緊急対応）" class="lp-card__icon"
-           width="60" height="60" loading="lazy">
-      <div>
-        <h3 class="lp-h3">WP復旧24（緊急対応）</h3>
-        <p>WordPressが突然動かなくなったら、すぐ呼んでください。表示崩れ・ログインできない・真っ白になったなど、WordPressの緊急トラブルに即対応します。</p>
+    <!-- 緊急対応（7枚目・中央寄せ） -->
+    <div class="lp-service-emergency">
+      <div class="lp-card">
+        <img src="<?php echo esc_url($lp_uri); ?>/images/svc-emergency.webp"
+             alt="WP復旧24（緊急対応）" class="lp-service-card__img"
+             width="400" height="180" loading="lazy">
+        <div class="lp-service-card__body">
+          <h3 class="lp-h3">WP復旧24（緊急対応）</h3>
+          <p>WordPressが突然動かなくなったら、すぐ呼んでください。表示崩れ・ログインできない・真っ白になったなど、WordPressの緊急トラブルに即対応します。</p>
+        </div>
       </div>
     </div>
 
