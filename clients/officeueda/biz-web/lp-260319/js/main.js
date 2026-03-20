@@ -23,7 +23,7 @@
       if (typeof gtag !== 'function') return
       gtag('event', 'cta_click', {
         label: el.getAttribute('data-cta-label'),
-        page: 'lp-260319'
+        page: window.location.pathname
       })
     })
   })
