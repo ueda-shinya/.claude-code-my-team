@@ -183,7 +183,7 @@ $page_url = get_permalink();
         「問い合わせが来ない」「何を直せばいいかわからない」——<br>
         原因の整理から改善・運用まで、専門用語なしで伴走します。
       </p>
-      <a href="#contact" class="lp-btn">無料でホームページ相談してみる</a>
+      <a href="#contact" class="lp-btn" data-cta-label="fv">無料でホームページ相談してみる</a>
     </div>
     <div class="lp-fv__photo">
       <img
@@ -207,7 +207,7 @@ $page_url = get_permalink();
       「何から始めればいいかわからない」という段階でも、一緒に整理します。<br>
       相談は無料です。
     </p>
-    <a href="#contact" class="lp-btn lp-btn--white">まず話だけでも聞いてみる</a>
+    <a href="#contact" class="lp-btn lp-btn--white" data-cta-label="cta_mid">まず話だけでも聞いてみる</a>
   </div>
 </section>
 
@@ -346,7 +346,7 @@ $page_url = get_permalink();
       「うちに何が必要かわからない」「そもそも何から始めればいいか」——<br>
       そんな段階からでも、一緒に整理します。専門用語なし・押し売りなし。
     </p>
-    <a href="#contact" class="lp-btn lp-btn--white">無料で相談してみる</a>
+    <a href="#contact" class="lp-btn lp-btn--white" data-cta-label="service">無料で相談してみる</a>
   </div>
 </section>
 
@@ -489,7 +489,7 @@ $page_url = get_permalink();
           <p class="lp-works__result-item">採用専用サイト制作後、3ヶ月で採用応募<br><strong>月0件 → 5件</strong>（東広島市・建設業・匿名）</p>
         </div>
         <p style="font-size:15px;color:#555;margin-top:16px;">多くは非公開ですが、制作実績は相談時にポートフォリオとしてご覧いただけます。業種・規模・予算など、お気軽にご相談ください。</p>
-        <a href="#contact" class="lp-btn" style="margin-top:24px;display:inline-block;text-align:center;">実績を聞いてみる</a>
+        <a href="#contact" class="lp-btn" style="margin-top:24px;display:inline-block;text-align:center;" data-cta-label="works">実績を聞いてみる</a>
       </div>
 
     </div>
@@ -655,7 +655,7 @@ $page_url = get_permalink();
 
     <div class="lp-form-line">
       <p class="lp-form-line__text">フォームが苦手な方は、LINEでも受け付けています。</p>
-      <a href="https://lin.ee/v7FmZuu" target="_blank" rel="noopener noreferrer" class="lp-btn-line">
+      <a href="https://lin.ee/v7FmZuu" target="_blank" rel="noopener noreferrer" class="lp-btn-line" data-cta-label="line">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.038 2 11.019c0 4.49 3.663 8.242 8.61 8.913.334.072.79.22.905.505.104.26.068.667.033.928l-.146.876c-.044.265-.205 1.037.909.565 1.113-.47 6.006-3.538 8.196-6.057C21.418 14.382 22 12.77 22 11.019 22 6.038 17.523 2 12 2z"/></svg>
         LINEで相談する（無料）
       </a>
@@ -680,7 +680,7 @@ $page_url = get_permalink();
      スマホ固定CTA（スクロール後に表示）
      ============================================================ -->
 <div class="lp-fixed-cta" style="display:none;">
-  <a href="#contact">無料でホームページ相談してみる</a>
+  <a href="#contact" data-cta-label="fixed_cta">無料でホームページ相談してみる</a>
 </div>
 
 

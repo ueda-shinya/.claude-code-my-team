@@ -17,6 +17,17 @@
     })
   })
 
+  /* ── GA4 CTAクリック計測 ── */
+  document.querySelectorAll('[data-cta-label]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      if (typeof gtag !== 'function') return
+      gtag('event', 'cta_click', {
+        label: el.getAttribute('data-cta-label'),
+        page: 'lp-260319'
+      })
+    })
+  })
+
   /* ── スクロール後に固定CTAを表示 ── */
   var fixedCta = document.querySelector('.lp-fixed-cta')
   if (fixedCta) {
