@@ -4,46 +4,33 @@
 
 ---
 
-## 【プロジェクト1】officeueda LP制作（コーディング完了・デプロイ待ち）
+## 【プロジェクト1】officeueda LP制作 → **完了（デプロイ待ち）**
 
 ### 現在のステータス
-- コーディング修正：完了（2026-03-19）
+- コーディング：完了
 - サクラによるコードレビュー：完了
-- サービス画像刷新：完了（2026-03-19）
-- git push：完了（commit: feat: officeueda LP サービス画像をシンプルバナーに刷新）
+- git push：完了
 
-### 完了した修正
-1. FVキャッチ・サブコピー差し替え ✅
-2. セクション順序変更 ✅
-3. 選ばれる理由コピー差し替え ✅
-4. FV人物写真：円形→角丸矩形・WebP変換 ✅
-5. 課題提起アイコン：SVGに変更 ✅
-6. LINE URL設定（https://lin.ee/v7FmZuu）✅
-7. 岩本商店担当表記修正（「コーディング」）✅
-8. shinyaueda.webp変換・差し替え ✅
-9. portfolio-iwamoto.webp差し替え ✅
-10. svc-*.webp 全7枚をブランドブルーバナーに刷新 ✅
+### デプロイ対象ファイル（シンヤさん作業）
+- `lp-260319/index.php`
+- `lp-260319/style.css`
+- `lp-260319/contact.css`
+- `lp-260319/js/main.js`
+- `lp-260319/js/lazyload-prioritize.js`
+- `lp-260319/images/shinyaueda.webp`
+- `lp-260319/images/portfolio-iwamoto.webp`
+- `lp-260319/images/svc-corporate.webp`
+- `lp-260319/images/svc-recruit.webp`
+- `lp-260319/images/svc-lp.webp`
+- `lp-260319/images/svc-swipe.webp`
+- `lp-260319/images/svc-renewal.webp`
+- `lp-260319/images/svc-maintenance.webp`
+- `lp-260319/images/svc-emergency.webp`
 
-### 次のアクション
-- WordPressにファイルをデプロイする（シンヤさん作業）
-  - `lp-260319/index.php`
-  - `lp-260319/style.css`
-  - `lp-260319/contact.css`
-  - `lp-260319/images/shinyaueda.webp`
-  - `lp-260319/images/portfolio-iwamoto.webp`
-  - `lp-260319/images/svc-corporate.webp`
-  - `lp-260319/images/svc-recruit.webp`
-  - `lp-260319/images/svc-lp.webp`
-  - `lp-260319/images/svc-swipe.webp`
-  - `lp-260319/images/svc-renewal.webp`
-  - `lp-260319/images/svc-maintenance.webp`
-  - `lp-260319/images/svc-emergency.webp`
-
-### 既存ファイル
-- `clients/officeueda/biz-web/lp-260319/index.php`
-- `clients/officeueda/biz-web/lp-260319/style.css`
-- `clients/officeueda/biz-web/lp-260319/js/main.js`
-- `clients/officeueda/biz-web/lp-260319/images/`
+### デプロイ後の確認事項
+- GA4 `cta_click` イベントが各CTAボタンで計測されるか確認
+- `lazyload-prioritize.js` の動作確認（Chrome DevTools > Network でlazy画像のリクエストタイミングを確認）
+- `img.src = img.src` でリフェッチが走っているか確認 → 不要なら該当行を削除
 
 ---
 
