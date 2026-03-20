@@ -687,5 +687,6 @@ $page_url = get_permalink();
 <?php wp_footer(); ?>
 
 <script src="<?php echo esc_url($lp_uri); ?>/js/main.js" defer></script>
+<script src="<?php echo esc_url($lp_uri); ?>/js/lazyload-prioritize.js" defer></script>
 </body>
 </html>
