@@ -670,7 +670,7 @@ $page_url = get_permalink();
 <footer class="lp-footer">
   <div class="lp-footer__links">
     <a href="https://officeueda.com/">オフィスウエダ トップページ</a>
-    <a href="/privacy-policy/">個人情報の取り扱い</a>
+    <a href="/privacy/">個人情報の取り扱い</a>
   </div>
   <p>&copy; <?php echo wp_date('Y'); ?> オフィスウエダ All Rights Reserved.</p>
 </footer>
