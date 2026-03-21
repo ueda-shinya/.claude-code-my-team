@@ -26,6 +26,7 @@
 - 技術ナレッジ（クライアント横断）は `~/.claude/knowledge/` で管理
   - `knowledge/wordpress-plugin/` ← WPプラグイン開発知見
   - `knowledge/figma-mcp/` ← Figma MCP Server 活用知見
+  - `knowledge/ai-image-layered/` ← AI画像生成レイヤー分割ワークフロー
 - → オフィスウエダ詳細は `clients/officeueda/README.md` を参照（biz-web/ と biz-ai/ の2事業）
 - → ランドプランニング詳細は `clients/lando-planning/README.md` を参照
 - → US-SAIJO詳細は `clients/us-saijo/README.md` を参照
@@ -62,6 +63,12 @@
 
 ## ナレッジ化スタイルのフィードバック
 → 詳細は [feedback-knowledge-style.md](feedback-knowledge-style.md) を参照（要点絞り・元ファイル削除まで一括）
+
+## effortコントロールのフィードバック
+→ 詳細は [feedback-effort-control.md](feedback-effort-control.md) を参照（設計・実装セッション開始時のみ /effort high を提案）
+
+## /loop提案タイミングのフィードバック
+→ 詳細は [feedback-loop-suggestion.md](feedback-loop-suggestion.md) を参照（必要なケースが来たときだけ提案・事前説明不要）
 
 ## officeueda Instagramマンガプロジェクト
 → 詳細は [project-officeueda-instagram-manga.md](project-officeueda-instagram-manga.md) を参照（キャラ設定・フォーマット・ツール選定保留中）
