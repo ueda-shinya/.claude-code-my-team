@@ -1,22 +1,46 @@
 # YouTube ダイジェスト
-最終更新: 2026-03-20T10:56:10.442875+09:00
+最終更新: 2026-03-23T08:55:02.324234+09:00
 
 ## AI関連
-- [2026年最新！SNSをバズらせるAIランキング！#動画編集 #生成ai攻略 #sns運用 #chatgpt #ランキング](https://www.youtube.com/watch?v=Ahx1e1wyFlI)
-  - チャンネル：まい【会社辞めてSNS生活】 / 再生数：915
-  - 概要：【プロンプト】  あなたは日本一のSNS動画クリエイターです。 目的は「参考動画を元に、再現できる台本を作ること」です。  # 制約条件 ・視聴者の興味を惹くフック（冒頭3秒）を重視すること ・専門用
-- [【ChatGPT・Geminiの嘘を防げ！】AIハルシネーション対策完全ガイド 革命的予防法5選！](https://www.youtube.com/watch?v=wtrq4GSdVvc)
-  - チャンネル：テックキャンプ AIカレッジ / 再生数：723
-  - 概要：▼2日間でClaude Codeをマスターする短期集中プログラム 3月・GW開催を募集中です。3/31まで入会金無料キャンペーン実施中 https://tech-camp.in/lps/ai?utm_
-- [【読書革命】買った本を100倍の資産に変えるNotebookLMの使い倒し方【著者召喚】](https://www.youtube.com/watch?v=_4_px587w98)
-  - チャンネル：ハック大学 / 再生数：33,610
-  - 概要：AI時代に乗り遅れたくない人は以下のLINEに登録してくださいませ。 https://utage-system.com/line/open/kOAASf1QysYX ※特典は、お友達登録後に動画内のキ
-- [【朗報】「NotebookLM」のスライドでも様々なスタイルを適用する方法！＋動画解説の新情報を紹介！](https://www.youtube.com/watch?v=waHfpDVUvHE)
-  - チャンネル：こーすけ先生のGoogle塾 / 再生数：4,457
-  - 概要：NotebookLMの「インフォグラフィック」の新スタイルの10種を「スライド資料」にも適用できないか、また、米国在住＆Ultraユーザ向けに追加された動画解説の「シネマティック」という2本立てで解説
-- [【残業ゼロ】パワポはもう古い？AIに「スライド10枚作って」と丸投げしてみた結果…](https://www.youtube.com/watch?v=QGDWeSLUpks)
-  - チャンネル：ひかりのAI大学 / 再生数：1,977
+- [🚨ChatGPT使ってる人へ🚨このままAIを使い続けると本当に危険な理由](https://www.youtube.com/watch?v=rqVKW8AIowg)
+  - チャンネル：AI活用研究所 / 再生数：1,688
+  - 概要：ChatGPTに仕事お願い〜」ってやってる人、ちょっと待って！⚠️ 実は今、AIは私たちが指示したことをやるだけじゃなく、自分で計画して勝手に行動する「AIエージェント」というバケモノへ進化しています
+- [【2026最新】Kindle×AI塗り絵はもう古い？今やるべき「AI副業」TOP3](https://www.youtube.com/watch?v=ekOADjC7yb4)
+  - チャンネル：AIビジネス活用 / 再生数：1,320
+  - 概要：【2026最新】Kindle×AI塗り絵はもう古い？今やるべき「AI副業」TOP3  第3位はAIライティング×SNSアフィリエイト。ChatGPTや最新のClaudeを使って、ブログ記事やX・Ins
+- [GPT-5.4 mini リリース｜3つの活用シーンを全解説](https://www.youtube.com/watch?v=NHVAykj3dAQ)
+  - チャンネル：AI market / 再生数：1,034
+  - 概要：2026年3月17日、OpenAIが「GPT-5.4 mini」をリリース。前モデルより2倍以上高速化され、コーディング・画面操作・複数タスクの同時処理など、実際の作業を代わりにやってくれるモデルとし
+- [最新のAI🤖〜だれでも使えるAI〜](https://www.youtube.com/watch?v=l5Ox2InwQT4)
+  - チャンネル：もりけんチャンネル【日本保守党】 / 再生数：3,089
+  - 概要：
+- [【自動売買】Gemini 2.0 で爆益を目指すAIトレーダーめたん【35日目/東京市場】](https://www.youtube.com/watch?v=IF0O0bDY7GY)
+  - チャンネル：GEMINIめたん FX Lab / 再生数：508
+  - 概要：アプデ 逆張りモード Ver2.0 トレンド追随モード Ver4.0  今後のアプデ予定 見直し中・・ ・トレード内容分析、収益改善 ・Geminiによる相場解析結果の取引反映 ・指標ギャンブルモード
+- [【超便利】Google最強AI「NotebookLM」×「YouTube」の拡張機能が神！徹底解説していきます！](https://www.youtube.com/watch?v=ZjUJ-35acaU)
+  - チャンネル：mikimiki web スクール / 再生数：18,986
+  - 概要：動画をご覧いただきありがとうございます。 今回は「NotebookLM」×「YouTube」の拡張機能が神！徹底解説していきます。 参考になったらいいね！とチャンネル登録お願いします♪  ✅【Gemi
+- [【神AI × 神活用】天才が考えるGoogleの『NotebookLM』の活用術が目から鱗すぎたので紹介します【全人類必見】](https://www.youtube.com/watch?v=BvbkOQWgAw8)
+  - チャンネル：ウェブマニア / 再生数：15,456
+  - 概要：＜今回の動画について＞ GoogleのNotebookLMを使って、超効率的に専門分野を学習するテクニックを解説しています。 とある天才が考えたこのNotebookLMの活用術、かなりすごいです。  
+- [【3分で完了】Google最強AI NotebookLMとClaudeの神連携パワポ・スライド資料作成が神すぎた！](https://www.youtube.com/watch?v=aXZGaOpRVoQ)
+  - チャンネル：【さき】のAIでええやん。 / 再生数：12,108
+  - 概要：#chatgpt    #gemini    #ai活用  #claude  ━━━━━━━━━━━━━━━━━━ 🏢企業様向けのAI研修のお問い合わせはコチラから🏢 https://jiso-ai.
+- [【15分で完全攻略】 Gensparkの活用機能を完全解説](https://www.youtube.com/watch?v=l6jUSziR1OY)
+  - チャンネル：トモミツの即実践AI活用術ch / 再生数：2,213
+  - 概要："最新のAI活用を見て真似するだけで使える"そんな動画を毎週火曜と金曜日20:00に公開します。 AIを使いこなしたいと思う方はぜひチャンネル登録よろしくお願いします。  ✅【無料特典＆LINE限定コ
+- [【もはやプロ】「比較レポート作って」→AIが勝手にネットを調べて完璧なWebページを作る機能がエグい](https://www.youtube.com/watch?v=I7F1fwGyeQs)
+  - チャンネル：ひかりのAI大学 / 再生数：1,722
   - 概要：【ひかりのAI大学で検索！】 #AI #業務効率 #Genspark
-- [課金上等！仕事で本当に使ってる最強AIツール9選～AIガチ勢のいけともが実際の業務でどう使ってるかも画面つきで全公開](https://www.youtube.com/watch?v=zsNPkVvfTUQ)
-  - チャンネル：いけともch / 再生数：8,817
-  - 概要：▼初心者でも2時間でできる！AIツールやExcel自動化などのイベント https://luma.com/user/usr-caLu98fa5GLuoT7  ▼2/14の参加者のリアルなアンケート結果
+- [教えてほしいんですけど・・・](https://www.youtube.com/watch?v=lTuCSsvxLvQ)
+  - チャンネル：みんなのAI実践塾【公式】 - AI活用で共に成長するコミュニティ / 再生数：1,363
+  - 概要：一つのアプリの中にGeminiやChatGPT…… 便利なのはいいけれど、どれを使えばいいか迷っちゃいますよね😅  そんな「ちょっとした疑問」も、みんなのAI実践塾なら気軽に聞けちゃいます。  #みん
+- [私が毎月旅行に行けたnoteの最新機能の秘密 #aiツール](https://www.youtube.com/watch?v=gPCl36_2_Dw)
+  - チャンネル：ゆい【SNSの裏ワザ攻略】 / 再生数：15,367
+  - 概要：ゆいです🧸📔  🎁 LINE登録者プレゼント🌸 AI×Instagramで収益化を始めるための 「最強プロンプト」を無料配布しています📖✨  無理なく始めたい方は、こちらからどうぞ👇 👉【プレゼントを
+- [最新AIツールを追うのは非効率。年200時間を奪う『スペック病』の正体」【モジュラー思考】](https://www.youtube.com/watch?v=JHdPRzGm2pU)
+  - チャンネル：クウキデザイン |  Kuuki Design / 再生数：7,956
+  - 概要：AI系情報追いかけている皆さん。もういい加減疲れませんか？ 毎週・毎月新しいツールがどうの、ベンチマークがどうの、キャッチアップしなきゃ置いていかれるかもしれない恐怖。ツールの学び直し・引っ越し。全て
+- [【今週のAIトレンド丸わかり】スマホから操作できるようになった「Claude Cowork・Claude Code」/Google AI StudioとStitchが過去最大のアップデート](https://www.youtube.com/watch?v=dvYZboKbH88)
+  - チャンネル：AI大学【AI&ChatGPT最新情報】 / 再生数：1,979
+  - 概要：◆動画の説明 今週リリース(発表)されたAIツールとAIニュースをまとめています なるべく無料で使えるツールを中心に紹介します！  ◆動画のもくじ 0:00　動画のもくじ 0:58　スマホから操作可能
