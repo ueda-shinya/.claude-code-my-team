@@ -6,14 +6,14 @@ type: project
 
 ## 保留中のタスク
 
-### Google カレンダー MCP の導入
-- **内容**: Claude Code から Google カレンダーを読み書きできるようにする
-  - MCP サーバーを `settings.json` に設定
-  - Google OAuth 認証が必要
-  - カナタに依頼して進める
-- **保留理由**: 時間がないため後回し
-- **登録日**: 2026-03-13
-- **対応**: シンヤさんが次に話しかけてきたらリマインドする
+### Telegram × Claude Code Channels のセットアップ
+- **内容**: Claude Code Channels（公式機能・v2.1.80+）でTelegramからClaude Codeに指示を送れるようにする
+  - Bun（v1.3.11）・Claude Code（v2.1.81）は準備済み
+  - `/plugin install telegram@claude-plugins-official` でプラグイン導入
+  - **残タスク：Telegram BotFather で Bot Token を発行 → configure**
+- **保留理由**: Bot Token 発行の時間が取れなかったため
+- **登録日**: 2026-03-23
+- **対応**: シンヤさんが「試そう」と言ったタイミングで再開
 
 ### Gemini API 活用によるリサーチ効率化
 - **内容**: Gemini API（無料枠）を MCP 経由で接続し、ミオのリサーチタスクをオフロードする
