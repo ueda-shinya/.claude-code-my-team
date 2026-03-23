@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: OU Basic Guard
- * Description: wp-admin・wp-login.php に PHP レベルの Basic 認証をかけます。プラグインディレクトリを FTP でリネームするだけで認証を即時無効化できます。
- * Version: 2.0.0
+ * Description: wp-admin・wp-login.php に PHP レベルの Basic 認証をかけます。wp-content/ にキーファイルを置くだけで認証を即時無効化できます。
+ * Version: 3.0.0
  * Author: Shinya Ueda
  * Requires at least: 5.9
  * Requires PHP: 8.0
@@ -16,6 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'OU_BG_PLUGIN_FILE', __FILE__ );
 define( 'OU_BG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'OU_BG_PLUGIN_DIRNAME', basename( dirname( __FILE__ ) ) );
+
+// キーファイルのパス（存在するだけで認証をスキップ）
+define( 'OU_BG_DISABLE_KEY_PATH', WP_CONTENT_DIR . '/ou-basic-guard-disable.key' );
 
 // オプションキー（旧 mu-plugin と同じキーを継続使用）
 const OU_BG_OPT_ENABLED  = 'ou_basic_guard_enabled';
@@ -37,6 +40,54 @@ function ou_bg_get_settings(): array {
   ];
 }
 
+// ========== キーファイルによる緊急無効化 ==========
+
+/**
+ * キーファイルが存在するかどうかを確認
+ * ファイルの中身は問わない（ダミーテキストでOK）
+ */
+function ou_bg_is_disabled_by_key(): bool {
+  return file_exists( OU_BG_DISABLE_KEY_PATH );
+}
+
+// ========== ローカル環境の自動スキップ ==========
+
+/**
+ * ローカル環境かどうかを判定
+ * 以下のいずれかに該当する場合はローカル環境とみなす（チェック順に評価）：
+ * 1. WP_ENVIRONMENT_TYPE 定数が 'local' または 'development'
+ * 2. WP_LOCAL_DEV 定数が true
+ * 3. HTTP_HOST が localhost / 127.0.0.1 / .local / .test / .localhost で終わる
+ */
+function ou_bg_is_local_env(): bool {
+  // 1. WP_ENVIRONMENT_TYPE による判定
+  if ( defined( 'WP_ENVIRONMENT_TYPE' ) ) {
+    $env_type = WP_ENVIRONMENT_TYPE;
+    if ( $env_type === 'local' || $env_type === 'development' ) {
+      return true;
+    }
+  }
+
+  // 2. WP_LOCAL_DEV による判定
+  if ( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV === true ) {
+    return true;
+  }
+
+  // 3. HTTP_HOST による判定
+  $host = strtolower( $_SERVER['HTTP_HOST'] ?? '' );
+  // ポート番号を除去（例：localhost:8080 → localhost）
+  $host = preg_replace( '/:\d+$/', '', $host );
+
+  $local_patterns = [ 'localhost', '127.0.0.1', '.local', '.test', '.localhost' ];
+  foreach ( $local_patterns as $pattern ) {
+    if ( str_ends_with( $host, $pattern ) ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // ========== PHP Basic 認証 ==========
 
 /**
@@ -53,7 +104,10 @@ function ou_bg_get_credentials(): array {
          ?? '';
 
     if ( str_starts_with( $auth, 'Basic ' ) ) {
-      $decoded = base64_decode( substr( $auth, 6 ) );
+      $decoded = base64_decode( substr( $auth, 6 ), true );
+      if ( $decoded === false ) {
+        return [ '', '' ];
+      }
       [ $user, $pass ] = explode( ':', $decoded, 2 ) + [ '', '' ];
     }
   }
@@ -63,9 +117,16 @@ function ou_bg_get_credentials(): array {
 
 /**
  * 現在のページが保護対象かどうかを判定
+ * admin-ajax.php はWordPress標準のAJAX処理が詰まるため除外する
  */
 function ou_bg_is_protected_page( string $targets ): bool {
-  $script = str_replace( '\\', '/', $_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '' );
+  // PHP_SELF はパスインジェクションのリスクがあるため SCRIPT_NAME のみ使用
+  $script = str_replace( '\\', '/', $_SERVER['SCRIPT_NAME'] ?? '' );
+
+  // admin-ajax.php は認証対象から除外
+  if ( str_ends_with( $script, '/wp-admin/admin-ajax.php' ) ) {
+    return false;
+  }
 
   $is_login = str_ends_with( $script, '/wp-login.php' );
   $is_admin = str_contains( $script, '/wp-admin/' )
@@ -83,12 +144,24 @@ function ou_bg_is_protected_page( string $targets ): bool {
  * Basic 認証チェック本体
  * init フック（優先度 0）で実行。認証失敗なら 401 で終了。
  *
- * 【緊急無効化の仕組み】
- * このプラグインは PHP レベルで認証を行うため、プラグインが読み込まれなければ
- * 認証チェック自体が実行されない。
- * → FTP でプラグインディレクトリをリネームするだけで認証を即時無効化できる。
+ * 【スキップ条件（優先度順）】
+ * 1. キーファイルが存在する（wp-content/ou-basic-guard-disable.key）
+ * 2. ローカル環境である（WP_ENVIRONMENT_TYPE / WP_LOCAL_DEV / HTTP_HOST による判定）
+ * 3. admin-ajax.php へのリクエスト
+ * 4. 認証が無効または設定不完全
+ * 5. 保護対象ページ以外
  */
 function ou_bg_enforce_basic_auth(): void {
+  // 1. キーファイルによる緊急無効化
+  if ( ou_bg_is_disabled_by_key() ) {
+    return;
+  }
+
+  // 2. ローカル環境の自動スキップ
+  if ( ou_bg_is_local_env() ) {
+    return;
+  }
+
   $settings = ou_bg_get_settings();
 
   if ( ! $settings['enabled'] ) {
@@ -99,13 +172,17 @@ function ou_bg_enforce_basic_auth(): void {
     return;
   }
 
+  // 3. admin-ajax.php を含む保護対象外ページの除外
   if ( ! ou_bg_is_protected_page( $settings['targets'] ) ) {
     return;
   }
 
   [ $user, $pass ] = ou_bg_get_credentials();
 
-  if ( $user === $settings['username'] && password_verify( $pass, $settings['pw_hash'] ) ) {
+  // hash_equals でタイミング攻撃対策（ユーザー名・パスワードともに定数時間比較）
+  $user_ok = hash_equals( $settings['username'], $user );
+  $pass_ok = password_verify( $pass, $settings['pw_hash'] );
+  if ( $user_ok && $pass_ok ) {
     return; // 認証成功
   }
 
@@ -162,7 +239,7 @@ function ou_bg_remove_legacy_htaccess_blocks(): array {
   if ( file_exists( $root_ht ) ) {
     $content = @file_get_contents( $root_ht );
     if ( $content !== false ) {
-      $pattern = '/' . preg_quote( OU_BG_BLOCK_BEGIN, '/' ) . '.*?' . preg_quote( OU_BG_BLOCK_END, '/' ) . '\R?/s';
+      $pattern = '/' . preg_quote( OU_BG_BLOCK_BEGIN, '/' ) . '.*?' . preg_quote( OU_BG_BLOCK_END, '/' ) . '\R*/s';
       $new     = preg_replace( $pattern, '', $content );
       if ( $new !== $content ) {
         $results['root'] = ( file_put_contents( $root_ht, $new ) !== false ) ? 'success' : 'error';
@@ -238,6 +315,7 @@ function ou_bg_render_settings_page(): void {
       if ( ! empty( $_POST['password'] ) ) {
         $plain  = (string) wp_unslash( $_POST['password'] );
         $has_pw = true;
+        // WP の wp_hash_password() は phpass ベースで強度が低いため、PHP 標準の bcrypt を意図的に使用
         update_option( OU_BG_OPT_PW_HASH, password_hash( $plain, PASSWORD_BCRYPT ) );
       }
 
@@ -276,8 +354,11 @@ function ou_bg_render_settings_page(): void {
     }
   }
 
-  $has_pw   = $settings['pw_hash'] !== '';
-  $is_https = is_ssl();
+  $has_pw        = $settings['pw_hash'] !== '';
+  $is_https      = is_ssl();
+  $key_exists    = ou_bg_is_disabled_by_key();
+  $is_local      = ou_bg_is_local_env();
+  $key_file_path = OU_BG_DISABLE_KEY_PATH;
 
   $target_label = match ( $settings['targets'] ) {
     'login' => 'ログインページ（wp-login.php）のみ',
@@ -302,7 +383,11 @@ function ou_bg_render_settings_page(): void {
         <tr>
           <th style="width:200px;">認証状態</th>
           <td>
-            <?php if ( $settings['enabled'] && $has_pw && $settings['username'] !== '' ) : ?>
+            <?php if ( $key_exists ) : ?>
+              ⏸️ <strong>スキップ中（キーファイルあり）</strong>
+            <?php elseif ( $is_local ) : ?>
+              ⏸️ <strong>スキップ中（ローカル環境）</strong>
+            <?php elseif ( $settings['enabled'] && $has_pw && $settings['username'] !== '' ) : ?>
               ✅ <strong>有効</strong>（<?php echo esc_html( $target_label ); ?> を保護中）
             <?php elseif ( $settings['enabled'] ) : ?>
               ⚠️ <strong>設定が不完全</strong>（ユーザー名またはパスワードが未設定のため認証は動作しません）
@@ -312,13 +397,36 @@ function ou_bg_render_settings_page(): void {
           </td>
         </tr>
         <tr>
+          <th>キーファイルの状態</th>
+          <td>
+            <?php if ( $key_exists ) : ?>
+              ⏸️ <strong>存在する → 認証スキップ中</strong>
+            <?php else : ?>
+              ✅ <strong>存在しない → 通常動作</strong>
+            <?php endif; ?>
+            <p class="description" style="margin-top:4px;">
+              キーファイルのパス：<br>
+              <code><?php echo esc_html( $key_file_path ); ?></code>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <th>ローカル環境判定</th>
+          <td>
+            <?php if ( $is_local ) : ?>
+              ✅ <strong>ローカル環境と判定 → 認証スキップ中</strong>
+            <?php else : ?>
+              ⬜ 本番環境（スキップなし）
+            <?php endif; ?>
+          </td>
+        </tr>
+        <tr>
           <th>緊急無効化の方法</th>
           <td>
-            <span style="font-family:monospace;background:#f0f0f1;padding:2px 6px;">
-              <?php echo esc_html( OU_BG_PLUGIN_DIRNAME ); ?>
-            </span>
-            ディレクトリを FTP でリネームする<br>
-            <span class="description">例：<code>_disabled-<?php echo esc_html( OU_BG_PLUGIN_DIRNAME ); ?></code></span>
+            以下のパスに <strong>任意の内容のファイル</strong>を置くだけで認証をスキップできます。<br>
+            プラグインは有効のまま認証だけを無効化できます。<br>
+            <code><?php echo esc_html( $key_file_path ); ?></code><br>
+            <span class="description">例：<code>touch <?php echo esc_html( $key_file_path ); ?></code></span>
           </td>
         </tr>
       </tbody>
@@ -326,8 +434,8 @@ function ou_bg_render_settings_page(): void {
 
     <p class="description" style="margin-bottom:1.5em;">
       このプラグインは <strong>PHP レベル</strong>で認証を処理します。
-      .htaccess に依存しないため、プラグインが読み込まれなければ認証チェックは実行されません。
-      ID・パスワードを忘れた場合は、FTP でディレクトリをリネームするだけで即時ロック解除できます。
+      .htaccess に依存しないため、キーファイルを置くだけで認証を即時スキップできます。
+      また <code>wp-admin/admin-ajax.php</code> は WordPress 標準の AJAX 処理のため認証対象から自動除外されます。
     </p>
 
     <hr>
