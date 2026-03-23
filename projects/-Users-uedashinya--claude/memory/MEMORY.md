@@ -73,6 +73,12 @@
 ## /loop提案タイミングのフィードバック
 → 詳細は [feedback-loop-suggestion.md](feedback-loop-suggestion.md) を参照（必要なケースが来たときだけ提案・事前説明不要）
 
+## sync タイミングのフィードバック
+→ 詳細は [feedback-sync-timing.md](feedback-sync-timing.md) を参照（「作業＋おつかれ」同時の場合は作業を先に完了してから sync）
+
+## 開発ワークフローのフィードバック
+→ 詳細は [feedback-dev-workflow.md](feedback-dev-workflow.md) を参照（要件確認→シュウに委譲→サクラレビュー→コミットの順序）
+
 ## officeueda Instagramマンガプロジェクト
 → 詳細は [project-officeueda-instagram-manga.md](project-officeueda-instagram-manga.md) を参照（キャラ設定・フォーマット・ツール選定保留中）
 
