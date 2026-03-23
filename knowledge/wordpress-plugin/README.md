@@ -6,14 +6,15 @@
 
 ```
 wordpress-plugin/
-├── README.md         ← このファイル（索引・運用ルール）
-├── architecture.md   ← 設計パターン・ディレクトリ構成
-├── hooks.md          ← よく使うフック・フィルター集
-├── security.md       ← セキュリティ対策・チェックリスト
-├── db.md             ← DB操作・カスタムテーブル設計
-├── rest-api.md       ← REST API 拡張
-├── gotchas.md        ← ハマりやすいポイント・注意点
-└── snippets/         ← 再利用コードスニペット
+├── README.md              ← このファイル（索引・運用ルール）
+├── plugin-management.md  ← プラグイン管理規約・ステータス定義・requirements.md の書き方
+├── security.md           ← セキュリティ対策・チェックリスト（hash_equals・PHP_SELF・base64等）
+├── architecture.md       ← 設計パターン・ディレクトリ構成
+├── hooks.md              ← よく使うフック・フィルター集
+├── db.md                 ← DB操作・カスタムテーブル設計
+├── rest-api.md           ← REST API 拡張
+├── gotchas.md            ← ハマりやすいポイント・注意点
+└── snippets/             ← 再利用コードスニペット
 ```
 
 ## 運用ルール
