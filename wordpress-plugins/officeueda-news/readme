@@ -1,0 +1,60 @@
+ファイル構成（配置例）
+wp-content/plugins/officeueda-news/
+├─ officeueda-news.php          # プラグイン本体
+├─ block.json                   # ブロック定義
+├─ uninstall.php                # アンインストール時の後始末
+├─ build/
+│   ├─ editor.js                # ブロック編集画面（ビルド不要版）
+│   └─ editor.css               # エディタ用の軽量CSS
+├─ parts/
+│   └─ news/
+│       ├─ latest.php           # 最新N件テンプレ（フォールバック）
+│       ├─ archive.php          # 一覧テンプレ（フォールバック）
+│       └─ entry.php            # 単体テンプレ（フォールバック）
+└─ assets/
+    └─ css/
+        └─ news.css             # ベースCSS（B/Cの土台 or Aの参考）
+
+テーマ側に parts/news/*.php があれば そちらを優先。なければプラグイン内をフォールバック使用。
+
+導入手順
+
+1.wp-content/plugins/ に officeueda-news/ フォルダを作成し、上記ファイル群を配置。
+
+2.管理画面 > プラグイン で 有効化。
+
+3.管理画面 > 設定 > News Block 設定 で CSS方式 A/B/C を選択。
+
+4.テンプレをテーマで上書きしたい場合は、your-(child)-theme/parts/news/ に latest.php / archive.php / entry.php を配置。
+
+5.A方式なら your-(child)-theme/assets/css/news.css、B方式の差分は news-override.css を配置。
+
+
+使い方（ブロック／ショートコード）
+
+ブロック：投稿/固定ページのエディタで「お知らせ（最新/一覧/単体）」。サイドバーで件数やカテゴリを設定。
+
+ショートコード例：
+[news_latest limit="3" template="latest"]
+[news_archive per_page="12" page_qs="npage" template="archive"]
+[news_entry id="123" template="entry"]
+
+
+セキュリティ & 保守
+
+すべての外部入力は sanitize_*、出力は esc_* を適用。
+
+テンプレ名は sanitize_file_name()、CSSはSettings APIで検証。
+
+クエリは no_found_rows / 必要最小の meta_query を採用しパフォーマンス配慮。
+
+将来的に i18n（翻訳）を追加する場合は load_plugin_textdomain() と languages/ を用意。
+
+
+カスタマイズのポイント
+
+タイトル省略幅： add_filter('ou_news_latest_title_width', fn()=>80);
+
+一覧のフィルタフォーム表示： add_filter('ou_news_archive_show_filter','__return_true');
+
+単体の前後ナビを消す： add_filter('ou_news_entry_show_nav','__return_false');

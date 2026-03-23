@@ -1,0 +1,72 @@
+/* =====================================================================
+   OU Slides Rotator - Scoped CSS (stack & center for given HTML)
+   対応: .slides （= 今回の .et_pb_row に付与） / 直下〜配下の .slide（= 画像モジュール）
+   ===================================================================== */
+
+/* ルート（.slides をスコープ化）：高さはJSでアクティブ画像に合わせて調整 */
+[data-ousr-root] {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 240px;
+  /* 行(.et_pb_row)のパディングに依存する場合があるため高さはJSで都度合わせます */
+}
+
+/* .slide（画像モジュール）を中央へ重ねる */
+[data-ousr-root] .slide {
+  --ousr-opacity-inactive: 0;  /* 非アクティブは非表示 */
+  --ousr-fade: 1200ms;
+
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+
+  width: 100% !important;    /* ルート幅にフィット */
+  height: 100% !important;
+
+  opacity: var(--ousr-opacity-inactive) !important;
+  transition: opacity var(--ousr-fade) ease-in-out !important;
+
+  z-index: 1 !important;
+  pointer-events: none;
+  margin: 0 !important;               /* Diviの画像モジュールの余白を無効化 */
+}
+
+/* アクティブだけ見せる */
+[data-ousr-root] .ousr__item--active {
+  opacity: 1 !important;
+  z-index: 2 !important;
+  pointer-events: auto;
+}
+
+/* 内部画像のフィット（span.wrap > img 構造に対応） */
+[data-ousr-root] .slide img {
+  display: block !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+}
+
+/* Divi特有の装飾は無効化（存在する場合のみ） */
+[data-ousr-root] .et_pb_image_wrap::before,
+[data-ousr-root] .et_overlay,
+[data-ousr-root] .et_pb_gallery_title,
+[data-ousr-root] .et_pb_gallery_caption {
+  display: none !important;
+}
+
+/* レイアウト崩れ防止: 行内のカラムの高さ伸長を阻害しない */
+[data-ousr-root] .et_pb_column {
+  position: static !important;
+}
+
+/* 低モーション配慮 */
+@media (prefers-reduced-motion: reduce) {
+  [data-ousr-root] .slide {
+    transition: none !important;
+  }
+}

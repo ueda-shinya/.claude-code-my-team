@@ -1,0 +1,1 @@
+(function($){$(function(){/* no-op */});})(jQuery);

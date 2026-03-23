@@ -1,0 +1,47 @@
+:root {
+  --gap: 16px;
+  --radius: 16px;
+  --border: #eee;
+  --bg-muted: #f7f7f7;
+}
+
+.l-grid { display: grid; }
+.l-grid--gap { gap: var(--gap); }
+.l-grid--cards {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--gap);
+  margin-top: 1rem;
+}
+
+.c-filter { padding: 12px; background: var(--bg-muted); border-radius: var(--radius); }
+.c-filter__fieldset { border: 0; margin: 0; padding: 0; }
+.c-filter__label { font-weight: 700; }
+.c-filter__select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
+.c-filter__submit { padding: 10px 16px; border: none; border-radius: 999px; cursor: pointer; }
+
+.c-result { margin-top: 12px; }
+.c-result__count { font-weight: 700; }
+
+.c-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+.c-card__link { color: inherit; text-decoration: none; display: block; height: 100%; }
+.c-card__media { aspect-ratio: 4/3; background: #fafafa; overflow: hidden; }
+.c-card__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.c-card__placeholder { width: 100%; height: 100%; background: #f0f0f0; }
+.c-card__body { padding: 12px; }
+.c-card__title { font-size: 1rem; line-height: 1.4; margin: 0 0 6px; }
+.c-card__meta { font-size: .92rem; color: #333; }
+.c-meta { display: grid; grid-template-columns: 56px 1fr; gap: 6px 10px; margin-top: 6px; }
+.c-meta__label { color: #666; }
+.c-meta__value { word-break: break-all; }
+.c-badge { display: inline-block; padding: 4px 8px; border: 1px solid #ddd; border-radius: 999px; text-decoration: none; margin-right: 6px; font-size: .9rem; }
+
+.p-single-info { margin-top: 24px; padding: 16px; background: #f9f9f9; border-radius: var(--radius); }
+.p-single-info__hdg { margin: 0 0 8px; font-size: 1.1rem; }
+.p-single-info__list { margin: 0; }
+.p-single-info__row { display: grid; grid-template-columns: 80px 1fr; gap: 6px 10px; margin: 8px 0; }
+.p-single-info__links .c-badge { margin-right: 8px; }
+.p-single-info__insta { margin-top: 16px; }
+
+.c-pagination { margin-top: 20px; }
+.c-pagination ul { list-style: none; display: flex; gap: 8px; padding: 0; }
+.c-pagination a, .c-pagination span { display: inline-block; padding: 6px 10px; border: 1px solid #ddd; border-radius: 8px; text-decoration: none; }

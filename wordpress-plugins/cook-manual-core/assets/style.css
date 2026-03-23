@@ -1,0 +1,76 @@
+/* 共通レイアウト */
+.l-manual {
+  padding: 24px 16px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* 見出しやメタ（任意） */
+.p-manual__title { font-weight: 700; font-size: clamp(22px, 4vw, 30px); line-height: 1.4; margin: 0 0 8px; }
+.p-manual__meta { margin: 0 0 16px; color: #555; font-size: 14px; display: flex; gap: 12px; flex-wrap: wrap; }
+.p-manual__eyecatch img { width: 100%; height: auto; border-radius: 12px; }
+.p-manual__intro { margin: 16px 0 24px; line-height: 1.8; }
+
+/* 目次 */
+.p-tocWrap { margin: 0 0 16px; }
+.p-tocBtn {
+  display:inline-flex; align-items:center; gap:.5em;
+  padding:.6em 1em; border-radius:999px; border:1px solid #ddd; background:#fafafa;
+  font-weight:700; cursor:pointer; line-height:1; text-decoration:none;
+}
+.p-tocBtn:hover { background:#f0f0f0; }
+.p-toc {
+  margin-top:12px; padding:12px; border:1px solid #e5e5e5; border-radius:12px; background:#fff;
+  display:none;
+}
+.p-toc.is-open { display:block; }
+.p-toc__title { font-weight:700; margin:0 0 8px; }
+.p-toc__list { list-style:none; padding:0; margin:0; display:grid; gap:6px; }
+.p-toc__item a { text-decoration:none; border-bottom:1px dashed transparent; }
+.p-toc__item a:hover { border-bottom-color:#aaa; }
+
+/* 手順リスト */
+.p-steps { list-style: none; padding: 0; margin: 0; }
+.p-step {
+  border: 1px solid #e5e5e5; border-radius: 16px; padding: 16px; margin: 16px 0; background: #fff;
+}
+.p-step:focus { outline: 2px solid #3388ff; outline-offset: 2px; }
+
+/* 2カラムレイアウト（モバイルは縦積み） */
+.p-step__inner { display: grid; gap: 16px; }
+@media (min-width: 768px) {
+  .p-step__inner {
+    grid-template-columns: minmax(240px, 44%) 1fr;
+    align-items: start;
+  }
+}
+
+.p-step__title { display:flex; align-items:center; gap:.6em; font-size: 18px; margin: 0 0 12px; }
+.p-step__num {
+  display:inline-block; min-width:2.2em; text-align:center; font-weight:700;
+  background:#f5f5f5; border-radius:999px; padding:.25em .6em;
+}
+
+.p-step__media { margin: 0; }
+.p-step__figure img, .p-step__video iframe, .p-step__video video {
+  width: 100%; height: auto; border-radius: 12px;
+}
+.p-step__caption { font-size: 12px; color: #666; margin-top: 6px; }
+
+.p-step__content { display:grid; gap:12px; }
+.p-step__body { line-height: 1.8; }
+
+.p-step__notes { display: grid; gap: 8px; }
+.p-step__note { border-radius: 12px; padding: 10px 12px; }
+.p-step__note--important { background: #fff7e6; border: 1px solid #ffe0a3; }
+.p-step__note--warning { background: #ffecec; border: 1px solid #ffb2b2; }
+.p-step__noteLabel { font-weight: 700; margin-right: 8px; display: inline-block; }
+.p-step__noteText { margin: 4px 0 0; }
+
+.p-step__actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+
+/* ボタン */
+.c-btn { display:inline-flex; align-items:center; justify-content:center; gap:.5em; padding:.6em 1em; border-radius:999px; border:1px solid #ddd; background:#fafafa; font-weight:700; text-decoration:none; cursor:pointer; line-height:1; }
+.c-btn:hover { background:#f0f0f0; }
+.c-btn[aria-disabled="true"] { opacity:.5; pointer-events:none; }
+.c-btn--timer { border-color:#ddd; }

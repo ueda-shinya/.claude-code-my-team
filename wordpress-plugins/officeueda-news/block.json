@@ -1,0 +1,22 @@
+{
+  "apiVersion": 3,
+  "name": "officeueda/news",
+  "title": "お知らせ（最新/一覧/単体）",
+  "category": "widgets",
+  "icon": "megaphone",
+  "description": "最新N件・一覧・単体のいずれかを表示します（サーバーサイドレンダー）。",
+  "supports": { "html": false },
+  "attributes": {
+    "mode": { "type": "string", "default": "latest" },
+    "limit": { "type": "number", "default": 5 },
+    "cat": { "type": "string", "default": "" },
+    "pinnedFirst": { "type": "boolean", "default": true },
+    "perPage": { "type": "number", "default": 12 },
+    "pageQs": { "type": "string", "default": "npage" },
+    "postId": { "type": "number", "default": 0 },
+    "slug": { "type": "string", "default": "" },
+    "template": { "type": "string", "default": "latest" }
+  },
+  "editorScript": "file:./build/editor.js",
+  "editorStyle": "file:./build/editor.css"
+}

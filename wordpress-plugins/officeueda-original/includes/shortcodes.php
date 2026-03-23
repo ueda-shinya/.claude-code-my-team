@@ -1,0 +1,2 @@
+<?php
+// ショートコード:shortcode.php
