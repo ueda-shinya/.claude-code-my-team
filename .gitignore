@@ -10,6 +10,9 @@ mcp-needs-auth-cache.json
 line-works-bot/*.key
 line-works-bot/*.pem
 
+# LINE WORKS Bot ログ
+line-works-bot/logs/
+
 # ── Claude Code が自動管理するもの（不要）───────────────
 # projects配下はmemory/だけ同期、あとは除外
 projects/**
