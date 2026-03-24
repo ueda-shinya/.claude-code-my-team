@@ -90,6 +90,24 @@ r_source = run({
     'limit': 5
 })
 
+# 3b. 広告別詳細（Paid Social / Paid Search のソース・媒体別、過去7日）
+r_ads = run({
+    'dimensions': [{'name': 'sessionSource'}, {'name': 'sessionMedium'}],
+    'metrics': [
+        {'name': 'sessions'}, {'name': 'newUsers'},
+        {'name': 'bounceRate'}, {'name': 'averageSessionDuration'}
+    ],
+    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+    'dimensionFilter': {
+        'orGroup': {'expressions': [
+            {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Social'}}},
+            {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Search'}}},
+        ]}
+    },
+    'orderBys': [{'metric': {'metricName': 'sessions'}, 'desc': True}],
+    'limit': 10
+})
+
 # 4. 人気ページ Top5（昨日）
 r_pages = run({
     'dimensions': [{'name': 'pagePath'}],
@@ -182,3 +200,14 @@ for row in r_lp_device.get('rows', []):
     if row['dimensionValues'][0]['value'] == 'mobile':
         mb = float(row['metricValues'][1]['value']) * 100
         print(f'LP_MOBILE_BOUNCE_7D: {mb:.1f}')
+
+# 広告別詳細
+for row in r_ads.get('rows', []):
+    src = row['dimensionValues'][0]['value']
+    med = row['dimensionValues'][1]['value']
+    s   = row['metricValues'][0]['value']
+    n   = row['metricValues'][1]['value']
+    br  = float(row['metricValues'][2]['value']) * 100
+    dur = float(row['metricValues'][3]['value'])
+    key = f'{src}__{med}'.replace(' ', '_')
+    print(f'AD_{key}: {s}|{n}|{br:.1f}|{dur:.0f}')
