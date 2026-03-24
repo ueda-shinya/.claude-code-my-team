@@ -291,12 +291,23 @@ python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
 ```
 
 出力から以下の値を取得して記憶する：
-- `CONTACT_VIEWS`：昨日の `/contact*` ページビュー数
 - `SITE_SESSIONS` / `SITE_USERS` / `SITE_NEW_USERS` / `SITE_BOUNCE`：サイト全体（昨日）
-- `CONTACT_VIEWS` / `CONTACT_USERS`：昨日の `/contact*` ページビュー・ユーザー数
-- `CONTACT_VIEWS_7D` / `CONTACT_USERS_7D`：過去7日の `/contact*` ページビュー・ユーザー数
+- `CONTACT_VIEWS` / `CONTACT_USERS`：昨日の `/contact*` PV・ユーザー数
+- `CONTACT_VIEWS_7D` / `CONTACT_USERS_7D`：過去7日の `/contact*` PV・ユーザー数
 - `SOURCE_<チャンネル>: <セッション>|<新規>`：流入元別（過去7日、上位5件）
 - `TOP_PAGE_<n>: <path>|<PV>|<ユーザー>`：人気ページ Top5（昨日）
+- `LP_SESSIONS_7D`：LP セッション数（過去7日）
+- `LP_BOUNCE_7D`：LP 離脱率（過去7日）
+- `LP_AVG_DURATION_7D`：LP 平均滞在時間・秒（過去7日）
+- `LP_CTA_CLICKS_7D`：LP CTA クリック数（過去7日）
+- `LP_MOBILE_BOUNCE_7D`：LP モバイル離脱率（過去7日）
+
+取得後、以下の改善提案ロジックを適用して `LP_ALERT` リストを作成する：
+- `LP_BOUNCE_7D` が 60% 超 → 「離脱率が高め（X%）。FV の訴求またはモバイル表示を要確認」
+- `LP_MOBILE_BOUNCE_7D` が 70% 超 → 「モバイル離脱率が高め（X%）。表示速度・FVデザインを確認」
+- `LP_AVG_DURATION_7D` が 30秒未満 → 「平均滞在時間が短い（X秒）。コンテンツが読まれていない可能性あり」
+- `LP_CTA_CLICKS_7D` が 0 かつ `LP_SESSIONS_7D` が 5 以上 → 「CTAクリックがゼロ。ボタンの視認性・訴求を要確認」
+- `LP_SESSIONS_7D` が 0 → 「LP へのアクセスなし。広告・SNS等の集客状況を確認」
 
 失敗した場合 → GA4 セクションを省略して次のステップへ
 
@@ -330,6 +341,11 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 
 ## 人気ページ Top5（昨日）
 - /path  X PV / Xユーザー
+
+## LP（lp-260319）状況（過去7日）
+- セッション：X / 離脱率：X% / 平均滞在：X秒 / CTAクリック：X回
+- モバイル離脱率：X%
+⚠️ 改善提案：（LP_ALERT があれば箇条書き。なければこの行を省略）
 
 ## YouTube ダイジェスト（最終更新: YYYY-MM-DD HH:MM）
 ### AI関連

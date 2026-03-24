@@ -3,16 +3,21 @@ GA4 日次レポートスクリプト
 モーニングブリーフィングから呼び出す用
 
 出力形式（stdout）:
-  SITE_SESSIONS: <件数>         ← サイト全体セッション（昨日）
-  SITE_USERS: <件数>            ← サイト全体ユーザー（昨日）
-  SITE_NEW_USERS: <件数>        ← 新規ユーザー（昨日）
-  SITE_BOUNCE: <率>             ← 離脱率（昨日）
-  CONTACT_VIEWS: <件数>         ← /contact* PV（昨日）
-  CONTACT_USERS: <件数>         ← /contact* ユーザー（昨日）
-  CONTACT_VIEWS_7D: <件数>      ← /contact* PV（過去7日）
-  CONTACT_USERS_7D: <件数>      ← /contact* ユーザー（過去7日）
-  SOURCE_<チャンネル>: <セッション>  ← 流入元別（過去7日、上位5件）
-  TOP_PAGE_<n>: <path>|<PV>    ← 人気ページ Top5（昨日）
+  SITE_SESSIONS: <件数>          ← サイト全体セッション（昨日）
+  SITE_USERS: <件数>             ← サイト全体ユーザー（昨日）
+  SITE_NEW_USERS: <件数>         ← 新規ユーザー（昨日）
+  SITE_BOUNCE: <率>              ← 離脱率（昨日）
+  CONTACT_VIEWS: <件数>          ← /contact* PV（昨日）
+  CONTACT_USERS: <件数>          ← /contact* ユーザー（昨日）
+  CONTACT_VIEWS_7D: <件数>       ← /contact* PV（過去7日）
+  CONTACT_USERS_7D: <件数>       ← /contact* ユーザー（過去7日）
+  SOURCE_<チャンネル>: <セッション>   ← 流入元別（過去7日、上位5件）
+  TOP_PAGE_<n>: <path>|<PV>     ← 人気ページ Top5（昨日）
+  LP_SESSIONS_7D: <件数>         ← LP セッション（過去7日）
+  LP_BOUNCE_7D: <率>             ← LP 離脱率（過去7日）
+  LP_AVG_DURATION_7D: <秒>       ← LP 平均滞在時間（過去7日）
+  LP_CTA_CLICKS_7D: <件数>       ← LP CTA クリック数（過去7日）
+  LP_MOBILE_BOUNCE_7D: <率>      ← LP モバイル離脱率（過去7日）
 """
 import json, urllib.request, urllib.parse, os, sys
 sys.stdout.reconfigure(encoding='utf-8')
@@ -94,6 +99,44 @@ r_pages = run({
     'limit': 5
 })
 
+lp_filter = {
+    'filter': {
+        'fieldName': 'pagePath',
+        'stringFilter': {'matchType': 'BEGINS_WITH', 'value': '/lp-260319'}
+    }
+}
+
+# 5. LP 概要（過去7日）
+r_lp = run({
+    'metrics': [
+        {'name': 'sessions'}, {'name': 'bounceRate'},
+        {'name': 'averageSessionDuration'}
+    ],
+    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+    'dimensionFilter': lp_filter
+})
+
+# 6. LP CTA クリック（過去7日）
+r_lp_cta = run({
+    'metrics': [{'name': 'eventCount'}],
+    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+    'dimensionFilter': {
+        'andGroup': {'expressions': [
+            lp_filter,
+            {'filter': {'fieldName': 'eventName', 'stringFilter': {'matchType': 'EXACT', 'value': 'cta_click'}}}
+        ]}
+    }
+})
+
+# 7. LP デバイス別（モバイル離脱率、過去7日）
+r_lp_device = run({
+    'dimensions': [{'name': 'deviceCategory'}],
+    'metrics': [{'name': 'sessions'}, {'name': 'bounceRate'}],
+    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+    'dimensionFilter': lp_filter,
+    'orderBys': [{'metric': {'metricName': 'sessions'}, 'desc': True}]
+})
+
 # --- 出力 ---
 # サイト全体
 m = r_overview.get('rows', [{}])[0].get('metricValues', [{'value':'0'}]*4) if r_overview.get('rows') else [{'value':'0'}]*4
@@ -122,3 +165,20 @@ for i, row in enumerate(r_pages.get('rows', []), 1):
     pv = row['metricValues'][0]['value']
     u = row['metricValues'][1]['value']
     print(f'TOP_PAGE_{i}: {path}|{pv}|{u}')
+
+# LP 概要
+lp_m = r_lp.get('rows', [{}])[0].get('metricValues', [{'value':'0'}]*3) if r_lp.get('rows') else [{'value':'0'}]*3
+print(f'LP_SESSIONS_7D: {lp_m[0]["value"]}')
+lp_bounce = float(lp_m[1]['value']) * 100
+print(f'LP_BOUNCE_7D: {lp_bounce:.1f}')
+lp_dur = float(lp_m[2]['value'])
+print(f'LP_AVG_DURATION_7D: {lp_dur:.0f}')
+
+# LP CTAクリック
+print(f'LP_CTA_CLICKS_7D: {get_metric(r_lp_cta, 0, 0)}')
+
+# LP モバイル離脱率
+for row in r_lp_device.get('rows', []):
+    if row['dimensionValues'][0]['value'] == 'mobile':
+        mb = float(row['metricValues'][1]['value']) * 100
+        print(f'LP_MOBILE_BOUNCE_7D: {mb:.1f}')
