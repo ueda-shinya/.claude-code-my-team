@@ -1,23 +1,40 @@
 # セッション引き継ぎ
 
-## 状態
-LINE WORKS Bot（アスカ Bot）Phase 1 テスト中断中
+## 作業中①: メール自動化 Phase 1（日程確定 → Googleカレンダー登録）
 
-## 中断理由
-Anthropic API のクレジット残高不足（400エラー）
+### 状況
+- スクリプト実装・サクラのセキュリティレビュー対応済み
+- `~/.claude/scripts/mail-check.py` 完成（サニタイズ・タイムアウト・UID方式・バリデーション対応済み）
+- **Anthropic APIクレジット不足で動作確認が中断中**
 
-## 現在の状態
-- Flask サーバー: ポート 5000 で稼働中
-- ngrok: セッション上限のため自動起動失敗。前のセッション URL が生きているか不明
-- ALLOWED_USER_ID: UUID `00f4ca87-5717-42de-1540-041b9e780a45` で設定済み
-- Webhook 受信・ユーザー認証・LINE WORKS トークン取得：すべて正常動作確認済み
-- server.py の expires_in TypeError バグ：修正済み
+### 再開手順
+1. Anthropic Plans & Billing でクレジットを追加
+2. `python3 ~/.claude/scripts/mail-check.py --dry-run` でドライラン確認（日程確定の分類テスト）
+3. 分類結果に問題なければ `--dry-run` なしで本番実行
 
-## 再開時にやること
+### 次フェーズ（Phase 1 完了後）
+- Phase 2: 返信下書き作成 + LINE WORKS タスク追加
+  - LINE WORKS タスクAPIはOAuthスコープに `todo` を追加して試す必要あり
+- Phase 3: ゴミ箱移動・不要DM削除
+
+### 関連ファイル
+- `~/.claude/scripts/mail-check.py`
+- `~/.claude/skills/mail-check/requirements.md`
+
+---
+
+## 作業中②: LINE WORKS Bot Phase 1（クレジット追加待ち）
+
+### 状況
+- Flask サーバー・ngrok: 前セッションから落ちている可能性あり
+- ALLOWED_USER_ID: UUID `00f4ca87-5717-42de-1540-041b9e780a45` 設定済み
+- Webhook受信・ユーザー認証・トークン取得：正常動作確認済み
+
+### 再開手順
 1. Anthropic Console でクレジット追加を確認
-2. サーバーが落ちていれば再起動: `python ~/.claude/line-works-bot/scripts/server.py`
-3. ngrok が切れていれば: `ngrok http 5000` → Callback URL を LINE WORKS Developer Console に再設定
+2. サーバー再起動: `python ~/.claude/line-works-bot/scripts/server.py`
+3. ngrok が切れていれば: `ngrok http 5000` → Callback URL を Developer Console に再設定
 4. LINE WORKS からメッセージを送って動作確認
 
-## 次のフェーズ
-- Phase 1 完了確認後 → 署名検証の有効化 → ngrok 固定ドメイン設定 → Xserver VPS 移行（Phase 2）
+### 次フェーズ
+- Phase 1 完了後 → 署名検証の有効化 → ngrok 固定ドメイン → Xserver VPS 移行
