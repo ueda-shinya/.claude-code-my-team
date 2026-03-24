@@ -173,14 +173,18 @@ Developer Console から LINE WORKS の管理画面に移動します。
 
 送信制限（シンヤさん以外が送っても Bot が反応しない設定）のために必要です。
 
-1. LINE WORKS 管理画面（https://admin.worksmobile.com/）を開く
-2. **「メンバー管理」** → **「メンバー一覧」** を開く
-3. 自分のアカウントをクリック
-4. **「ユーザーID」** を確認してメモする
-   - 形式：`ログインID@契約ドメイン名`（例：`shinya@example.com`）
-   - ドメイン部分は契約時に設定したドメインになります（`worksmobile.net` とは限りません）
+Bot が使う LINE WORKS のユーザーID は、管理画面に表示されるログインID（`shinya@example.com` 形式）とは異なり、**UUID 形式**（例：`00f4ca87-5717-42de-1540-041b9e780a45`）です。
 
-または Developer Console の「認証」メニューから確認できる場合もあります。
+**最確実な確認方法：サーバーログから取得する**
+
+1. アスカにサーバーを起動してもらう（ALLOWED_USER_ID は仮の値でOK）
+2. LINE WORKS アプリからアスカ Bot にメッセージを送る
+3. サーバーログ（`~/.claude/line-works-bot/logs/server.log`）を確認する
+4. 以下のような行に UUID が記録されている：
+   ```
+   [WARNING] 未許可ユーザーからのメッセージを無視: 00f4ca87-5717-42de-1540-041b9e780a45
+   ```
+5. この UUID が自分のユーザーID → アスカに伝える
 
 ---
 
@@ -193,7 +197,7 @@ Bot ID:
 Client ID:
 Client Secret:
 Service Account ID:
-Private Key ファイルの場所: C:\Users\ueda-\.claude\(ファイル名)
+Private Key ファイルの場所: C:\Users\ueda-\.claude\line-works-bot\(ファイル名)
 自分のユーザーID:
 ```
 
@@ -207,6 +211,8 @@ Private Key ファイルの場所: C:\Users\ueda-\.claude\(ファイル名)
 | Bot が LINE WORKS アプリで見つからない | STEP 6 の「メンバーに公開」が完了しているか確認 |
 | Private Key のダウンロードボタンがない | ページをリロードして再試行 |
 | Client Secret が表示されない | アプリ詳細画面で「再発行」から確認できる場合がある |
+| ngrok 起動時に ERR_NGROK_108 が出る | ngrok のセッション上限（無料は3本）に達している。https://dashboard.ngrok.com/agents で古いセッションを Terminate してから再起動 |
+| ngrok 起動時に「authtoken」エラーが出る | `ngrok config add-authtoken <token>` コマンドを実行（トークンは https://dashboard.ngrok.com/get-started/your-authtoken で確認） |
 
 ---
 
