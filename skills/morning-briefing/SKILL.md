@@ -282,7 +282,23 @@ python3 ~/.claude/scripts/youtube-add-to-playlist.py 2>&1
 - 正常完了（`完了: X件追加`）→ 結果を記憶するが報告には含めない
 - 失敗した場合 → 無視して次のステップへ（プレイリスト追加はオプション扱い）
 
-### ステップ 4: セッション引き継ぎ確認
+### ステップ 4: GA4 サイト状況確認
+
+以下を実行してください：
+
+```bash
+python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
+```
+
+出力から以下の値を取得して記憶する：
+- `CONTACT_VIEWS`：昨日の `/contact*` ページビュー数
+- `CONTACT_USERS`：昨日の `/contact*` ユニークユーザー数
+- `CONTACT_VIEWS_7D`：過去7日の `/contact*` ページビュー数
+- `CONTACT_USERS_7D`：過去7日の `/contact*` ユニークユーザー数
+
+失敗した場合 → GA4 セクションを省略して次のステップへ
+
+### ステップ 5: セッション引き継ぎ確認
 
 まず Bash で `cd ~/.claude && pwd` を実行してパスを取得し、そのパスに `/session-handoff.md` を付けた絶対パスで Read ツールを使ってください。
 
@@ -302,6 +318,9 @@ python3 ~/.claude/scripts/youtube-add-to-playlist.py 2>&1
 
 ## 引き継ぎ
 - 内容
+
+## サイト状況（昨日）
+- お問い合わせページ：X PV / Xユーザー（過去7日：X PV / Xユーザー）
 
 ## YouTube ダイジェスト（最終更新: YYYY-MM-DD HH:MM）
 ### AI関連
