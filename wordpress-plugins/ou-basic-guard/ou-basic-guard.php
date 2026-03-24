@@ -189,7 +189,7 @@ function ou_bg_enforce_basic_auth(): void {
   // 認証失敗 → 401
   header( 'WWW-Authenticate: Basic realm="Protected Area"' );
   status_header( 401 );
-  echo '認証が必要です。ユーザー名とパスワードを入力してください。';
+  echo esc_html( '認証が必要です。ユーザー名とパスワードを入力してください。' );
   exit;
 }
 add_action( 'init', 'ou_bg_enforce_basic_auth', 0 );
@@ -197,6 +197,9 @@ add_action( 'init', 'ou_bg_enforce_basic_auth', 0 );
 // ========== 有効化・無効化フック ==========
 register_activation_hook( OU_BG_PLUGIN_FILE, 'ou_bg_on_activate' );
 function ou_bg_on_activate(): void {
+  // .htaccess を変更する前にバックアップ（バックアップ済みなら skip）
+  ou_bg_backup_htaccess();
+
   // 旧 mu-plugin の .htaccess ブロックが残っていれば検知フラグを立てる
   if ( ou_bg_has_legacy_htaccess_block() ) {
     update_option( 'ou_basic_guard_legacy_detected', 1 );
@@ -208,6 +211,27 @@ function ou_bg_on_activate(): void {
 
 // ========== アンインストール ==========
 // uninstall.php で処理（register_uninstall_hook は匿名関数不可のため）
+
+// ========== .htaccess バックアップ ==========
+
+/**
+ * ルート .htaccess をバックアップする
+ * バックアップファイルが既に存在する場合はスキップ
+ */
+function ou_bg_backup_htaccess(): bool {
+  $root_ht = ABSPATH . '.htaccess';
+  $backup  = ABSPATH . '.htaccess-ou-basic-guard-backup';
+
+  if ( file_exists( $backup ) ) {
+    return true; // 既にバックアップ済み
+  }
+
+  if ( ! file_exists( $root_ht ) ) {
+    return false;
+  }
+
+  return @copy( $root_ht, $backup ) !== false;
+}
 
 // ========== 旧 .htaccess クリーンアップ ==========
 function ou_bg_has_legacy_htaccess_block(): bool {
@@ -241,7 +265,8 @@ function ou_bg_remove_legacy_htaccess_blocks(): array {
     if ( $content !== false ) {
       $pattern = '/' . preg_quote( OU_BG_BLOCK_BEGIN, '/' ) . '.*?' . preg_quote( OU_BG_BLOCK_END, '/' ) . '\R*/s';
       $new     = preg_replace( $pattern, '', $content );
-      if ( $new !== $content ) {
+      if ( $new !== $content && $new !== '' ) {
+        ou_bg_backup_htaccess(); // 変更前にバックアップ（バックアップ済みなら skip）
         $results['root'] = ( file_put_contents( $root_ht, $new ) !== false ) ? 'success' : 'error';
       }
     }
@@ -315,8 +340,9 @@ function ou_bg_render_settings_page(): void {
       if ( ! empty( $_POST['password'] ) ) {
         $plain  = (string) wp_unslash( $_POST['password'] );
         $has_pw = true;
-        // WP の wp_hash_password() は phpass ベースで強度が低いため、PHP 標準の bcrypt を意図的に使用
-        update_option( OU_BG_OPT_PW_HASH, password_hash( $plain, PASSWORD_BCRYPT ) );
+        // WP の wp_hash_password() は phpass ベースで強度が低いため、PHP 標準の password_hash を意図的に使用
+        // PASSWORD_DEFAULT を使用することで PHP バージョンアップ時に自動的に最適なアルゴリズムへ移行される
+        update_option( OU_BG_OPT_PW_HASH, password_hash( $plain, PASSWORD_DEFAULT ) );
       }
 
       if ( $enabled && ( $username === '' || ! $has_pw ) ) {

@@ -93,10 +93,43 @@ if ( $decoded === false ) {
 
 ---
 
-## PHP-FPM 環境での Authorization ヘッダー
+## Authorization ヘッダーが PHP に届かない問題
 
-PHP-FPM 環境では `$_SERVER['PHP_AUTH_USER']` が取得できない場合がある。
-`HTTP_AUTHORIZATION` へのフォールバックと、.htaccess への追記で対応。
+Apache + CGI系（mod_fcgid / FastCGI / PHP-FPM）の環境では、
+`Authorization` ヘッダーがセキュリティ上の理由で PHP プロセスに転送されない。
+結果として `$_SERVER['PHP_AUTH_USER']` や `$_SERVER['HTTP_AUTHORIZATION']` が空になり、
+BASIC 認証プラグインが認証情報を受け取れず常に 401 を返す。
+
+### 症状
+- BASIC 認証ダイアログは表示される（401 レスポンス自体は正常）
+- ユーザー名・パスワードを入力しても認証が通らない（何度もダイアログが出る）
+
+### 影響範囲
+エックスサーバーに限らず、Apache + CGI/FastCGI 構成の共用ホスティング全般で発生する。
+（エックスサーバー、さくら、ロリポップ等）
+
+### 対処1：RewriteRule 方式（CGI/mod_fcgid 環境向け・推奨）
+
+WordPress の `.htaccess` の `# BEGIN WordPress` **より前** に追加する：
+
+```apache
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+```
+
+`# BEGIN WordPress` より後に書くと、WordPress の自動書き換えで消される可能性がある。
+
+### 対処2：SetEnvIf 方式（PHP-FPM 環境向け）
+
+```apache
+SetEnvIf Authorization "(.+)" HTTP_AUTHORIZATION=$1
+```
+
+### PHP 側のフォールバック実装
+
+どちらの .htaccess 対処でも、PHP 側で `HTTP_AUTHORIZATION` を読むフォールバックが必要。
 
 ```php
 function get_basic_credentials(): array {
@@ -119,10 +152,12 @@ function get_basic_credentials(): array {
 }
 ```
 
-.htaccess への追記：
-```
-SetEnvIf Authorization "(.+)" HTTP_AUTHORIZATION=$1
-```
+### 判断フロー
+
+1. BASIC 認証が通らない場合、まずサーバーの PHP 実行方式を確認する
+2. CGI / mod_fcgid / FastCGI → 対処1（RewriteRule）を適用
+3. PHP-FPM → 対処2（SetEnvIf）を適用
+4. いずれの場合も PHP 側のフォールバック実装を確認する
 
 ---
 
