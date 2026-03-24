@@ -11,14 +11,19 @@ GA4 日次レポートスクリプト
   CONTACT_USERS: <件数>          ← /contact* ユーザー（昨日）
   CONTACT_VIEWS_7D: <件数>       ← /contact* PV（過去7日）
   CONTACT_USERS_7D: <件数>       ← /contact* ユーザー（過去7日）
-  SOURCE_<チャンネル>: <セッション>   ← 流入元別（過去7日、上位5件）
-  TOP_PAGE_<n>: <path>|<PV>     ← 人気ページ Top5（昨日）
+  SOURCE_<チャンネル>: <セッション>|<新規>  ← 流入元別（過去7日、上位5件）
+  TOP_PAGE_<n>: <path>|<PV>|<ユーザー>    ← 人気ページ Top5（昨日）
   LP_SESSIONS_7D: <件数>         ← LP セッション（過去7日）
   LP_BOUNCE_7D: <率>             ← LP 離脱率（過去7日）
   LP_AVG_DURATION_7D: <秒>       ← LP 平均滞在時間（過去7日）
-  LP_CTA_CLICKS_7D: <件数>       ← LP CTA クリック数（過去7日）
+  LP_CTA_CLICKS_7D: <件数>       ← LP CTA クリック数（LP_CTA_START_DATE以降・テスト除外）
   LP_MOBILE_BOUNCE_7D: <率>      ← LP モバイル離脱率（過去7日）
+  LP_DAILY_<YYYYMMDD>_<チャンネル>: <セッション>  ← LP 日別流入元（過去7日）
 """
+
+# テストクリック除外: この日付以降のCTAクリックのみ集計
+LP_CTA_START_DATE = '2026-03-21'
+
 import json, urllib.request, urllib.parse, os, sys
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -152,10 +157,10 @@ r_lp = run({
     'dimensionFilter': lp_filter
 })
 
-# 6. LP CTA クリック（過去7日）
+# 6. LP CTA クリック（LP_CTA_START_DATE以降・テスト除外）
 r_lp_cta = run({
     'metrics': [{'name': 'eventCount'}],
-    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+    'dateRanges': [{'startDate': LP_CTA_START_DATE, 'endDate': 'today'}],
     'dimensionFilter': {
         'andGroup': {'expressions': [
             lp_filter,
@@ -171,6 +176,15 @@ r_lp_device = run({
     'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
     'dimensionFilter': lp_filter,
     'orderBys': [{'metric': {'metricName': 'sessions'}, 'desc': True}]
+})
+
+# 8. LP 日別流入元（過去7日、ソース/媒体別）
+r_lp_daily = run({
+    'dimensions': [{'name': 'date'}, {'name': 'sessionSource'}, {'name': 'sessionMedium'}],
+    'metrics': [{'name': 'sessions'}],
+    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+    'dimensionFilter': lp_filter,
+    'orderBys': [{'dimension': {'dimensionName': 'date'}, 'desc': False}]
 })
 
 # --- 出力 ---
@@ -210,7 +224,7 @@ print(f'LP_BOUNCE_7D: {lp_bounce:.1f}')
 lp_dur = float(lp_m[2]['value'])
 print(f'LP_AVG_DURATION_7D: {lp_dur:.0f}')
 
-# LP CTAクリック
+# LP CTAクリック（テスト除外）
 print(f'LP_CTA_CLICKS_7D: {get_metric(r_lp_cta, 0, 0)}')
 
 # LP モバイル離脱率
@@ -240,3 +254,12 @@ for row in r_ig_organic.get('rows', []):
     dur = float(row['metricValues'][3]['value'])
     key = f'{src}__{med}'.replace(' ', '_').replace('.', '_')
     print(f'IG_{key}: {s}|{n}|{br:.1f}|{dur:.0f}')
+
+# LP 日別流入元（ソース/媒体）
+for row in r_lp_daily.get('rows', []):
+    d   = row['dimensionValues'][0]['value']
+    src = row['dimensionValues'][1]['value']
+    med = row['dimensionValues'][2]['value']
+    s   = row['metricValues'][0]['value']
+    key = f'{src}__{med}'.replace(' ', '_').replace('.', '_')
+    print(f'LP_DAILY_{d}_{key}: {s}')
