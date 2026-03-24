@@ -13,6 +13,7 @@ installed = cred['installed']
 
 SCOPES = [
     'https://www.googleapis.com/auth/analytics.readonly',
+    'https://www.googleapis.com/auth/analytics.edit',
     'https://www.googleapis.com/auth/calendar.events',
     'https://www.googleapis.com/auth/calendar.readonly',
     'https://www.googleapis.com/auth/youtube',
