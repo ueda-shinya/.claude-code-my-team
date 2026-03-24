@@ -3,11 +3,18 @@ GA4 日次レポートスクリプト
 モーニングブリーフィングから呼び出す用
 
 出力形式（stdout）:
-  CONTACT_VIEWS: <件数>  ← /contact* のページビュー（昨日）
-  CONTACT_VIEWS_7D: <件数>  ← /contact* のページビュー（過去7日）
+  SITE_SESSIONS: <件数>         ← サイト全体セッション（昨日）
+  SITE_USERS: <件数>            ← サイト全体ユーザー（昨日）
+  SITE_NEW_USERS: <件数>        ← 新規ユーザー（昨日）
+  SITE_BOUNCE: <率>             ← 離脱率（昨日）
+  CONTACT_VIEWS: <件数>         ← /contact* PV（昨日）
+  CONTACT_USERS: <件数>         ← /contact* ユーザー（昨日）
+  CONTACT_VIEWS_7D: <件数>      ← /contact* PV（過去7日）
+  CONTACT_USERS_7D: <件数>      ← /contact* ユーザー（過去7日）
+  SOURCE_<チャンネル>: <セッション>  ← 流入元別（過去7日、上位5件）
+  TOP_PAGE_<n>: <path>|<PV>    ← 人気ページ Top5（昨日）
 """
 import json, urllib.request, urllib.parse, os, sys
-from datetime import datetime, timezone, timedelta
 sys.stdout.reconfigure(encoding='utf-8')
 
 cred_path = os.path.expanduser('~/.claude/google-oauth-credentials.json')
@@ -36,38 +43,82 @@ def run(body):
     with urllib.request.urlopen(req) as res:
         return json.loads(res.read())
 
-# /contact* のページビュー（昨日 & 過去7日）
+def get_metric(r, row=0, idx=0):
+    rows = r.get('rows', [])
+    if not rows or row >= len(rows):
+        return '0'
+    return rows[row]['metricValues'][idx]['value']
+
+# 1. サイト全体の概要（昨日）
+r_overview = run({
+    'metrics': [
+        {'name': 'sessions'}, {'name': 'totalUsers'},
+        {'name': 'newUsers'}, {'name': 'bounceRate'}
+    ],
+    'dateRanges': [{'startDate': 'yesterday', 'endDate': 'yesterday'}],
+})
+
+# 2. /contact* のページビュー（昨日 & 過去7日）
 contact_filter = {
     'filter': {
         'fieldName': 'pagePath',
         'stringFilter': {'matchType': 'BEGINS_WITH', 'value': '/contact'}
     }
 }
-
-r_yesterday = run({
+r_contact_yd = run({
     'metrics': [{'name': 'screenPageViews'}, {'name': 'totalUsers'}],
     'dateRanges': [{'startDate': 'yesterday', 'endDate': 'yesterday'}],
     'dimensionFilter': contact_filter
 })
-
-r_7d = run({
+r_contact_7d = run({
     'metrics': [{'name': 'screenPageViews'}, {'name': 'totalUsers'}],
     'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
     'dimensionFilter': contact_filter
 })
 
-def get_metric(r, idx=0):
-    rows = r.get('rows', [])
-    if not rows:
-        return '0'
-    return rows[0]['metricValues'][idx]['value']
+# 3. 流入元（過去7日、チャンネルグループ別、上位5件）
+r_source = run({
+    'dimensions': [{'name': 'sessionDefaultChannelGrouping'}],
+    'metrics': [{'name': 'sessions'}, {'name': 'newUsers'}],
+    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+    'orderBys': [{'metric': {'metricName': 'sessions'}, 'desc': True}],
+    'limit': 5
+})
 
-pv_yesterday = get_metric(r_yesterday, 0)
-users_yesterday = get_metric(r_yesterday, 1)
-pv_7d = get_metric(r_7d, 0)
-users_7d = get_metric(r_7d, 1)
+# 4. 人気ページ Top5（昨日）
+r_pages = run({
+    'dimensions': [{'name': 'pagePath'}],
+    'metrics': [{'name': 'screenPageViews'}, {'name': 'totalUsers'}],
+    'dateRanges': [{'startDate': 'yesterday', 'endDate': 'yesterday'}],
+    'orderBys': [{'metric': {'metricName': 'screenPageViews'}, 'desc': True}],
+    'limit': 5
+})
 
-print(f'CONTACT_VIEWS: {pv_yesterday}')
-print(f'CONTACT_USERS: {users_yesterday}')
-print(f'CONTACT_VIEWS_7D: {pv_7d}')
-print(f'CONTACT_USERS_7D: {users_7d}')
+# --- 出力 ---
+# サイト全体
+m = r_overview.get('rows', [{}])[0].get('metricValues', [{'value':'0'}]*4) if r_overview.get('rows') else [{'value':'0'}]*4
+print(f'SITE_SESSIONS: {m[0]["value"]}')
+print(f'SITE_USERS: {m[1]["value"]}')
+print(f'SITE_NEW_USERS: {m[2]["value"]}')
+bounce = float(m[3]['value']) * 100
+print(f'SITE_BOUNCE: {bounce:.1f}')
+
+# /contact*
+print(f'CONTACT_VIEWS: {get_metric(r_contact_yd, 0, 0)}')
+print(f'CONTACT_USERS: {get_metric(r_contact_yd, 0, 1)}')
+print(f'CONTACT_VIEWS_7D: {get_metric(r_contact_7d, 0, 0)}')
+print(f'CONTACT_USERS_7D: {get_metric(r_contact_7d, 0, 1)}')
+
+# 流入元
+for row in r_source.get('rows', []):
+    ch = row['dimensionValues'][0]['value'].replace(' ', '_')
+    s = row['metricValues'][0]['value']
+    n = row['metricValues'][1]['value']
+    print(f'SOURCE_{ch}: {s}|{n}')
+
+# 人気ページ
+for i, row in enumerate(r_pages.get('rows', []), 1):
+    path = row['dimensionValues'][0]['value']
+    pv = row['metricValues'][0]['value']
+    u = row['metricValues'][1]['value']
+    print(f'TOP_PAGE_{i}: {path}|{pv}|{u}')

@@ -292,9 +292,11 @@ python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
 
 出力から以下の値を取得して記憶する：
 - `CONTACT_VIEWS`：昨日の `/contact*` ページビュー数
-- `CONTACT_USERS`：昨日の `/contact*` ユニークユーザー数
-- `CONTACT_VIEWS_7D`：過去7日の `/contact*` ページビュー数
-- `CONTACT_USERS_7D`：過去7日の `/contact*` ユニークユーザー数
+- `SITE_SESSIONS` / `SITE_USERS` / `SITE_NEW_USERS` / `SITE_BOUNCE`：サイト全体（昨日）
+- `CONTACT_VIEWS` / `CONTACT_USERS`：昨日の `/contact*` ページビュー・ユーザー数
+- `CONTACT_VIEWS_7D` / `CONTACT_USERS_7D`：過去7日の `/contact*` ページビュー・ユーザー数
+- `SOURCE_<チャンネル>: <セッション>|<新規>`：流入元別（過去7日、上位5件）
+- `TOP_PAGE_<n>: <path>|<PV>|<ユーザー>`：人気ページ Top5（昨日）
 
 失敗した場合 → GA4 セクションを省略して次のステップへ
 
@@ -320,7 +322,14 @@ python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
 - 内容
 
 ## サイト状況（昨日）
-- お問い合わせページ：X PV / Xユーザー（過去7日：X PV / Xユーザー）
+- 全体：Xセッション / Xユーザー（新規X） / 離脱率X%
+- お問い合わせ：X PV / Xユーザー（過去7日：X PV / Xユーザー）
+
+## 流入元（過去7日）
+Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
+
+## 人気ページ Top5（昨日）
+- /path  X PV / Xユーザー
 
 ## YouTube ダイジェスト（最終更新: YYYY-MM-DD HH:MM）
 ### AI関連
