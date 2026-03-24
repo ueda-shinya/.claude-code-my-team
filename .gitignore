@@ -6,6 +6,10 @@
 .credentials.json
 mcp-needs-auth-cache.json
 
+# LINE WORKS Private Key（漏洩すると不正利用される）
+line-works-bot/*.key
+line-works-bot/*.pem
+
 # ── Claude Code が自動管理するもの（不要）───────────────
 # projects配下はmemory/だけ同期、あとは除外
 projects/**
