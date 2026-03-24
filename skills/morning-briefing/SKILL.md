@@ -339,10 +339,14 @@ python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
 ## 流入元（過去7日）
 Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 
-## 広告（過去7日）
-- Instagram（ig/paid）：Xセッション / 新規X / 離脱率X% / 平均滞在X秒
-- Google（google/cpc）：Xセッション / 新規X / 離脱率X% / 平均滞在X秒
-※ 広告がない場合はこのセクションを省略
+## Instagram（過去7日）
+- 広告（ig/paid）：Xセッション / 新規X / 離脱率X% / 平均滞在X秒
+- プロフィール等（organic/referral）：Xセッション / 新規X / 離脱率X% / 平均滞在X秒
+※ データがない行は省略。Instagram流入が一切ない場合はセクションごと省略
+
+## Google広告（過去7日）
+- google/cpc：Xセッション / 新規X / 離脱率X% / 平均滞在X秒
+※ データがない場合はセクションごと省略
 
 ## 人気ページ Top5（昨日）
 - /path  X PV / Xユーザー

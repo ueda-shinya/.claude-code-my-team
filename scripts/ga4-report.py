@@ -108,6 +108,24 @@ r_ads = run({
     'limit': 10
 })
 
+# 3c. Instagram 自然流入（プロフィールリンク等、過去7日）
+r_ig_organic = run({
+    'dimensions': [{'name': 'sessionSource'}, {'name': 'sessionMedium'}],
+    'metrics': [
+        {'name': 'sessions'}, {'name': 'newUsers'},
+        {'name': 'bounceRate'}, {'name': 'averageSessionDuration'}
+    ],
+    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+    'dimensionFilter': {
+        'orGroup': {'expressions': [
+            {'filter': {'fieldName': 'sessionSource', 'stringFilter': {'matchType': 'CONTAINS', 'value': 'instagram'}}},
+            {'filter': {'fieldName': 'sessionSource', 'stringFilter': {'matchType': 'CONTAINS', 'value': 'l.instagram'}}},
+        ]}
+    },
+    'orderBys': [{'metric': {'metricName': 'sessions'}, 'desc': True}],
+    'limit': 10
+})
+
 # 4. 人気ページ Top5（昨日）
 r_pages = run({
     'dimensions': [{'name': 'pagePath'}],
@@ -211,3 +229,14 @@ for row in r_ads.get('rows', []):
     dur = float(row['metricValues'][3]['value'])
     key = f'{src}__{med}'.replace(' ', '_')
     print(f'AD_{key}: {s}|{n}|{br:.1f}|{dur:.0f}')
+
+# Instagram 自然流入（プロフィールリンク等）
+for row in r_ig_organic.get('rows', []):
+    src = row['dimensionValues'][0]['value']
+    med = row['dimensionValues'][1]['value']
+    s   = row['metricValues'][0]['value']
+    n   = row['metricValues'][1]['value']
+    br  = float(row['metricValues'][2]['value']) * 100
+    dur = float(row['metricValues'][3]['value'])
+    key = f'{src}__{med}'.replace(' ', '_').replace('.', '_')
+    print(f'IG_{key}: {s}|{n}|{br:.1f}|{dur:.0f}')
