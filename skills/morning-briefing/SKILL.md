@@ -354,6 +354,7 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 ## LP（lp-260319）状況（過去7日）
 - セッション：X / 離脱率：X% / 平均滞在：X秒 / CTAクリック：X回
 - モバイル離脱率：X%
+- 詳細レポート：[lp-260319_ga4-report_YYYYMMDD.md](clients/officeueda/reports/lp-260319_ga4-report_YYYYMMDD.md)（YYYYMMDD は今日の日付）
 ⚠️ 改善提案：（LP_ALERT があれば箇条書き。なければこの行を省略）
 
 ## YouTube ダイジェスト（最終更新: YYYY-MM-DD HH:MM）
