@@ -1,11 +1,39 @@
 # セッション引き継ぎ
 
+## 残件（アスカからの提案）
+
+1. **コトへの依頼テンプレートをCLAUDE.mdに組み込む**（コピーライティングガイドの9項目テンプレート）
+2. **コトとカイにコピーライティング基礎をagent-studyで学習させる**（`knowledge/copywriting/copywriting-basics-judgment-guide.md`）
+3. **Notion CRM再開前にスコープ記述書を1枚まとめる**（WBSガイドのテンプレート活用）
+
+---
+
 ## 完了済み（このセッションで実施）
 - `agents/sales-consultant.md`（タク）を新規作成 → **再起動で有効化**
 - `agents/marketing-planner.md`（レン）にマーケ知識ベースを追加
 - `skills/agent-study/SKILL.md` を新規作成
 - `knowledge/marketing/Marketing_Textbook_for_Beginners.md` に教科書を移動
 - `agents/sales-consultant.md` の agent-study マッピングへの追記は未実施（次回対応可）
+
+---
+
+## 作業中③: Notion顧客リスト管理の実装
+
+### 状況
+- 設計フェーズで一時停止中
+
+### 提案済みフィールド構成
+- 会社名 / 屋号（タイトル）
+- 担当者名、電話番号、メールアドレス
+- ステータス（見込み・商談中・成約・失注・既存）
+- 事業種別（Web制作・AI・その他）
+- 担当、最終連絡日、メモ、流入元
+
+### 再開時の確認事項
+1. フィールド構成の承認（追加・変更があれば）
+2. Notionアカウント・ワークスペース確認
+3. APIトークン（`secret_...`）の取得状況
+4. トークンが揃い次第、`~/.claude/scripts/notion-crm.py` を作成する
 
 ---
 

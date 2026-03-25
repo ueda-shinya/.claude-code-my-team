@@ -16,3 +16,6 @@
 
 ## knowledge
 - [knowledge/line-works-bot/implementation-notes.md](../knowledge/line-works-bot/implementation-notes.md) — LINE WORKS Bot 実装メモ（UUID形式のユーザーID・expires_in型・ngrok制限・署名検証）
+- [knowledge/analytics/ga4-bounce-exit-analysis.md](../knowledge/analytics/ga4-bounce-exit-analysis.md) — GA4 バウンス率・離脱数の公式定義・解釈レベル・4ステップ分析・原因仮説マトリクス・報告テンプレート
+- [knowledge/pm/wbs-scope-management.md](../knowledge/pm/wbs-scope-management.md) — WBS・スコープ管理・MoSCoW・依存関係4タイプ・変更管理プロセス（マルチエージェント運用向けPM実務）
+- [knowledge/copywriting/copywriting-basics-judgment-guide.md](../knowledge/copywriting/copywriting-basics-judgment-guide.md) — コピーライティング3大原則・ヘッドライン判断軸・PAS/AIDA・CTA設計・自己診断チェックリスト・コトへの依頼テンプレート
