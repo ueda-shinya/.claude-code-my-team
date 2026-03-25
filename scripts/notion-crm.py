@@ -7,6 +7,13 @@ Notion CRM - 顧客リスト管理スクリプト
   python3 notion-crm.py search <キーワード>          # 検索
   python3 notion-crm.py update <ページID>           # 対話形式で更新
   python3 notion-crm.py show <ページID>             # 詳細表示
+  python3 notion-crm.py issue-no                   # 管理No.を発行する
+
+【運用ルール】
+  - 顧客追加時に管理No.は発行しない
+  - 管理No.は見積書・請求書・領収書の発行が必要になったタイミングで発行する
+  - 発行は `issue-no` コマンドを使い、重複チェック済みの番号が自動採番される
+  - 採番順序: A→Z → AA→ZZ → AAA→ZZZ（最大18,278件）
 """
 
 import json
@@ -247,7 +254,7 @@ def cmd_list(token, db_id):
 
 def cmd_add(token, db_id):
     print("\n--- 顧客追加 ---")
-    auto_no = next_management_no(token, db_id)
+    print("  ※ 管理No.は見積書・請求書・領収書の発行時に発行します（ここでは不要）\n")
     data = {
         "会社名": prompt("会社名 / 屋号（必須）"),
         "担当者名": prompt("担当者名"),
@@ -260,7 +267,6 @@ def cmd_add(token, db_id):
         "流入元": prompt_choice("流入元", SOURCE_OPTIONS),
         "協力金率": prompt("協力金率（例: 10%）"),
         "メモ": prompt("メモ"),
-        "管理No.": prompt("管理No.", auto_no),
     }
     if not data["会社名"]:
         print("[ERROR] 会社名は必須です。")
@@ -270,7 +276,59 @@ def cmd_add(token, db_id):
         "parent": {"database_id": db_id},
         "properties": props,
     }, token=token)
-    print(f"\n追加しました: [{data['管理No.']}] {data['会社名']}")
+    print(f"\n追加しました: {data['会社名']}")
+
+
+def cmd_issue_no(token, db_id):
+    """管理No.を発行する（見積書・請求書・領収書の発行時に使用）"""
+    print("\n--- 管理No. 発行 ---")
+    keyword = prompt("会社名で検索")
+    if not keyword:
+        print("[ERROR] 会社名を入力してください。")
+        return
+
+    result = notion_request("POST", f"/databases/{db_id}/query", {
+        "filter": {"property": "会社名 / 屋号", "rich_text": {"contains": keyword}}
+    }, token=token)
+    pages = result.get("results", [])
+    if not pages:
+        print(f"「{keyword}」に一致する顧客が見つかりません。")
+        return
+
+    # 既に管理No.があるものを除外
+    candidates = []
+    for page in pages:
+        row = page_to_row(page)
+        candidates.append(row)
+
+    if len(candidates) == 1:
+        row = candidates[0]
+    else:
+        print(f"\n{len(candidates)} 件見つかりました：")
+        for i, row in enumerate(candidates, 1):
+            no = row["管理No."] or "（未発行）"
+            print(f"  {i}. [{no}] {row['会社名']}")
+        idx = input("  番号を選択: ").strip()
+        try:
+            row = candidates[int(idx) - 1]
+        except (ValueError, IndexError):
+            print("[ERROR] 不正な番号です。")
+            return
+
+    if row["管理No."]:
+        print(f"\nこの顧客の管理No.は既に発行済みです: {row['管理No.']}")
+        return
+
+    new_no = next_management_no(token, db_id)
+    confirm = input(f"\n  管理No. [{new_no}] を {row['会社名']} に発行しますか？ [y/N]: ").strip().lower()
+    if confirm != "y":
+        print("キャンセルしました。")
+        return
+
+    notion_request("PATCH", f"/pages/{row['id']}", {
+        "properties": {"管理No.": {"rich_text": [{"text": {"content": new_no}}]}}
+    }, token=token)
+    print(f"\n発行しました: [{new_no}] {row['会社名']}")
 
 
 def cmd_search(keyword, token, db_id):
@@ -390,6 +448,8 @@ def main():
             print("使い方: notion-crm.py update <ページID>")
             sys.exit(1)
         cmd_update(args[1], token, db_id)
+    elif cmd == "issue-no":
+        cmd_issue_no(token, db_id)
     else:
         print(f"[ERROR] 不明なコマンド: {cmd}")
         print(__doc__)
