@@ -13,6 +13,7 @@ import json
 import os
 import re
 import ssl
+import string
 import sys
 import urllib.request
 import urllib.error
@@ -39,6 +40,44 @@ def load_env():
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip().strip('"').strip("'")
     return env
+
+
+def next_management_no(token, db_id):
+    """現在の最大管理No.を取得し、次のIDを返す"""
+    result = notion_request_raw("POST", f"/databases/{db_id}/query", {}, token)
+    pages = result.get("results", [])
+    existing = set()
+    for page in pages:
+        items = page["properties"].get("管理No.", {}).get("rich_text", [])
+        code = "".join(i.get("plain_text", "") for i in items).strip()
+        if code:
+            existing.add(code)
+
+    # A→Z→AA→AZ→BA→ZZ→AAA... の順で次の未使用IDを返す
+    LETTERS = string.ascii_uppercase
+    for length in range(1, 5):
+        import itertools
+        for combo in itertools.product(LETTERS, repeat=length):
+            candidate = "".join(combo)
+            if candidate not in existing:
+                return candidate
+    raise RuntimeError("管理No.の上限に達しました")
+
+
+def notion_request_raw(method, path, data, token):
+    """グローバルHEADERSを使わず直接tokenを指定するバージョン（next_management_no用）"""
+    import ssl as _ssl
+    url = f"https://api.notion.com/v1{path}"
+    body = json.dumps(data).encode("utf-8") if data is not None else None
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+    }
+    req = urllib.request.Request(url, data=body, headers=headers, method=method)
+    ctx = _ssl.create_default_context()
+    with urllib.request.urlopen(req, context=ctx, timeout=30) as res:
+        return json.loads(res.read())
 
 
 def validate_page_id(pid):
@@ -119,6 +158,8 @@ def page_to_row(page):
         "担当": extract_text(p.get("担当")),
         "最終連絡日": extract_date(p.get("最終連絡日")),
         "流入元": extract_select(p.get("流入元")),
+        "協力金率": extract_text(p.get("協力金率")),
+        "管理No.": extract_text(p.get("管理No.")),
         "メモ": extract_text(p.get("メモ")),
     }
 
@@ -144,6 +185,10 @@ def build_properties(data):
         props["流入元"] = {"select": {"name": data["流入元"]}}
     if data.get("メモ"):
         props["メモ"] = {"rich_text": [{"text": {"content": data["メモ"]}}]}
+    if data.get("管理No."):
+        props["管理No."] = {"rich_text": [{"text": {"content": data["管理No."]}}]}
+    if data.get("協力金率"):
+        props["協力金率"] = {"rich_text": [{"text": {"content": data["協力金率"]}}]}
     return props
 
 
@@ -192,17 +237,17 @@ def cmd_list(token, db_id):
     if not pages:
         print("顧客データがありません。")
         return
-    print(f"\n{'ID':10} {'会社名':20} {'ステータス':8} {'事業種別':8} {'最終連絡日':12}")
-    print("-" * 65)
+    print(f"\n{'管理No.':6} {'会社名':22} {'ステータス':8} {'事業種別':8} {'最終連絡日':12}")
+    print("-" * 62)
     for page in pages:
         row = page_to_row(page)
-        short_id = row["id"].replace("-", "")[:8]
-        print(f"{short_id:10} {row['会社名'][:20]:20} {row['ステータス']:8} {row['事業種別']:8} {row['最終連絡日']:12}")
+        print(f"{row['管理No.']:6} {row['会社名'][:22]:22} {row['ステータス']:8} {row['事業種別']:8} {row['最終連絡日']:12}")
     print(f"\n合計 {len(pages)} 件")
 
 
 def cmd_add(token, db_id):
     print("\n--- 顧客追加 ---")
+    auto_no = next_management_no(token, db_id)
     data = {
         "会社名": prompt("会社名 / 屋号（必須）"),
         "担当者名": prompt("担当者名"),
@@ -213,7 +258,9 @@ def cmd_add(token, db_id):
         "担当": prompt("担当"),
         "最終連絡日": prompt_date("最終連絡日（YYYY-MM-DD）", datetime.today().strftime("%Y-%m-%d")),
         "流入元": prompt_choice("流入元", SOURCE_OPTIONS),
+        "協力金率": prompt("協力金率（例: 10%）"),
         "メモ": prompt("メモ"),
+        "管理No.": prompt("管理No.", auto_no),
     }
     if not data["会社名"]:
         print("[ERROR] 会社名は必須です。")
@@ -223,7 +270,7 @@ def cmd_add(token, db_id):
         "parent": {"database_id": db_id},
         "properties": props,
     }, token=token)
-    print(f"\n追加しました: {result['id']}")
+    print(f"\n追加しました: [{data['管理No.']}] {data['会社名']}")
 
 
 def cmd_search(keyword, token, db_id):
