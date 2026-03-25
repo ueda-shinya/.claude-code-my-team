@@ -147,7 +147,7 @@ if os.path.exists(digest_path):
 # APIキー読み込み
 env_path = os.path.expanduser('~/.claude/.env')
 api_key = ''
-with open(env_path) as f:
+with open(env_path, encoding='utf-8') as f:
     for line in f:
         if line.startswith('YOUTUBE_API_KEY='):
             api_key = line.strip().split('=', 1)[1]
@@ -172,7 +172,7 @@ queries = [
 ]
 
 # リスト集め・インフルエンサー系コンテンツの除外キーワード
-SPAM_KEYWORDS = ['公式LINE', 'LINE登録', '無料プレゼント', 'メルマガ', '公式ライン', 'プレゼント配布', '特典配布']
+SPAM_KEYWORDS = ['公式LINE', 'LINE登録', '無料プレゼント', 'メルマガ', '公式ライン', 'プレゼント配布', '特典配布', 'lmes.jp', 'lin.ee', 'utage-system.com']
 SPAM_CHANNELS = ['大学', 'スクール', '塾', 'アカデミー']
 
 results = []
