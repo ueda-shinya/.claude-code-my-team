@@ -6,6 +6,15 @@ type: project
 
 ## 保留中のタスク
 
+### freee × Claude Code 連携セットアップ
+- **内容**: freee無料トライアルを試してMCPで連携する
+  - マニュアル作成済み: `~/.claude/knowledge/freee-mcp/setup-guide.md`
+  - 手順: freeeトライアル登録 → アプリ作成（OAuth） → MCPサーバー追加
+  - 会計専用エージェントは不要と判断済み
+- **保留理由**: 時間があるときに試す
+- **登録日**: 2026-03-25
+- **対応**: シンヤさんが「試そう」と言ったタイミングで再開（「freee設定して」でOK）
+
 ### Telegram × Claude Code Channels のセットアップ
 - **内容**: Claude Code Channels（公式機能・v2.1.80+）でTelegramからClaude Codeに指示を送れるようにする
   - Bun（v1.3.11）・Claude Code（v2.1.81）は準備済み
