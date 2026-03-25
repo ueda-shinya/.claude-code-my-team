@@ -1,48 +1,42 @@
 # YouTube ダイジェスト
-最終更新: 2026-03-24T08:59:53.025654+09:00
+最終更新: 2026-03-25T22:13:58.332702+09:00
 
 ## AI関連
-- [2026年最新AI格付けTier表](https://www.youtube.com/watch?v=PmMioxw3pkQ)
-  - チャンネル：ゆい【SNSの裏ワザ攻略】 / 再生数：14,876
-  - 概要：ゆいです🧸📔  🎁 LINE登録者プレゼント🌸 AI×Instagramで収益化を始めるための 「最強プロンプト」を無料配布しています📖✨  無理なく始めたい方は、こちらからどうぞ👇 👉【プレゼントを
-- [【2026年最新】ChatGPT vs Gemini vs Claude 結局どれ使えばいい？60秒で解説](https://www.youtube.com/watch?v=dMVRT1WOl0A)
-  - チャンネル：澤村ｽﾍﾟﾝｻｰ / 再生数：2,077
-  - 概要：2026年最新AI比較！ChatGPT・Gemini・Claude、3大AIを60秒で徹底比較。 文章作成・コーディング・リサーチ…用途ごとに最適なAIは違います。初心者でもわかる使い分けを解説！  
-- [【神AI 7選】ChatGPTを超える？仕事が爆速になる最新ツールまとめ #shorts #時短術 #最新技術#chatgpt](https://www.youtube.com/watch?v=oxW4veN-LhI)
-  - チャンネル：れんSNS-labo / 再生数：982
-  - 概要：【AI初心者必見！ChatGPTを超える神ツール7選】 ​ぶっちゃけ、AI＝ChatGPTだと思ってませんか？ 今のAIは「文章」「検索」「画像」「動画」など、用途に合わせて使い分けるのが当たり前。 
-- [うちの子がミニチュアに！✨ #ミニチュア #gemini #画像生成ai](https://www.youtube.com/watch?v=2q-YQa9sHq4)
-  - チャンネル：🍀あずのお家で学べるAI🍀 / 再生数：2,453
-  - 概要：元限界保育士↪︎AIに出会い3ヶ月で月45達成して 念願の在宅ワーカーへ🏠✨  📣初心者でも分かりやすい 📣便利なAIツール発信  『期間限定』 【最新のAIツールまとめ】が欲しい方はプロフの概要にあ
-- [3/23(日)のAIニュース速報🌏📮※AI制作のニュース解説です](https://www.youtube.com/watch?v=58vCYb6cak8)
-  - チャンネル：世界のAI NEWS TODAY🌏📮 毎朝30秒で追いつく / 再生数：2,445
-  - 概要：AIの最新ニュースを毎朝30秒でお届けするアカウントです！⚡️💻  ① OpenClawが世界的バイラル — 無料OSSのAIエージェント登場（3/21報道） オープンソースのAIエージェント「Ope
-- [ついにドラクエにAIがやってくる！ドラクエ✖️Geminiで描く未来！ #AI #DX #DDF](https://www.youtube.com/watch?v=mWAzWHqa8ek)
-  - チャンネル：Digital Daily Flash / 再生数：883
-  - 概要：毎朝7:00、最新のAI・デジタル技術を1分で解説！ 今日のトピック：DQ10にGeiminiを搭載、リアルな会話を楽しめる！  💡 今日のポイント ・ドラクエにGeminiを搭載、リアルタイムで会話
-- [【別物級】NotebookLMスライドがここまで変わる！"ある工程"で資料レベルが格段に上がる【Google Workspace/Gemini】](https://www.youtube.com/watch?v=JLmzjootOvI)
-  - チャンネル：NI-WORK / 再生数：20,908
-  - 概要：「仕事に次の革新を」を基に生成AIやGoogle WorkspaceについてGoogle導入のプロと生成AIコンサルが対談で発信中  収録日：2025年2月15日 この動画は日本字幕ONでご覧いただけ
-- [【ChatGPTの最上位モデル・GPT−5.2Proを無料で使う方法】#chatgpt #aiプロンプト #ai動画](https://www.youtube.com/watch?v=LFrjBnDu1vo)
-  - チャンネル：haya【AI×SNS活用術】 / 再生数：1,483
-  - 概要：このAIの名前は、 その名も、Genspark AI！！ 👇🏻 ・GPT-5.2 Proが使える ・高性能AIチャット ・画像生成 ・動画生成 ・調査・要約 ・表作成 ・そして資料作成（AI Slid
-- [2026年3月23日: ポッドキャストアワード、Manusデスクトップ、Genspark LINE対応、Notionアプデ、イーロンマスクUHI、Cowork、ロボット](https://www.youtube.com/watch?v=ipIsMaWMr2s)
-  - チャンネル：ながらAI - usutaku&gomichan / 再生数：477
-  - 概要：毎週月曜日朝9時に配信。ゆる〜く、"ながら聞き"できる、生成AI関連トピックを主に取り上げる番組です。むずかしい話は(なるべく)ナシ！わかりやすさがウリです♪ 番組の感想、リクエストは #ながらAI 
-- [最新動画生成AIプラットフォームLitVideoの勢いが止まらない！Seedance 2.0 Kling 3.0 Sora 2 Nano Banana 2無双](https://www.youtube.com/watch?v=Vt7sF9LiGHM)
-  - チャンネル：オガワダン / 再生数：2,040
-  - 概要：🎁 視聴者限定：20無料クレジット獲得リンク 👉 https://www.litmedia.ai/ja/app/litvideo/home?utm_medium=video-c&site_initia
-- [【最新機能】3D生成AI「Hitem3D」の「セグメンテーション機能」を使ってみた！マルチカラー3Dプリントに役立つ色塗り分け自動化ツールの実態を実践解説！ #生成AI #3Dプリンター](https://www.youtube.com/watch?v=tHqx1o9v_vk)
-  - チャンネル：Age of 3DP / ウノケン【3Dプリンター】 / 再生数：1,973
-  - 概要：🖥️使用した3D生成AIツール「Hitem3D」【PR】 https://www.hitem3d.ai/?utm_source=koc_kol_YTB&utm_medium=sign_up&utm_c
+- [【知らないと損】Claude Codeで会社経営を行う方法とは？｜使い方・活用方法を徹底解説！](https://www.youtube.com/watch?v=rqdG7YnCK54)
+  - チャンネル：かいちのAI大学 / 再生数：29,692
+  - 概要：✅生成AI活用に役立つ無料プレゼント20点は公式LINE登録から✅ https://utage-system.com/line/open/Hq2briQSXmTz?mtid=IEfTqby7tmyk 
+- [Claude Codeで仕事が楽になるAI活用術10選＋a【実演あり】](https://www.youtube.com/watch?v=UMnA5dFlSDQ)
+  - チャンネル：KEITO【AI&WEB ch】 / 再生数：20,872
+  - 概要：実際に私が活用してるClaude Codeの事例10パターンを実演解説します。その他にもSNSで見つけた事例を色々と紹介。  以下のコミュニティでもClaudeについてのセミナーを頻繁に行なっています
+- [【カンタン解説】今トレンド生成AI「Claude」はこの使い方だけマスターしてや！Claude Codeが苦手な人向けに基礎解説する](https://www.youtube.com/watch?v=rWCwc60pXW4)
+  - チャンネル：AI仙人 【AI歴10年・ガチADHD男】 / 再生数：18,886
+  - 概要：🎭生成AIをネイティブ級に使いこなす裏技はここをクリック  https://s.lmes.jp/landing-qr/2008237726-YN0qB0Ll?uLand=w4yVlG  AI仙人ライン
+- [【2026年最新】ChatGPT vs Gemini vs Claude｜全部課金した医師の結論](https://www.youtube.com/watch?v=M1h9J4ETGbg)
+  - チャンネル：医ちゃんねる / 再生数：607
+  - 概要：ChatGPT・Gemini・Claude、全部課金して使い続けた医師が「正直な結論」を話します。  性能テスト・料金比較・コーディング力・実体験5選――2026年3月時点の最新情報でまとめました。 
+- [【プロが厳選】2026年3月最新AIランキング！ChatGPT、Gemini、Claude…結局どれに課金すべき？](https://www.youtube.com/watch?v=DDiP8N130Qw)
+  - チャンネル：AI時代の羅針盤 門脇明日香 / 再生数：73
+  - 概要：▼動画概要 「AIに仕事を奪われる」は嘘。本当にあなたの仕事を奪うのは「AIを使いこなしている人間」です。 2026年3月現在、無数にあるAIツールの中から「結局どれに課金すればいいの？」と迷っている
+- [Googleマップの大規模アップデート！AI連携で劇的進化](https://www.youtube.com/watch?v=i_4BC2Evang)
+  - チャンネル：ITツールの使い方 / 再生数：15,496
+  - 概要：Google マップが Gemini と連携し、過去最大級のアップデート！ AI がクチコミを要約したり、具体的な質問に答えたりと、もはや単なる「地図アプリ」ではありません。  本動画では、米国で話題
+- [AIだけでツムツムを作ってみた](https://www.youtube.com/watch?v=gKJH2WKvw5I)
+  - チャンネル：Made in AI. / 再生数：6,973
+  - 概要：▼ チャプター 0:00 イントロ 0:05 ChatGPTの挑戦 2:06 Geminiの挑戦 3:45 Geminiで「スキル」を再現 4:34 最終結果：勝者はどっち？ 4:54 エンディング 
+- [【Googleの無双AI】NotebookLM完全ガイド2026年3月最新版！ この動画1本で使い方＆全機能を完全網羅！](https://www.youtube.com/watch?v=sMWNHTLqxKo)
+  - チャンネル：AI大学【AI&ChatGPT最新情報】 / 再生数：2,048
+  - 概要：◆動画の説明 PDFやwebサイトなどの各種データから 仮想のノートブック(以下ノート)を生成し ノートについてAIチャット経由で質問したり プレゼン資料や解説動画に変換できる Googleの無料で使
+- [【一人社長】生成AI自動化で年商4000万｜Gensparkを使い倒して業務を9割削減した全手法](https://www.youtube.com/watch?v=R54Owz8V01U)
+  - チャンネル：RKJ VIDEO 【イケている動画を作りたいなら】 / 再生数：1,411
+  - 概要：オールインワンのAIワークスペース「Genspark」が、AI Workspace 3.0をリリース。サービス開始からわずか11か月で、ARR（年間経常収益）2億ドルという驚異的な成長を遂げました。 
+- [【完全自動化】Gensparkの新機能「AI Workspace 3.0」の使い方を徹底解説！ターミナル不要でAI従業員を雇う時代に！](https://www.youtube.com/watch?v=oL7ZhuJ5MWU)
+  - チャンネル：ITとAIのルーティンラボ / 再生数：685
+  - 概要：▼ Gensparkを使ってみる@GensparkProduct  https://bit.ly/4lLwE77  今回は、Genspark（ジェンスパーク）に実装された超特大アップデート「AI Wo
+- [【無料】Google AI Studio Build超進化！自分専用ツールが誰でも作れる時代に【企業利用の設定方法も解説】](https://www.youtube.com/watch?v=UuZ3g5REF9U)
+  - チャンネル：いけともch / 再生数：9,085
+  - 概要：▼初心者でも2時間でできる！AIツールやエージェントスキルなどのイベント https://luma.com/user/usr-caLu98fa5GLuoT7  ▼全イベント参加者のリアルなアンケート結
 
 ## WordPress関連
-- [【明日開始！】WordPressの不安解消したい人へ](https://www.youtube.com/watch?v=Nx51oB9vJ_c)
-  - チャンネル：Naomi Suzuki (tofulab.app) / 再生数：1,253
-  - 概要：👉WordPress保守基礎講座: https://academy.tofulab.app/hkc/?m=yt&v=Nx51oB9vJ_c&t=d  ▼ナオミのウェブ制作コミュニティ『TOFUラボ』！
-- [Elementor 4.0もうすぐ登場！新ウィジェット&新機能紹介](https://www.youtube.com/watch?v=OW5xxs-E4PM)
-  - チャンネル：Naomi Suzuki (tofulab.app) / 再生数：489
-  - 概要：WordPress保守基礎講座 👉 https://academy.tofulab.app/hkc/?m=yt&v=live20260320&t=d  ▼メルマガ: https://nocodeweb
-- [WordPress 7.0を試してみよう](https://www.youtube.com/watch?v=QxQVTMiLRgY)
-  - チャンネル：Aki Hamano / 再生数：392
-  - 概要：【概要】  2026年4月9日に、WordPress 7.0のリリースが予定されています。 イベント当日の時点では、リリース候補版がリリースされている段階の予定ですが、WordPress7.0の新機能
+- [【初投稿】Wordpressに関する機能１分解説！初めはタイトル変更について#ゆっくり解説 #wordpress](https://www.youtube.com/watch?v=jeAMIQuSFUQ)
+  - チャンネル：Wordpress1分解説ch / 再生数：1,970
+  - 概要：
