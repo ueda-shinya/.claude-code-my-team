@@ -1,5 +1,14 @@
 # セッション引き継ぎ
 
+## 完了済み（このセッションで実施）
+- `agents/sales-consultant.md`（タク）を新規作成 → **再起動で有効化**
+- `agents/marketing-planner.md`（レン）にマーケ知識ベースを追加
+- `skills/agent-study/SKILL.md` を新規作成
+- `knowledge/marketing/Marketing_Textbook_for_Beginners.md` に教科書を移動
+- `agents/sales-consultant.md` の agent-study マッピングへの追記は未実施（次回対応可）
+
+---
+
 ## 作業中①: メール自動化 Phase 1（日程確定 → Googleカレンダー登録）
 
 ### 状況
