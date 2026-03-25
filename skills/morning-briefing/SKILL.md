@@ -105,12 +105,12 @@ for e in items:
 `~/.claude/youtube-digest.md` の最終更新日時を確認し、**24時間以上経過している場合（またはファイルが存在しない場合）のみ**、以下を実行してください。
 
 **検索キーワード（各最大3件）：**
-- `Claude Code`
-- `ChatGPT 最新`
-- `Gemini AI 最新`
+- `Claude AI ニュース`
+- `ChatGPT 新機能 2026`
+- `Gemini 新機能 アップデート`
 - `NotebookLM`
 - `Genspark`
-- `AI ツール 最新`
+- `AI 業界 ニュース`
 - `WordPress`
 - `ワードプレス`
 
@@ -161,15 +161,19 @@ if os.path.exists(seen_path):
 published_after = (now - timedelta(hours=72)).strftime('%Y-%m-%dT%H:%M:%S+09:00')
 
 queries = [
-    ('Claude Code', 'AI関連'),
-    ('ChatGPT 最新', 'AI関連'),
-    ('Gemini AI 最新', 'AI関連'),
+    ('Claude AI ニュース', 'AI関連'),
+    ('ChatGPT 新機能 2026', 'AI関連'),
+    ('Gemini 新機能 アップデート', 'AI関連'),
     ('NotebookLM', 'AI関連'),
     ('Genspark', 'AI関連'),
-    ('AI ツール 最新', 'AI関連'),
+    ('AI 業界 ニュース', 'AI関連'),
     ('WordPress', 'WordPress関連'),
     ('ワードプレス', 'WordPress関連'),
 ]
+
+# リスト集め・インフルエンサー系コンテンツの除外キーワード
+SPAM_KEYWORDS = ['公式LINE', 'LINE登録', '無料プレゼント', 'メルマガ', '公式ライン', 'プレゼント配布', '特典配布']
+SPAM_CHANNELS = ['大学', 'スクール', '塾', 'アカデミー']
 
 results = []
 new_ids = []
@@ -225,7 +229,13 @@ for query, category in queries:
         view_count = int(item.get('statistics', {}).get('viewCount', 0))
         title = snippet['title']
         channel = snippet['channelTitle']
-        desc = snippet['description'][:100].replace('\n', ' ')
+        full_desc = snippet['description']
+        desc = full_desc[:100].replace('\n', ' ')
+        # リスト集め・インフルエンサー系コンテンツを除外
+        if any(kw in full_desc for kw in SPAM_KEYWORDS):
+            continue
+        if any(kw in channel for kw in SPAM_CHANNELS):
+            continue
         videos.append({'id': vid, 'views': view_count, 'title': title, 'channel': channel, 'desc': desc, 'query': query, 'category': category})
 
     videos.sort(key=lambda x: x['views'], reverse=True)
