@@ -263,3 +263,95 @@ for row in r_lp_daily.get('rows', []):
     s   = row['metricValues'][0]['value']
     key = f'{src}__{med}'.replace(' ', '_').replace('.', '_')
     print(f'LP_DAILY_{d}_{key}: {s}')
+
+# --- Notion 書き込み ---
+try:
+    import ssl as _ssl
+    from datetime import datetime, timezone, timedelta
+
+    _env_path = os.path.expanduser('~/.claude/.env')
+    _env = {}
+    with open(_env_path, encoding='utf-8') as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith('#') and '=' in _line:
+                _k, _v = _line.split('=', 1)
+                _env[_k.strip()] = _v.strip().strip('"').strip("'")
+
+    _notion_token = _env.get('NOTION_API_TOKEN', '')
+    _ga4_db_id    = _env.get('NOTION_GA4_DB_ID', '')
+
+    if _notion_token and _ga4_db_id:
+        _jst = timezone(timedelta(hours=9))
+        _today = datetime.now(_jst).strftime('%Y-%m-%d')
+
+        # 既存レコード確認（同日の重複を避ける）
+        _ctx = _ssl.create_default_context()
+        _check_body = json.dumps({
+            'filter': {'property': '日付', 'title': {'equals': _today}}
+        }).encode()
+        _headers = {
+            'Authorization': f'Bearer {_notion_token}',
+            'Notion-Version': '2022-06-28',
+            'Content-Type': 'application/json',
+        }
+        _check_req = urllib.request.Request(
+            f'https://api.notion.com/v1/databases/{_ga4_db_id}/query',
+            data=_check_body, headers=_headers, method='POST'
+        )
+        with urllib.request.urlopen(_check_req, context=_ctx) as _res:
+            _existing = json.loads(_res.read()).get('results', [])
+
+        # 流入元テキスト（上位5件）
+        _sources = []
+        for _row in r_source.get('rows', []):
+            _ch = _row['dimensionValues'][0]['value']
+            _s  = _row['metricValues'][0]['value']
+            _sources.append(f'{_ch}: {_s}')
+        _source_text = ' / '.join(_sources)
+
+        _props = {
+            '日付':            {'title': [{'text': {'content': _today}}]},
+            'セッション':      {'number': int(m[0]['value'])},
+            'ユーザー':        {'number': int(m[1]['value'])},
+            '新規ユーザー':    {'number': int(m[2]['value'])},
+            '離脱率%':         {'number': round(bounce, 1)},
+            '問い合わせPV':    {'number': int(get_metric(r_contact_yd, 0, 0))},
+            'LPセッション':    {'number': int(lp_m[0]['value'])},
+            'LP離脱率%':       {'number': round(lp_bounce, 1)},
+            'LP平均滞在秒':    {'number': round(lp_dur, 0)},
+            'LPCTAクリック':   {'number': int(get_metric(r_lp_cta, 0, 0))},
+            '流入元':          {'rich_text': [{'text': {'content': _source_text}}]},
+        }
+
+        # LP モバイル離脱率
+        for _row in r_lp_device.get('rows', []):
+            if _row['dimensionValues'][0]['value'] == 'mobile':
+                _mb = float(_row['metricValues'][1]['value']) * 100
+                _props['LPモバイル離脱率%'] = {'number': round(_mb, 1)}
+
+        if _existing:
+            # 既存レコードを上書き
+            _page_id = _existing[0]['id']
+            _req = urllib.request.Request(
+                f'https://api.notion.com/v1/pages/{_page_id}',
+                data=json.dumps({'properties': _props}, ensure_ascii=False).encode('utf-8'),
+                headers=_headers, method='PATCH'
+            )
+        else:
+            # 新規作成
+            _req = urllib.request.Request(
+                'https://api.notion.com/v1/pages',
+                data=json.dumps({
+                    'parent': {'database_id': _ga4_db_id},
+                    'properties': _props
+                }, ensure_ascii=False).encode('utf-8'),
+                headers=_headers, method='POST'
+            )
+        with urllib.request.urlopen(_req, context=_ctx) as _res:
+            _res.read()
+        print('NOTION_GA4_PUSH: OK')
+    else:
+        print('NOTION_GA4_PUSH: SKIP (token or db_id not set)')
+except Exception as _e:
+    print(f'NOTION_GA4_PUSH: ERROR ({_e})')
