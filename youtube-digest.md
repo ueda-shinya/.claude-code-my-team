@@ -1,22 +1,21 @@
 # YouTube ダイジェスト
-最終更新: 2026-03-26T08:07:49.420721+09:00
+最終更新: 2026-03-27T08:21:43.278763+09:00
 
 ## AI関連
-- [【カンタン解説】今トレンド生成AI「Claude」はこの使い方だけマスターしてや！Claude Codeが苦手な人向けに基礎解説する](https://www.youtube.com/watch?v=rWCwc60pXW4)
-  - チャンネル：AI仙人 【AI歴10年・ガチADHD男】 / 再生数：22,670
-  - 概要：🎭生成AIをネイティブ級に使いこなす裏技はここをクリック  https://s.lmes.jp/landing-qr/2008237726-YN0qB0Ll?uLand=w4yVlG  AI仙人ライン
-- [Googleマップの大規模アップデート！AI連携で劇的進化](https://www.youtube.com/watch?v=i_4BC2Evang)
-  - チャンネル：ITツールの使い方 / 再生数：29,306
-  - 概要：Google マップが Gemini と連携し、過去最大級のアップデート！ AI がクチコミを要約したり、具体的な質問に答えたりと、もはや単なる「地図アプリ」ではありません。  本動画では、米国で話題
-- [【教師のためのNotebookLM活用術】校務・準備・授業を劇的に変える１２のアイデア](https://www.youtube.com/watch?v=0eTK4U9tVqs)
-  - チャンネル：小学校教師のための授業・学級コンサル・クッチャンねる / 再生数：5,631
-  - 概要：NotebookLM 活用 教員の可能性を知っていますか？  NotebookLM 活用 教員の実践は、校務効率化にも授業改善にも大きな力を発揮します。 この動画では、GoogleのNotebookL
-- [【完全版】凄すぎワロタ！iPad miniの無料で使えるおすすめAIアプリ15選・2026版/ Gemini/NotebookLM](https://www.youtube.com/watch?v=-pcluv9MIzs)
-  - チャンネル：THE オトウサンノヒミツキチ / お父さんの秘密基地  / 再生数：2,256
-  - 概要：今回は、iPadを仕事のメインツールとして活用するために、無料で始められて実務で本当に使えるAIアプリを15個厳選しました。「結局どれを使えばいいの？」と迷わないように、「汎用か特化か」「インプットか
-- [【一人社長】生成AI自動化で年商4000万｜Gensparkを使い倒して業務を9割削減した全手法](https://www.youtube.com/watch?v=R54Owz8V01U)
-  - チャンネル：RKJ VIDEO 【イケている動画を作りたいなら】 / 再生数：3,936
-  - 概要：オールインワンのAIワークスペース「Genspark」が、AI Workspace 3.0をリリース。サービス開始からわずか11か月で、ARR（年間経常収益）2億ドルという驚異的な成長を遂げました。 
-- [2026年3月23日: ポッドキャストアワード、Manusデスクトップ、Genspark LINE対応、Notionアプデ、イーロンマスクUHI、Cowork、ロボット](https://www.youtube.com/watch?v=ipIsMaWMr2s)
-  - チャンネル：ながらAI - usutaku&gomichan / 再生数：710
-  - 概要：毎週月曜日朝9時に配信。ゆる〜く、"ながら聞き"できる、生成AI関連トピックを主に取り上げる番組です。むずかしい話は(なるべく)ナシ！わかりやすさがウリです♪ 番組の感想、リクエストは #ながらAI 
+- [AI テクノロジーニュース: 2026年3月26日木曜日 11:07 #QixNewsAI](https://www.youtube.com/watch?v=8WChEWQ8FCk)
+  - チャンネル：QixNews クイッククリアニュース / 再生数：0
+  - 概要：🎯 AI テクノロジーニュース厳選  📺 このエピソードには 12 個の重要なテクノロジーニュースが含まれています  ⏰ タイムライン:  00:00 - ChatGPT新機能「ライブラリ」登場！ファ
+- [【新機能】iPad OS26.4 最新アップデートをわかりやすく解説](https://www.youtube.com/watch?v=GrGuAhy5kFM)
+  - チャンネル：あっちゃん教えてiPad / 再生数：3,006
+  - 概要：▼iPadOS26がリリース！ 今回は容量がとても大きいので、ストレージと時間の確保してから、アップデートを行ってください🙏  📝目次 00:00 今回の動画について 00:47 ❶Safari：コン
+- [仕事を最大限効率化するアイテム「Genspark 」の紹介です！](https://www.youtube.com/watch?v=tyE1IHGFaro)
+  - チャンネル：ゆっこロードショー【おすすめ映画紹介】 / 再生数：2,314
+  - 概要：#PR  仕事革命！あなたの時間を最大限効率化できる従業員として 「Genspark」を紹介！@genspark_ai ▼ダウンロードはこちらから https://www.genspark.ai/?u
+- [【比較】Manus AI vs Gensparkどっちが優秀？](https://www.youtube.com/watch?v=euBluZZN7tw)
+  - チャンネル：中本怜男　Nakamoto Reo / 再生数：775
+  - 概要：最近話題のAIエージェント Manus AI と Gensparkを比較しました。  同じAIエージェントでも 得意分野はかなり違います。  ---  [ Manus AI ] 作業特化AI  条件を
+
+## WordPress関連
+- [Claude で WordPress まわりの作業を効率化しました！雑談](https://www.youtube.com/watch?v=8WuXzblOlqM)
+  - チャンネル：AnimaGate, Inc. / 再生数：110
+  - 概要：ウェブに関する話題全般、ワードプレステーマ Nishiki Pro/Hakoniwa など株式会社アニマゲートが扱う製品に関する情報をライブ配信。  質問やご意見など、コメントやチャット大歓迎です！ 
