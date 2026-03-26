@@ -1,0 +1,901 @@
+/* ============================================================
+   officeueda LP 2026-03-26 — style.css
+   デザイントークンは :root に集約
+   ブレイクポイント: SP(~767px) / TB(768px~1023px) / PC(1024px~)
+   ============================================================ */
+
+/* ---------- デザイントークン ---------- */
+:root {
+  --color-main:     #0068b7;
+  --color-accent:   #ff6b35;
+  --color-bg:       #ebffff;
+  --color-dark:     #003d6e;
+  --color-white:    #ffffff;
+  --color-text:     #333333;
+  --color-text-sub: #555555;
+  --color-star:     #dd9933;
+  --color-line:     #06c755;
+
+  --font-family: 'Noto Sans JP', sans-serif;
+  --fs-h1:   28px;
+  --fs-h2:   22px;
+  --fs-h3:   18px;
+  --fs-body: 16px;
+  --fs-sm:   14px;
+  --fs-num:  48px;
+  --line-height-body:    1.8;
+  --line-height-heading: 1.4;
+
+  --bp-tb: 768px;
+  --bp-pc: 1024px;
+  --inner-max:        960px;
+  --inner-padding-sp: 20px;
+  --inner-padding-pc: 40px;
+
+  --section-pt-sp: 60px;
+  --section-pb-sp: 60px;
+  --section-pt-pc: 80px;
+  --section-pb-pc: 80px;
+  --card-padding:  24px;
+  --gap-grid:      24px;
+
+  --transition-base: 0.3s ease;
+  --transition-btn:  0.25s ease;
+}
+
+/* ---------- リセット & ベース ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.lp-body {
+  font-family: var(--font-family);
+  font-size: var(--fs-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+  background: var(--color-white);
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+
+/* ---------- スクロールアニメーション ---------- */
+.lp-animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.lp-animate.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- レイアウト ---------- */
+.lp-section {
+  padding: var(--section-pt-pc) var(--inner-padding-pc);
+}
+.lp-section--light { background: var(--color-bg); }
+.lp-section--white { background: var(--color-white); }
+.lp-section--dark  { background: var(--color-main); color: var(--color-white); }
+
+.lp-inner {
+  max-width: var(--inner-max);
+  margin: 0 auto;
+}
+
+/* ---------- タイポグラフィ ---------- */
+.lp-body h1, .lp-body h2, .lp-body h3 {
+  color: var(--color-main);
+  line-height: var(--line-height-heading);
+  font-weight: 900;
+}
+.lp-section--dark h1,
+.lp-section--dark h2,
+.lp-section--dark h3 { color: var(--color-white); }
+
+.lp-h1 { font-size: clamp(26px, 4vw, 48px); }
+.lp-h2 { font-size: clamp(22px, 3vw, 32px); margin-bottom: 16px; }
+.lp-h3 { font-size: clamp(16px, 2.2vw, 20px); margin-bottom: 10px; }
+
+.lp-lead {
+  font-size: clamp(16px, 2vw, 18px);
+  color: var(--color-text-sub);
+  margin-bottom: 40px;
+}
+.lp-section--dark .lp-lead { color: rgba(255,255,255,.88); }
+
+/* ---------- ボタン共通 ---------- */
+.lp-btn {
+  display: inline-block;
+  background: var(--color-star);
+  color: var(--color-white);
+  font-size: 17px;
+  font-weight: bold;
+  padding: 18px 44px;
+  border-radius: 50px;
+  text-decoration: none;
+  text-align: center;
+  letter-spacing: .06em;
+  transition: opacity var(--transition-btn), transform var(--transition-btn);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 16px rgba(221,153,51,.35);
+  white-space: nowrap;
+}
+.lp-btn:hover { opacity: .88; transform: translateY(-2px); }
+.lp-btn:active { transform: translateY(0); }
+
+.lp-btn--white {
+  background: var(--color-white);
+  color: var(--color-main);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
+}
+.lp-btn--white:hover { opacity: .92; }
+
+.lp-btn-wrap { text-align: center; margin-top: 36px; }
+
+/* LINEボタン */
+.lp-btn-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-line);
+  color: var(--color-white);
+  font-size: 16px;
+  font-weight: bold;
+  padding: 14px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: opacity var(--transition-btn);
+  white-space: nowrap;
+}
+.lp-btn-line:hover { opacity: .85; }
+.lp-btn-line--lg {
+  font-size: 17px;
+  padding: 18px 40px;
+}
+
+/* マイクロコピー（CTA内） */
+.lp-cta__micro {
+  font-size: 13px;
+  opacity: .8;
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* ---------- グリッド ---------- */
+.lp-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-grid);
+  margin-top: 40px;
+}
+.lp-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  margin-top: 40px;
+  align-items: start;
+}
+.lp-grid-2--center { align-items: center; }
+
+/* ---------- カード ---------- */
+.lp-card {
+  background: var(--color-white);
+  border-radius: 14px;
+  padding: 28px 24px;
+  box-shadow: 0 2px 16px rgba(0,104,183,.08);
+}
+.lp-section--light .lp-card { background: var(--color-white); }
+.lp-section--white .lp-card {
+  background: #f0f9ff;
+  border: 1px solid #c8e6ff;
+}
+
+/* ---------- アイコン（選ばれる理由等） ---------- */
+.lp-card__icon {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  margin: 0 auto 16px;
+}
+
+/* ---------- タグバッジ ---------- */
+.lp-badge {
+  display: inline-block;
+  font-size: 12px;
+  background: #e8f4ff;
+  color: var(--color-main);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-weight: bold;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+
+/* ============================================================
+   セクション別スタイル
+   ============================================================ */
+
+/* ── セクション1: FV ── */
+.lp-fv {
+  position: relative;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  background: url('images/fv-bg.webp') center center / cover no-repeat;
+  padding: 80px 24px;
+}
+.lp-fv__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(235,255,255,.75);
+}
+.lp-fv__inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--inner-max);
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+.lp-fv__text { flex: 1; }
+.lp-fv__catch {
+  font-size: clamp(28px, 4.5vw, 52px);
+  color: var(--color-main);
+  font-weight: 900;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+.lp-fv__sub {
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--color-text);
+  margin-bottom: 36px;
+  line-height: 1.7;
+}
+.lp-fv__catch-area {
+  font-size: .75em;
+  font-weight: 700;
+  display: block;
+  margin-top: 8px;
+}
+.lp-fv__btn-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+.lp-fv__photo {
+  flex: 0 0 300px;
+  text-align: center;
+}
+.lp-fv__photo img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 16px;
+  box-shadow: 0 6px 32px rgba(0,104,183,.18);
+  margin: 0 auto;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+}
+
+/* ── セクション2: 数字バー ── */
+.lp-numbers { padding: 56px 24px; }
+.lp-numbers__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+.lp-number-item {
+  text-align: center;
+  padding: 24px 16px;
+}
+.lp-number-item + .lp-number-item {
+  border-left: 1px solid #d0eaff;
+}
+.lp-number-item__num {
+  font-size: clamp(44px, 6vw, 64px);
+  font-weight: 900;
+  color: var(--color-main);
+  line-height: 1;
+}
+.lp-number-item__num--star {
+  color: var(--color-star);
+  font-size: clamp(36px, 5vw, 56px);
+}
+.lp-number-item__unit {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--color-main);
+  margin-top: 6px;
+}
+.lp-number-item__unit--star { color: var(--color-star); }
+.lp-number-item__label {
+  font-size: 14px;
+  color: #777;
+  margin-top: 10px;
+}
+
+/* ── セクション3: FV直下CTA ── */
+.lp-cta-top { padding: 52px 24px; }
+.lp-cta-top__inner { text-align: center; }
+.lp-cta-top p {
+  font-size: clamp(16px, 2vw, 18px);
+  margin-bottom: 28px;
+  line-height: 2;
+}
+.lp-cta-top__btn-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ── セクション4: 課題提起 ── */
+.lp-troubles__list {
+  list-style: none;
+  max-width: 680px;
+  margin: 36px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.lp-troubles__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--color-white);
+  padding: 18px 22px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,104,183,.06);
+  font-size: 16px;
+}
+.lp-troubles__item::before {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  background-color: var(--color-main);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* ── セクション5: 選ばれる理由 ── */
+.lp-reasons .lp-card { text-align: center; }
+.lp-reasons .lp-h3 { text-align: center; }
+.lp-reasons .lp-card p {
+  font-size: 15px;
+  color: var(--color-text-sub);
+  margin-top: 12px;
+  text-align: left;
+}
+
+/* Before/After ブロック */
+.lp-reasons__result {
+  max-width: 600px;
+  margin: 40px auto 0;
+  text-align: center;
+}
+.lp-reasons__result-lead {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--color-main);
+  margin-bottom: 14px;
+}
+
+/* ── 実績ハイライトボックス（理由・実績共通） ── */
+.lp-works__result {
+  background: var(--color-bg);
+  border-left: 4px solid var(--color-main);
+  border-radius: 6px;
+  padding: 14px 18px;
+}
+.lp-works__result-item {
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 1.7;
+  margin: 0;
+}
+.lp-works__result-item strong {
+  color: var(--color-main);
+  font-size: 17px;
+}
+
+/* ── セクション6: プロフィール ── */
+.lp-profile__photo img {
+  width: 100%;
+  max-width: 360px;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,104,183,.12);
+  margin: 0 auto;
+}
+.lp-profile__text { padding: 8px 0; }
+.lp-profile__text p { color: #444; }
+.lp-profile__text p + p { margin-top: 14px; }
+
+/* ── セクション7: 中間CTA ── */
+.lp-cta-mid { padding: 72px 24px; text-align: center; }
+.lp-cta-mid h2 { margin-bottom: 18px; }
+.lp-cta-mid p {
+  font-size: 17px;
+  opacity: .9;
+  margin-bottom: 32px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.lp-cta-mid__btn-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ── セクション8: サービス一覧 ── */
+.lp-services .lp-card {
+  padding: 0;
+  overflow: hidden;
+}
+.lp-service-card__img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 14px 14px 0 0;
+  display: block;
+  margin: 0;
+}
+.lp-service-card__body {
+  padding: 20px 20px 22px;
+}
+.lp-service-card__body h3 { margin-bottom: 8px; }
+.lp-services .lp-card p {
+  font-size: 14px;
+  color: var(--color-text-sub);
+  margin-top: 8px;
+}
+.lp-service-emergency {
+  max-width: 360px;
+  margin: 24px auto 0;
+}
+.lp-service-emergency .lp-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ── セクション9: サービス後CTA（新規） ── */
+.lp-cta-services { padding: 60px 24px; }
+.lp-cta-services__inner { text-align: center; }
+.lp-cta-services__lead {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.9;
+  margin-bottom: 32px;
+  opacity: .95;
+}
+.lp-cta-services__btn-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ── セクション10: 制作実績 ── */
+.lp-works__card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.lp-works__badge-wrap { margin-bottom: 12px; }
+.lp-works__role {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+.lp-works__card p { font-size: 15px; color: var(--color-text-sub); margin-top: 10px; }
+.lp-works__card .lp-btn { font-size: 14px; padding: 11px 24px; margin-top: 20px; }
+
+/* 対応業種カード */
+.lp-works__genres {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 28px;
+}
+.lp-works__genres h3 { margin-bottom: 16px; }
+.lp-works__genres .lp-works__badge-wrap { margin-bottom: 20px; }
+.lp-works__genres .lp-works__result { margin-bottom: 20px; }
+.lp-works__genres .lp-btn {
+  align-self: flex-start;
+  font-size: 14px;
+  padding: 12px 28px;
+}
+
+/* ── セクション11: お客様の声 ── */
+.lp-reviews__widget { margin-top: 36px; }
+.lp-reviews__link-wrap { text-align: center; margin-top: 28px; }
+.lp-reviews__link {
+  color: var(--color-main);
+  font-weight: bold;
+  font-size: 15px;
+  text-decoration: underline;
+}
+.lp-reviews__link:hover { opacity: .75; }
+
+/* ── セクション12: 制作フロー ── */
+.lp-flow__steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-top: 48px;
+  position: relative;
+}
+.lp-flow__steps::before {
+  content: "";
+  position: absolute;
+  top: 36px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: #c8e6ff;
+  z-index: 0;
+}
+.lp-flow__step {
+  text-align: center;
+  padding: 0 12px;
+  position: relative;
+  z-index: 1;
+}
+.lp-flow__num {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-main);
+  color: var(--color-white);
+  font-size: 22px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 14px rgba(0,104,183,.25);
+}
+.lp-flow__step h3 {
+  font-size: 15px;
+  color: var(--color-main);
+  margin-bottom: 8px;
+}
+.lp-flow__step p {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* ── セクション13: FAQ ── */
+.lp-faq__list {
+  max-width: 760px;
+  margin: 40px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lp-faq__item {
+  background: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,104,183,.06);
+  overflow: hidden;
+}
+.lp-faq__item summary {
+  padding: 20px 24px;
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--color-main);
+  font-size: 16px;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  user-select: none;
+}
+.lp-faq__item summary::-webkit-details-marker { display: none; }
+.lp-faq__item summary::after {
+  content: "＋";
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--color-main);
+  flex-shrink: 0;
+  transition: transform .2s;
+}
+.lp-faq__item[open] summary::after { content: "－"; }
+.lp-faq__answer {
+  padding: 0 24px 20px;
+  color: var(--color-text-sub);
+  font-size: 15px;
+  border-top: 1px solid #d0eaff;
+}
+.lp-faq__answer p { margin-top: 14px; }
+
+/* ── セクション14: フォームCTA ── */
+.lp-form-section { padding: 88px 24px; }
+.lp-form-section h2 {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: clamp(24px, 3.5vw, 38px);
+}
+.lp-form-lead {
+  text-align: center;
+  font-size: 17px;
+  opacity: .92;
+  margin-bottom: 40px;
+  line-height: 2;
+}
+
+/* LINE優先ブロック（上部） */
+.lp-form-line--top {
+  max-width: 500px;
+  margin: 0 auto 32px;
+  text-align: center;
+  background: rgba(255,255,255,.1);
+  border-radius: 14px;
+  padding: 28px 24px;
+  border: 1px solid rgba(255,255,255,.25);
+}
+.lp-form-line__heading {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--color-white);
+  margin-bottom: 16px;
+}
+.lp-form-line__micro {
+  font-size: 13px;
+  color: rgba(255,255,255,.75);
+  margin-top: 12px;
+}
+
+/* 区切り線 */
+.lp-form-divider {
+  max-width: 500px;
+  margin: 0 auto 32px;
+  text-align: center;
+  position: relative;
+}
+.lp-form-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255,255,255,.25);
+}
+.lp-form-divider__text {
+  position: relative;
+  display: inline-block;
+  background: var(--color-main);
+  padding: 0 16px;
+  font-size: 14px;
+  color: rgba(255,255,255,.8);
+}
+
+/* フォームラッパー */
+.lp-form-wrap { max-width: 600px; margin: 0 auto; }
+.lp-form-wrap__micro {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255,255,255,.8);
+  margin-bottom: 20px;
+}
+
+/* CF7 上書き */
+.lp-form-section .wpcf7 input[type="text"],
+.lp-form-section .wpcf7 input[type="email"],
+.lp-form-section .wpcf7 input[type="tel"],
+.lp-form-section .wpcf7 textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  color: var(--color-text);
+  margin-bottom: 4px;
+  font-family: inherit;
+  background: rgba(255,255,255,.95);
+}
+.lp-form-section .wpcf7 textarea { resize: vertical; min-height: 120px; }
+.lp-form-section .wpcf7 input[type="submit"] {
+  width: 100%;
+  max-width: 360px;
+  display: block;
+  margin: 24px auto 0;
+  padding: 18px;
+  background: var(--color-star);
+  color: var(--color-white);
+  font-size: 17px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  letter-spacing: .06em;
+  transition: opacity .2s;
+  box-shadow: 0 4px 16px rgba(221,153,51,.35);
+}
+.lp-form-section .wpcf7 input[type="submit"]:hover { opacity: .88; }
+.lp-form-section .wpcf7-form-control-wrap { display: block; margin-bottom: 12px; }
+.lp-form-section .wpcf7 label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  opacity: .88;
+}
+.lp-form__privacy {
+  text-align: center;
+  font-size: 13px;
+  opacity: .75;
+  margin-top: 16px;
+}
+.lp-form__privacy a { text-decoration: underline; color: var(--color-white); }
+.lp-form__required { color: #ffaaaa; font-size: 12px; margin-left: 4px; }
+
+/* P.S. */
+.lp-form__ps {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255,255,255,.8);
+  margin-top: 28px;
+  font-style: italic;
+}
+
+/* ============================================================
+   フッター（LP専用ミニフッター）
+   ============================================================ */
+.lp-footer {
+  background: #1a1a2e;
+  color: rgba(255,255,255,.6);
+  text-align: center;
+  padding: 28px 24px;
+  font-size: 13px;
+}
+.lp-footer a { color: rgba(255,255,255,.7); text-decoration: none; }
+.lp-footer a:hover { color: var(--color-white); }
+.lp-footer__links {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   固定CTA（スマホ下部）
+   ============================================================ */
+.lp-fixed-cta {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,61,110,.97);
+  z-index: 999;
+  padding: 10px 16px;
+  box-shadow: 0 -4px 16px rgba(0,0,0,.2);
+}
+.lp-fixed-cta__inner {
+  display: flex;
+  gap: 10px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.lp-fixed-cta__btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: none;
+  border-radius: 50px;
+  padding: 12px 8px;
+  text-align: center;
+  letter-spacing: .02em;
+  transition: opacity var(--transition-btn);
+}
+.lp-fixed-cta__btn:hover { opacity: .85; }
+.lp-fixed-cta__btn--form {
+  background: var(--color-star);
+  color: var(--color-white);
+  box-shadow: 0 2px 10px rgba(221,153,51,.3);
+}
+.lp-fixed-cta__btn--line {
+  background: var(--color-line);
+  color: var(--color-white);
+}
+
+/* ============================================================
+   レスポンシブ
+   ============================================================ */
+
+/* タブレット（768px〜1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .lp-grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .lp-flow__steps { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
+  .lp-flow__steps::before { display: none; }
+}
+
+/* タブレット以下（〜1023px） */
+@media (max-width: 1023px) {
+  .lp-section {
+    padding: var(--section-pt-sp) var(--inner-padding-sp);
+  }
+}
+
+/* スマホ（〜767px） */
+@media (max-width: 767px) {
+  /* FV */
+  .lp-fv__inner { flex-direction: column-reverse; gap: 24px; }
+  .lp-fv__photo { flex: none; width: 100%; }
+  .lp-fv__photo img { max-width: 260px; }
+  .lp-fv__text { text-align: center; }
+  .lp-fv__btn-wrap { justify-content: center; }
+
+  /* 数字バー */
+  .lp-numbers { padding: 40px 20px; }
+  .lp-numbers__grid { grid-template-columns: 1fr; }
+  .lp-number-item + .lp-number-item {
+    border-left: none;
+    border-top: 1px solid #d0eaff;
+  }
+
+  /* グリッド */
+  .lp-grid-3, .lp-grid-2 { grid-template-columns: 1fr; gap: 16px; }
+
+  /* CTA ボタン群 */
+  .lp-cta-top__btn-wrap,
+  .lp-cta-mid__btn-wrap,
+  .lp-cta-services__btn-wrap {
+    flex-direction: column;
+    align-items: center;
+  }
+  .lp-cta-top__btn-wrap .lp-btn,
+  .lp-cta-top__btn-wrap .lp-btn-line,
+  .lp-cta-mid__btn-wrap .lp-btn,
+  .lp-cta-mid__btn-wrap .lp-btn-line,
+  .lp-cta-services__btn-wrap .lp-btn,
+  .lp-cta-services__btn-wrap .lp-btn-line {
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
+
+  /* フロー */
+  .lp-flow__steps { grid-template-columns: 1fr; gap: 24px; }
+  .lp-flow__steps::before { display: none; }
+
+  /* プロフィール */
+  .lp-profile__photo { text-align: center; }
+
+  /* 対応業種カード */
+  .lp-works__genres .lp-btn { align-self: center; }
+
+  /* 固定CTA（表示制御はJS=main.jsに一任。CSSでは非表示を維持） */
+  .lp-body { padding-bottom: 62px; }
+
+  /* ボタン */
+  .lp-btn { padding: 16px 28px; font-size: 15px; }
+}
+
+/* 極小スマホ（〜399px） */
+@media (max-width: 399px) {
+  .lp-btn { padding: 14px 20px; font-size: 14px; }
+  .lp-btn-line { padding: 12px 20px; font-size: 14px; }
+}
