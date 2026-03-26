@@ -7,11 +7,11 @@ Notion CRM - 顧客リスト管理スクリプト
   python3 notion-crm.py search <キーワード>          # 検索
   python3 notion-crm.py update <ページID>           # 対話形式で更新
   python3 notion-crm.py show <ページID>             # 詳細表示
-  python3 notion-crm.py issue-no                   # 管理No.を発行する
+  python3 notion-crm.py issue-no                   # 識別記号を発行する
 
 【運用ルール】
-  - 顧客追加時に管理No.は発行しない
-  - 管理No.は見積書・請求書・領収書の発行が必要になったタイミングで発行する
+  - 顧客追加時に識別記号は発行しない
+  - 識別記号は見積書・請求書・領収書の発行が必要になったタイミングで発行する
   - 発行は `issue-no` コマンドを使い、重複チェック済みの番号が自動採番される
   - 採番順序: A→Z → AA→ZZ → AAA→ZZZ（最大18,278件）
 """
@@ -55,7 +55,7 @@ def next_management_no(token, db_id):
     pages = result.get("results", [])
     existing = set()
     for page in pages:
-        items = page["properties"].get("管理No.", {}).get("rich_text", [])
+        items = page["properties"].get("識別記号", {}).get("rich_text", [])
         code = "".join(i.get("plain_text", "") for i in items).strip()
         if code:
             existing.add(code)
@@ -166,7 +166,7 @@ def page_to_row(page):
         "最終連絡日": extract_date(p.get("最終連絡日")),
         "流入元": extract_select(p.get("流入元")),
         "協力値引率": extract_text(p.get("協力値引率")),
-        "管理No.": extract_text(p.get("管理No.")),
+        "識別記号": extract_text(p.get("識別記号")),
         "メモ": extract_text(p.get("メモ")),
     }
 
@@ -192,8 +192,8 @@ def build_properties(data):
         props["流入元"] = {"select": {"name": data["流入元"]}}
     if data.get("メモ"):
         props["メモ"] = {"rich_text": [{"text": {"content": data["メモ"]}}]}
-    if data.get("管理No."):
-        props["管理No."] = {"rich_text": [{"text": {"content": data["管理No."]}}]}
+    if data.get("識別記号"):
+        props["識別記号"] = {"rich_text": [{"text": {"content": data["識別記号"]}}]}
     if data.get("協力値引率"):
         props["協力値引率"] = {"rich_text": [{"text": {"content": data["協力値引率"]}}]}
     return props
@@ -244,17 +244,17 @@ def cmd_list(token, db_id):
     if not pages:
         print("顧客データがありません。")
         return
-    print(f"\n{'管理No.':6} {'会社名':22} {'ステータス':8} {'事業種別':8} {'最終連絡日':12}")
+    print(f"\n{'識別記号':6} {'会社名':22} {'ステータス':8} {'事業種別':8} {'最終連絡日':12}")
     print("-" * 62)
     for page in pages:
         row = page_to_row(page)
-        print(f"{row['管理No.']:6} {row['会社名'][:22]:22} {row['ステータス']:8} {row['事業種別']:8} {row['最終連絡日']:12}")
+        print(f"{row['識別記号']:6} {row['会社名'][:22]:22} {row['ステータス']:8} {row['事業種別']:8} {row['最終連絡日']:12}")
     print(f"\n合計 {len(pages)} 件")
 
 
 def cmd_add(token, db_id):
     print("\n--- 顧客追加 ---")
-    print("  ※ 管理No.は見積書・請求書・領収書の発行時に発行します（ここでは不要）\n")
+    print("  ※ 識別記号は見積書・請求書・領収書の発行時に発行します（ここでは不要）\n")
     data = {
         "会社名": prompt("会社名 / 屋号（必須）"),
         "担当者名": prompt("担当者名"),
@@ -281,7 +281,7 @@ def cmd_add(token, db_id):
 
 def cmd_issue_no(token, db_id):
     """管理No.を発行する（見積書・請求書・領収書の発行時に使用）"""
-    print("\n--- 管理No. 発行 ---")
+    print("\n--- 識別記号 発行 ---")
     keyword = prompt("会社名で検索")
     if not keyword:
         print("[ERROR] 会社名を入力してください。")
@@ -306,7 +306,7 @@ def cmd_issue_no(token, db_id):
     else:
         print(f"\n{len(candidates)} 件見つかりました：")
         for i, row in enumerate(candidates, 1):
-            no = row["管理No."] or "（未発行）"
+            no = row["識別記号"] or "（未発行）"
             print(f"  {i}. [{no}] {row['会社名']}")
         idx = input("  番号を選択: ").strip()
         try:
@@ -315,18 +315,18 @@ def cmd_issue_no(token, db_id):
             print("[ERROR] 不正な番号です。")
             return
 
-    if row["管理No."]:
-        print(f"\nこの顧客の管理No.は既に発行済みです: {row['管理No.']}")
+    if row["識別記号"]:
+        print(f"\nこの顧客の識別記号は既に発行済みです: {row['識別記号']}")
         return
 
     new_no = next_management_no(token, db_id)
-    confirm = input(f"\n  管理No. [{new_no}] を {row['会社名']} に発行しますか？ [y/N]: ").strip().lower()
+    confirm = input(f"\n  識別記号 [{new_no}] を {row['会社名']} に発行しますか？ [y/N]: ").strip().lower()
     if confirm != "y":
         print("キャンセルしました。")
         return
 
     notion_request("PATCH", f"/pages/{row['id']}", {
-        "properties": {"管理No.": {"rich_text": [{"text": {"content": new_no}}]}}
+        "properties": {"識別記号": {"rich_text": [{"text": {"content": new_no}}]}}
     }, token=token)
     print(f"\n発行しました: [{new_no}] {row['会社名']}")
 
@@ -369,7 +369,7 @@ def cmd_update(page_id, token, db_id):
     page_id = resolve_id(page_id, token, db_id)
     page = notion_request("GET", f"/pages/{page_id}", token=token)
     current = page_to_row(page)
-    no_display = f"  管理No.: {current['管理No.']}（発行済み・変更不可）\n" if current["管理No."] else ""
+    no_display = f"  識別記号: {current['識別記号']}（発行済み・変更不可）\n" if current["識別記号"] else ""
     print(f"\n--- 更新: {current['会社名']} ---")
     if no_display:
         print(no_display, end="")

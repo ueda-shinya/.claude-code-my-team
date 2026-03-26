@@ -9,6 +9,7 @@
 - [feedback_asuka_role.md](feedback_asuka_role.md) — アスカの役割は全部自分でやることではなく、適材適所でチームにタスクを割り振ること
 - [feedback_code_intent.md](feedback_code_intent.md) — コード改善時は元の意図を正確に読んでから変更する（動作を変える場合は明示して確認）
 - [feedback_security_review.md](feedback_security_review.md) — ファイル操作・認証・ユーザー入力処理等のコードを書いた直後はサクラに自動レビューを依頼する（確認不要）
+- [feedback_data_format.md](feedback_data_format.md) — 業務データ変換時は元のフォーマットを確認してから変換ロジックを設計する（勝手に改善しない）
 
 ## project
 - [project_officeueda_web.md](project_officeueda_web.md) — officeueda web事業コーディング方針・GMC対応など
