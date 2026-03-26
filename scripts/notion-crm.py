@@ -165,7 +165,7 @@ def page_to_row(page):
         "担当": extract_text(p.get("担当")),
         "最終連絡日": extract_date(p.get("最終連絡日")),
         "流入元": extract_select(p.get("流入元")),
-        "協力金率": extract_text(p.get("協力金率")),
+        "協力値引率": extract_text(p.get("協力値引率")),
         "管理No.": extract_text(p.get("管理No.")),
         "メモ": extract_text(p.get("メモ")),
     }
@@ -194,8 +194,8 @@ def build_properties(data):
         props["メモ"] = {"rich_text": [{"text": {"content": data["メモ"]}}]}
     if data.get("管理No."):
         props["管理No."] = {"rich_text": [{"text": {"content": data["管理No."]}}]}
-    if data.get("協力金率"):
-        props["協力金率"] = {"rich_text": [{"text": {"content": data["協力金率"]}}]}
+    if data.get("協力値引率"):
+        props["協力値引率"] = {"rich_text": [{"text": {"content": data["協力値引率"]}}]}
     return props
 
 
@@ -265,7 +265,7 @@ def cmd_add(token, db_id):
         "担当": prompt("担当"),
         "最終連絡日": prompt_date("最終連絡日（YYYY-MM-DD）", datetime.today().strftime("%Y-%m-%d")),
         "流入元": prompt_choice("流入元", SOURCE_OPTIONS),
-        "協力金率": prompt("協力金率（例: 10%）"),
+        "協力値引率": prompt("協力値引率（例: 10%）"),
         "メモ": prompt("メモ"),
     }
     if not data["会社名"]:
@@ -384,7 +384,7 @@ def cmd_update(page_id, token, db_id):
         "担当": prompt("担当", current["担当"]),
         "最終連絡日": prompt_date("最終連絡日（YYYY-MM-DD）", current["最終連絡日"]),
         "流入元": prompt_choice("流入元", SOURCE_OPTIONS, current["流入元"]),
-        "協力金率": prompt("協力金率", current["協力金率"]),
+        "協力値引率": prompt("協力値引率", current["協力値引率"]),
         "メモ": prompt("メモ", current["メモ"]),
         # 管理No.は更新対象に含めない（一度発行したら変更不可）
     }
