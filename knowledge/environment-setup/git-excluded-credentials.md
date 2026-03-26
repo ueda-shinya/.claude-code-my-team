@@ -30,6 +30,28 @@
 - `.gitignore` からこれらを除外しないこと
 - GCPがテストモードの場合、`refresh_token` は7日で失効する。再認証が必要になったらトラブルシューティング記録 `troubleshooting/active/20260313_google-calendar-mcp.md` を参照
 
+## `.env` に必要なキー一覧
+
+新しいPCで `.env` を手動コピーした後、以下のキーが揃っているか確認すること。
+
+| キー | 用途 |
+|---|---|
+| `GEMINI_API_KEY` | Gemini 画像生成 |
+| `YOUTUBE_API_KEY` | YouTube ダイジェスト |
+| `ANTHROPIC_API_KEY` | メール自動化・LINE WORKS Bot |
+| `LINE_WORKS_BOT_ID` 等 | LINE WORKS Bot 認証 |
+| `MAIL_HOST` 等 | メール自動化（Xserver IMAP/SMTP） |
+| `NOTION_API_TOKEN` | Notion API 共通 |
+| `NOTION_CRM_DB_ID` | Notion 顧客リスト DB |
+| `NOTION_PROJECT_DB_ID` | Notion 案件リスト DB |
+| `NOTION_MINUTES_DB_ID` | Notion 議事録 DB |
+| `NOTION_LEDGER_DB_ID` | Notion 見積・請求台帳 DB |
+| `NOTION_GA4_DB_ID` | Notion GA4 日次レポート DB（`32fb7112-f5f8-8108-aa71-dc5865243404`） |
+
+### 注意：`.env` 各行は必ず改行で終わること
+
+2026-03-27 に発生した事例：`NOTION_LEDGER_DB_ID` の行末に改行がなく `NOTION_GA4_DB_ID` と連結されてしまい、ブリーフィングの Notion 書き込みが `SKIP` になった。`.env` に追記する際は `echo 'KEY=VALUE' >> ~/.claude/.env` ではなくエディタで開いて追記するのが安全。
+
 ## 発生した事例
 
 ### 2026-03-16: Windows環境でGoogle Calendar CLIフォールバック失敗
