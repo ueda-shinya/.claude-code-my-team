@@ -34,12 +34,10 @@
 
 ---
 
-### 作業中③: Notion CRM（フィールド構成確認待ち）
+### 完了済み: Notion CRM（全Phase完了）
 
-- スコープ記述書作成済み：`clients/officeueda/reports/notion-crm-scope-260326.md`
-- フィールド構成の最終承認が取れれば DB作成・スクリプト実装に進む
-
-**再開手順：**
-1. フィールド構成を確認・承認
-2. Notionアカウント・APIトークン（`secret_...`）確認
-3. `~/.claude/scripts/notion-crm.py` を作成する
+- DB作成済み：アスカ室 → 顧客リスト・案件リスト・議事録（各DB IDは .env に記載）
+- CLIスクリプト完成：`~/.claude/scripts/notion-crm.py` / `notion-projects.py`
+- 既存顧客58件のインポート済み（2026-03-26）
+- リレーション・バックリンク設定済み（顧客↔案件↔議事録）
+- 運用中

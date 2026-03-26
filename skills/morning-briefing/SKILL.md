@@ -100,6 +100,110 @@ for e in items:
 
 月曜日の場合は、今週分（月曜から日曜まで）の予定も追加で取得する。
 
+### ステップ 2-2: 前日打ち合わせ・訪問後の CRM 履歴チェック
+
+前日のカレンダーから「打ち合わせ・訪問・商談系」イベントを抽出し、Notion 議事録への記録漏れを検出する。
+失敗しても次のステップに進むこと。
+
+**① 前日イベント取得 ＆ 議事録チェック（Mac・Windows両対応）：**
+
+カレンダーのトークン取得はステップ2で使ったコードと同じ方式で実施する。YESTERDAY を前日の日付（YYYY-MM-DD形式）に置き換えて実行すること。
+
+```bash
+python3 -c "
+import json, urllib.request, urllib.parse, os, sys, ssl
+from datetime import datetime, timezone, timedelta
+sys.stdout.reconfigure(encoding='utf-8')
+
+jst = timezone(timedelta(hours=9))
+now = datetime.now(jst)
+yesterday = (now - timedelta(days=1)).strftime('%Y-%m-%d')
+
+# --- Google Calendar: 前日イベント取得 ---
+cred_path = os.path.expanduser('~/.claude/google-oauth-credentials.json')
+token_path = os.path.expanduser('~/.claude/mcp-google-calendar-token.json')
+cred = json.load(open(cred_path))
+token = json.load(open(token_path))
+
+data = urllib.parse.urlencode({
+    'client_id': cred['installed']['client_id'],
+    'client_secret': cred['installed']['client_secret'],
+    'refresh_token': token['normal']['refresh_token'],
+    'grant_type': 'refresh_token'
+}).encode()
+req = urllib.request.Request('https://oauth2.googleapis.com/token', data=data, method='POST')
+with urllib.request.urlopen(req) as res:
+    access_token = json.loads(res.read())['access_token']
+
+url = f'https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin={yesterday}T00:00:00%2B09:00&timeMax={yesterday}T23:59:59%2B09:00&singleEvents=true&orderBy=startTime&timeZone=Asia/Tokyo'
+req2 = urllib.request.Request(url, headers={'Authorization': 'Bearer ' + access_token})
+with urllib.request.urlopen(req2) as res:
+    events = json.loads(res.read())
+
+# 打ち合わせ・訪問系キーワード
+MEETING_KEYWORDS = ['打ち合わせ', '訪問', 'MTG', 'ミーティング', '商談', '面談', '会議', 'meeting', 'visit']
+meeting_events = []
+for e in events.get('items', []):
+    title = e.get('summary', '')
+    if any(kw.lower() in title.lower() for kw in MEETING_KEYWORDS):
+        start = e.get('start', {})
+        t = start.get('dateTime', start.get('date', ''))[:16]
+        meeting_events.append(f'{t} {title}')
+
+if not meeting_events:
+    print('MEETING_NONE')
+    sys.exit(0)
+
+# --- Notion 議事録 DB: 前日〜当日作成エントリを確認 ---
+env_path = os.path.expanduser('~/.claude/.env')
+notion_token = ''
+minutes_db_id = ''
+with open(env_path, encoding='utf-8') as f:
+    for line in f:
+        line = line.strip().strip('\"').strip(\"'\")
+        if line.startswith('NOTION_API_TOKEN='):
+            notion_token = line.split('=', 1)[1].strip('\"').strip(\"'\")
+        if line.startswith('NOTION_MINUTES_DB_ID='):
+            minutes_db_id = line.split('=', 1)[1].strip('\"').strip(\"'\")
+
+ctx = ssl.create_default_context()
+query = json.dumps({
+    'filter': {
+        'property': '日時',
+        'date': {'on_or_after': yesterday}
+    }
+}).encode()
+req3 = urllib.request.Request(
+    f'https://api.notion.com/v1/databases/{minutes_db_id}/query',
+    data=query,
+    headers={
+        'Authorization': f'Bearer {notion_token}',
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+    },
+    method='POST'
+)
+with urllib.request.urlopen(req3, context=ctx, timeout=10) as res:
+    result = json.loads(res.read())
+
+minutes_count = len(result.get('results', []))
+
+print(f'MEETINGS: {len(meeting_events)}')
+for m in meeting_events:
+    print(f'  - {m}')
+print(f'MINUTES_AFTER: {minutes_count}')
+" 2>&1 | cat
+```
+
+**② 判定ロジック：**
+
+- 出力が `MEETING_NONE` → 打ち合わせ系イベントなし → セクション省略
+- `MEETINGS: N` かつ `MINUTES_AFTER: 0` → ⚠️ 記録漏れの可能性あり → 報告に含める
+- `MEETINGS: N` かつ `MINUTES_AFTER: 1以上` → ✅ 記録済み → 報告に含めない（セクション省略）
+- スクリプトがエラーで失敗した場合 → セクション省略
+
+---
+
 ### ステップ 3: YouTube動画ダイジェスト更新
 
 `~/.claude/youtube-digest.md` の最終更新日時を確認し、**24時間以上経過している場合（またはファイルが存在しない場合）のみ**、以下を実行してください。
@@ -346,6 +450,11 @@ python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
 
 ## 引き継ぎ
 - 内容
+
+## ⚠️ 履歴更新を忘れずに（※ 前日の打ち合わせ・訪問後に議事録未登録の場合のみ表示）
+昨日の以下の予定後、議事録への記録がまだのようです：
+- HH:MM 予定名
+→ `python3 ~/.claude/scripts/notion-projects.py minutes-add` で記録してください
 
 ## サイト状況（昨日）
 - 全体：Xセッション / Xユーザー（新規X） / 離脱率X%
