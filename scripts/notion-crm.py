@@ -369,7 +369,10 @@ def cmd_update(page_id, token, db_id):
     page_id = resolve_id(page_id, token, db_id)
     page = notion_request("GET", f"/pages/{page_id}", token=token)
     current = page_to_row(page)
+    no_display = f"  管理No.: {current['管理No.']}（発行済み・変更不可）\n" if current["管理No."] else ""
     print(f"\n--- 更新: {current['会社名']} ---")
+    if no_display:
+        print(no_display, end="")
     print("  変更する項目のみ入力してください（Enterでスキップ）\n")
     data = {
         "会社名": prompt("会社名 / 屋号", current["会社名"]),
@@ -381,7 +384,9 @@ def cmd_update(page_id, token, db_id):
         "担当": prompt("担当", current["担当"]),
         "最終連絡日": prompt_date("最終連絡日（YYYY-MM-DD）", current["最終連絡日"]),
         "流入元": prompt_choice("流入元", SOURCE_OPTIONS, current["流入元"]),
+        "協力金率": prompt("協力金率", current["協力金率"]),
         "メモ": prompt("メモ", current["メモ"]),
+        # 管理No.は更新対象に含めない（一度発行したら変更不可）
     }
     props = build_properties(data)
     notion_request("PATCH", f"/pages/{page_id}", {"properties": props}, token=token)
