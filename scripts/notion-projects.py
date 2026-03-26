@@ -156,12 +156,36 @@ def cmd_list(token, project_db_id):
         print(f"{p['案件名'][:24]:24} {p['顧客名'][:16]:16} {p['ステータス']:8} {p['事業種別']:8} {p['開始日']:12}")
     print(f"\n合計 {len(pages)} 件")
 
-def cmd_add(token, project_db_id):
+def search_customer(keyword, token, crm_db_id):
+    """顧客リストからキーワード検索してページIDを返す"""
+    result = notion_request("POST", f"/databases/{crm_db_id}/query", {
+        "filter": {"property": "会社名 / 屋号", "rich_text": {"contains": keyword}}
+    }, token=token)
+    pages = result.get("results", [])
+    if not pages:
+        return None, None
+    if len(pages) == 1:
+        p = pages[0]
+        name = "".join(i.get("plain_text", "") for i in p["properties"].get("会社名 / 屋号", {}).get("title", []))
+        return p["id"], name
+    print(f"\n{len(pages)} 件見つかりました：")
+    for i, p in enumerate(pages, 1):
+        name = "".join(i2.get("plain_text", "") for i2 in p["properties"].get("会社名 / 屋号", {}).get("title", []))
+        no = "".join(i2.get("plain_text", "") for i2 in p["properties"].get("管理No.", {}).get("rich_text", []))
+        print(f"  {i}. [{no}] {name}")
+    idx = input("  番号を選択: ").strip()
+    try:
+        p = pages[int(idx) - 1]
+        name = "".join(i2.get("plain_text", "") for i2 in p["properties"].get("会社名 / 屋号", {}).get("title", []))
+        return p["id"], name
+    except (ValueError, IndexError):
+        return None, None
+
+
+def cmd_add(token, project_db_id, crm_db_id):
     print("\n--- 案件追加 ---")
     data = {
         "案件名": prompt("案件名（必須）"),
-        "顧客名": prompt("顧客名"),
-        "顧客管理No.": prompt("顧客管理No.（顧客リストのNo.）"),
         "ステータス": prompt_choice("ステータス", STATUS_OPTIONS),
         "事業種別": prompt_choice("事業種別", BIZTYPE_OPTIONS),
         "開始日": prompt_date("開始日（YYYY-MM-DD）", datetime.today().strftime("%Y-%m-%d")),
@@ -173,13 +197,23 @@ def cmd_add(token, project_db_id):
         print("[ERROR] 案件名は必須です。")
         return
 
+    # 顧客リレーション
+    customer_page_id = None
+    customer_name = ""
+    kw = prompt("顧客名で検索（スキップ=Enter）")
+    if kw:
+        customer_page_id, customer_name = search_customer(kw, token, crm_db_id)
+        if customer_page_id:
+            print(f"  → {customer_name} に紐づけます")
+        else:
+            print("  → 顧客が見つからないためリレーションなしで登録します")
+
     props = {
         "案件名": {"title": [{"text": {"content": data["案件名"]}}]},
     }
-    if data["顧客名"]:
-        props["顧客名"] = {"rich_text": [{"text": {"content": data["顧客名"]}}]}
-    if data["顧客管理No."]:
-        props["顧客管理No."] = {"rich_text": [{"text": {"content": data["顧客管理No."]}}]}
+    if customer_page_id:
+        props["顧客"] = {"relation": [{"id": customer_page_id}]}
+        props["顧客名"] = {"rich_text": [{"text": {"content": customer_name}}]}
     if data["ステータス"]:
         props["ステータス"] = {"select": {"name": data["ステータス"]}}
     if data["事業種別"]:
@@ -265,12 +299,36 @@ def page_to_minutes(page):
         "メモ": get_text(p, "メモ"),
     }
 
-def cmd_minutes_add(token, minutes_db_id):
+def search_project(keyword, token, project_db_id):
+    """案件リストからキーワード検索してページIDを返す"""
+    result = notion_request("POST", f"/databases/{project_db_id}/query", {
+        "filter": {"property": "案件名", "rich_text": {"contains": keyword}}
+    }, token=token)
+    pages = result.get("results", [])
+    if not pages:
+        return None, None
+    if len(pages) == 1:
+        p = pages[0]
+        name = "".join(i.get("plain_text", "") for i in p["properties"].get("案件名", {}).get("title", []))
+        return p["id"], name
+    print(f"\n{len(pages)} 件見つかりました：")
+    for i, p in enumerate(pages, 1):
+        name = "".join(i2.get("plain_text", "") for i2 in p["properties"].get("案件名", {}).get("title", []))
+        status = p["properties"].get("ステータス", {}).get("select", {})
+        print(f"  {i}. [{status.get('name', '')}] {name}")
+    idx = input("  番号を選択: ").strip()
+    try:
+        p = pages[int(idx) - 1]
+        name = "".join(i2.get("plain_text", "") for i2 in p["properties"].get("案件名", {}).get("title", []))
+        return p["id"], name
+    except (ValueError, IndexError):
+        return None, None
+
+
+def cmd_minutes_add(token, minutes_db_id, project_db_id):
     print("\n--- 議事録追加 ---")
     data = {
         "タイトル": prompt("タイトル（必須）"),
-        "案件名": prompt("案件名"),
-        "顧客名": prompt("顧客名"),
         "日付": prompt_date("日付（YYYY-MM-DD）", datetime.today().strftime("%Y-%m-%d")),
         "決定事項": prompt("決定事項"),
         "宿題・TODO": prompt("宿題・TODO"),
@@ -280,14 +338,28 @@ def cmd_minutes_add(token, minutes_db_id):
         print("[ERROR] タイトルは必須です。")
         return
 
+    # 案件リレーション
+    project_page_id = None
+    project_name = ""
+    kw = prompt("案件名で検索（スキップ=Enter）")
+    if kw:
+        project_page_id, project_name = search_project(kw, token, project_db_id)
+        if project_page_id:
+            print(f"  → {project_name} に紐づけます")
+        else:
+            print("  → 案件が見つからないためリレーションなしで登録します")
+
     props = {
         "タイトル": {"title": [{"text": {"content": data["タイトル"]}}]},
     }
-    for key in ["案件名", "顧客名", "決定事項", "宿題・TODO", "メモ"]:
-        if data[key]:
-            props[key] = {"rich_text": [{"text": {"content": data[key]}}]}
+    if project_page_id:
+        props["案件"] = {"relation": [{"id": project_page_id}]}
+        props["案件名"] = {"rich_text": [{"text": {"content": project_name}}]}
     if data["日付"]:
         props["日付"] = {"date": {"start": data["日付"]}}
+    for key in ["決定事項", "宿題・TODO", "メモ"]:
+        if data[key]:
+            props[key] = {"rich_text": [{"text": {"content": data[key]}}]}
 
     notion_request("POST", "/pages", {
         "parent": {"database_id": minutes_db_id},
@@ -373,6 +445,7 @@ def main():
     token = env.get("NOTION_API_TOKEN", "")
     project_db_id = env.get("NOTION_PROJECT_DB_ID", "")
     minutes_db_id = env.get("NOTION_MINUTES_DB_ID", "")
+    crm_db_id = env.get("NOTION_CRM_DB_ID", "")
 
     if not token or not project_db_id or not minutes_db_id:
         print("[ERROR] .env に NOTION_API_TOKEN / NOTION_PROJECT_DB_ID / NOTION_MINUTES_DB_ID が必要です。")
@@ -387,14 +460,14 @@ def main():
     if cmd == "list":
         cmd_list(token, project_db_id)
     elif cmd == "add":
-        cmd_add(token, project_db_id)
+        cmd_add(token, project_db_id, crm_db_id)
     elif cmd == "update":
         if len(args) < 2:
             print("使い方: notion-projects.py update <案件名キーワード>")
             sys.exit(1)
         cmd_update_project(args[1], token, project_db_id)
     elif cmd == "minutes-add":
-        cmd_minutes_add(token, minutes_db_id)
+        cmd_minutes_add(token, minutes_db_id, project_db_id)
     elif cmd == "minutes-list":
         cmd_minutes_list(token, minutes_db_id)
     elif cmd == "query":
