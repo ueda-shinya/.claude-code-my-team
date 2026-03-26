@@ -71,18 +71,16 @@ print('顧客リストを取得中...')
 crm_map = get_crm_map()
 print(f'  → {len(crm_map)} 件取得')
 
-# --- 管理番号変換: YYMMDD記号-版数 → YYYYMMDD(記号)-版数 ---
+# --- 管理番号変換: YYMMDD記号-版数 → YYMMDD記号-版数 (版数のゼロ埋め除去のみ) ---
 def convert_bangou(old):
     if not old or not isinstance(old, str):
         return old
-    # 例: 220824A-01 → 20220824(A)-1
+    # 例: 220824A-01 → 220824A-1
     m = re.match(r'^(\d{6})([A-Z]{1,3})-(\d+)$', old.strip())
     if m:
         yymmdd, shikibetsu, version = m.group(1), m.group(2), m.group(3)
-        yyyy = '20' + yymmdd[:2]
-        mmdd = yymmdd[2:]
-        ver  = str(int(version))  # 01 → 1
-        return f'{yyyy}{mmdd}({shikibetsu})-{ver}'
+        ver = str(int(version))  # 01 → 1
+        return f'{yymmdd}{shikibetsu}-{ver}'
     return old  # 変換できない場合はそのまま
 
 # --- 種別を判定 ---
