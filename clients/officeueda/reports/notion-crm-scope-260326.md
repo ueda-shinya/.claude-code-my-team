@@ -135,3 +135,6 @@ Notion CRM 構築
 
 - スクリプト（未作成）：`~/.claude/scripts/notion-crm.py`
 - このスコープ：`~/.claude/clients/officeueda/reports/notion-crm-scope-260326.md`
+- 見積・請求台帳 設計書：`~/.claude/clients/officeueda/reports/notion-ledger-design-260326.md`
+
+> **補足**：CRM DBの`識別記号`フィールドは、見積・請求台帳の管理番号採番に使用される。詳細は台帳設計書を参照。
