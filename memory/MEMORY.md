@@ -10,6 +10,8 @@
 - [feedback_code_intent.md](feedback_code_intent.md) — コード改善時は元の意図を正確に読んでから変更する（動作を変える場合は明示して確認）
 - [feedback_security_review.md](feedback_security_review.md) — ファイル操作・認証・ユーザー入力処理等のコードを書いた直後はサクラに自動レビューを依頼する（確認不要）
 - [feedback_data_format.md](feedback_data_format.md) — 業務データ変換時は元のフォーマットを確認してから変換ロジックを設計する（勝手に改善しない）
+- [feedback_credential_management.md](feedback_credential_management.md) — 認証情報を丁寧に管理する方針。.env の直接操作を最小限に、定期ローテーション声がけ、echo 追記禁止
+- [feedback_agent_study.md](feedback_agent_study.md) — agent-study 提案前に「一般知識か固有知識か」をアスカが先に判断。一般的な教科書系は提案しない
 
 ## project
 - [project_officeueda_web.md](project_officeueda_web.md) — officeueda web事業コーディング方針・GMC対応など
