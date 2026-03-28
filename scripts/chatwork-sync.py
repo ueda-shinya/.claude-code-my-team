@@ -171,12 +171,13 @@ def save_state(state: dict, dry_run: bool = False):
 def calc_check_interval(last_updated_at_str: str) -> int:
     """
     最終更新日から動的にチェック間隔を決定する
-    7日以内  → 1時間
-    7〜14日  → 4時間
-    14日以上 → 24時間
+    未記録（初回） → 4時間
+    7日以内        → 4時間
+    7〜14日        → 12時間
+    14日以上       → 24時間
     """
     if not last_updated_at_str:
-        return 1
+        return 4
     try:
         jst = timezone(timedelta(hours=9))
         last_updated = datetime.fromisoformat(last_updated_at_str)
@@ -185,13 +186,13 @@ def calc_check_interval(last_updated_at_str: str) -> int:
         now = datetime.now(jst)
         diff_days = (now - last_updated).days
         if diff_days < 7:
-            return 1
-        elif diff_days < 14:
             return 4
+        elif diff_days < 14:
+            return 12
         else:
             return 24
     except Exception:
-        return 1
+        return 4
 
 
 def should_check_room(room_state: dict) -> bool:
@@ -344,13 +345,12 @@ def add_or_update_notion_project(task_summary: str, related_project: str, dry_ru
     page_id = find_notion_project(related_project) if related_project else None
 
     if page_id:
-        # 既存案件のメモを更新
+        # 既存案件の概要を更新（DBプロパティ名: 概要 / type: rich_text）
         data = {
             'properties': {
-                'メモ': {
+                '概要': {
                     'rich_text': [{'text': {'content': task_summary[:2000]}}]
                 },
-                '最終更新': {'date': {'start': now_str}},
             }
         }
         result = notion_request('PATCH', f'/pages/{page_id}', data)
@@ -359,14 +359,13 @@ def add_or_update_notion_project(task_summary: str, related_project: str, dry_ru
             return True
         return False
     else:
-        # 新規作成
+        # 新規作成（DBプロパティ名: 案件名 / type: title、概要 / type: rich_text）
         project_title = related_project or 'Chatwork タスク'
         data = {
             'parent': {'database_id': NOTION_PROJECT_DB_ID},
             'properties': {
-                '案件名':   {'title': [{'text': {'content': project_title}}]},
-                'メモ':     {'rich_text': [{'text': {'content': task_summary[:2000]}}]},
-                '最終更新': {'date': {'start': now_str}},
+                '案件名': {'title': [{'text': {'content': project_title}}]},
+                '概要':   {'rich_text': [{'text': {'content': task_summary[:2000]}}]},
             }
         }
         result = notion_request('POST', '/pages', data)
@@ -439,9 +438,11 @@ def add_calendar_event(summary: str, start_iso: str, dry_run: bool = False) -> b
 
 # ── メイン処理 ───────────────────────────────────────────────
 
-def run_sync(dry_run: bool = False):
+def run_sync(dry_run: bool = False, since_dt=None):
     """Chatwork 同期メイン処理"""
     logger.info(f'=== chatwork-sync 開始 {"[DRY-RUN]" if dry_run else ""} ===')
+    if since_dt:
+        logger.info(f'since フィルタ: {since_dt.isoformat()} 以降のみ処理')
 
     # 必須環境変数チェック
     if not CHATWORK_API_TOKEN:
@@ -487,8 +488,9 @@ def run_sync(dry_run: bool = False):
 
         logger.info(f'チェック開始: {room_name} (room_id={room_id})')
 
-        # メッセージ取得（force=0 で未読のみ）
-        messages = get_messages(int(room_id), force=0)
+        # メッセージ取得（--since 指定時は force=1 で全件取得、通常は force=0 で未読のみ）
+        fetch_force = 1 if since_dt else 0
+        messages = get_messages(int(room_id), force=fetch_force)
         if not messages:
             # 未読なし → last_checked_at のみ更新
             room_state['room_name']      = room_name
@@ -500,6 +502,7 @@ def run_sync(dry_run: bool = False):
 
         last_message_id = room_state.get('last_message_id', 0)
         new_last_id     = last_message_id
+        since_skip_count = 0  # --since フィルタでスキップした件数
 
         for msg in messages:
             msg_id      = msg.get('message_id', '')
@@ -515,12 +518,22 @@ def run_sync(dry_run: bool = False):
             except Exception:
                 send_time = str(send_time_ts)
 
-            # メッセージIDの更新
+            # メッセージIDの更新（since フィルタ対象でも既読扱いにするため先に更新）
             try:
                 if int(msg_id) > new_last_id:
                     new_last_id = int(msg_id)
             except Exception:
                 pass
+
+            # --since フィルタ: 指定日時より前のメッセージはスキップ（last_message_id は更新済み）
+            if since_dt is not None:
+                try:
+                    send_dt_check = datetime.fromtimestamp(send_time_ts, tz=jst)
+                    if send_dt_check < since_dt:
+                        since_skip_count += 1
+                        continue
+                except Exception:
+                    pass
 
             # 本文が短すぎる・システムメッセージはスキップ
             if len(body.strip()) < 5:
@@ -567,6 +580,10 @@ def run_sync(dry_run: bool = False):
                 )
                 send_line_works_message(notify_text, dry_run=dry_run)
 
+        # --since スキップ件数のログ出力
+        if since_dt is not None and since_skip_count > 0:
+            logger.info(f'  スキップ（since以前）: {since_skip_count}件')
+
         # 状態を更新
         room_state['room_name']       = room_name
         room_state['last_message_id'] = new_last_id
@@ -592,6 +609,25 @@ if __name__ == '__main__':
         action='store_true',
         help='実際の書き込み（Notion/Calendar/LINEWORKS）をスキップして動作確認',
     )
+    parser.add_argument(
+        '--since',
+        type=str,
+        default=None,
+        help='この日時以降のメッセージのみ処理（例: 2026-03-28T12:00:00）',
+    )
     args = parser.parse_args()
 
-    run_sync(dry_run=args.dry_run)
+    # --since の解析（JSTとして扱う）
+    since_dt = None
+    if args.since:
+        jst = timezone(timedelta(hours=9))
+        try:
+            since_dt = datetime.fromisoformat(args.since)
+            if since_dt.tzinfo is None:
+                since_dt = since_dt.replace(tzinfo=jst)
+            logger.info(f'--since フィルタ有効: {since_dt.isoformat()} 以降のメッセージのみ処理')
+        except ValueError as e:
+            logger.error(f'--since の日時フォーマットが不正です: {e}')
+            sys.exit(1)
+
+    run_sync(dry_run=args.dry_run, since_dt=since_dt)
