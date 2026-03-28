@@ -29,14 +29,24 @@
 
 ### 完了済み: LINE WORKS Bot Phase 1（2026-03-28）
 
-- Flask + ngrok サーバー稼働中（PID は毎回変わる）
-- コマンド実装済み：/ga4・/tasks・/clients・/memo・/notion
-- Windows 起動時自動起動：スタートアップフォルダに登録済み
-- 起動スクリプト：`~/.claude/line-works-bot/start-server.bat`
+- Flask + ngrok サーバー稼働中
+- Python: `X:\Python310\python.exe`（これ以外は動作不可）
+- 起動スクリプト：`~/.claude/line-works-bot/start-server.bat`（PC起動時自動起動）
+- 起動時に旧ngrokを自動kill済み（プロセス溜まり問題解決）
 
-**サーバー手動起動（再起動が必要な場合）：**
+**機能一覧：**
+- `/ga4`・自然語「GA4レポートお願い」→ キャッシュ優先・当日初回のみ取得（90秒）
+  - 「最新版」「再取得」で強制リフレッシュ。キャッシュ: `~/.claude/tmp/ga4-cache.txt`
+- `/tasks` → session-handoff.md の残件・引き継ぎ
+- `/clients` → クライアント一覧
+- `/memo <テキスト>` → knowledge-buffer.md に保存
+- `/notion <タイトル>` → Notion議事録DBに追加
+- 自然語「今日の予定は？」「明日の予定は？」→ Google Calendar リアルタイム取得
+- 自然語「明日14時にMTG追加して」→ Google Calendar にイベント追加（1時間）
+
+**サーバー手動起動：**
 ```
-python ~/.claude/line-works-bot/scripts/server.py
+"X:\Python310\python.exe" "C:\Users\ueda-\.claude\line-works-bot\scripts\server.py"
 ```
 
 **次フェーズ：** Phase 2（Xserver VPS移行・24時間対応）は後回し

@@ -6,4 +6,4 @@
 timeout /t 30 /nobreak > nul
 
 :: サーバー起動
-"C:\Users\ueda-\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe" "C:\Users\ueda-\.claude\line-works-bot\scripts\server.py"
+"X:\Python310\python.exe" "C:\Users\ueda-\.claude\line-works-bot\scripts\server.py"

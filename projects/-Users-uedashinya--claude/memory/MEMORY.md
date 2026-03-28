@@ -30,6 +30,7 @@
   - `knowledge/wordpress-plugin/` ← WPプラグイン開発知見
   - `knowledge/figma-mcp/` ← Figma MCP Server 活用知見
   - `knowledge/ai-image-layered/` ← AI画像生成レイヤー分割ワークフロー
+  - `knowledge/windows-python/coding-rules.md` ← Windows Python コーディングルール（2026-03-28）
 - → オフィスウエダ詳細は `clients/officeueda/README.md` を参照（biz-web/ と biz-ai/ の2事業）
 - → ランドプランニング詳細は `clients/lando-planning/README.md` を参照
 - → US-SAIJO詳細は `clients/us-saijo/README.md` を参照
@@ -83,7 +84,7 @@
 → 詳細は [feedback-sync-timing.md](feedback-sync-timing.md) を参照（「作業＋おつかれ」同時の場合は作業を先に完了してから sync）
 
 ## 開発ワークフローのフィードバック
-→ 詳細は [feedback-dev-workflow.md](feedback-dev-workflow.md) を参照（要件確認→シュウに委譲→サクラレビュー→コミットの順序）
+→ 詳細は [feedback-dev-workflow.md](feedback-dev-workflow.md) を参照（担当が決まっているものは即委譲・確認不要。2026-03-28 再整理）
 
 ## officeueda Instagramマンガプロジェクト
 → 詳細は [project-officeueda-instagram-manga.md](project-officeueda-instagram-manga.md) を参照（キャラ設定・フォーマット・ツール選定保留中）
