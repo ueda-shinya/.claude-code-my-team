@@ -285,16 +285,17 @@ try:
         _jst = timezone(timedelta(hours=9))
         _today = datetime.now(_jst).strftime('%Y-%m-%d')
 
-        # 既存レコード確認（同日の重複を避ける）
         _ctx = _ssl.create_default_context()
-        _check_body = json.dumps({
-            'filter': {'property': '日付', 'title': {'equals': _today}}
-        }).encode()
         _headers = {
             'Authorization': f'Bearer {_notion_token}',
             'Notion-Version': '2022-06-28',
             'Content-Type': 'application/json',
         }
+
+        # 既存レコード確認（同日の重複を避ける）
+        _check_body = json.dumps({
+            'filter': {'property': '日付', 'title': {'equals': _today}}
+        }).encode()
         _check_req = urllib.request.Request(
             f'https://api.notion.com/v1/databases/{_ga4_db_id}/query',
             data=_check_body, headers=_headers, method='POST'
@@ -325,13 +326,13 @@ try:
         }
 
         # LP モバイル離脱率
+        _lp_mobile_bounce = None
         for _row in r_lp_device.get('rows', []):
             if _row['dimensionValues'][0]['value'] == 'mobile':
-                _mb = float(_row['metricValues'][1]['value']) * 100
-                _props['LPモバイル離脱率%'] = {'number': round(_mb, 1)}
+                _lp_mobile_bounce = float(_row['metricValues'][1]['value']) * 100
+                _props['LPモバイル離脱率%'] = {'number': round(_lp_mobile_bounce, 1)}
 
         if _existing:
-            # 既存レコードを上書き
             _page_id = _existing[0]['id']
             _req = urllib.request.Request(
                 f'https://api.notion.com/v1/pages/{_page_id}',
@@ -339,7 +340,6 @@ try:
                 headers=_headers, method='PATCH'
             )
         else:
-            # 新規作成
             _req = urllib.request.Request(
                 'https://api.notion.com/v1/pages',
                 data=json.dumps({
@@ -349,7 +349,161 @@ try:
                 headers=_headers, method='POST'
             )
         with urllib.request.urlopen(_req, context=_ctx) as _res:
-            _res.read()
+            _page_id = json.loads(_res.read())['id'] if not _existing else _page_id
+
+        # --- ページ本文ブロック構築 ---
+
+        def _bar(value, max_val, width=15):
+            """Unicode バーチャート"""
+            if max_val <= 0:
+                return '░' * width
+            filled = min(int(value / max_val * width), width)
+            return '█' * filled + '░' * (width - filled)
+
+        def _bounce_icon(rate):
+            return '🟢' if rate < 50 else ('🟡' if rate < 70 else '🔴')
+
+        def _dur_icon(sec):
+            return '🔴' if sec < 30 else ('🟡' if sec < 90 else '🟢')
+
+        def _txt(content):
+            return {'type': 'text', 'text': {'content': content}}
+
+        def _h2(text):
+            return {'object': 'block', 'type': 'heading_2',
+                    'heading_2': {'rich_text': [_txt(text)]}}
+
+        def _callout(content, emoji='📊', color='gray_background'):
+            return {'object': 'block', 'type': 'callout',
+                    'callout': {'icon': {'type': 'emoji', 'emoji': emoji},
+                                'color': color,
+                                'rich_text': [_txt(content)]}}
+
+        def _para(content):
+            return {'object': 'block', 'type': 'paragraph',
+                    'paragraph': {'rich_text': [_txt(content)]}}
+
+        def _bullet(content):
+            return {'object': 'block', 'type': 'bulleted_list_item',
+                    'bulleted_list_item': {'rich_text': [_txt(content)]}}
+
+        def _divider():
+            return {'object': 'block', 'type': 'divider', 'divider': {}}
+
+        _blocks = []
+
+        # --- サイト概要（昨日） ---
+        _site_sessions = int(m[0]['value'])
+        _site_users    = int(m[1]['value'])
+        _site_new      = int(m[2]['value'])
+        _site_bounce_icon = _bounce_icon(bounce)
+        _blocks.append(_h2('📊 サイト概要（昨日）'))
+        _blocks.append(_callout(
+            f'セッション: {_site_sessions}　ユーザー: {_site_users}（新規 {_site_new}）\n'
+            f'離脱率: {bounce:.1f}%  {_site_bounce_icon}',
+            emoji='📊', color='blue_background'
+        ))
+
+        # --- 流入元（過去7日）バーチャート ---
+        _source_rows = r_source.get('rows', [])
+        if _source_rows:
+            _blocks.append(_divider())
+            _blocks.append(_h2('📈 流入元（過去7日）'))
+            _max_s = max(int(r['metricValues'][0]['value']) for r in _source_rows)
+            for _row in _source_rows:
+                _ch = _row['dimensionValues'][0]['value']
+                _s  = int(_row['metricValues'][0]['value'])
+                _n  = int(_row['metricValues'][1]['value'])
+                _b  = _bar(_s, _max_s, 16)
+                _blocks.append(_para(f'{_ch:<22} {_b}  {_s} セッション（新規 {_n}）'))
+
+        # --- LP 状況（過去7日） ---
+        _lp_sessions = int(lp_m[0]['value'])
+        _lp_cta_cnt  = int(get_metric(r_lp_cta, 0, 0))
+        _dur_min = int(lp_dur // 60)
+        _dur_sec = int(lp_dur % 60)
+        _dur_str = f'{_dur_min}分{_dur_sec}秒' if _dur_min > 0 else f'{int(lp_dur)}秒'
+
+        _lp_alerts = []
+        if lp_bounce > 60:
+            _lp_alerts.append(f'離脱率高め（{lp_bounce:.1f}%）')
+        if _lp_mobile_bounce and _lp_mobile_bounce > 70:
+            _lp_alerts.append(f'モバイル離脱率高め（{_lp_mobile_bounce:.1f}%）')
+        if _lp_cta_cnt == 0 and _lp_sessions >= 5:
+            _lp_alerts.append('CTAクリックがゼロ')
+        if _lp_sessions == 0:
+            _lp_alerts.append('LPへのアクセスなし')
+
+        _lp_color = 'red_background' if _lp_alerts else ('yellow_background' if lp_bounce > 50 else 'green_background')
+        _lp_emoji = '🔴' if _lp_alerts else ('🟡' if lp_bounce > 50 else '🟢')
+
+        _lp_content = (
+            f'セッション: {_lp_sessions}\n'
+            f'離脱率: {lp_bounce:.1f}%  {_bounce_icon(lp_bounce)}\n'
+            f'平均滞在: {_dur_str}  {_dur_icon(lp_dur)}\n'
+            f'CTAクリック: {_lp_cta_cnt}  {"🟢" if _lp_cta_cnt > 0 else "🔴"}'
+        )
+        if _lp_mobile_bounce is not None:
+            _lp_content += f'\nモバイル離脱率: {_lp_mobile_bounce:.1f}%  {_bounce_icon(_lp_mobile_bounce)}'
+
+        _blocks.append(_divider())
+        _blocks.append(_h2('🏠 LP状況（lp-260319 / 過去7日）'))
+        _blocks.append(_callout(_lp_content, emoji=_lp_emoji, color=_lp_color))
+        if _lp_alerts:
+            _blocks.append(_callout('⚠️ ' + ' / '.join(_lp_alerts), emoji='⚠️', color='yellow_background'))
+
+        # --- お問い合わせ ---
+        _contact_yd_pv = int(get_metric(r_contact_yd, 0, 0))
+        _contact_yd_u  = int(get_metric(r_contact_yd, 0, 1))
+        _contact_7d_pv = int(get_metric(r_contact_7d, 0, 0))
+        _contact_7d_u  = int(get_metric(r_contact_7d, 0, 1))
+        _contact_emoji = '🟢' if _contact_yd_pv > 0 else '⬜'
+        _blocks.append(_divider())
+        _blocks.append(_h2('📞 お問い合わせ'))
+        _blocks.append(_callout(
+            f'昨日: {_contact_yd_pv} PV / {_contact_yd_u} ユーザー\n'
+            f'過去7日: {_contact_7d_pv} PV / {_contact_7d_u} ユーザー',
+            emoji=_contact_emoji, color='gray_background'
+        ))
+
+        # --- 人気ページ Top5（昨日） ---
+        if r_pages.get('rows'):
+            _blocks.append(_divider())
+            _blocks.append(_h2('📄 人気ページ Top5（昨日）'))
+            for _i, _row in enumerate(r_pages['rows'], 1):
+                _path = _row['dimensionValues'][0]['value']
+                _pv   = _row['metricValues'][0]['value']
+                _u    = _row['metricValues'][1]['value']
+                _blocks.append(_bullet(f'{_path}  →  {_pv} PV / {_u} ユーザー'))
+
+        # 既存ブロックをクリアして新しいブロックを追加
+        _list_req = urllib.request.Request(
+            f'https://api.notion.com/v1/blocks/{_page_id}/children?page_size=100',
+            headers=_headers, method='GET'
+        )
+        with urllib.request.urlopen(_list_req, context=_ctx) as _res:
+            _children = json.loads(_res.read()).get('results', [])
+        for _blk in _children:
+            try:
+                _del_req = urllib.request.Request(
+                    f'https://api.notion.com/v1/blocks/{_blk["id"]}',
+                    headers=_headers, method='DELETE'
+                )
+                urllib.request.urlopen(_del_req, context=_ctx).read()
+            except Exception:
+                pass
+
+        # ブロック追加（100件ずつ）
+        for _i in range(0, len(_blocks), 100):
+            _chunk = _blocks[_i:_i+100]
+            _append_req = urllib.request.Request(
+                f'https://api.notion.com/v1/blocks/{_page_id}/children',
+                data=json.dumps({'children': _chunk}, ensure_ascii=False).encode('utf-8'),
+                headers=_headers, method='PATCH'
+            )
+            with urllib.request.urlopen(_append_req, context=_ctx) as _res:
+                _res.read()
+
         print('NOTION_GA4_PUSH: OK')
     else:
         print('NOTION_GA4_PUSH: SKIP (token or db_id not set)')
