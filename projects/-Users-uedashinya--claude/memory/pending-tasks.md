@@ -6,6 +6,16 @@ type: project
 
 ## 保留中のタスク
 
+### Chatwork → Notion / Calendar 自動連携
+- **内容**: Chatwork新着メッセージからタスク・スケジュールを自動抽出してNotionと Google Calendarに追加
+  - 対象：全ルーム
+  - タスク追加先：Notion 案件リスト
+  - スケジュール追加先：Google Calendar
+  - モーニングブリーフィングに組み込む形で実装（アスカ自身が解析・API追加クレジット不要）
+- **シンヤさんに必要な作業**: Chatwork「設定 → API連携」でAPIトークンを発行 → `.env` に `CHATWORK_API_TOKEN=xxxx` を追加
+- **登録日**: 2026-03-28
+- **対応**: トークンが用意できたら「Chatwork連携して」で再開
+
 ### 明日の打ち合わせ前に質問リストを確認する
 - **内容**: 事前準備資料の質問リストに目を通しておく
   - ファイル: `clients/officeueda/reports/20260329_marketing-kickoff-prep.md`
