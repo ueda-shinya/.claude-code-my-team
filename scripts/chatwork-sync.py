@@ -265,7 +265,14 @@ ANALYZE_SYSTEM_PROMPT = """以下のChatworkメッセージを解析してくだ
   "schedule_datetime": "YYYY-MM-DDTHH:MM:SS（推測できる場合、不明な場合はnull）",
   "is_high_priority": true/false,
   "priority_reason": "優先度高と判断した理由（is_high_priorityがtrueの場合）"
-}"""
+}
+
+is_high_priority の判定基準（以下のいずれかに該当する場合のみ true）：
+- 今日中または明日中に返答・対応が必要とわかるもの
+- 金額・契約・キャンセル・解約に関わる内容
+- To:（名指し）で送られてきたメッセージ
+- クレーム・トラブル・緊急対応が必要な内容
+上記に該当しない場合は false とすること。"""
 
 
 def analyze_message(room_name: str, account_name: str, send_time: str, message_body: str) -> dict | None:
