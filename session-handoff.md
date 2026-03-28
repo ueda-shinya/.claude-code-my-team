@@ -27,6 +27,16 @@
 
 ---
 
+### 運用中: Chatwork → Notion/Calendar/LINE WORKS 連携（2026-03-28）
+
+- スクリプト: `~/.claude/scripts/chatwork-sync.py`
+- APScheduler で4時間ごと自動チェック（server.py に統合済み）
+- Notionプロパティ修正済み・優先度高の判定基準定義済み
+- **運用しながら通知精度を見直し中**（不要な通知があれば随時プロンプト調整）
+- サーバー再起動でAPScheduler有効化（まだ再起動待ち）
+
+---
+
 ### 完了済み: LINE WORKS Bot Phase 1（2026-03-28）
 
 - Flask + ngrok サーバー稼働中
