@@ -92,5 +92,8 @@
 ## officeueda Instagramマンガプロジェクト
 → 詳細は [project-officeueda-instagram-manga.md](project-officeueda-instagram-manga.md) を参照（キャラ設定・フォーマット・ツール選定保留中）
 
+## APIコスト管理ポリシー
+→ 詳細は [feedback-api-cost.md](feedback-api-cost.md) を参照（テスト中は毎回報告・通常運用は閾値超え時のみ・要因を確定/推測で報告）
+
 ## 保留タスク
 → 詳細は [pending-tasks.md](pending-tasks.md) を参照

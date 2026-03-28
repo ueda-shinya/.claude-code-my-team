@@ -140,6 +140,32 @@
 - ページの種類に応じてtypeを選択: LocalBusiness / WebPage / FAQPage / Product / Service など
 - JSON-LD1本でSEO・GMC・リッチリザルトをまとめて対応できる
 
+## APIコスト管理ポリシー（2026-03-28 合意）
+
+Claude API（Anthropic）を使用するスクリプト・機能には、以下のコスト管理を組み込む。
+
+### 運用モード別の報告ルール
+
+| モード | 報告タイミング |
+|---|---|
+| **テスト/テスト運用中** | 毎回実行ごとにコストを報告 |
+| **通常運用中** | ログに記録のみ。閾値を超えた場合のみアラート報告 |
+
+### 閾値超え時の報告内容
+- 推定コスト（USD・JPY概算）
+- 解析件数・トークン数
+- 超えた要因（確定 / 推測 のどちらかを明記）
+
+### 実装パターン（chatwork-sync.py を参考）
+- `--test-mode` フラグ：テスト時に明示指定
+- `COST_THRESHOLD_USD`：閾値定数（スクリプトごとに適切な値を設定）
+- コスト履歴：`~/.claude/tmp/api-cost-history.json` に追記（script名・timestamp・cost・token数）
+- 履歴保持：最新500件
+
+### テストモードの切り替え
+- CLI実行（手動テスト）：`--test-mode` を付与
+- APScheduler（自動運用）：`--test-mode` なし → 通常運用モード
+
 ## 利用可能な共通スキル
 - /blog-post：記事作成
 - /commit：gitコミット

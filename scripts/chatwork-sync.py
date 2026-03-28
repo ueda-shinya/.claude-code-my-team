@@ -50,9 +50,15 @@ LINE_WORKS_PRIVATE_KEY_PATH = os.path.expanduser(
 ALLOWED_USER_ID = os.environ.get('ALLOWED_USER_ID', '')
 
 # ── 定数 ──────────────────────────────────────────────────────
-CHATWORK_API_BASE = 'https://api.chatwork.com/v2'
-STATE_FILE        = os.path.expanduser('~/.claude/tmp/chatwork-state.json')
-LOG_DIR           = os.path.expanduser('~/.claude/line-works-bot/logs')
+CHATWORK_API_BASE    = 'https://api.chatwork.com/v2'
+STATE_FILE           = os.path.expanduser('~/.claude/tmp/chatwork-state.json')
+LOG_DIR              = os.path.expanduser('~/.claude/line-works-bot/logs')
+
+# ── APIコスト管理 ──────────────────────────────────────────────
+INPUT_COST_PER_MTOK  = 0.80   # claude-haiku-4-5: $0.80/MTok
+OUTPUT_COST_PER_MTOK = 4.00   # claude-haiku-4-5: $4.00/MTok
+COST_THRESHOLD_USD   = 0.05   # 通常運用でこの金額を超えたらアラート（約¥7.5）
+COST_HISTORY_FILE    = os.path.expanduser('~/.claude/tmp/api-cost-history.json')
 
 # ── ログ設定 ─────────────────────────────────────────────────
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -456,9 +462,47 @@ def add_calendar_event(summary: str, start_iso: str, dry_run: bool = False) -> b
         return False
 
 
+# ── APIコスト履歴管理 ─────────────────────────────────────────
+
+def append_cost_history(script: str, cost_usd: float, input_tokens: int, output_tokens: int, analyzed_count: int):
+    """APIコスト履歴を COST_HISTORY_FILE に追記（最新500件を保持）"""
+    os.makedirs(os.path.dirname(COST_HISTORY_FILE), exist_ok=True)
+    try:
+        if os.path.exists(COST_HISTORY_FILE):
+            with open(COST_HISTORY_FILE, encoding='utf-8') as f:
+                history = json.load(f)
+        else:
+            history = []
+    except Exception:
+        history = []
+
+    jst = timezone(timedelta(hours=9))
+    history.append({
+        'timestamp':      datetime.now(jst).isoformat(),
+        'script':         script,
+        'cost_usd':       round(cost_usd, 6),
+        'input_tokens':   input_tokens,
+        'output_tokens':  output_tokens,
+        'analyzed_count': analyzed_count,
+    })
+    history = history[-500:]  # 最新500件のみ保持
+
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(COST_HISTORY_FILE), suffix='.tmp')
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            json.dump(history, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, COST_HISTORY_FILE)
+    except Exception as e:
+        logger.warning(f'コスト履歴の保存失敗: {e}')
+        try:
+            os.unlink(tmp)
+        except Exception:
+            pass
+
+
 # ── メイン処理 ───────────────────────────────────────────────
 
-def run_sync(dry_run: bool = False, since_dt=None):
+def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
     """Chatwork 同期メイン処理"""
     logger.info(f'=== chatwork-sync 開始 {"[DRY-RUN]" if dry_run else ""} ===')
     if since_dt:
@@ -627,18 +671,37 @@ def run_sync(dry_run: bool = False, since_dt=None):
     save_state(state, dry_run=dry_run)
 
     # コスト概算（claude-haiku-4-5-20251001 料金）
-    INPUT_COST_PER_MTOK  = 0.80   # $0.80/MTok
-    OUTPUT_COST_PER_MTOK = 4.00   # $4.00/MTok
-    input_cost       = total_input_tokens  / 1_000_000 * INPUT_COST_PER_MTOK
-    output_cost      = total_output_tokens / 1_000_000 * OUTPUT_COST_PER_MTOK
-    total_cost_usd   = input_cost + output_cost
-    total_cost_jpy   = total_cost_usd * 150  # 概算レート
+    input_cost     = total_input_tokens  / 1_000_000 * INPUT_COST_PER_MTOK
+    output_cost    = total_output_tokens / 1_000_000 * OUTPUT_COST_PER_MTOK
+    total_cost_usd = input_cost + output_cost
+    total_cost_jpy = total_cost_usd * 150  # 概算レート
 
-    logger.info('=== API使用コスト概算 ===')
-    logger.info(f'解析メッセージ数: {analyzed_count} 件')
-    logger.info(f'入力トークン: {total_input_tokens:,}')
-    logger.info(f'出力トークン: {total_output_tokens:,}')
-    logger.info(f'推定コスト: ${total_cost_usd:.4f}（約¥{total_cost_jpy:.1f}）')
+    # 履歴に記録（テスト・通常運用共通）
+    append_cost_history('chatwork-sync', total_cost_usd, total_input_tokens, total_output_tokens, analyzed_count)
+
+    if test_mode:
+        # テスト/テスト運用中: 毎回コストを報告
+        logger.info('=== API使用コスト概算（テストモード） ===')
+        logger.info(f'解析メッセージ数: {analyzed_count} 件')
+        logger.info(f'入力トークン: {total_input_tokens:,}')
+        logger.info(f'出力トークン: {total_output_tokens:,}')
+        logger.info(f'推定コスト: ${total_cost_usd:.4f}（約¥{total_cost_jpy:.1f}）')
+    else:
+        # 通常運用中: 閾値超え時のみアラート
+        if total_cost_usd > COST_THRESHOLD_USD:
+            # 要因を推測
+            if analyzed_count > 20:
+                cause = f'解析メッセージ数が多い（{analyzed_count}件）（推測）'
+            elif analyzed_count > 0:
+                cause = f'1件あたりのトークンが多い（平均 {(total_input_tokens + total_output_tokens) // analyzed_count:,}トークン/件）（推測）'
+            else:
+                cause = '解析件数0件にもかかわらずコスト発生（確認推奨）'
+            logger.warning('=== [COST ALERT] APIコストが閾値を超えました ===')
+            logger.warning(f'  推定コスト: ${total_cost_usd:.4f}（約¥{total_cost_jpy:.1f}）/ 閾値: ${COST_THRESHOLD_USD}')
+            logger.warning(f'  解析メッセージ数: {analyzed_count}件 / 入力: {total_input_tokens:,} / 出力: {total_output_tokens:,}')
+            logger.warning(f'  要因: {cause}')
+        else:
+            logger.info(f'APIコスト: ${total_cost_usd:.4f}（閾値内・履歴に記録済み）')
 
     logger.info('=== chatwork-sync 完了 ===')
 
@@ -658,6 +721,11 @@ if __name__ == '__main__':
         default=None,
         help='この日時以降のメッセージのみ処理（例: 2026-03-28T12:00:00）',
     )
+    parser.add_argument(
+        '--test-mode',
+        action='store_true',
+        help='テスト/テスト運用モード: 毎回APIコストを報告する（通常運用は閾値超え時のみ）',
+    )
     args = parser.parse_args()
 
     # --since の解析（JSTとして扱う）
@@ -673,4 +741,4 @@ if __name__ == '__main__':
             logger.error(f'--since の日時フォーマットが不正です: {e}')
             sys.exit(1)
 
-    run_sync(dry_run=args.dry_run, since_dt=since_dt)
+    run_sync(dry_run=args.dry_run, since_dt=since_dt, test_mode=args.test_mode)
