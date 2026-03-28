@@ -64,6 +64,9 @@ LOG_DIR              = os.path.expanduser('~/.claude/line-works-bot/logs')
 # 一次返信: 受信から何時間経過したら返信するか
 URGENT_REPLY_AFTER_HOURS = 1
 
+# 緊急対応中の LINE WORKS リマインド間隔（分）
+URGENT_ESCALATION_INTERVAL_MINUTES = 15
+
 # 一次返信メッセージ（内容は運用しながら調整）
 URGENT_AUTO_REPLY_TEXT = (
     'お世話になっております。\n'
@@ -305,10 +308,12 @@ def get_messages(room_id: int, force: int = 0) -> list:
 
 # ── Claude API 解析 ───────────────────────────────────────────
 
-ANALYZE_SYSTEM_PROMPT = """以下のChatworkメッセージを解析してください。
+def build_analyze_prompt(my_account_id: str) -> str:
+    """解析用システムプロンプトを生成する（自分のアカウントIDを埋め込む）"""
+    return f"""以下のChatworkメッセージを解析してください。
 
 以下のJSON形式で返してください。必ずJSONのみを返し、前後に説明文を付けないこと：
-{
+{{
   "has_task": true/false,
   "task_summary": "タスクの要約（has_taskがtrueの場合）",
   "related_project": "関連する案件名（推測）",
@@ -317,13 +322,15 @@ ANALYZE_SYSTEM_PROMPT = """以下のChatworkメッセージを解析してくだ
   "schedule_datetime": "YYYY-MM-DDTHH:MM:SS（推測できる場合、不明な場合はnull）",
   "is_high_priority": true/false,
   "priority_reason": "優先度高と判断した理由（is_high_priorityがtrueの場合）"
-}
+}}
 
-is_high_priority の判定基準（以下のいずれかに該当する場合のみ true）：
-- 今日中または明日中に返答・対応が必要とわかるもの
-- 金額・契約・キャンセル・解約に関わる内容
-- To:（名指し）で送られてきたメッセージ
-- クレーム・トラブル・緊急対応が必要な内容
+is_high_priority の判定基準（以下のすべてを満たす場合のみ true）：
+- 以下のいずれかに該当すること：
+  - [To:{my_account_id}] が本文に含まれている（自分宛の名指しメッセージ）
+  - 今日中または明日中に自分が返答・対応する必要があるとわかるもの
+  - 自分に関係する金額・契約・キャンセル・解約に関わる内容
+  - 自分に関係するクレーム・トラブル・緊急対応が必要な内容
+- 他の人宛の [To:xxxxx] メッセージで自分のアカウントID（{my_account_id}）が含まれていない場合は false
 上記に該当しない場合は false とすること。"""
 
 
@@ -342,7 +349,7 @@ def analyze_message(room_name: str, account_name: str, send_time: str, message_b
         response = claude_client.messages.create(
             model='claude-haiku-4-5-20251001',
             max_tokens=512,
-            system=ANALYZE_SYSTEM_PROMPT,
+            system=build_analyze_prompt(CHATWORK_MY_ACCOUNT_ID),
             messages=[{
                 'role': 'user',
                 'content': f'ルーム名：{room_name}\n送信者：{account_name}\n送信日時：{send_time}\nメッセージ本文：\n<message>\n{message_body[:3000]}\n</message>',
@@ -552,6 +559,14 @@ def check_urgent_rooms(state: dict, rooms_state: dict, dry_run: bool = False, te
                 if last_outgoing.tzinfo is None:
                     last_outgoing = last_outgoing.replace(tzinfo=jst)
                 if last_outgoing >= last_incoming:
+                    # 緊急対応中だった場合は解除して通常間隔に戻す
+                    if room_state.get('urgent_escalation_active'):
+                        room_state['urgent_escalation_active'] = False
+                        room_state['urgent_auto_reply_sent'] = False
+                        room_state['urgent_last_lw_reminded_at'] = ''
+                        room_state['check_interval_hours'] = 1
+                        rooms_state[room_id] = room_state
+                        logger.info(f'緊急対応解除: {room_name}（返信確認・フラグリセット）')
                     continue  # 返信済みのためスキップ
             except Exception:
                 pass
@@ -566,6 +581,9 @@ def check_urgent_rooms(state: dict, rooms_state: dict, dry_run: bool = False, te
             if ok:
                 room_state['urgent_auto_reply_sent'] = True
                 room_state['urgent_auto_replied_at'] = now.isoformat()
+                room_state['urgent_escalation_active'] = True          # エスカレーション開始
+                room_state['urgent_last_lw_reminded_at'] = now.isoformat()  # 初回リマインド時刻
+                room_state['check_interval_hours'] = URGENT_ESCALATION_INTERVAL_MINUTES / 60  # 15分間隔
                 rooms_state[room_id] = room_state
 
         # 1時間以上未返信（自動返信済みでも未解決）なら通知リストに追加
@@ -577,6 +595,39 @@ def check_urgent_rooms(state: dict, rooms_state: dict, dry_run: bool = False, te
                 'elapsed':     elapsed_hours,
                 'auto_replied': room_state.get('urgent_auto_reply_sent', False),
             })
+
+        # エスカレーション中リマインド（15分ごとに LINE WORKS 再通知）
+        if elapsed_hours >= URGENT_REPLY_AFTER_HOURS and room_state.get('urgent_escalation_active'):
+            last_reminded_str = room_state.get('urgent_last_lw_reminded_at', '')
+            should_remind = False
+            if not last_reminded_str:
+                should_remind = True
+            else:
+                try:
+                    last_reminded = datetime.fromisoformat(last_reminded_str)
+                    if last_reminded.tzinfo is None:
+                        last_reminded = last_reminded.replace(tzinfo=jst)
+                    elapsed_since_remind = (now - last_reminded).total_seconds() / 60
+                    should_remind = elapsed_since_remind >= URGENT_ESCALATION_INTERVAL_MINUTES
+                except Exception as e:
+                    logger.warning(f'urgent_last_lw_reminded_at のパース失敗（リマインドスキップ）: {e}')
+                    should_remind = False
+
+            if should_remind:
+                sender = room_state.get('last_incoming_sender', '不明')
+                excerpt = room_state.get('last_incoming_excerpt', '')[:50]
+                room_url = f'https://www.chatwork.com/#!rid{room_id}'
+                remind_text = (
+                    f'【Chatwork 未対応リマインド】\n'
+                    f'{room_name}｜{sender}\n'
+                    f'自動返信から{elapsed_hours:.0f}時間経過しています。\n'
+                    f'「{excerpt}」\n'
+                    f'{room_url}'
+                )
+                ok = send_line_works_message(remind_text, dry_run=dry_run)
+                if ok:
+                    room_state['urgent_last_lw_reminded_at'] = now.isoformat()
+                    rooms_state[room_id] = room_state
 
     # LINE WORKS リマインド（未返信ルームがある場合）
     if pending_rooms:
@@ -678,9 +729,12 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
         # check_interval_hours を動的に再計算・更新
         last_updated = room_state.get('last_updated_at', '')
         new_interval = calc_check_interval(last_updated)
-        # 一次返信対象ルームは最大1時間間隔でチェック
+        # 一次返信対象ルームのチェック間隔（緊急対応中は15分・通常時は最大1時間）
         if room_id in CHATWORK_URGENT_ROOM_IDS:
-            new_interval = min(new_interval, 1)
+            if room_state.get('urgent_escalation_active'):
+                new_interval = URGENT_ESCALATION_INTERVAL_MINUTES / 60  # 緊急対応中は15分
+            else:
+                new_interval = min(new_interval, 1)  # 通常時は最大1時間
         room_state['check_interval_hours'] = new_interval
 
         if not should_check_room(room_state):
