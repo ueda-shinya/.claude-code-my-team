@@ -86,6 +86,9 @@
 ## 開発ワークフローのフィードバック
 → 詳細は [feedback-dev-workflow.md](feedback-dev-workflow.md) を参照（担当が決まっているものは即委譲・確認不要。2026-03-28 再整理）
 
+## クロスプラットフォーム事前検証のフィードバック
+→ 詳細は [feedback-cross-platform.md](feedback-cross-platform.md) を参照（Windows/Mac 差異は実装前に洗い出す・後から発覚は準備不足。2026-03-28）
+
 ## officeueda Instagramマンガプロジェクト
 → 詳細は [project-officeueda-instagram-manga.md](project-officeueda-instagram-manga.md) を参照（キャラ設定・フォーマット・ツール選定保留中）
 
