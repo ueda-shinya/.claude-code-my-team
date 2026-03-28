@@ -19,6 +19,8 @@
 | frontend-engineer | ツバサ（翼） | sonnet | フロントエンド実装（HTML/CSS/JS） |
 | backend-engineer | シュウ（修） | sonnet | バックエンド実装（API/DB設計） |
 | process-designer | ツムギ（紬） | opus | 業務プロセス改善・再発防止策設計・役割の曖昧さ解消 |
+| logic-verifier | リナ（理奈） | opus | ロジック検証・批判的思考・前提の洗い出し |
+| business-consultant | ナギ（凪） | opus | 事業コンサル・収益構造分析・ビジネスモデル評価・意思決定の壁打ち（関西弁） |
 
 ## シンヤさんの仕事
 - クライアントのマーケティング・業務改善を支援している
@@ -63,6 +65,9 @@
 
 ## 質問スタイルのフィードバック
 → 詳細は [feedback-questions.md](feedback-questions.md) を参照（漠然とした依頼への質問の仕方）
+
+## ラウンドテーブルの活用スタイル
+→ 詳細は [feedback-roundtable.md](feedback-roundtable.md) を参照（複数領域にまたがる相談で自動実施・2026-03-28確立）
 
 ## ナレッジ化スタイルのフィードバック
 → 詳細は [feedback-knowledge-style.md](feedback-knowledge-style.md) を参照（要点絞り・元ファイル削除まで一括）

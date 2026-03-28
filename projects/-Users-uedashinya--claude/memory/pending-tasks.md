@@ -6,6 +6,13 @@ type: project
 
 ## 保留中のタスク
 
+### 明日の打ち合わせ前に質問リストを確認する
+- **内容**: 事前準備資料の質問リストに目を通しておく
+  - ファイル: `clients/officeueda/reports/20260329_marketing-kickoff-prep.md`
+  - 特にセクション3「シンヤさんに確認すべき質問リスト」のA〜E
+- **登録日**: 2026-03-28
+- **対応**: 2026-03-29 打ち合わせ前にリマインド
+
 ### freee × Claude Code 連携セットアップ
 - **内容**: freee無料トライアルを試してMCPで連携する
   - マニュアル作成済み: `~/.claude/knowledge/freee-mcp/setup-guide.md`
