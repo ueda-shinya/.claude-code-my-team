@@ -1,10 +1,10 @@
 """
 LINE WORKS Bot サーバー — アスカ Bot (Phase 1)
-Flask + ngrok + Anthropic SDK
+Flask + ngrok + Anthropic SDK + APScheduler (Chatwork 定期同期)
 
 起動方法:
-  pip install flask anthropic requests python-dotenv PyJWT pyngrok
-  python3 ~/.claude/line-works-bot/scripts/server.py
+  pip install flask anthropic requests python-dotenv PyJWT pyngrok apscheduler
+  X:\\Python310\\python.exe ~/.claude/line-works-bot/scripts/server.py
 """
 import os
 import sys
@@ -28,11 +28,9 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import anthropic
 import jwt as pyjwt
+from apscheduler.schedulers.background import BackgroundScheduler
 
 # ── 環境変数読み込み ───────────────────────────────────────
-# ── 起動時クリーンアップ（旧 ngrok プロセスを終了） ────────
-subprocess.run(['taskkill', '/F', '/IM', 'ngrok.exe'], capture_output=True)
-
 load_dotenv(os.path.expanduser('~/.claude/.env'))
 
 BOT_ID            = os.environ['LINE_WORKS_BOT_ID']
@@ -42,6 +40,7 @@ SERVICE_ACCOUNT   = os.environ['LINE_WORKS_SERVICE_ACCOUNT']
 PRIVATE_KEY_PATH  = os.path.expanduser(os.environ['LINE_WORKS_PRIVATE_KEY_PATH'])
 ALLOWED_USER_ID   = os.environ['ALLOWED_USER_ID']
 ANTHROPIC_API_KEY = os.environ['ANTHROPIC_API_KEY']
+BOT_SECRET        = os.environ.get('LINE_WORKS_BOT_SECRET', '')
 
 with open(PRIVATE_KEY_PATH, 'r') as f:
     PRIVATE_KEY = f.read()
@@ -171,8 +170,10 @@ def fetch_calendar(date_from: str, date_to: str) -> str:
     try:
         cred_path = os.path.expanduser('~/.claude/google-oauth-credentials.json')
         token_path = os.path.expanduser('~/.claude/mcp-google-calendar-token.json')
-        cred = json.load(open(cred_path))
-        token = json.load(open(token_path))
+        with open(cred_path, encoding='utf-8') as f:
+            cred = json.load(f)
+        with open(token_path, encoding='utf-8') as f:
+            token = json.load(f)
 
         data = urllib.parse.urlencode({
             'client_id':     cred['installed']['client_id'],
@@ -212,8 +213,10 @@ def add_calendar_event(summary: str, start_iso: str, end_iso: str) -> str | None
     try:
         cred_path = os.path.expanduser('~/.claude/google-oauth-credentials.json')
         token_path = os.path.expanduser('~/.claude/mcp-google-calendar-token.json')
-        cred = json.load(open(cred_path))
-        token = json.load(open(token_path))
+        with open(cred_path, encoding='utf-8') as f:
+            cred = json.load(f)
+        with open(token_path, encoding='utf-8') as f:
+            token = json.load(f)
 
         data = urllib.parse.urlencode({
             'client_id':     cred['installed']['client_id'],
@@ -646,9 +649,9 @@ def process_message(user_id: str, text: str):
 app = Flask(__name__)
 
 def verify_signature(body: bytes, signature: str) -> bool:
-    """HMAC-SHA256 署名検証"""
+    """HMAC-SHA256 署名検証（LINE_WORKS_BOT_SECRET を使用）"""
     expected = base64.b64encode(
-        hmac.new(CLIENT_SECRET.encode(), body, hashlib.sha256).digest()
+        hmac.new(BOT_SECRET.encode(), body, hashlib.sha256).digest()
     ).decode()
     return hmac.compare_digest(expected, signature)
 
@@ -661,12 +664,10 @@ def callback():
     body      = request.get_data()   # raw body を先に取得（署名検証に必要）
     signature = request.headers.get('X-WORKS-Signature', '')
 
-    # 署名検証（一時的にスキップ中 - Bot Secret 確認後に有効化）
-    # if signature and not verify_signature(body, signature):
-    #     logger.warning('署名検証失敗')
-    #     return 'Invalid signature', 403
-    if signature:
-        logger.info(f'署名ヘッダー受信（検証スキップ中）: {signature[:20]}...')
+    # 署名検証
+    if not signature or not verify_signature(body, signature):
+        logger.warning('署名検証失敗')
+        return 'Invalid signature', 403
 
     try:
         data = json.loads(body)
@@ -697,9 +698,43 @@ def callback():
     threading.Thread(target=run, daemon=True).start()
     return 'OK', 200
 
+# ── Chatwork 定期同期（APScheduler） ──────────────────────
+CHATWORK_SYNC_SCRIPT = os.path.expanduser('~/.claude/scripts/chatwork-sync.py')
+
+def run_chatwork_sync():
+    """
+    chatwork-sync.py を子プロセスで実行するジョブ。
+    1時間ごとに呼ばれるが、各ルームのチェック間隔判定は chatwork-sync.py 側で行う。
+    """
+    logger.info('Chatwork 定期同期ジョブ起動')
+    try:
+        result = subprocess.run(
+            [sys.executable, CHATWORK_SYNC_SCRIPT],
+            capture_output=True,
+            text=True,
+            timeout=300,
+            encoding='utf-8',
+        )
+        if result.stdout:
+            logger.info(f'chatwork-sync stdout:\n{result.stdout[-1000:]}')
+        if result.stderr:
+            logger.warning(f'chatwork-sync stderr:\n{result.stderr[-500:]}')
+        if result.returncode != 0:
+            logger.error(f'chatwork-sync が異常終了しました (returncode={result.returncode})')
+        else:
+            logger.info('Chatwork 定期同期ジョブ完了')
+    except subprocess.TimeoutExpired:
+        logger.error('chatwork-sync がタイムアウトしました（300秒超過）')
+    except Exception as e:
+        logger.error(f'Chatwork 定期同期ジョブ エラー: {e}')
+
+
 # ── エントリーポイント ─────────────────────────────────────
 if __name__ == '__main__':
     logger.info('アスカ Bot サーバーを起動します')
+
+    # 起動時クリーンアップ（旧 ngrok プロセスを終了）
+    subprocess.run(['taskkill', '/F', '/IM', 'ngrok.exe'], capture_output=True)
 
     # ngrok 起動（pyngrok がある場合）
     try:
@@ -724,4 +759,18 @@ if __name__ == '__main__':
         logger.warning(f'ngrok 起動失敗: {e}')
         print(f'\nngrok 起動失敗: {e}\nngrok http 5000 を手動で実行してください。\n')
 
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    # APScheduler 起動（Chatwork 1時間ごと定期同期）
+    scheduler = BackgroundScheduler(timezone='Asia/Tokyo')
+    scheduler.add_job(
+        run_chatwork_sync,
+        trigger='interval',
+        hours=1,
+        id='chatwork_sync',
+        replace_existing=True,
+        max_instances=1,
+        next_run_time=datetime.now(timezone(timedelta(hours=9))),  # 起動直後に1回実行
+    )
+    scheduler.start()
+    logger.info('APScheduler 起動完了（Chatwork 同期: 1時間ごと）')
+
+    app.run(host='127.0.0.1', port=5000, debug=False)
