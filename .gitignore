@@ -40,6 +40,9 @@ google-oauth-credentials.json
 mcp.json
 .mcp.json
 
+# ── 一時ファイル ─────────────────────────────────────────
+tmp/
+
 # ── OS自動生成 ───────────────────────────────────────────
 .DS_Store
 Thumbs.db
