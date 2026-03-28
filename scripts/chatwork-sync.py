@@ -49,10 +49,27 @@ LINE_WORKS_PRIVATE_KEY_PATH = os.path.expanduser(
 )
 ALLOWED_USER_ID = os.environ.get('ALLOWED_USER_ID', '')
 
+# 一次返信機能
+CHATWORK_MY_ACCOUNT_ID = os.environ.get('CHATWORK_MY_ACCOUNT_ID', '')
+_target_ids_raw = os.environ.get('CHATWORK_URGENT_TARGET_USER_IDS', '')
+CHATWORK_URGENT_TARGET_IDS = set(
+    x.strip() for x in _target_ids_raw.split(',') if x.strip()
+)
+
 # ── 定数 ──────────────────────────────────────────────────────
 CHATWORK_API_BASE    = 'https://api.chatwork.com/v2'
 STATE_FILE           = os.path.expanduser('~/.claude/tmp/chatwork-state.json')
 LOG_DIR              = os.path.expanduser('~/.claude/line-works-bot/logs')
+
+# 一次返信: 受信から何時間経過したら返信するか
+URGENT_REPLY_AFTER_HOURS = 1
+
+# 一次返信メッセージ（内容は運用しながら調整）
+URGENT_AUTO_REPLY_TEXT = (
+    'お世話になっております。\n'
+    'ご連絡いただいた内容を確認しております。\n'
+    '担当者より折り返しご連絡いたしますので、しばらくお待ちください。'
+)
 
 # ── APIコスト管理 ──────────────────────────────────────────────
 INPUT_COST_PER_MTOK  = 0.80   # claude-haiku-4-5: $0.80/MTok
@@ -245,6 +262,33 @@ def get_rooms() -> list:
     """全ルーム一覧を取得"""
     result = cw_get('/rooms')
     return result if isinstance(result, list) else []
+
+
+def send_chatwork_message(room_id: int, body: str, dry_run: bool = False) -> bool:
+    """Chatwork のルームにメッセージを送信する"""
+    if dry_run:
+        logger.info(f'[DRY-RUN] Chatwork 送信スキップ (room={room_id}): {body[:50]}...')
+        return True
+    url = f'{CHATWORK_API_BASE}/rooms/{room_id}/messages'
+    try:
+        data = urllib.parse.urlencode({'body': body, 'self_unread': 0}).encode()
+        req = urllib.request.Request(
+            url,
+            data=data,
+            headers={
+                'X-ChatWorkToken': CHATWORK_API_TOKEN,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method='POST',
+        )
+        ctx = ssl.create_default_context()
+        with urllib.request.urlopen(req, context=ctx, timeout=10) as res:
+            json.loads(res.read())
+        logger.info(f'Chatwork 一次返信送信完了 (room={room_id})')
+        return True
+    except Exception as e:
+        logger.error(f'send_chatwork_message エラー (room={room_id}): {e}')
+        return False
 
 
 def get_messages(room_id: int, force: int = 0) -> list:
@@ -462,6 +506,98 @@ def add_calendar_event(summary: str, start_iso: str, dry_run: bool = False) -> b
         return False
 
 
+# ── 一次返信処理 ─────────────────────────────────────────────
+
+def check_and_handle_urgent_pending(state: dict, dry_run: bool = False, test_mode: bool = False):
+    """
+    pending_urgent リストを確認し、1時間以上返信がなければ一次返信を送る。
+    - シンヤさん（MY_ACCOUNT_ID）が返信済みなら resolved に変更
+    - LINE WORKS に未返信サマリーを送信
+    """
+    if not CHATWORK_MY_ACCOUNT_ID:
+        logger.warning('CHATWORK_MY_ACCOUNT_ID が未設定のため一次返信チェックをスキップ')
+        return
+
+    pending_list = state.setdefault('pending_urgent', [])
+    if not pending_list:
+        return
+
+    jst = timezone(timedelta(hours=9))
+    now = datetime.now(jst)
+    still_pending = []  # LINE WORKS サマリー用
+
+    for item in pending_list:
+        if item.get('resolved'):
+            continue
+
+        room_id   = item.get('room_id')
+        msg_id    = item.get('msg_id')
+        room_name = item.get('room_name', '')
+        sender    = item.get('sender_name', '')
+        body_exc  = item.get('body_excerpt', '')
+
+        # 受信時刻をパース
+        try:
+            received_at = datetime.fromisoformat(item['received_at'])
+            if received_at.tzinfo is None:
+                received_at = received_at.replace(tzinfo=jst)
+        except Exception:
+            continue
+
+        elapsed_hours = (now - received_at).total_seconds() / 3600
+
+        # ルームの最新メッセージを取得してシンヤさんの返信を確認
+        recent_msgs = get_messages(int(room_id), force=1)
+        shinya_replied = False
+        msg_id_int = int(msg_id) if str(msg_id).isdigit() else 0
+
+        for m in recent_msgs:
+            m_id  = int(m.get('message_id', 0))
+            a_id  = str(m.get('account', {}).get('account_id', ''))
+            if m_id > msg_id_int and a_id == CHATWORK_MY_ACCOUNT_ID:
+                shinya_replied = True
+                break
+
+        if shinya_replied:
+            item['resolved'] = True
+            logger.info(f'一次返信不要（返信済み確認）: {room_name} / msg_id={msg_id}')
+            continue
+
+        # 1時間以上経過 & 未返信 → 一次返信（まだ送っていない場合のみ）
+        if elapsed_hours >= URGENT_REPLY_AFTER_HOURS and not item.get('auto_replied'):
+            logger.info(f'一次返信実行: {room_name} / {sender} / 経過{elapsed_hours:.1f}h')
+            ok = send_chatwork_message(int(room_id), URGENT_AUTO_REPLY_TEXT, dry_run=dry_run)
+            if ok:
+                item['auto_replied'] = True
+                item['auto_replied_at'] = now.isoformat()
+
+        # まだ未解決なら LINE WORKS サマリーに追加
+        if not item.get('resolved'):
+            still_pending.append(item)
+
+    # 解決済みを除去（最大50件保持）
+    state['pending_urgent'] = [x for x in pending_list if not x.get('resolved')][-50:]
+
+    # LINE WORKS リマインド（未返信が残っている場合）
+    if still_pending:
+        lines = ['【Chatwork 未返信リスト】']
+        for item in still_pending:
+            try:
+                received_at = datetime.fromisoformat(item['received_at'])
+                if received_at.tzinfo is None:
+                    received_at = received_at.replace(tzinfo=jst)
+                elapsed = (now - received_at).total_seconds() / 3600
+                replied_str = '一次返信済み' if item.get('auto_replied') else '未返信'
+                lines.append(
+                    f'・{item.get("room_name")} | {item.get("sender_name")} '
+                    f'({elapsed:.0f}時間経過・{replied_str})\n'
+                    f'  {item.get("body_excerpt", "")[:50]}'
+                )
+            except Exception:
+                continue
+        send_line_works_message('\n'.join(lines), dry_run=dry_run)
+
+
 # ── APIコスト履歴管理 ─────────────────────────────────────────
 
 def append_cost_history(script: str, cost_usd: float, input_tokens: int, output_tokens: int, analyzed_count: int):
@@ -641,9 +777,8 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                 else:
                     logger.info('  スケジュール日時が不明なためカレンダー追加をスキップ')
 
-            # 優先度高 → LINE WORKS 通知
+            # 優先度高 → LINE WORKS 通知 + 一次返信キューに追加
             if analysis.get('is_high_priority'):
-                # 本文の先頭100文字
                 body_excerpt = body[:100] + ('...' if len(body) > 100 else '')
                 notify_text = (
                     f'【Chatwork 要確認】\n'
@@ -652,6 +787,26 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                     f'https://www.chatwork.com/#!rid{room_id}-{msg_id}'
                 )
                 send_line_works_message(notify_text, dry_run=dry_run)
+
+                # 対象ユーザーからのメッセージなら pending_urgent に追加
+                sender_id = str(account.get('account_id', ''))
+                if sender_id in CHATWORK_URGENT_TARGET_IDS:
+                    pending_list = state.setdefault('pending_urgent', [])
+                    # 同一 msg_id が既に登録済みでないか確認
+                    existing_ids = {str(p.get('msg_id')) for p in pending_list}
+                    if str(msg_id) not in existing_ids:
+                        pending_list.append({
+                            'room_id':       room_id,
+                            'msg_id':        msg_id,
+                            'room_name':     room_name,
+                            'sender_name':   account_name,
+                            'sender_id':     sender_id,
+                            'body_excerpt':  body_excerpt,
+                            'received_at':   send_dt.isoformat() if 'send_dt' in dir() else now_str,
+                            'auto_replied':  False,
+                            'resolved':      False,
+                        })
+                        logger.info(f'  一次返信キューに追加: {account_name} / msg_id={msg_id}')
 
         # --since スキップ件数のログ出力
         if since_dt is not None and since_skip_count > 0:
@@ -665,6 +820,10 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
         if messages:
             room_state['last_updated_at'] = now_str
         rooms_state[room_id] = room_state
+
+    # 一次返信チェック（対象ユーザーの未返信メッセージを処理）
+    if CHATWORK_URGENT_TARGET_IDS:
+        check_and_handle_urgent_pending(state, dry_run=dry_run, test_mode=test_mode)
 
     # 状態ファイル保存
     state['rooms'] = rooms_state
