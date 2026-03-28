@@ -704,7 +704,7 @@ CHATWORK_SYNC_SCRIPT = os.path.expanduser('~/.claude/scripts/chatwork-sync.py')
 def run_chatwork_sync():
     """
     chatwork-sync.py を子プロセスで実行するジョブ。
-    1時間ごとに呼ばれるが、各ルームのチェック間隔判定は chatwork-sync.py 側で行う。
+    15分ごとに呼ばれるが、各ルームのチェック間隔判定は chatwork-sync.py 側で行う。
     """
     logger.info('Chatwork 定期同期ジョブ起動')
     try:
@@ -761,18 +761,18 @@ if __name__ == '__main__':
         logger.warning(f'ngrok 起動失敗: {e}')
         print(f'\nngrok 起動失敗: {e}\nngrok http 5000 を手動で実行してください。\n')
 
-    # APScheduler 起動（Chatwork 1時間ごと定期同期）
+    # APScheduler 起動（Chatwork 15分ごと定期同期）
     scheduler = BackgroundScheduler(timezone='Asia/Tokyo')
     scheduler.add_job(
         run_chatwork_sync,
         trigger='interval',
-        hours=1,
+        minutes=15,
         id='chatwork_sync',
         replace_existing=True,
         max_instances=1,
         next_run_time=datetime.now(timezone(timedelta(hours=9))),  # 起動直後に1回実行
     )
     scheduler.start()
-    logger.info('APScheduler 起動完了（Chatwork 同期: 1時間ごと）')
+    logger.info('APScheduler 起動完了（Chatwork 同期: 15分ごと）')
 
     app.run(host='127.0.0.1', port=5000, debug=False)
