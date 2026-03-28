@@ -67,6 +67,7 @@ URGENT_REPLY_AFTER_HOURS = 1
 # 一次返信メッセージ（内容は運用しながら調整）
 URGENT_AUTO_REPLY_TEXT = (
     'お世話になっております。\n'
+    'AIのアスカです。\n'
     'ご連絡いただいた内容を確認しております。\n'
     '担当者より折り返しご連絡いたしますので、しばらくお待ちください。'
 )
@@ -685,6 +686,9 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
         # check_interval_hours を動的に再計算・更新
         last_updated = room_state.get('last_updated_at', '')
         new_interval = calc_check_interval(last_updated)
+        # 対象ユーザーが過去にメッセージを送ったルームは最大1時間間隔
+        if room_state.get('has_target_user') and CHATWORK_URGENT_TARGET_IDS:
+            new_interval = min(new_interval, 1)
         room_state['check_interval_hours'] = new_interval
 
         if not should_check_room(room_state):
@@ -729,6 +733,11 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                     new_last_id = int(msg_id)
             except Exception:
                 pass
+
+            # 対象ユーザーからのメッセージを検出したらルームにフラグを立てる（1時間間隔チェック用）
+            sender_id_check = str(account.get('account_id', ''))
+            if sender_id_check in CHATWORK_URGENT_TARGET_IDS:
+                room_state['has_target_user'] = True
 
             # --since フィルタ: 指定日時より前のメッセージはスキップ（last_message_id は更新済み）
             if since_dt is not None:
