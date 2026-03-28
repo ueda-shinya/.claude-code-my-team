@@ -16,7 +16,11 @@ import base64
 import threading
 import logging
 import re
-from datetime import datetime, timezone
+import subprocess
+import ssl
+import urllib.request
+import urllib.parse
+from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
 import requests
@@ -176,25 +180,198 @@ def get_claude_response(user_id: str, message: str) -> str:
 
     return reply
 
+# ── カスタムコマンド実装 ────────────────────────────────
+
+def cmd_ga4() -> str:
+    """GA4レポートを取得して要約を返す"""
+    try:
+        result = subprocess.run(
+            ['python3', os.path.expanduser('~/.claude/scripts/ga4-report.py')],
+            capture_output=True, text=True, timeout=90, encoding='utf-8'
+        )
+        out = result.stdout
+
+        def get(key):
+            m = re.search(rf'^{key}: (.+)$', out, re.MULTILINE)
+            return m.group(1) if m else '–'
+
+        lines = [
+            '【アスカ】昨日のサイト状況',
+            f'セッション: {get("SITE_SESSIONS")} / ユーザー: {get("SITE_USERS")}（新規{get("SITE_NEW_USERS")}）',
+            f'離脱率: {get("SITE_BOUNCE")}%',
+            f'お問い合わせ: 昨日{get("CONTACT_VIEWS")}PV / 7日間{get("CONTACT_VIEWS_7D")}PV',
+        ]
+        src_lines = []
+        for m in re.finditer(r'^SOURCE_(\w+): (\d+)\|', out, re.MULTILINE):
+            src_lines.append(f'{m.group(1).replace("_", " ")}: {m.group(2)}')
+        if src_lines:
+            lines.append('流入元(7日): ' + ' / '.join(src_lines[:3]))
+        return '\n'.join(lines)
+    except Exception as e:
+        logger.error(f'cmd_ga4 エラー: {e}')
+        return '【アスカ】GA4の取得に失敗しました。PC側のログを確認してください。'
+
+
+def cmd_tasks() -> str:
+    """session-handoff.md から残件・引き継ぎを返す"""
+    try:
+        path = os.path.expanduser('~/.claude/session-handoff.md')
+        with open(path, encoding='utf-8') as f:
+            content = f.read()
+        if '作業なし' in content:
+            return '【アスカ】残件・引き継ぎ事項はありません。'
+        lines = content.splitlines()
+        result_lines = ['【アスカ】現在の残件・引き継ぎ']
+        in_section = False
+        for line in lines:
+            if re.match(r'^## (残件|予定|中断中の作業)', line):
+                in_section = True
+                result_lines.append(line.replace('## ', '▶ '))
+                continue
+            if re.match(r'^##', line) and in_section:
+                if '完了済み' in line:
+                    break
+                in_section = False
+            if in_section and line.strip():
+                result_lines.append(line)
+        return '\n'.join(result_lines[:25])
+    except Exception as e:
+        logger.error(f'cmd_tasks エラー: {e}')
+        return '【アスカ】タスク一覧の取得に失敗しました。'
+
+
+def cmd_clients() -> str:
+    """クライアント一覧と概要を返す"""
+    try:
+        clients_dir = os.path.expanduser('~/.claude/clients')
+        entries = []
+        for name in sorted(os.listdir(clients_dir)):
+            readme = os.path.join(clients_dir, name, 'README.md')
+            if not os.path.isfile(readme):
+                continue
+            with open(readme, encoding='utf-8') as f:
+                text = f.read()
+            m = re.search(r'\*\*屋号\*\*[：:]\s*(.+)', text) or \
+                re.search(r'\*\*会社名\*\*[：:]\s*(.+)', text)
+            label = m.group(1).strip() if m else name
+            bizs = re.findall(r'\|\s*\[?biz-\w+\]?.*?\|\s*(.+?)\s*\|', text)
+            biz_str = ' / '.join(bizs) if bizs else ''
+            entries.append(f'・{label}（{name}）' + (f'  {biz_str}' if biz_str else ''))
+        if not entries:
+            return '【アスカ】クライアント情報が見つかりませんでした。'
+        return '【アスカ】クライアント一覧\n' + '\n'.join(entries)
+    except Exception as e:
+        logger.error(f'cmd_clients エラー: {e}')
+        return '【アスカ】クライアント一覧の取得に失敗しました。'
+
+
+def cmd_memo(text: str) -> str:
+    """knowledge-buffer.md にメモを追加する"""
+    try:
+        path = os.path.expanduser('~/.claude/knowledge-buffer.md')
+        jst = timezone(timedelta(hours=9))
+        now = datetime.now(jst).strftime('%Y-%m-%d %H:%M')
+        with open(path, 'a', encoding='utf-8') as f:
+            f.write(f'\n- [{now}] {text}')
+        return f'【アスカ】メモしました。\n「{text}」'
+    except Exception as e:
+        logger.error(f'cmd_memo エラー: {e}')
+        return '【アスカ】メモの保存に失敗しました。'
+
+
+def cmd_notion_add(title: str) -> str:
+    """Notion の議事録DBにクイックメモとして追加する"""
+    try:
+        env_path = os.path.expanduser('~/.claude/.env')
+        notion_token = ''
+        minutes_db_id = ''
+        with open(env_path, encoding='utf-8') as f:
+            for line in f:
+                line = line.strip().strip('"').strip("'")
+                if line.startswith('NOTION_API_TOKEN='):
+                    notion_token = line.split('=', 1)[1].strip('"').strip("'")
+                if line.startswith('NOTION_MINUTES_DB_ID='):
+                    minutes_db_id = line.split('=', 1)[1].strip('"').strip("'")
+        jst = timezone(timedelta(hours=9))
+        today = datetime.now(jst).strftime('%Y-%m-%d')
+        data = {
+            'parent': {'database_id': minutes_db_id},
+            'properties': {
+                'タイトル': {'title': [{'text': {'content': title}}]},
+                '日時': {'date': {'start': today}},
+            }
+        }
+        ctx = ssl.create_default_context()
+        req = urllib.request.Request(
+            'https://api.notion.com/v1/pages',
+            data=json.dumps(data).encode(),
+            headers={
+                'Authorization': f'Bearer {notion_token}',
+                'Notion-Version': '2022-06-28',
+                'Content-Type': 'application/json',
+            },
+            method='POST'
+        )
+        with urllib.request.urlopen(req, context=ctx, timeout=10) as res:
+            result = json.loads(res.read())
+        return f'【アスカ】Notion に追加しました。\n「{title}」\n{result.get("url", "")}'
+    except Exception as e:
+        logger.error(f'cmd_notion_add エラー: {e}')
+        return '【アスカ】Notion への追加に失敗しました。'
+
+
 # ── コマンド処理 ───────────────────────────────────────────
 def handle_command(user_id: str, text: str) -> str | None:
-    cmd = text.strip().lower()
-    if cmd == '/reset':
+    cmd = text.strip()
+    cmd_lower = cmd.lower()
+
+    if cmd_lower == '/reset':
         with sessions_lock:
             sessions[user_id] = []
         return '【アスカ】会話履歴をリセットしました。'
-    if cmd == '/status':
+
+    if cmd_lower == '/status':
         with sessions_lock:
             count = len(sessions[user_id]) // 2
         return f'【アスカ】稼働中です。\n会話履歴: {count}件'
-    if cmd == '/help':
+
+    if cmd_lower == '/help':
         return (
             '【アスカ】使い方:\n'
-            '/reset  - 会話履歴をリセット\n'
-            '/status - 稼働状態を確認\n'
-            '/help   - この一覧を表示\n\n'
-            'それ以外はそのままメッセージを送ってください。'
+            '/ga4          - 昨日のサイト状況\n'
+            '/tasks        - 残件・引き継ぎ一覧\n'
+            '/clients      - クライアント一覧\n'
+            '/memo <テキスト>   - メモを保存\n'
+            '/notion <タイトル> - Notion議事録DBに追加\n'
+            '/reset        - 会話履歴をリセット\n'
+            '/status       - 稼働確認\n'
+            '/help         - この一覧'
         )
+
+    if cmd_lower == '/ga4':
+        return cmd_ga4()
+
+    if cmd_lower == '/tasks':
+        return cmd_tasks()
+
+    if cmd_lower == '/clients':
+        return cmd_clients()
+
+    if cmd_lower.startswith('/memo '):
+        body = cmd[6:].strip()
+        if not body:
+            return '【アスカ】メモの内容を入力してください。\n例: /memo 〇〇を確認する'
+        return cmd_memo(body)
+
+    if cmd_lower.startswith('/notion '):
+        body = cmd[8:].strip()
+        if not body:
+            return '【アスカ】タイトルを入力してください。\n例: /notion 〇〇について確認'
+        return cmd_notion_add(body)
+
+    if cmd_lower.startswith('/'):
+        return '【アスカ】不明なコマンドです。/help で一覧を確認してください。'
+
     return None
 
 # ── メッセージ処理（バックグラウンド） ────────────────────

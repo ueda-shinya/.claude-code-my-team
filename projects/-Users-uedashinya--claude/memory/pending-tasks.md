@@ -6,6 +6,15 @@ type: project
 
 ## 保留中のタスク
 
+### LINE WORKS Bot Phase 2（VPS 移行・24時間対応）
+- **内容**: 現在 Windows PC + ngrok で動かしている Bot を Xserver VPS に移行する
+  - PC を閉じていても24時間応答・通知が届くようになる
+  - ngrok も不要になる
+- **現状**: Phase 1（PC運用）は完了・問題なく動作中
+- **保留理由**: Phase 1 で十分に使えるため急がない
+- **登録日**: 2026-03-28
+- **対応**: シンヤさんが「VPS移行したい」と言ったタイミングで再開
+
 ### Chatwork → Notion / Calendar 自動連携
 - **内容**: Chatwork新着メッセージからタスク・スケジュールを自動抽出してNotionと Google Calendarに追加
   - 対象：全ルーム

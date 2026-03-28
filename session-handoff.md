@@ -15,29 +15,31 @@
 
 ## 中断中の作業
 
-### 作業中①: メール自動化 Phase 1（クレジット追加待ち）
+### 作業中①: メール自動化 Phase 1
 
 - スクリプト実装・サクラのセキュリティレビュー対応済み
 - `~/.claude/scripts/mail-check.py` 完成
-- **Anthropic APIクレジット不足で動作確認が中断中**
+- クレジット追加済み（2026-03-28）→ 動作確認未実施
 
 **再開手順：**
-1. Anthropic Plans & Billing でクレジットを追加
-2. `python3 ~/.claude/scripts/mail-check.py --dry-run` でドライラン確認
-3. 問題なければ `--dry-run` なしで本番実行
+1. `python3 ~/.claude/scripts/mail-check.py --dry-run` でドライラン確認
+2. 問題なければ `--dry-run` なしで本番実行
 
 ---
 
-### 作業中②: LINE WORKS Bot Phase 1（クレジット追加待ち）
+### 完了済み: LINE WORKS Bot Phase 1（2026-03-28）
 
-- Flask サーバー・ngrok: 落ちている可能性あり
-- ALLOWED_USER_ID: UUID `00f4ca87-5717-42de-1540-041b9e780a45` 設定済み
-- Webhook受信・ユーザー認証・トークン取得：正常動作確認済み
+- Flask + ngrok サーバー稼働中（PID は毎回変わる）
+- コマンド実装済み：/ga4・/tasks・/clients・/memo・/notion
+- Windows 起動時自動起動：スタートアップフォルダに登録済み
+- 起動スクリプト：`~/.claude/line-works-bot/start-server.bat`
 
-**再開手順：**
-1. Anthropic Console でクレジット追加確認
-2. サーバー再起動: `python ~/.claude/line-works-bot/scripts/server.py`
-3. ngrok が切れていれば: `ngrok http 5000` → Callback URL を Developer Console に再設定
+**サーバー手動起動（再起動が必要な場合）：**
+```
+python ~/.claude/line-works-bot/scripts/server.py
+```
+
+**次フェーズ：** Phase 2（Xserver VPS移行・24時間対応）は後回し
 
 ---
 
