@@ -276,7 +276,16 @@ is_high_priority の判定基準（以下のいずれかに該当する場合の
 
 
 def analyze_message(room_name: str, account_name: str, send_time: str, message_body: str) -> dict | None:
-    """Claude API でメッセージを解析してJSONを返す"""
+    """Claude API でメッセージを解析してJSONを返す
+
+    戻り値:
+        {
+            'result': dict,         # 解析結果JSON
+            'input_tokens': int,    # 入力トークン数
+            'output_tokens': int,   # 出力トークン数
+        }
+        解析失敗時は None
+    """
     try:
         response = claude_client.messages.create(
             model='claude-haiku-4-5-20251001',
@@ -296,7 +305,11 @@ def analyze_message(room_name: str, account_name: str, send_time: str, message_b
             if m:
                 text = m.group(1)
 
-        return json.loads(text)
+        return {
+            'result':        json.loads(text),
+            'input_tokens':  response.usage.input_tokens,
+            'output_tokens': response.usage.output_tokens,
+        }
     except json.JSONDecodeError as e:
         logger.warning(f'Claude レスポンスのJSON解析失敗: {e} / レスポンス: {text[:200]}')
         return None
@@ -451,6 +464,11 @@ def run_sync(dry_run: bool = False, since_dt=None):
     if since_dt:
         logger.info(f'since フィルタ: {since_dt.isoformat()} 以降のみ処理')
 
+    # トークン集計用カウンター
+    total_input_tokens  = 0
+    total_output_tokens = 0
+    analyzed_count      = 0
+
     # 必須環境変数チェック
     if not CHATWORK_API_TOKEN:
         logger.error('CHATWORK_API_TOKEN が設定されていません')
@@ -549,10 +567,14 @@ def run_sync(dry_run: bool = False, since_dt=None):
             logger.info(f'  解析中: [{account_name}] {body[:50]}...')
 
             # Claude で解析
-            analysis = analyze_message(room_name, account_name, send_time, body)
-            if not analysis:
+            ret = analyze_message(room_name, account_name, send_time, body)
+            if ret is None:
                 logger.warning(f'  解析失敗: message_id={msg_id}')
                 continue
+            analysis             = ret['result']
+            total_input_tokens  += ret['input_tokens']
+            total_output_tokens += ret['output_tokens']
+            analyzed_count      += 1
 
             logger.info(
                 f'  解析結果: has_task={analysis.get("has_task")}, '
@@ -603,6 +625,20 @@ def run_sync(dry_run: bool = False, since_dt=None):
     # 状態ファイル保存
     state['rooms'] = rooms_state
     save_state(state, dry_run=dry_run)
+
+    # コスト概算（claude-haiku-4-5-20251001 料金）
+    INPUT_COST_PER_MTOK  = 0.80   # $0.80/MTok
+    OUTPUT_COST_PER_MTOK = 4.00   # $4.00/MTok
+    input_cost       = total_input_tokens  / 1_000_000 * INPUT_COST_PER_MTOK
+    output_cost      = total_output_tokens / 1_000_000 * OUTPUT_COST_PER_MTOK
+    total_cost_usd   = input_cost + output_cost
+    total_cost_jpy   = total_cost_usd * 150  # 概算レート
+
+    logger.info('=== API使用コスト概算 ===')
+    logger.info(f'解析メッセージ数: {analyzed_count} 件')
+    logger.info(f'入力トークン: {total_input_tokens:,}')
+    logger.info(f'出力トークン: {total_output_tokens:,}')
+    logger.info(f'推定コスト: ${total_cost_usd:.4f}（約¥{total_cost_jpy:.1f}）')
 
     logger.info('=== chatwork-sync 完了 ===')
 
