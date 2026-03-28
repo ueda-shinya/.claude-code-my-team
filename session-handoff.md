@@ -22,7 +22,7 @@
 - クレジット追加済み（2026-03-28）→ 動作確認未実施
 
 **再開手順：**
-1. `python3 ~/.claude/scripts/mail-check.py --dry-run` でドライラン確認
+1. `"X:\Python310\python.exe" ~/.claude/scripts/mail-check.py --dry-run` でドライラン確認
 2. 問題なければ `--dry-run` なしで本番実行
 
 ---
