@@ -714,6 +714,8 @@ def run_chatwork_sync():
             text=True,
             timeout=300,
             encoding='utf-8',
+            errors='replace',
+            env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
         )
         if result.stdout:
             logger.info(f'chatwork-sync stdout:\n{result.stdout[-1000:]}')

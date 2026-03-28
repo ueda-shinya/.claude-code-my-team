@@ -475,6 +475,31 @@ python3 ~/.claude/scripts/ga4-notion-analysis.py 2>&1
 - `OK` → 次のステップへ（報告不要）
 - 失敗 → 無視して次のステップへ
 
+### ステップ 4.8: 定期タスクのリマインダーチェック
+
+今日の日付から「毎月第2日曜日」かどうかを判定する。
+
+```bash
+python3 -c "
+from datetime import date
+import sys
+today = date.today()
+# 今月の第2日曜日を計算
+first_day = today.replace(day=1)
+# 第1日曜日
+weekday = first_day.weekday()  # 0=月曜
+days_to_sunday = (6 - weekday) % 7
+first_sunday = first_day.day + days_to_sunday
+second_sunday = first_sunday + 7
+print('TODAY:', today.day)
+print('SECOND_SUNDAY:', second_sunday)
+print('IS_SECOND_SUNDAY:', str(today.day == second_sunday))
+" 2>&1
+```
+
+- `IS_SECOND_SUNDAY: True` の場合 → 報告に `## 定期タスク` セクションを追加する
+- `IS_SECOND_SUNDAY: False` の場合 → スキップ
+
 ### ステップ 5: セッション引き継ぎ確認
 
 まず Bash で `cd ~/.claude && pwd` を実行してパスを取得し、そのパスに `/session-handoff.md` を付けた絶対パスで Read ツールを使ってください。
@@ -536,6 +561,10 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 - [動画タイトル](URL)
   - チャンネル：チャンネル名
   - 概要：説明文
+
+## 定期タスク（※ 第2日曜日のみ表示）
+今日は **月次ルール棚卸し** の日です。
+`/rule-review` で実行できます（リナ＋Gemini＋全員参加。所要時間：15〜20分）
 
 ## リポジトリ更新（※ 新しいコミットがあった場合のみ表示）
 前回から X 件の変更を確認しました。
