@@ -1,25 +1,27 @@
 # YouTube ダイジェスト
-最終更新: 2026-03-28T09:01:39.513765+09:00
+最終更新: 2026-03-30T08:48:28.592690+09:00
 
 ## AI関連
-- [🧐👉 ChatGPT新機能「ライブラリ」登場！ファイル管理が爆速進化 #QixNewsAI](https://www.youtube.com/watch?v=TH8-5-QsR18)
-  - チャンネル：QixNews クイッククリアニュース / 再生数：268
-  - 概要：🚀ChatGPTに「ライブラリ」機能が新登場！  このアップデートで、アップロードや生成したドキュメント、画像、スプレッドシートなどのファイルを一括管理＆検索できるようになったよ。Plus、Pro、B
-- [🧐👉 Apple、SiriをAIチャットボット化へ　iOS27でChatGPTに本気対抗 #QixNewsAI](https://www.youtube.com/watch?v=Lzzj686zCM8)
-  - チャンネル：QixNews クイッククリアニュース / 再生数：4
-  - 概要：🍏AppleがSiriを独立したAIチャットボットアプリとして刷新する計画が判明！2026年のWWDCで発表予定で、iOS27やmacOS27に組み込まれ、Google GeminiやChatGPTに
-- [【残業ゼロへ】Google最強AI「NotebookLM」×YouTubeで授業準備が“数時間→数分”になる方法](https://www.youtube.com/watch?v=Nz_T0hEVeCw)
-  - チャンネル：ゴリ先生【AI×クリエイターch】 / 再生数：2,919
-  - 概要：授業準備が終わらず、今日も残業…。 その時間、この動画で“今日から消せます”。  この動画では、GoogleのAIツール「NotebookLM」とYouTubeを組み合わせて、 授業準備・資料作成を“
-- [【AI❌英語】Gemini×NotebookLMで自分専用「AI英語コーチ」爆誕！もう英語スクール不要？](https://www.youtube.com/watch?v=ZY5OxVxDcxY)
-  - チャンネル：エリーののんびり英語 / 再生数：1,939
-  - 概要：今日は、Googleの最新AI・Gemini LiveとNotebookLMを使って「自分専用のパーソナル英語コーチ」を召喚する方法をご紹介します。  パーソナルコーチって人間の先生にお願いすると、と
-- [【衝撃】このAI機能は間違いなく流行る！話題の『Speakly』の使い方や魅力を徹底解説します](https://www.youtube.com/watch?v=iV9DrWga8Tg)
-  - チャンネル：ウェブマニア / 再生数：3,109
-  - 概要：＜今回の動画について＞ Gensparkに新しく追加されたSpekalyという機能がやばすぎました。 SpekalyみたいなAI音声入力は今年かなり流行る気がします。 パソコンやスマホの使い方が変わる
-- [動画生成AI「Sora 2」終了の背景！OpenAIは次の一手「オープンクロー」で形勢逆転できるのか？](https://www.youtube.com/watch?v=Wd1vBePtFA4)
-  - チャンネル：テレ東BIZ ダイジェスト / 再生数：9,323
-  - 概要：フル視聴はコチラ▶https://txbiz.tv-tokyo.co.jp/original2/vod/post_337794?utm_source=youtube&utm_medium=video&
-- [【週刊AI】推論時代は「データセンター設計」が勝負の肝になる。ソフトバンクも本格参戦｜計4トピックのニュースから読みとるAI業界の潮流](https://www.youtube.com/watch?v=yjRtUXe9j2s)
-  - チャンネル：The WAVE TV【AIの独自解説チャンネル】 / 再生数：208
-  - 概要：今週の週刊AIでは、4つのニューストピックについて解説した後、そこから読みとるAI業界の潮流  0:32 イントロ 2:05 ニューストピック①：OpenAI、次世代モデル「Spud」の事前学習完了 
+- [Gensparkでプレゼン作ってみた #Genspark #WorkwithGenspark @Genspark-Japan](https://www.youtube.com/watch?v=HMSkjOJfJ88)
+  - チャンネル：さえちゃんラボ / 再生数：2,023
+  - 概要：・ついに Genspark「All-in-one AI Workspace 3.0」がリリース！新機能が追加されました： ・Genspark Claw：アプリの枠を超えて複雑な作業を自動代行する「個人
+- [【PCの常識が変わる最強コンビ見つけたライド💡】](https://www.youtube.com/watch?v=vLa61QJ3vZw)
+  - チャンネル：える / 再生数：1,956
+  - 概要：PC作業中、 「AIツール多すぎて、結局どれ使えばいいの…」って 毎回迷っていた私が すごいAIワークスペースに出会いました！！ それが、この「Genspark」  このAIワークスペースがすごくて…
+- [【Claude Mythos流出】最強AIの登場で大手セキュリティ株が軒並み下落した理由｜今日のAIニュースまとめ【2026.03.28】](https://www.youtube.com/watch?v=M2jPJXGpk8I)
+  - チャンネル：AIニュースラボ【毎朝配信】 / 再生数：3,183
+  - 概要：📰 2026年3月28日のAIニュース 00:00 オープニング 00:30 Anthropic新モデル「Claude Mythos」がリーク ― サイバーセキュリティ業界に衝撃 03:19 Goog
+- [【速報】AIの嘘つきの原因、実は○○だった](https://www.youtube.com/watch?v=qq0iyRA4-8o)
+  - チャンネル：AI時短ラボ / 再生数：991
+  - 概要：ChatGPTやClaudeが平気で嘘をつく理由が判明。それは学習データの問題じゃなく、ある仕組みが原因だった。業界激震のニュース。#AIニュース #ChatGPT #03月28日 #最新情報
+- [【悲報】3000通の機密が流出…Anthropic最強AI「Mythos」の正体と危険性が判明](https://www.youtube.com/watch?v=YFCpICyJLMc)
+  - チャンネル：Techの地平線 / 再生数：419
+  - 概要：3000通もの内部資料が流出。安全性を掲げるAnthropicが隠し続けていた最強AI「Claude Mythos」の衝撃的な正体が暴かれました。 「前例のないリスク」と自ら認めた次世代モデルの脅威と
+
+## WordPress関連
+- [絶対WordPress使わせたいエンジニアのジョージ #エンジニアあるある](https://www.youtube.com/watch?v=Ps_2ITwO9lw)
+  - チャンネル：まめ太郎 / 再生数：3,796
+  - 概要：
+- [絶対WordPress使わせたいエンジニアのジョージ #エンジニアあるある](https://www.youtube.com/watch?v=Ps_2ITwO9lw)
+  - チャンネル：まめ太郎 / 再生数：3,796
+  - 概要：
