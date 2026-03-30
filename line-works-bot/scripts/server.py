@@ -33,14 +33,14 @@ from apscheduler.schedulers.background import BackgroundScheduler
 # ── 環境変数読み込み ───────────────────────────────────────
 load_dotenv(os.path.expanduser('~/.claude/.env'))
 
-BOT_ID            = os.environ['LINE_WORKS_BOT_ID']
+BOT_ID            = os.environ['LINE_WORKS_ASUKA_BOT_ID']
 CLIENT_ID         = os.environ['LINE_WORKS_CLIENT_ID']
 CLIENT_SECRET     = os.environ['LINE_WORKS_CLIENT_SECRET']
 SERVICE_ACCOUNT   = os.environ['LINE_WORKS_SERVICE_ACCOUNT']
 PRIVATE_KEY_PATH  = os.path.expanduser(os.environ['LINE_WORKS_PRIVATE_KEY_PATH'])
 ALLOWED_USER_ID   = os.environ['ALLOWED_USER_ID']
 ANTHROPIC_API_KEY = os.environ['ANTHROPIC_API_KEY']
-BOT_SECRET        = os.environ.get('LINE_WORKS_BOT_SECRET', '')
+BOT_SECRET        = os.environ.get('LINE_WORKS_ASUKA_BOT_SECRET', '')
 
 with open(PRIVATE_KEY_PATH, 'r') as f:
     PRIVATE_KEY = f.read()
