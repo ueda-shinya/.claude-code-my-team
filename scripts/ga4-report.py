@@ -30,8 +30,10 @@ sys.stdout.reconfigure(encoding='utf-8')
 cred_path = os.path.expanduser('~/.claude/google-oauth-credentials.json')
 token_path = os.path.expanduser('~/.claude/mcp-google-calendar-token.json')
 
-cred = json.load(open(cred_path))
-token = json.load(open(token_path))
+with open(cred_path) as f:
+    cred = json.load(f)
+with open(token_path) as f:
+    token = json.load(f)
 
 # トークンリフレッシュ
 data = urllib.parse.urlencode({
@@ -40,18 +42,29 @@ data = urllib.parse.urlencode({
     'refresh_token': token['normal']['refresh_token'],
     'grant_type': 'refresh_token'
 }).encode()
-req = urllib.request.Request('https://oauth2.googleapis.com/token', data=data, method='POST')
-with urllib.request.urlopen(req) as res:
-    access_token = json.loads(res.read())['access_token']
+try:
+    req = urllib.request.Request('https://oauth2.googleapis.com/token', data=data, method='POST')
+    with urllib.request.urlopen(req) as res:
+        access_token = json.loads(res.read())['access_token']
+except Exception as e:
+    print(f'AUTH_ERROR: {e}', file=sys.stderr)
+    sys.exit(1)
 
 property_id = '320411221'
 headers = {'Authorization': 'Bearer ' + access_token, 'Content-Type': 'application/json'}
 url = f'https://analyticsdata.googleapis.com/v1beta/properties/{property_id}:runReport'
 
 def run(body):
-    req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=headers)
-    with urllib.request.urlopen(req) as res:
-        return json.loads(res.read())
+    try:
+        req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=headers)
+        with urllib.request.urlopen(req) as res:
+            return json.loads(res.read())
+    except urllib.error.HTTPError as e:
+        print(f'GA4_API_ERROR: {e.code} {e.reason}', file=sys.stderr)
+        return {}
+    except Exception as e:
+        print(f'GA4_API_ERROR: {e}', file=sys.stderr)
+        return {}
 
 def get_metric(r, row=0, idx=0):
     rows = r.get('rows', [])
@@ -113,7 +126,27 @@ r_ads = run({
     'limit': 10
 })
 
-# 3c. Instagram 自然流入（プロフィールリンク等、過去7日）
+# 3c. 広告経由 x トップページ着地（過去7日）
+r_top_ad = run({
+    'dimensions': [{'name': 'landingPage'}],
+    'metrics': [
+        {'name': 'sessions'},
+        {'name': 'bounceRate'},
+        {'name': 'averageSessionDuration'}
+    ],
+    'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
+    'dimensionFilter': {
+        'andGroup': {'expressions': [
+            {'filter': {'fieldName': 'landingPage', 'stringFilter': {'matchType': 'EXACT', 'value': '/'}}},
+            {'orGroup': {'expressions': [
+                {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Social'}}},
+                {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Search'}}},
+            ]}}
+        ]}
+    }
+})
+
+# 3d. Instagram 自然流入（プロフィールリンク等、過去7日）
 r_ig_organic = run({
     'dimensions': [{'name': 'sessionSource'}, {'name': 'sessionMedium'}],
     'metrics': [
@@ -216,6 +249,15 @@ for i, row in enumerate(r_pages.get('rows', []), 1):
     u = row['metricValues'][1]['value']
     print(f'TOP_PAGE_{i}: {path}|{pv}|{u}')
 
+# TOP広告（広告経由・トップページ着地、過去7日）
+top_ad_m = r_top_ad.get('rows', [{}])[0].get('metricValues', [{'value':'0'}]*3) if r_top_ad.get('rows') else [{'value':'0'}]*3
+top_ad_sessions = int(top_ad_m[0]['value'])
+top_ad_bounce = float(top_ad_m[1]['value']) * 100
+top_ad_dur = float(top_ad_m[2]['value'])
+print(f'TOP_AD_SESSIONS_7D: {top_ad_sessions}')
+print(f'TOP_AD_BOUNCE_7D: {top_ad_bounce:.1f}')
+print(f'TOP_AD_DURATION_7D: {top_ad_dur:.0f}')
+
 # LP 概要
 lp_m = r_lp.get('rows', [{}])[0].get('metricValues', [{'value':'0'}]*3) if r_lp.get('rows') else [{'value':'0'}]*3
 print(f'LP_SESSIONS_7D: {lp_m[0]["value"]}')
@@ -303,6 +345,34 @@ try:
         with urllib.request.urlopen(_check_req, context=_ctx) as _res:
             _existing = json.loads(_res.read()).get('results', [])
 
+        # DBスキーマに不足プロパティを自動追加（既存プロパティには触れない）
+        _db_req = urllib.request.Request(
+            f'https://api.notion.com/v1/databases/{_ga4_db_id}',
+            headers=_headers, method='GET'
+        )
+        with urllib.request.urlopen(_db_req, context=_ctx) as _res:
+            _db_info = json.loads(_res.read())
+        _existing_props = set(_db_info.get('properties', {}).keys())
+
+        _new_props = {}
+        for _prop_name in ['TOP広告セッション', 'TOP広告離脱率%', 'TOP広告滞在秒']:
+            if _prop_name not in _existing_props:
+                _new_props[_prop_name] = {'number': {'format': 'number'}}
+
+        if _new_props:
+            try:
+                _patch_req = urllib.request.Request(
+                    f'https://api.notion.com/v1/databases/{_ga4_db_id}',
+                    data=json.dumps({'properties': _new_props}, ensure_ascii=False).encode('utf-8'),
+                    headers=_headers, method='PATCH'
+                )
+                with urllib.request.urlopen(_patch_req, context=_ctx) as _res:
+                    _res.read()
+                print(f'NOTION_DB_SCHEMA: added {list(_new_props.keys())}')
+            except Exception as _e:
+                print(f'NOTION_DB_SCHEMA: WARN - {_e}', file=sys.stderr)
+                # スキーマ追加失敗してもデータ書き込みは試行する
+
         # 流入元テキスト（上位5件）
         _sources = []
         for _row in r_source.get('rows', []):
@@ -322,6 +392,9 @@ try:
             'LP離脱率%':       {'number': round(lp_bounce, 1)},
             'LP平均滞在秒':    {'number': round(lp_dur, 0)},
             'LPCTAクリック':   {'number': int(get_metric(r_lp_cta, 0, 0))},
+            'TOP広告セッション': {'number': top_ad_sessions},
+            'TOP広告離脱率%':   {'number': round(top_ad_bounce, 1)},
+            'TOP広告滞在秒':    {'number': round(top_ad_dur, 0)},
             '流入元':          {'rich_text': [{'text': {'content': _source_text}}]},
         }
 
@@ -483,6 +556,7 @@ try:
         )
         with urllib.request.urlopen(_list_req, context=_ctx) as _res:
             _children = json.loads(_res.read()).get('results', [])
+        _delete_errors = 0
         for _blk in _children:
             try:
                 _del_req = urllib.request.Request(
@@ -490,8 +564,11 @@ try:
                     headers=_headers, method='DELETE'
                 )
                 urllib.request.urlopen(_del_req, context=_ctx).read()
-            except Exception:
-                pass
+            except Exception as _e:
+                _delete_errors += 1
+                print(f'NOTION_BLOCK_DELETE_WARN: {_blk["id"]} - {_e}', file=sys.stderr)
+        if _delete_errors:
+            print(f'NOTION_BLOCK_DELETE: {_delete_errors} errors', file=sys.stderr)
 
         # ブロック追加（100件ずつ）
         for _i in range(0, len(_blocks), 100):
