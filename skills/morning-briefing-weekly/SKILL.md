@@ -1,14 +1,13 @@
-# /morning-briefing スキル
+# /morning-briefing-weekly スキル
 
-毎日版モーニングブリーフィング（軽量版）。「おはよ」トリガーで hook から additionalContext が注入された場合に実行する。
-レン考察・YouTubeダイジェスト更新は省略し、トークン消費を抑える。詳細分析は `/morning-briefing-weekly` で実施。
+週次モーニングブリーフィング。毎日版では省略されるYouTubeダイジェスト更新・レン考察を含む詳細版。手動実行専用。
 
 ## トリガー条件
 
-以下のいずれかに該当する場合にこのスキルを実行してください：
+以下に該当する場合にこのスキルを実行してください：
 
-- コンテキストに「/morning-briefing スキルを実行してください」が含まれている
-- ユーザーが「おはよ」「おはよう」「おはようございます」と発言した
+- コンテキストに「/morning-briefing-weekly スキルを実行してください」が含まれている
+- ユーザーが「週次ブリーフィング」「weekly briefing」と発言した
 
 ## 運用制約（暫定）
 - [20260313] Google Calendar MCP（mcp__google-calendar）はVSCode拡張機能環境で使用不可。方法B（CLIフォールバック）を優先すること（参照: troubleshooting/active/20260313_google-calendar-mcp.md）
@@ -16,7 +15,7 @@
 
 ## 実行手順
 
-以下のステップを実行してください。各ステップが失敗しても、他のステップは止めずに続行してください。
+以下の4つのステップを実行してください。各ステップが失敗しても、他のステップは止めずに続行してください。
 
 ### ステップ 1: リポジトリ最新化
 
@@ -205,7 +204,199 @@ print(f'MINUTES_AFTER: {minutes_count}')
 
 ---
 
-### ステップ 3: GA4 サイト状況確認
+### ステップ 3: YouTube動画ダイジェスト更新
+
+`~/.claude/youtube-digest.md` の最終更新日時を確認し、**24時間以上経過している場合（またはファイルが存在しない場合）のみ**、以下を実行してください。
+
+**検索キーワード（各最大3件）：**
+- `Claude AI ニュース`
+- `ChatGPT 新機能 2026`
+- `Gemini 新機能 アップデート`
+- `NotebookLM`
+- `Genspark`
+- `AI 業界 ニュース`
+- `WordPress`
+- `ワードプレス`
+
+**ロジック：**
+- 168時間以内（1週間）にアップロードされた動画のみ対象
+- 2段階API（search → videos/statistics）で実再生数を取得し、再生数の多い順にソート
+- 既出動画除外：`~/.claude/youtube-seen-ids.json` に記録済みの動画IDはスキップ
+- 各クエリで上位3件を採用
+
+**① 24時間チェック＆動画取得（Mac・Windows両対応）：**
+
+```bash
+python3 -c "
+import json, urllib.request, urllib.parse, os, sys, re
+from datetime import datetime, timezone, timedelta
+sys.stdout.reconfigure(encoding='utf-8')
+
+digest_path = os.path.expanduser('~/.claude/youtube-digest.md')
+seen_path = os.path.expanduser('~/.claude/youtube-seen-ids.json')
+jst = timezone(timedelta(hours=9))
+now = datetime.now(jst)
+
+# 24時間チェック
+if os.path.exists(digest_path):
+    with open(digest_path, encoding='utf-8') as f:
+        content = f.read()
+    m = re.search(r'最終更新: (.+)', content)
+    if m:
+        last_updated = datetime.fromisoformat(m.group(1))
+        if (now - last_updated).total_seconds() < 86400:
+            print('SKIP: 最終更新から24時間未経過')
+            sys.exit(0)
+
+# APIキー読み込み
+env_path = os.path.expanduser('~/.claude/.env')
+api_key = ''
+with open(env_path, encoding='utf-8') as f:
+    for line in f:
+        if line.startswith('YOUTUBE_API_KEY='):
+            api_key = line.strip().split('=', 1)[1]
+
+# 既出動画IDを読み込み
+seen_ids = set()
+if os.path.exists(seen_path):
+    with open(seen_path, encoding='utf-8') as f:
+        seen_ids = set(json.load(f))
+
+published_after = (now - timedelta(hours=168)).strftime('%Y-%m-%dT%H:%M:%S+09:00')
+
+queries = [
+    ('Claude AI ニュース', 'AI関連'),
+    ('ChatGPT 新機能 2026', 'AI関連'),
+    ('Gemini 新機能 アップデート', 'AI関連'),
+    ('NotebookLM', 'AI関連'),
+    ('Genspark', 'AI関連'),
+    ('AI 業界 ニュース', 'AI関連'),
+    ('WordPress', 'WordPress関連'),
+    ('ワードプレス', 'WordPress関連'),
+]
+
+# リスト集め・インフルエンサー系コンテンツの除外キーワード
+SPAM_KEYWORDS = ['公式LINE', 'LINE登録', '無料プレゼント', 'メルマガ', '公式ライン', 'プレゼント配布', '特典配布', 'lmes.jp', 'lin.ee', 'utage-system.com']
+SPAM_CHANNELS = ['大学', 'スクール', '塾', 'アカデミー']
+
+results = []
+new_ids = []
+
+for query, category in queries:
+    # ステップ1: search で候補動画IDを取得（多めに取得して絞り込む）
+    params = urllib.parse.urlencode({
+        'part': 'snippet',
+        'q': query,
+        'type': 'video',
+        'publishedAfter': published_after,
+        'order': 'viewCount',
+        'maxResults': 10,
+        'relevanceLanguage': 'ja',
+        'regionCode': 'JP',
+        'key': api_key
+    })
+    url = 'https://www.googleapis.com/youtube/v3/search?' + params
+    req = urllib.request.Request(url)
+    with urllib.request.urlopen(req) as res:
+        data = json.loads(res.read())
+
+    # 既出除外
+    candidate_ids = [
+        item['id']['videoId']
+        for item in data.get('items', [])
+        if item['id'].get('videoId') and item['id']['videoId'] not in seen_ids
+    ]
+    if not candidate_ids:
+        continue
+
+    # ステップ2: videos/statistics で実再生数を取得
+    ids_param = ','.join(candidate_ids)
+    stats_params = urllib.parse.urlencode({
+        'part': 'snippet,statistics',
+        'id': ids_param,
+        'key': api_key
+    })
+    stats_url = 'https://www.googleapis.com/youtube/v3/videos?' + stats_params
+    req2 = urllib.request.Request(stats_url)
+    with urllib.request.urlopen(req2) as res2:
+        stats_data = json.loads(res2.read())
+
+    # 日本語動画のみ・再生数でソートして上位3件
+    videos = []
+    for item in stats_data.get('items', []):
+        snippet = item['snippet']
+        lang = snippet.get('defaultAudioLanguage') or snippet.get('defaultLanguage') or ''
+        # 言語が未設定 or ja の動画のみ採用（英語・韓国語等を除外）
+        if lang and not lang.startswith('ja'):
+            continue
+        vid = item['id']
+        view_count = int(item.get('statistics', {}).get('viewCount', 0))
+        title = snippet['title']
+        channel = snippet['channelTitle']
+        full_desc = snippet['description']
+        desc = full_desc[:100].replace('\n', ' ')
+        # リスト集め・インフルエンサー系コンテンツを除外
+        if any(kw in full_desc for kw in SPAM_KEYWORDS):
+            continue
+        if any(kw in channel for kw in SPAM_CHANNELS):
+            continue
+        videos.append({'id': vid, 'views': view_count, 'title': title, 'channel': channel, 'desc': desc, 'query': query, 'category': category})
+
+    videos.sort(key=lambda x: x['views'], reverse=True)
+    top3 = videos[:3]
+    results.extend(top3)
+    new_ids.extend([v['id'] for v in top3])
+
+# 既出IDを更新（新規採用分を追加）
+updated_seen = list(seen_ids) + new_ids
+with open(seen_path, 'w', encoding='utf-8') as f:
+    json.dump(updated_seen, f)
+
+# ファイル書き出し
+lines = ['# YouTube ダイジェスト', f'最終更新: {now.isoformat()}', '']
+
+for category in ['AI関連', 'WordPress関連']:
+    cat_results = [r for r in results if r['category'] == category]
+    if not cat_results:
+        continue
+    lines.append(f'## {category}')
+    for r in cat_results:
+        views_str = f'{r[\"views\"]:,}'
+        lines.append(f'- [{r[\"title\"]}](https://www.youtube.com/watch?v={r[\"id\"]})')
+        lines.append(f'  - チャンネル：{r[\"channel\"]} / 再生数：{views_str}')
+        lines.append(f'  - 概要：{r[\"desc\"]}')
+    lines.append('')
+
+with open(digest_path, 'w', encoding='utf-8') as f:
+    f.write('\n'.join(lines))
+
+print(f'UPDATED: {len(results)}件取得')
+" 2>&1 | cat
+```
+
+**② 更新された場合はGitコミット：**
+
+出力が `UPDATED:` で始まる場合のみ以下を実行してください：
+
+```bash
+cd ~/.claude && git add youtube-digest.md youtube-seen-ids.json && git commit -m "chore: YouTubeダイジェスト更新" && git push 2>&1
+```
+
+- `SKIP:` の場合 → コミット不要。既存ファイルの内容を Read ツールで読み込む
+- 取得失敗の場合 → 「YouTube動画の取得に失敗しました」と報告し、次のステップへ
+
+**③ 「Claude厳選」プレイリストへ追加：**
+
+ダイジェストが `UPDATED:` の場合も `SKIP:` の場合も、毎回以下を実行してください：
+
+```bash
+python3 ~/.claude/scripts/youtube-add-to-playlist.py 2>&1
+```
+
+- 正常完了（`完了: X件追加`）→ 結果を記憶するが報告には含めない
+- 失敗した場合 → 無視して次のステップへ（プレイリスト追加はオプション扱い）
+
+### ステップ 4: GA4 サイト状況確認
 
 以下を実行してください：
 
@@ -225,20 +416,9 @@ python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
 - `LP_CTA_CLICKS_7D`：LP CTA クリック数（過去7日）
 - `LP_MOBILE_BOUNCE_7D`：LP モバイル離脱率（過去7日）
 
-**アスカ異常値判定ルール（レン考察の代わりに以下をすべてチェック）：**
+取得後、以下の改善提案ロジックを適用して `LP_ALERT` リストを作成する：
 
-レンへの委譲は行わない。アスカ自身が以下のルールで異常値を判定する：
-
-- 広告の離脱率が 80% 超 → `[広告名]の離脱率がX%です。レンへの分析依頼を検討してください。`
-- 前週比セッション 50% 以下（`SITE_SESSIONS` が著しく低い場合）→ `昨日のセッションが少ない（X件）。先週と比べて確認を。`
-- お問い合わせが週0件（`CONTACT_VIEWS_7D: 0`）→ `過去7日のお問い合わせが0件です。レンへの相談を検討してください。`
-- LP の CTA クリックが 0 かつ `LP_SESSIONS_7D` が 5 以上 → `LPのCTAクリックがゼロ（セッションXあり）。レンへの分析依頼を検討してください。`
-
-異常なしの場合 → 「特記事項なし」と表示
-
-取得後、以下の改善提案ロジックも適用して `LP_ALERT` リストを作成する：
-
-【GA4定義の注意】バウンス率 = エンゲージドでなかったセッションの割合（100% - エンゲージメント率）。
+【GA4定義の注意】バウンス率 = エンゲージドでなかったセッションの割合（100% − エンゲージメント率）。
 「10秒超継続」だけでもエンゲージドセッションになるため、単純に「すぐ帰った人」ではない。
 流入元・デバイス・コンテンツのゴールによって文脈が異なるため、数値単体で判断しない。
 
@@ -249,6 +429,51 @@ python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
 - `LP_SESSIONS_7D` が 0 → 「LP へのアクセスなし。広告・SNS等の集客状況を確認」
 
 失敗した場合 → GA4 セクションを省略して次のステップへ
+
+### ステップ 4.5: GA4 考察生成（レン）とNotion更新
+
+ステップ4で取得したGA4データをもとにレンに考察を依頼し、Notionレポートに追記する。
+失敗しても次のステップに進むこと。
+
+**① レン（`subagent_type: marketing-planner`）に以下のプロンプトで考察を依頼する：**
+
+ステップ4で取得した数値（SITE_SESSIONS / SITE_BOUNCE / SOURCE_* / LP_* / CONTACT_* など）をすべて渡す。
+
+```
+オフィスウエダのGA4データ（昨日のサイト全体 / 過去7日の流入元・LP状況・お問い合わせ）を渡します。
+マーケティング観点から3〜5点の考察を箇条書きで返してください。
+数値に基づいた具体的な考察と、次のアクションに繋がる内容にしてください。
+出力は考察の箇条書きのみ（「・」始まり）。見出しや前置きは不要。
+
+【サイト概要（昨日）】
+セッション: X / ユーザー: X（新規 X） / 離脱率: X%
+
+【流入元（過去7日）】
+（SOURCE_* の内容を列挙）
+
+【LP状況（lp-260319 / 過去7日）】
+セッション: X / 離脱率: X% / 平均滞在: X秒 / CTAクリック: X / モバイル離脱率: X%
+
+【お問い合わせ】
+昨日: X PV / X ユーザー　過去7日: X PV / X ユーザー
+```
+
+**② 考察テキストをファイルに保存：**
+
+```bash
+mkdir -p ~/.claude/tmp
+```
+
+を実行してから、レンの回答（箇条書きテキストのみ）を `~/.claude/tmp/ga4-analysis.txt` に Write ツールで書き出す。
+
+**③ Notion に追加：**
+
+```bash
+python3 ~/.claude/scripts/ga4-notion-analysis.py 2>&1
+```
+
+- `OK` → 次のステップへ（報告不要）
+- 失敗 → 無視して次のステップへ
 
 ### ステップ 4.8: 定期タスクのリマインダーチェック
 
@@ -281,12 +506,6 @@ print('IS_SECOND_SUNDAY:', str(today.day == second_sunday))
 
 - 「作業なし」の場合 → 引き継ぎセクションに「引き継ぎ事項はありません」と表示
 - それ以外の場合 → 内容を引き継ぎセクションに表示
-
-### ステップ 6: YouTube ダイジェスト（読み込みのみ）
-
-`~/.claude/youtube-digest.md` を Read ツールで読み込んで報告に含める。
-取得・更新・Gitコミットは行わない（週次版でのみ実施）。
-ファイルが存在しない場合はセクション省略。
 
 ## 報告フォーマット
 
@@ -332,10 +551,19 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 - 詳細レポート：[lp-260319_ga4-report_YYYYMMDD.md](clients/officeueda/reports/lp-260319_ga4-report_YYYYMMDD.md)（YYYYMMDD は今日の日付）
 改善提案：（LP_ALERT があれば箇条書き。なければこの行を省略）
 
-アスカ判定：（異常値があれば記載。なければ「特記事項なし」）
+## レン考察
+・考察内容（箇条書き）
 
 ## YouTube ダイジェスト（最終更新: YYYY-MM-DD HH:MM）
-（youtube-digest.md の内容をそのまま転記。ファイルが存在しない場合はセクション省略）
+### AI関連
+- [動画タイトル](URL)
+  - チャンネル：チャンネル名
+  - 概要：説明文
+
+### WordPress関連
+- [動画タイトル](URL)
+  - チャンネル：チャンネル名
+  - 概要：説明文
 
 ## 定期タスク（※ 第2日曜日のみ表示）
 今日は **月次ルール棚卸し** の日です。
@@ -348,6 +576,8 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 ## リポジトリ（※ git pull が失敗した場合のみこのセクションを表示）
 - エラー内容
 ```
+
+YouTubeダイジェストは `~/.claude/youtube-digest.md` の内容をそのまま転記すること。SKIPの場合も既存ファイルから読み込んで表示する。取得失敗かつファイルも存在しない場合はセクションを省略する。
 
 ### 動的サマリー一文のルール
 
