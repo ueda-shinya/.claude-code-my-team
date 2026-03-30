@@ -40,7 +40,7 @@ NOTION_API_TOKEN   = os.environ.get('NOTION_API_TOKEN', '')
 NOTION_PROJECT_DB_ID = os.environ.get('NOTION_PROJECT_DB_ID', '')
 
 # LINE WORKS 通知先（ALLOWED_USER_ID 宛に個人メッセージ送信）
-LINE_WORKS_BOT_ID      = os.environ.get('LINE_WORKS_BOT_ID', '')
+LINE_WORKS_BOT_ID      = os.environ.get('LINE_WORKS_CHATWORK_BOT_ID', '')
 LINE_WORKS_CLIENT_ID   = os.environ.get('LINE_WORKS_CLIENT_ID', '')
 LINE_WORKS_CLIENT_SECRET = os.environ.get('LINE_WORKS_CLIENT_SECRET', '')
 LINE_WORKS_SERVICE_ACCOUNT = os.environ.get('LINE_WORKS_SERVICE_ACCOUNT', '')
@@ -79,7 +79,7 @@ URGENT_AUTO_REPLY_TEXT = (
 # ── APIコスト管理 ──────────────────────────────────────────────
 INPUT_COST_PER_MTOK  = 0.80   # claude-haiku-4-5: $0.80/MTok
 OUTPUT_COST_PER_MTOK = 4.00   # claude-haiku-4-5: $4.00/MTok
-COST_THRESHOLD_USD   = 0.05   # 通常運用でこの金額を超えたらアラート（約¥7.5）
+COST_THRESHOLD_USD   = 0.05   # 通常運用でこの金額を超えたらアラート（約7.5円）
 COST_HISTORY_FILE    = os.path.expanduser('~/.claude/tmp/api-cost-history.json')
 
 # ── ログ設定 ─────────────────────────────────────────────────
@@ -892,7 +892,7 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
         logger.info(f'解析メッセージ数: {analyzed_count} 件')
         logger.info(f'入力トークン: {total_input_tokens:,}')
         logger.info(f'出力トークン: {total_output_tokens:,}')
-        logger.info(f'推定コスト: ${total_cost_usd:.4f}（約¥{total_cost_jpy:.1f}）')
+        logger.info(f'推定コスト: ${total_cost_usd:.4f}（約{total_cost_jpy:.1f}円）')
     else:
         # 通常運用中: 閾値超え時のみアラート
         if total_cost_usd > COST_THRESHOLD_USD:
@@ -904,7 +904,7 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
             else:
                 cause = '解析件数0件にもかかわらずコスト発生（確認推奨）'
             logger.warning('=== [COST ALERT] APIコストが閾値を超えました ===')
-            logger.warning(f'  推定コスト: ${total_cost_usd:.4f}（約¥{total_cost_jpy:.1f}）/ 閾値: ${COST_THRESHOLD_USD}')
+            logger.warning(f'  推定コスト: ${total_cost_usd:.4f}（約{total_cost_jpy:.1f}円）/ 閾値: ${COST_THRESHOLD_USD}')
             logger.warning(f'  解析メッセージ数: {analyzed_count}件 / 入力: {total_input_tokens:,} / 出力: {total_output_tokens:,}')
             logger.warning(f'  要因: {cause}')
         else:

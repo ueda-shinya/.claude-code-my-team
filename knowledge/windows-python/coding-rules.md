@@ -36,5 +36,20 @@ subprocess.run([sys.executable, 'script.py'])
 - **インストール済みパッケージ**: flask, anthropic, requests, python-dotenv, PyJWT, pyngrok
 - `C:\Users\ueda-\AppData\Local\Microsoft\WindowsApps\python3.12.exe` はVSCode拡張用であり、上記パッケージは未インストール
 
+## 文字エンコーディング
+
+| ❌ 使わない | ✅ 代わりに使う | 理由 |
+|---|---|---|
+| `¥{値}` / `¥` (U+00A5) をログ出力に使う | `{値}円` | Windows コンソール（CP932）では U+00A5 が `UnicodeEncodeError` になる場合がある |
+
+```python
+# ❌
+logging.info(f"推定コスト: 約¥{cost:.1f}")
+
+# ✅
+logging.info(f"推定コスト: 約{cost:.1f}円")
+```
+
 ## 更新履歴
+- 2026-03-30: UnicodeEncodeError（¥記号）の注意点を追加（chatwork-sync.py の事例）
 - 2026-03-28: 初版作成（LINE WORKS Bot Phase 1 開発時の教訓）

@@ -16,6 +16,7 @@
 ## project
 - [project_officeueda_web.md](project_officeueda_web.md) — officeueda web事業コーディング方針・GMC対応など
 - [project_gmc_sync.md](project_gmc_sync.md) — カラーミー×GMC自動同期ツール開発プロジェクト（officeueda導入代行サービス）
+- [project_client_consultation_flow.md](project_client_consultation_flow.md) — クライアント相談受付の標準フロー（顧客確認→Notion登録→clientsディレクトリ作成）
 
 ## knowledge
 - [knowledge/line-works-bot/implementation-notes.md](../knowledge/line-works-bot/implementation-notes.md) — LINE WORKS Bot 実装メモ（UUID形式のユーザーID・expires_in型・ngrok制限・署名検証）

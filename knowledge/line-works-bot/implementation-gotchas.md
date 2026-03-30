@@ -100,6 +100,23 @@ python3 -c "import os; print(repr(os.environ.get('LINE_WORKS_MIO_BOT_SECRET')))"
 
 ---
 
+## 問題8: 外部スクリプトの BOT_ID 参照先が環境変数名変更に追従しなかった
+
+**症状:** chatwork-sync.py の LINE WORKS 通知が404エラーで失敗
+
+**原因:** LINE WORKS Bot の設定整理で環境変数を `LINE_WORKS_BOT_ID` から `LINE_WORKS_ASUKA_BOT_ID` に改名した。
+しかし chatwork-sync.py は旧名 `LINE_WORKS_BOT_ID` を参照したまま → 空文字になりURLが壊れた。
+
+**修正方針:** 目的別に変数を新設する。`LINE_WORKS_CHATWORK_BOT_ID` のように用途を変数名に含める。
+用途が同じでも変数名は共有しない（片方を改名するともう片方が壊れる）。
+
+**教訓:** 環境変数を改名したとき、参照している全スクリプトを必ず横断検索すること。
+```bash
+grep -r "LINE_WORKS_BOT_ID" ~/.claude/scripts/
+```
+
+---
+
 ## Bot追加時のチェックリスト
 
 新しいBotを追加するとき、以下を漏れなく確認すること。
