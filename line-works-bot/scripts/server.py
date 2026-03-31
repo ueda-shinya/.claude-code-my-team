@@ -602,31 +602,95 @@ def cmd_ga4(force: bool = False) -> str:
 
 
 def cmd_tasks() -> str:
-    """session-handoff.md から残件・引き継ぎを返す"""
+    """Notion の残件タスクDB から未着手・進行中・保留のタスクを返す"""
     try:
-        path = os.path.expanduser('~/.claude/session-handoff.md')
-        with open(path, encoding='utf-8') as f:
-            content = f.read()
-        if '作業なし' in content:
-            return '【アスカ】残件・引き継ぎ事項はありません。'
-        lines = content.splitlines()
-        result_lines = ['【アスカ】現在の残件・引き継ぎ']
-        in_section = False
-        for line in lines:
-            if re.match(r'^## (残件|予定|中断中の作業)', line):
-                in_section = True
-                result_lines.append(line.replace('## ', '▶ '))
-                continue
-            if re.match(r'^##', line) and in_section:
-                if '完了済み' in line:
-                    break
-                in_section = False
-            if in_section and line.strip():
-                result_lines.append(line)
-        return '\n'.join(result_lines[:25])
+        # .env から Notion 認証情報を読み込む
+        env_path = os.path.expanduser('~/.claude/.env')
+        notion_token = ''
+        tasks_db_id = ''
+        with open(env_path, encoding='utf-8') as f:
+            for line in f:
+                line = line.strip().strip('"').strip("'")
+                if line.startswith('NOTION_API_TOKEN='):
+                    notion_token = line.split('=', 1)[1].strip('"').strip("'")
+                if line.startswith('NOTION_TASKS_DB_ID='):
+                    tasks_db_id = line.split('=', 1)[1].strip('"').strip("'")
+
+        if not notion_token or not tasks_db_id:
+            logger.error('cmd_tasks: NOTION_API_TOKEN または NOTION_TASKS_DB_ID が未設定')
+            return '【アスカ】⚠️ Notion の設定が不足しています。.env を確認してください。'
+
+        # Notion API: 完了以外のタスクを作成日昇順で取得
+        filter_body = {
+            'filter': {
+                'property': 'ステータス',
+                'select': {
+                    'does_not_equal': '完了'
+                }
+            },
+            'sorts': [{'property': '作成日', 'direction': 'ascending'}]
+        }
+        ctx = ssl.create_default_context()
+        req = urllib.request.Request(
+            f'https://api.notion.com/v1/databases/{tasks_db_id}/query',
+            data=json.dumps(filter_body).encode(),
+            headers={
+                'Authorization': f'Bearer {notion_token}',
+                'Notion-Version': '2022-06-28',
+                'Content-Type': 'application/json',
+            },
+            method='POST'
+        )
+        with urllib.request.urlopen(req, context=ctx, timeout=10) as res:
+            result = json.loads(res.read())
+
+        pages = result.get('results', [])
+        if not pages:
+            return '残件タスクはありません ✅'
+
+        lines = [f'📋 残件タスク（{len(pages)}件）', '']
+        for page in pages:
+            props = page.get('properties', {})
+
+            # タスク名（title プロパティ）
+            title_prop = props.get('タスク名') or props.get('名前') or {}
+            title_items = title_prop.get('title', [])
+            title = ''.join(t.get('plain_text', '') for t in title_items).strip() or '（タイトルなし）'
+
+            # ステータス（select プロパティ）
+            status_prop = props.get('ステータス', {})
+            status_val = (status_prop.get('select') or {}).get('name', '')
+
+            # ステータスラベル
+            STATUS_LABELS = {
+                '未着手': '未着手',
+                '進行中': '進行中',
+                '保留':   '保留',
+            }
+            label = STATUS_LABELS.get(status_val, status_val or '不明')
+
+            lines.append(f'[{label}] {title}')
+
+            # 作業履歴（rich_text プロパティ）— 最後の1行のみ表示
+            history_prop = props.get('作業履歴', {})
+            history_items = history_prop.get('rich_text', [])
+            history_text = ''.join(t.get('plain_text', '') for t in history_items).strip()
+            if history_text and label == '進行中':
+                # 改行で分割して最後の空でない行を取得
+                history_lines = [l.strip() for l in history_text.splitlines() if l.strip()]
+                if history_lines:
+                    lines.append(f'  └ 最新履歴: {history_lines[-1]}')
+
+        lines.append('')
+        lines.append('Notion で管理中 🔗')
+        return '\n'.join(lines)
+
+    except urllib.error.HTTPError as e:
+        logger.error(f'cmd_tasks Notion API エラー: HTTP {e.code}')
+        return '【アスカ】Notion API がエラーを返しました。認証情報を確認してください。'
     except Exception as e:
         logger.error(f'cmd_tasks エラー: {e}')
-        return '【アスカ】タスク一覧の取得に失敗しました。'
+        return '⚠️ Notion への接続に失敗しました。直接 Notion を確認してください。'
 
 
 def cmd_clients() -> str:
@@ -666,6 +730,84 @@ def cmd_memo(text: str) -> str:
     except Exception as e:
         logger.error(f'cmd_memo エラー: {e}')
         return '【アスカ】メモの保存に失敗しました。'
+
+
+MAX_DECIDE_LEN = 200  # /decide コマンドの入力文字数上限
+
+def cmd_decide(text: str) -> str:
+    """session-handoff.md の設計・実装決定ログに追記して git push する"""
+    if len(text) > MAX_DECIDE_LEN:
+        return f'【アスカ】決定内容が長すぎます（{len(text)}文字）。{MAX_DECIDE_LEN}文字以内にしてください。'
+    try:
+        path = os.path.expanduser('~/.claude/session-handoff.md')
+        jst = timezone(timedelta(hours=9))
+        today = datetime.now(jst)
+        date_str = f'{today.year}-{today.month:02d}-{today.day:02d}'
+        entry = f'- [{date_str}] {text}（`/decide` コマンドで記録）'
+
+        with open(path, encoding='utf-8') as f:
+            content = f.read()
+
+        # 「設計・実装決定ログ」セクションの末尾エントリを探して追記
+        # セクション内の最後の「- [」行の直後に挿入する
+        lines = content.splitlines(keepends=True)
+        insert_idx = None
+        in_section = False
+        for i, line in enumerate(lines):
+            if re.match(r'^## 設計・実装決定ログ', line):
+                in_section = True
+                continue
+            if in_section and re.match(r'^##', line):
+                # 次のセクションに入ったら終了
+                break
+            if in_section and re.match(r'^- \[', line):
+                insert_idx = i  # 最後のエントリ行を更新し続ける
+
+        if insert_idx is not None:
+            # 最後のエントリ行の直後に追記
+            lines.insert(insert_idx + 1, entry + '\n')
+        else:
+            # エントリが1件もない場合はセクション末尾（次セクション区切りの手前）に追記
+            in_section = False
+            inserted = False
+            for i, line in enumerate(lines):
+                if re.match(r'^## 設計・実装決定ログ', line):
+                    in_section = True
+                    continue
+                if in_section and re.match(r'^##', line):
+                    lines.insert(i, entry + '\n')
+                    inserted = True
+                    break
+            if not inserted:
+                # セクション自体が存在しない場合はヘッダーごと末尾に追記
+                lines.append('\n## 設計・実装決定ログ\n')
+                lines.append(entry + '\n')
+
+        with open(path, 'w', encoding='utf-8') as f:
+            f.writelines(lines)
+
+        # git add → commit → push
+        repo_dir = os.path.expanduser('~/.claude')
+        subprocess.run(
+            ['git', 'add', 'session-handoff.md'],
+            cwd=repo_dir, capture_output=True, timeout=30
+        )
+        subprocess.run(
+            ['git', 'commit', '-m', 'chore: /decide で設計決定を記録'],
+            cwd=repo_dir, capture_output=True, timeout=30
+        )
+        push_result = subprocess.run(
+            ['git', 'push'],
+            cwd=repo_dir, capture_output=True, timeout=60
+        )
+        if push_result.returncode != 0:
+            logger.warning(f'cmd_decide: git push 失敗 (returncode={push_result.returncode})')
+            return f'【アスカ】記録しました（ローカルのみ。pushに失敗しました）。\n{entry}'
+        logger.info(f'cmd_decide: 記録完了 → {entry}')
+        return f'【アスカ】記録しました。\n{entry}'
+    except Exception as e:
+        logger.error(f'cmd_decide エラー: {e}')
+        return '【アスカ】設計決定の記録に失敗しました。PC側のログを確認してください。'
 
 
 def cmd_notion_add(title: str) -> str:
@@ -734,6 +876,7 @@ def handle_command(user_id: str, text: str) -> str | None:
             '/clients      - クライアント一覧\n'
             '/memo <テキスト>   - メモを保存\n'
             '/notion <タイトル> - Notion議事録DBに追加\n'
+            '/decide <内容>    - 設計・実装決定を記録してpush\n'
             '/reset        - 会話履歴をリセット\n'
             '/status       - 稼働確認\n'
             '/help         - この一覧\n'
@@ -763,6 +906,15 @@ def handle_command(user_id: str, text: str) -> str | None:
         if not body:
             return '【アスカ】タイトルを入力してください。\n例: /notion 〇〇について確認'
         return cmd_notion_add(body)
+
+    if cmd_lower == '/decide':
+        return '【アスカ】使い方: /decide <決定内容>\n例: /decide ga4-report.pyの広告着地URLを動的検出に変更する'
+
+    if cmd_lower.startswith('/decide '):
+        body = cmd[8:].strip()
+        if not body:
+            return '【アスカ】決定内容を入力してください。\n例: /decide ga4-report.pyの広告着地URLを動的検出に変更する'
+        return cmd_decide(body)
 
     if cmd_lower.startswith('/'):
         return '【アスカ】不明なコマンドです。/help で一覧を確認してください。'

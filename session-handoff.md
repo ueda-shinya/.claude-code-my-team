@@ -13,8 +13,8 @@
 - chatwork-sync.py の Notion 案件リスト登録ロジックを修正（登録内容がよくない・後日対応）
 - GA4広告LP切り替え：シンヤさんから連絡が来たら切り替え前日にベースラインデータ取得（ga4-report.py修正済み・TOP広告列追加済み）
   - **LP切り替えと同時に** ga4-report.py の広告着地URL検出を動的化する（`/` ハードコード→自動検出）→ `knowledge-buffer.md` 参照
-- 別PC間の意思決定共有問題：解決策設計・実装（別PCで）→ `knowledge-buffer.md` 参照
 - エージェント精度向上ラウンドテーブル（日程未定・knowledge-buffer.mdに議題保存済み）
+- **【Mac確認】** LINE WORKS Bot / Chatwork APScheduler がMacで起動設定されていないか確認する（PC_ROLE=server はWindowsのみの想定）
 
 ---
 
@@ -63,7 +63,7 @@
 **機能一覧：**
 - `/ga4`・自然語「GA4レポートお願い」→ キャッシュ優先・当日初回のみ取得（90秒）
   - 「最新版」「再取得」で強制リフレッシュ。キャッシュ: `~/.claude/tmp/ga4-cache.txt`
-- `/tasks` → session-handoff.md の残件・引き継ぎ
+- `/tasks` → Notion「残件タスク」DBから未完了タスクを取得
 - `/clients` → クライアント一覧
 - `/memo <テキスト>` → knowledge-buffer.md に保存
 - `/notion <タイトル>` → Notion議事録DBに追加
