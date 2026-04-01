@@ -108,7 +108,7 @@ r_source = run({
     'limit': 5
 })
 
-# 3b. 広告別詳細（Paid Social / Paid Search のソース・媒体別、過去7日）
+# 3b. 広告別詳細（Paid Social / Paid Search のソース・媒体別、apexlineキャンペーン限定、過去7日）
 r_ads = run({
     'dimensions': [{'name': 'sessionSource'}, {'name': 'sessionMedium'}],
     'metrics': [
@@ -117,18 +117,20 @@ r_ads = run({
     ],
     'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
     'dimensionFilter': {
-        'orGroup': {'expressions': [
-            {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Social'}}},
-            {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Search'}}},
+        'andGroup': {'expressions': [
+            {'orGroup': {'expressions': [
+                {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Social'}}},
+                {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Search'}}},
+            ]}},
+            {'filter': {'fieldName': 'sessionCampaignName', 'stringFilter': {'matchType': 'EXACT', 'value': 'apexline'}}}
         ]}
     },
     'orderBys': [{'metric': {'metricName': 'sessions'}, 'desc': True}],
     'limit': 10
 })
 
-# 3c. 広告経由 x トップページ着地（過去7日）
+# 3c. 広告経由 x LP着地（lp-260319、過去7日）
 r_top_ad = run({
-    'dimensions': [{'name': 'landingPage'}],
     'metrics': [
         {'name': 'sessions'},
         {'name': 'bounceRate'},
@@ -137,7 +139,7 @@ r_top_ad = run({
     'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
     'dimensionFilter': {
         'andGroup': {'expressions': [
-            {'filter': {'fieldName': 'landingPage', 'stringFilter': {'matchType': 'EXACT', 'value': '/'}}},
+            {'filter': {'fieldName': 'landingPage', 'stringFilter': {'matchType': 'BEGINS_WITH', 'value': '/lp-260319'}}},
             {'orGroup': {'expressions': [
                 {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Social'}}},
                 {'filter': {'fieldName': 'sessionDefaultChannelGrouping', 'stringFilter': {'matchType': 'EXACT', 'value': 'Paid Search'}}},
@@ -249,7 +251,7 @@ for i, row in enumerate(r_pages.get('rows', []), 1):
     u = row['metricValues'][1]['value']
     print(f'TOP_PAGE_{i}: {path}|{pv}|{u}')
 
-# TOP広告（広告経由・トップページ着地、過去7日）
+# TOP広告（広告経由・LP着地 lp-260319、過去7日）
 top_ad_m = r_top_ad.get('rows', [{}])[0].get('metricValues', [{'value':'0'}]*3) if r_top_ad.get('rows') else [{'value':'0'}]*3
 top_ad_sessions = int(top_ad_m[0]['value'])
 top_ad_bounce = float(top_ad_m[1]['value']) * 100
