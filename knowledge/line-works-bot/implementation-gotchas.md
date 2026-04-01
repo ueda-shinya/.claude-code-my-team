@@ -126,7 +126,7 @@ grep -r "LINE_WORKS_BOT_ID" ~/.claude/scripts/
 3. `send_message()` の呼び出し箇所で `bot_id=received_bot_id` を渡しているか確認
 4. グループルーティングに「自分宛てでないメッセージは無視」チェックを追加
 5. DMのデフォルトルーティングに `and not channel_id` を入れる
-6. システムプロンプトのBot間引き継ぎセクションにハンドオフ形式を明記する
+6. システムプロンプトのBot間引き継ぎセクションにハンドオフ形式を明記する（**「【Bot名】を冒頭に付ける」指示は不要**。LINE WORKSではアイコン・名前が表示されるため）
 7. `detect_handoff()` のパターンに新Bot名のバリエーションを追加
 
 ---

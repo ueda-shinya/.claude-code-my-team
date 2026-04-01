@@ -56,6 +56,7 @@ python3 -c "import os; print(repr(os.environ.get('LINE_WORKS_{BOT名}_BOT_SECRET
 
 5. **システムプロンプト（新Botの役割定義）を追加**
    - 既存Bot（アスカ・ミオ）のプロンプト構造を参考に作成
+   - **「【Bot名】を冒頭に付ける」指示は不要**（LINE WORKSではアイコン・名前が表示されるため）
 
 6. **Bot間引き継ぎのハンドオフパターン更新**
    - `detect_handoff()` に新Bot名のパターンを追加
