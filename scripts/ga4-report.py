@@ -18,6 +18,17 @@ GA4 日次レポートスクリプト
   LP_AVG_DURATION_7D: <秒>       ← LP 平均滞在時間（過去7日）
   LP_CTA_CLICKS_7D: <件数>       ← LP CTA クリック数（LP_CTA_START_DATE以降・テスト除外）
   LP_MOBILE_BOUNCE_7D: <率>      ← LP モバイル離脱率（過去7日）
+  TOPPAGE_SESSIONS_YD: <件数>      ← トップページ（/）セッション（昨日）
+  TOPPAGE_USERS_YD: <件数>         ← トップページ（/）ユーザー（昨日）
+  TOPPAGE_BOUNCE_YD: <率>          ← トップページ（/）離脱率（昨日）
+  TOPPAGE_AVG_DURATION_YD: <秒>    ← トップページ（/）平均滞在時間（昨日）
+  LP_SESSIONS_YD: <件数>           ← LP セッション（昨日）
+  LP_USERS_YD: <件数>              ← LP ユーザー（昨日）
+  LP_BOUNCE_YD: <率>               ← LP 離脱率（昨日）
+  LP_AVG_DURATION_YD: <秒>         ← LP 平均滞在時間（昨日）
+  TOP_AD_SESSIONS_7D: <件数>       ← 広告経由LP着地セッション（過去7日）
+  TOP_AD_BOUNCE_7D: <率>           ← 広告経由LP着地離脱率（過去7日）
+  TOP_AD_DURATION_7D: <秒>         ← 広告経由LP着地滞在秒（過去7日）
   LP_DAILY_<YYYYMMDD>_<チャンネル>: <セッション>  ← LP 日別流入元（過去7日）
 """
 
@@ -182,6 +193,31 @@ lp_filter = {
     }
 }
 
+# 4b. トップページ（/）昨日の個別メトリクス
+r_toppage_yd = run({
+    'metrics': [
+        {'name': 'sessions'}, {'name': 'totalUsers'},
+        {'name': 'bounceRate'}, {'name': 'averageSessionDuration'}
+    ],
+    'dateRanges': [{'startDate': 'yesterday', 'endDate': 'yesterday'}],
+    'dimensionFilter': {
+        'filter': {
+            'fieldName': 'pagePath',
+            'stringFilter': {'matchType': 'EXACT', 'value': '/'}
+        }
+    }
+})
+
+# 4c. LP（/lp-260319）昨日の個別メトリクス
+r_lp_yd = run({
+    'metrics': [
+        {'name': 'sessions'}, {'name': 'totalUsers'},
+        {'name': 'bounceRate'}, {'name': 'averageSessionDuration'}
+    ],
+    'dateRanges': [{'startDate': 'yesterday', 'endDate': 'yesterday'}],
+    'dimensionFilter': lp_filter
+})
+
 # 5. LP 概要（過去7日）
 r_lp = run({
     'metrics': [
@@ -259,6 +295,34 @@ top_ad_dur = float(top_ad_m[2]['value'])
 print(f'TOP_AD_SESSIONS_7D: {top_ad_sessions}')
 print(f'TOP_AD_BOUNCE_7D: {top_ad_bounce:.1f}')
 print(f'TOP_AD_DURATION_7D: {top_ad_dur:.0f}')
+
+# トップページ（/）昨日
+toppage_rows = r_toppage_yd.get('rows', [])
+if toppage_rows:
+    toppage_m = toppage_rows[0]['metricValues']
+    print(f'TOPPAGE_SESSIONS_YD: {toppage_m[0]["value"]}')
+    print(f'TOPPAGE_USERS_YD: {toppage_m[1]["value"]}')
+    toppage_bounce = float(toppage_m[2]['value']) * 100
+    print(f'TOPPAGE_BOUNCE_YD: {toppage_bounce:.1f}')
+    toppage_dur = float(toppage_m[3]['value'])
+    print(f'TOPPAGE_AVG_DURATION_YD: {toppage_dur:.0f}')
+else:
+    print('TOPPAGE_SESSIONS_YD: 0')
+    print('TOPPAGE_USERS_YD: 0')
+
+# LP（/lp-260319）昨日
+lp_yd_rows = r_lp_yd.get('rows', [])
+if lp_yd_rows:
+    lp_yd_m = lp_yd_rows[0]['metricValues']
+    print(f'LP_SESSIONS_YD: {lp_yd_m[0]["value"]}')
+    print(f'LP_USERS_YD: {lp_yd_m[1]["value"]}')
+    lp_yd_bounce = float(lp_yd_m[2]['value']) * 100
+    print(f'LP_BOUNCE_YD: {lp_yd_bounce:.1f}')
+    lp_yd_dur = float(lp_yd_m[3]['value'])
+    print(f'LP_AVG_DURATION_YD: {lp_yd_dur:.0f}')
+else:
+    print('LP_SESSIONS_YD: 0')
+    print('LP_USERS_YD: 0')
 
 # LP 概要
 lp_m = r_lp.get('rows', [{}])[0].get('metricValues', [{'value':'0'}]*3) if r_lp.get('rows') else [{'value':'0'}]*3
