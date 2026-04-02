@@ -17,6 +17,7 @@ GA4 日次レポートスクリプト
   LP_BOUNCE_7D: <率>             ← LP 離脱率（過去7日）
   LP_AVG_DURATION_7D: <秒>       ← LP 平均滞在時間（過去7日）
   LP_CTA_CLICKS_7D: <件数>       ← LP CTA クリック数（LP_CTA_START_DATE以降・テスト除外）
+  LP_CTA_LABEL_<label>: <件数>  ← LP CTAクリック内訳（label別、LP_CTA_START_DATE以降）
   LP_MOBILE_BOUNCE_7D: <率>      ← LP モバイル離脱率（過去7日）
   TOPPAGE_SESSIONS_YD: <件数>      ← トップページ（/）セッション（昨日）
   TOPPAGE_USERS_YD: <件数>         ← トップページ（/）ユーザー（昨日）
@@ -240,6 +241,20 @@ r_lp_cta = run({
     }
 })
 
+# 6b. LP CTA クリック内訳（label別）
+r_lp_cta_labels = run({
+    'dimensions': [{'name': 'customEvent:label'}],
+    'metrics': [{'name': 'eventCount'}],
+    'dateRanges': [{'startDate': LP_CTA_START_DATE, 'endDate': 'today'}],
+    'dimensionFilter': {
+        'andGroup': {'expressions': [
+            lp_filter,
+            {'filter': {'fieldName': 'eventName', 'stringFilter': {'matchType': 'EXACT', 'value': 'cta_click'}}}
+        ]}
+    },
+    'orderBys': [{'metric': {'metricName': 'eventCount'}, 'desc': True}]
+})
+
 # 7. LP デバイス別（モバイル離脱率、過去7日）
 r_lp_device = run({
     'dimensions': [{'name': 'deviceCategory'}],
@@ -334,6 +349,12 @@ print(f'LP_AVG_DURATION_7D: {lp_dur:.0f}')
 
 # LP CTAクリック（テスト除外）
 print(f'LP_CTA_CLICKS_7D: {get_metric(r_lp_cta, 0, 0)}')
+
+# LP CTA クリック内訳
+for row in r_lp_cta_labels.get('rows', []):
+    label = row['dimensionValues'][0]['value']
+    count = row['metricValues'][0]['value']
+    print(f'LP_CTA_LABEL_{label}: {count}')
 
 # LP モバイル離脱率
 for row in r_lp_device.get('rows', []):
