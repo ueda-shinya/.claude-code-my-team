@@ -416,6 +416,7 @@ python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
 - `LP_BOUNCE_7D`：LP 直帰率（過去7日）
 - `LP_AVG_DURATION_7D`：LP 平均滞在時間・秒（過去7日）
 - `LP_CTA_CLICKS_7D`：LP CTA クリック数（過去7日）
+- `LP_CTA_LABEL_<label>`：LP CTAボタン別クリック数（LP_CTA_START_DATE以降）
 - `LP_MOBILE_BOUNCE_7D`：LP モバイル直帰率（過去7日）
 
 取得後、以下の評価ロジックを適用して各アラートリストを作成する：
@@ -467,7 +468,7 @@ python3 ~/.claude/scripts/ga4-report.py 2>&1 | cat
 セッション: X / 離脱率: X% / 平均滞在: X秒
 
 【LP（lp-260319）昨日】
-セッション: X / 離脱率: X% / 平均滞在: X秒 / CTAクリック（7D）: X
+セッション: X / 離脱率: X% / 平均滞在: X秒 / CTAクリック（累計）: X
 
 【サイト概要（昨日）】
 セッション: X / ユーザー: X（新規 X） / 離脱率: X%
@@ -572,7 +573,10 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 
 ## LP（lp-260319）昨日
 - セッション：X / ユーザー：X / 離脱率：X% / 平均滞在：X秒
-- CTA クリック（7D）：X回 / モバイル離脱率（7D）：X%
+- CTA クリック（累計）：X回
+  - fv: X / cta_mid: X / service: X / works: X / line: X / fixed_cta: X
+  ※ データがあるlabelのみ表示。全0件の場合は内訳省略
+- モバイル離脱率（7D）：X%
 評価：（LP_ALERT_DAILYがあれば箇条書き。なければ「特記事項なし」）
 
 ## 人気ページ Top5（昨日）
