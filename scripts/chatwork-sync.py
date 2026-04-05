@@ -330,7 +330,8 @@ def build_analyze_prompt(my_account_id: str, now_str: str) -> str:
 has_schedule の判定基準（以下をすべて満たす場合のみ true）：
 - 自分（アカウントID: {my_account_id}）が参加・対応する予定または期限であること
   - 他の人同士の予定調整・第三者の予定は false
-  - [To:{my_account_id}] がある、または文脈から自分が関係者とわかる場合のみ
+  - [To:{my_account_id}] がある、または文脈から自分が関係者とわかる場合
+  - または、送信者が「（自分の送信）」と示されており、予定が確定したことを報告・通知している場合
 - 具体的な日時（日付＋時刻、または日付のみ）が明示されていること
   - 「いつか」「近いうち」など曖昧な表現は false
 - 過去の予定ではなく、未来の予定であること（上記の現在日時を基準とする）
@@ -346,7 +347,7 @@ is_high_priority の判定基準：
 上記に該当しない場合は false とすること。"""
 
 
-def analyze_message(room_name: str, account_name: str, send_time: str, message_body: str) -> dict | None:
+def analyze_message(room_name: str, account_name: str, send_time: str, message_body: str, is_my_message: bool = False) -> dict | None:
     """Claude API でメッセージを解析してJSONを返す
 
     戻り値:
@@ -360,13 +361,14 @@ def analyze_message(room_name: str, account_name: str, send_time: str, message_b
     try:
         jst = timezone(timedelta(hours=9))
         now_str = datetime.now(jst).strftime('%Y-%m-%d %H:%M')
+        sender_label = f'{account_name}（自分の送信）' if is_my_message else account_name
         response = claude_client.messages.create(
             model='claude-haiku-4-5-20251001',
             max_tokens=512,
             system=build_analyze_prompt(CHATWORK_MY_ACCOUNT_ID, now_str),
             messages=[{
                 'role': 'user',
-                'content': f'ルーム名：{room_name}\n送信者：{account_name}\n送信日時：{send_time}\nメッセージ本文：\n<message>\n{message_body[:3000]}\n</message>',
+                'content': f'ルーム名：{room_name}\n送信者：{sender_label}\n送信日時：{send_time}\nメッセージ本文：\n<message>\n{message_body[:3000]}\n</message>',
             }],
         )
         text = response.content[0].text.strip()
@@ -833,7 +835,9 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
             logger.info(f'  解析中: [{account_name}] {body[:50]}...')
 
             # Claude で解析
-            ret = analyze_message(room_name, account_name, send_time, body)
+            sender_account_id = str(account.get('account_id', ''))
+            is_my_message = (sender_account_id == CHATWORK_MY_ACCOUNT_ID) if CHATWORK_MY_ACCOUNT_ID else False
+            ret = analyze_message(room_name, account_name, send_time, body, is_my_message=is_my_message)
             if ret is None:
                 logger.warning(f'  解析失敗: message_id={msg_id}')
                 continue
