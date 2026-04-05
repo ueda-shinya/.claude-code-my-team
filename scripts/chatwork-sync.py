@@ -472,6 +472,17 @@ def add_or_update_notion_project(task_summary: str, related_project: str, dry_ru
 
 # ── Google Calendar 連携 ─────────────────────────────────────
 
+def _format_event_datetime(iso_str: str) -> str:
+    """ISO 8601 日時文字列を読みやすい形式に変換する（例: 4/10（金） 15:00）"""
+    WEEKDAYS = ['月', '火', '水', '木', '金', '土', '日']
+    try:
+        dt = datetime.fromisoformat(iso_str[:19])
+        wd = WEEKDAYS[dt.weekday()]
+        return f'{dt.month}/{dt.day}（{wd}） {dt.hour:02d}:{dt.minute:02d}'
+    except Exception:
+        return iso_str[:16]
+
+
 def add_calendar_event(summary: str, start_iso: str, meeting_url: str = None, dry_run: bool = False) -> bool:
     """Google Calendar にイベントを追加（server.py の実装を参考）"""
     if dry_run:
@@ -511,6 +522,12 @@ def add_calendar_event(summary: str, start_iso: str, meeting_url: str = None, dr
             json.loads(res.read())
 
         logger.info(f'カレンダー追加完了: {summary} / {start_iso}')
+        # LINE WORKS 通知
+        dt_str = _format_event_datetime(start_iso)
+        notify_lines = ['【カレンダー登録】', f'📅 {summary}', f'🕐 {dt_str}']
+        if meeting_url:
+            notify_lines.append(f'🔗 {meeting_url}')
+        send_line_works_message('\n'.join(notify_lines), dry_run=dry_run)
         return True
     except Exception as e:
         logger.error(f'add_calendar_event エラー: {e}')
@@ -686,6 +703,15 @@ def update_calendar_event(
             json.loads(res.read())
 
         logger.info(f'既存イベント更新: {old_summary} → {summary} / {old_start[:16]} → {start_iso[:16]}')
+        # LINE WORKS 通知
+        new_dt_str = _format_event_datetime(start_iso)
+        old_dt_str = _format_event_datetime(old_start) if old_start else ''
+        notify_lines = ['【カレンダー更新】', f'📅 {summary}', f'🕐 {new_dt_str}']
+        if old_summary or old_dt_str:
+            notify_lines.append(f'↩️ 変更前: {old_summary} {old_dt_str}'.strip())
+        if meeting_url:
+            notify_lines.append(f'🔗 {meeting_url}')
+        send_line_works_message('\n'.join(notify_lines), dry_run=dry_run)
         return True
     except Exception as e:
         logger.error(f'update_calendar_event エラー: {e}')
