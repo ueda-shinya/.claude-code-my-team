@@ -570,8 +570,10 @@ def _is_similar_summary(s1: str, s2: str) -> bool:
 
 def find_similar_calendar_event(summary: str, start_iso: str) -> dict | None:
     """
-    指定日の±1日以内に類似イベントがあれば返す。なければ None。
-    複数の類似イベントが見つかった場合は安全のため None を返す（新規登録にフォールバック）。
+    今日から60日以内の全イベントからタイトルが類似するものを返す。
+    候補が1件 → そのイベントを返す
+    候補が複数 → 新しい start_iso に日時が最も近いものを返す（同点の場合は先のものを優先）
+    候補なし → None
     戻り値: {'id': str, 'summary': str, 'start': str, 'description': str}
     """
     try:
@@ -579,18 +581,17 @@ def find_similar_calendar_event(summary: str, start_iso: str) -> dict | None:
         access_token = _get_calendar_access_token()
         ctx = ssl.create_default_context()
 
-        # 対象期間: start_iso の前日〜翌日（±1日）
-        base_dt = datetime.fromisoformat(start_iso)
+        # 対象期間: 今日〜60日後
         jst = timezone(timedelta(hours=9))
-        if base_dt.tzinfo is None:
-            base_dt = base_dt.replace(tzinfo=jst)
-        time_min = (base_dt - timedelta(days=1)).strftime('%Y-%m-%dT00:00:00+09:00')
-        time_max = (base_dt + timedelta(days=1)).strftime('%Y-%m-%dT23:59:59+09:00')
+        now = datetime.now(jst)
+        time_min = now.strftime('%Y-%m-%dT00:00:00+09:00')
+        time_max = (now + timedelta(days=60)).strftime('%Y-%m-%dT23:59:59+09:00')
 
         params = urllib.parse.urlencode({
             'timeMin': time_min,
             'timeMax': time_max,
             'singleEvents': 'true',
+            'maxResults': 250,
         })
         req2 = urllib.request.Request(
             f'https://www.googleapis.com/calendar/v3/calendars/primary/events?{params}',
@@ -613,12 +614,28 @@ def find_similar_calendar_event(summary: str, start_iso: str) -> dict | None:
                     'description': item.get('description', '') or '',
                 })
 
+        if len(candidates) == 0:
+            return None
         if len(candidates) == 1:
             return candidates[0]
-        elif len(candidates) > 1:
-            logger.warning(f'類似イベントが{len(candidates)}件見つかりました。安全のためスキップします: {summary}')
-            return None
-        return None
+
+        # 複数候補：新しい start_iso に最も近いものを選ぶ
+        try:
+            target_dt = datetime.fromisoformat(start_iso[:19])
+        except Exception:
+            return candidates[0]
+
+        def dt_distance(c):
+            try:
+                c_dt = datetime.fromisoformat(c['start'][:19])
+                return abs((c_dt - target_dt).total_seconds())
+            except Exception:
+                return float('inf')
+
+        candidates.sort(key=dt_distance)
+        if len(candidates) > 1:
+            logger.info(f'類似イベントが{len(candidates)}件見つかりました。最も近い日時のイベントを選択: {candidates[0]["summary"]} {candidates[0]["start"][:16]}')
+        return candidates[0]
     except Exception as e:
         logger.error(f'find_similar_calendar_event エラー: {e}')
         return None
