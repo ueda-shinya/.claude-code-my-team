@@ -308,9 +308,11 @@ def get_messages(room_id: int, force: int = 0) -> list:
 
 # ── Claude API 解析 ───────────────────────────────────────────
 
-def build_analyze_prompt(my_account_id: str) -> str:
-    """解析用システムプロンプトを生成する（自分のアカウントIDを埋め込む）"""
-    return f"""以下のChatworkメッセージを解析してください。
+def build_analyze_prompt(my_account_id: str, now_str: str) -> str:
+    """解析用システムプロンプトを生成する（自分のアカウントIDと現在日時を埋め込む）"""
+    return f"""現在日時（JST）: {now_str}
+
+以下のChatworkメッセージを解析してください。
 
 以下のJSON形式で返してください。必ずJSONのみを返し、前後に説明文を付けないこと：
 {{
@@ -320,9 +322,19 @@ def build_analyze_prompt(my_account_id: str) -> str:
   "has_schedule": true/false,
   "schedule_summary": "スケジュール内容",
   "schedule_datetime": "YYYY-MM-DDTHH:MM:SS（推測できる場合、不明な場合はnull）",
+  "meeting_url": "ZoomやGoogle MeetなどのURLがあれば記載、なければnull",
   "is_high_priority": true/false,
   "priority_reason": "優先度高と判断した理由（is_high_priorityがtrueの場合）"
 }}
+
+has_schedule の判定基準（以下をすべて満たす場合のみ true）：
+- 自分（アカウントID: {my_account_id}）が参加・対応する予定または期限であること
+  - 他の人同士の予定調整・第三者の予定は false
+  - [To:{my_account_id}] がある、または文脈から自分が関係者とわかる場合のみ
+- 具体的な日時（日付＋時刻、または日付のみ）が明示されていること
+  - 「いつか」「近いうち」など曖昧な表現は false
+- 過去の予定ではなく、未来の予定であること（上記の現在日時を基準とする）
+該当しない場合は false とすること。
 
 is_high_priority の判定基準：
 - [To:{my_account_id}] が本文に含まれていない場合は必ず false
@@ -346,10 +358,12 @@ def analyze_message(room_name: str, account_name: str, send_time: str, message_b
         解析失敗時は None
     """
     try:
+        jst = timezone(timedelta(hours=9))
+        now_str = datetime.now(jst).strftime('%Y-%m-%d %H:%M')
         response = claude_client.messages.create(
             model='claude-haiku-4-5-20251001',
             max_tokens=512,
-            system=build_analyze_prompt(CHATWORK_MY_ACCOUNT_ID),
+            system=build_analyze_prompt(CHATWORK_MY_ACCOUNT_ID, now_str),
             messages=[{
                 'role': 'user',
                 'content': f'ルーム名：{room_name}\n送信者：{account_name}\n送信日時：{send_time}\nメッセージ本文：\n<message>\n{message_body[:3000]}\n</message>',
@@ -456,10 +470,11 @@ def add_or_update_notion_project(task_summary: str, related_project: str, dry_ru
 
 # ── Google Calendar 連携 ─────────────────────────────────────
 
-def add_calendar_event(summary: str, start_iso: str, dry_run: bool = False) -> bool:
+def add_calendar_event(summary: str, start_iso: str, meeting_url: str = None, dry_run: bool = False) -> bool:
     """Google Calendar にイベントを追加（server.py の実装を参考）"""
     if dry_run:
-        logger.info(f'[DRY-RUN] カレンダー追加スキップ: {summary} / {start_iso}')
+        url_info = f' / {meeting_url}' if meeting_url else ''
+        logger.info(f'[DRY-RUN] カレンダー追加スキップ: {summary} / {start_iso}{url_info}')
         return True
     try:
         from datetime import datetime as dt
@@ -491,11 +506,14 @@ def add_calendar_event(summary: str, start_iso: str, dry_run: bool = False) -> b
         if '+' not in start_iso and 'Z' not in start_iso:
             start_iso = start.strftime('%Y-%m-%dT%H:%M:%S+09:00')
 
-        event_data = json.dumps({
+        event_dict = {
             'summary': summary,
             'start': {'dateTime': start_iso, 'timeZone': 'Asia/Tokyo'},
             'end':   {'dateTime': end_iso,   'timeZone': 'Asia/Tokyo'},
-        }).encode()
+        }
+        if meeting_url:
+            event_dict['description'] = meeting_url
+        event_data = json.dumps(event_dict).encode()
         req2 = urllib.request.Request(
             'https://www.googleapis.com/calendar/v3/calendars/primary/events',
             data=event_data,
@@ -841,7 +859,8 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                 schedule_dt = analysis.get('schedule_datetime')
                 if schedule_dt:
                     summary_text = analysis.get('schedule_summary', body[:100])
-                    add_calendar_event(summary_text, schedule_dt, dry_run=dry_run)
+                    meeting_url  = analysis.get('meeting_url')
+                    add_calendar_event(summary_text, schedule_dt, meeting_url=meeting_url, dry_run=dry_run)
                 else:
                     logger.info('  スケジュール日時が不明なためカレンダー追加をスキップ')
 
