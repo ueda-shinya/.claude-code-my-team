@@ -1,27 +1,28 @@
 # YouTube ダイジェスト
-最終更新: 2026-03-30T08:48:28.592690+09:00
+最終更新: 2026-04-06T07:28:45.454233+09:00
 
 ## AI関連
-- [Gensparkでプレゼン作ってみた #Genspark #WorkwithGenspark @Genspark-Japan](https://www.youtube.com/watch?v=HMSkjOJfJ88)
-  - チャンネル：さえちゃんラボ / 再生数：2,023
-  - 概要：・ついに Genspark「All-in-one AI Workspace 3.0」がリリース！新機能が追加されました： ・Genspark Claw：アプリの枠を超えて複雑な作業を自動代行する「個人
-- [【PCの常識が変わる最強コンビ見つけたライド💡】](https://www.youtube.com/watch?v=vLa61QJ3vZw)
-  - チャンネル：える / 再生数：1,956
-  - 概要：PC作業中、 「AIツール多すぎて、結局どれ使えばいいの…」って 毎回迷っていた私が すごいAIワークスペースに出会いました！！ それが、この「Genspark」  このAIワークスペースがすごくて…
-- [【Claude Mythos流出】最強AIの登場で大手セキュリティ株が軒並み下落した理由｜今日のAIニュースまとめ【2026.03.28】](https://www.youtube.com/watch?v=M2jPJXGpk8I)
-  - チャンネル：AIニュースラボ【毎朝配信】 / 再生数：3,183
-  - 概要：📰 2026年3月28日のAIニュース 00:00 オープニング 00:30 Anthropic新モデル「Claude Mythos」がリーク ― サイバーセキュリティ業界に衝撃 03:19 Goog
-- [【速報】AIの嘘つきの原因、実は○○だった](https://www.youtube.com/watch?v=qq0iyRA4-8o)
-  - チャンネル：AI時短ラボ / 再生数：991
-  - 概要：ChatGPTやClaudeが平気で嘘をつく理由が判明。それは学習データの問題じゃなく、ある仕組みが原因だった。業界激震のニュース。#AIニュース #ChatGPT #03月28日 #最新情報
-- [【悲報】3000通の機密が流出…Anthropic最強AI「Mythos」の正体と危険性が判明](https://www.youtube.com/watch?v=YFCpICyJLMc)
-  - チャンネル：Techの地平線 / 再生数：419
-  - 概要：3000通もの内部資料が流出。安全性を掲げるAnthropicが隠し続けていた最強AI「Claude Mythos」の衝撃的な正体が暴かれました。 「前例のないリスク」と自ら認めた次世代モデルの脅威と
-
-## WordPress関連
-- [絶対WordPress使わせたいエンジニアのジョージ #エンジニアあるある](https://www.youtube.com/watch?v=Ps_2ITwO9lw)
-  - チャンネル：まめ太郎 / 再生数：3,796
-  - 概要：
-- [絶対WordPress使わせたいエンジニアのジョージ #エンジニアあるある](https://www.youtube.com/watch?v=Ps_2ITwO9lw)
-  - チャンネル：まめ太郎 / 再生数：3,796
-  - 概要：
+- [【2026/3/31】Appleが新プライバシー機能でメアドを非公開に？最新AI動向まとめ #Shorts](https://www.youtube.com/watch?v=TbcjDxqxImI)
+  - チャンネル：AI:STREAM / 再生数：635
+  - 概要：今日のAIニュース3選をお届けします！  ① [プライバシー] Appleが新プライバシー機能でメアドを非公開に AppleがiOSに新機能を追加し、アプリやウェブサイトへのメールアドレス開示を選択的
+- [Google公式の新機能　写真から動画生成#ChatGPT #AI活用 #AIツール #sns #gemini](https://www.youtube.com/watch?v=xe0TCKBPAVU)
+  - チャンネル：えりか | AI×TikTokラボ / 再生数：93
+  - 概要：Google公式の新機能　写真から動画生成#ChatGPT #AI活用 #AIツール #sns #gemini
+- [🧐👉 ChatGPTの新機能「Deep Research」で市場調査が秒速完了、その威力とは？ #QixNewsAI](https://www.youtube.com/watch?v=Lktj6bvFryw)
+  - チャンネル：QixNews クイッククリアニュース / 再生数：54
+  - 概要：🦾 ChatGPTの新機能「Deep Research」が登場！  このAIツール、もう市場調査に何時間もかける必要なし。たった数分で、ユーザーのニーズに合わせて商品を徹底比較し、価格・静音性・サイズ
+- [[意外と知らない？]アップデートされたGeminiの新機能！記憶の引き継ぎとAIの「目」を検証しよう！](https://www.youtube.com/watch?v=i0voIaYGEFA)
+  - チャンネル：ドコドア_インターンチャンネル / 再生数：194
+  - 概要：生成AIを活用したアプリ制作・社内生成AIコンサル承ります！まずは無料相談で課題整理から👌 お問い合わせ▶︎https://docodoor.com/contact/   🎬 動画概要 大学生が届ける
+- [プロダクト篇 15秒　Genspark TVCM｜Gensparkさえ、あればいい](https://www.youtube.com/watch?v=fJ8FmFJiMkU)
+  - チャンネル：Genspark Japan / 再生数：5,382,758
+  - 概要：#Genspark #GensparkAI #Gensparkスライド  #gensparkさえあればいい #松坂桃李 #あなたを超える資料作成をAIで  【Genspark日本公式】 X(旧Twit
+- [プレゼン篇 15秒　Genspark TVCM｜Gensparkさえ、あればいい](https://www.youtube.com/watch?v=J_KDYLHjU0w)
+  - チャンネル：Genspark Japan / 再生数：5,250,348
+  - 概要：#Genspark #GensparkAI #Gensparkスライド　  #gensparkさえあればいい #松坂桃李 #あなたを超える資料作成をAIで  【Genspark日本公式】 X(旧Twi
+- [プレゼン篇 30秒　Genspark TVCM｜Gensparkさえ、あればいい](https://www.youtube.com/watch?v=5yAfytiQM28)
+  - チャンネル：Genspark Japan / 再生数：3,757,142
+  - 概要：#Genspark #GensparkAI #Gensparkスライド  #gensparkさえあればいい #松坂桃李 #あなたを超える資料作成をAIで  【Genspark日本公式】 X(旧Twit
+- [AI業界が消えた1週間…OpenAI・Googleが「完全沈黙」する本当の理由がヤバすぎる](https://www.youtube.com/watch?v=WJ_g1PjKpKg)
+  - チャンネル：ごりニート【ニートがAIで1億稼ぐ】 / 再生数：2,170
+  - 概要：━━━━━━━━━━━━━━━━━━━━━━━━━ 📢 ごりニート@ニートがAIで1億稼ぐ ━━━━━━━━━━━━━━━━━━━━━━━━━  2026年3月最終週、AI業界から一切のニュースが消え
