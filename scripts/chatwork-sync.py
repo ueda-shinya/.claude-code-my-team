@@ -18,6 +18,7 @@ Chatwork 全ルーム未確認メッセージ取得・解析・連携スクリ�
 
 import os
 import sys
+import re
 import json
 import ssl
 import logging
@@ -375,7 +376,6 @@ def analyze_message(room_name: str, account_name: str, send_time: str, message_b
 
         # JSONブロックの抽出（```json ... ``` 形式にも対応）
         if '```' in text:
-            import re
             m = re.search(r'```(?:json)?\s*([\s\S]+?)\s*```', text)
             if m:
                 text = m.group(1)
@@ -479,30 +479,12 @@ def add_calendar_event(summary: str, start_iso: str, meeting_url: str = None, dr
         logger.info(f'[DRY-RUN] カレンダー追加スキップ: {summary} / {start_iso}{url_info}')
         return True
     try:
-        from datetime import datetime as dt
-        cred_path  = os.path.expanduser('~/.claude/google-oauth-credentials.json')
-        token_path = os.path.expanduser('~/.claude/mcp-google-calendar-token.json')
-        with open(cred_path, encoding='utf-8') as f:
-            cred = json.load(f)
-        with open(token_path, encoding='utf-8') as f:
-            token = json.load(f)
-
         # アクセストークン取得
-        data = urllib.parse.urlencode({
-            'client_id':     cred['installed']['client_id'],
-            'client_secret': cred['installed']['client_secret'],
-            'refresh_token': token['normal']['refresh_token'],
-            'grant_type':    'refresh_token',
-        }).encode()
-        req = urllib.request.Request(
-            'https://oauth2.googleapis.com/token', data=data, method='POST'
-        )
+        access_token = _get_calendar_access_token()
         ctx = ssl.create_default_context()
-        with urllib.request.urlopen(req, context=ctx, timeout=10) as res:
-            access_token = json.loads(res.read())['access_token']
 
         # イベント追加（1時間枠）
-        start = dt.fromisoformat(start_iso)
+        start = datetime.fromisoformat(start_iso)
         end   = start + timedelta(hours=1)
         end_iso = end.strftime('%Y-%m-%dT%H:%M:%S+09:00')
         if '+' not in start_iso and 'Z' not in start_iso:
@@ -532,6 +514,181 @@ def add_calendar_event(summary: str, start_iso: str, meeting_url: str = None, dr
         return True
     except Exception as e:
         logger.error(f'add_calendar_event エラー: {e}')
+        return False
+
+
+def _get_calendar_access_token() -> str:
+    """Google Calendar API 用アクセストークンを取得する"""
+    cred_path  = os.path.expanduser('~/.claude/google-oauth-credentials.json')
+    token_path = os.path.expanduser('~/.claude/mcp-google-calendar-token.json')
+    with open(cred_path, encoding='utf-8') as f:
+        cred = json.load(f)
+    with open(token_path, encoding='utf-8') as f:
+        token = json.load(f)
+    data = urllib.parse.urlencode({
+        'client_id':     cred['installed']['client_id'],
+        'client_secret': cred['installed']['client_secret'],
+        'refresh_token': token['normal']['refresh_token'],
+        'grant_type':    'refresh_token',
+    }).encode()
+    ctx = ssl.create_default_context()
+    req = urllib.request.Request('https://oauth2.googleapis.com/token', data=data, method='POST')
+    with urllib.request.urlopen(req, context=ctx, timeout=10) as res:
+        return json.loads(res.read())['access_token']
+
+
+# ── Google Calendar 重複チェック・更新 ───────────────────────
+
+STOP_WORDS = {'定例', '会議', '打合せ', 'ミーティング', '確認', '報告', '対応', '作業', 'MTG', '連絡'}
+
+def _is_similar_summary(s1: str, s2: str) -> bool:
+    """タイトルの類似判定（共通する2文字以上のトークンが1つ以上あれば類似とみなす）"""
+    # 記号・括弧を除いたトークンに分割
+    tokens1 = set(re.findall(r'[^\s\(\)【】「」、。・]+', s1))
+    tokens2 = set(re.findall(r'[^\s\(\)【】「」、。・]+', s2))
+    # 2文字以上かつストップワード以外の共通トークンが存在するか
+    common = [t for t in tokens1 & tokens2 if len(t) >= 2 and t not in STOP_WORDS]
+    return len(common) >= 1
+
+
+def find_similar_calendar_event(summary: str, start_iso: str) -> dict | None:
+    """
+    指定日の±1日以内に類似イベントがあれば返す。なければ None。
+    複数の類似イベントが見つかった場合は安全のため None を返す（新規登録にフォールバック）。
+    戻り値: {'id': str, 'summary': str, 'start': str, 'description': str}
+    """
+    try:
+        # アクセストークン取得
+        access_token = _get_calendar_access_token()
+        ctx = ssl.create_default_context()
+
+        # 対象期間: start_iso の前日〜翌日（±1日）
+        base_dt = datetime.fromisoformat(start_iso)
+        jst = timezone(timedelta(hours=9))
+        if base_dt.tzinfo is None:
+            base_dt = base_dt.replace(tzinfo=jst)
+        time_min = (base_dt - timedelta(days=1)).strftime('%Y-%m-%dT00:00:00+09:00')
+        time_max = (base_dt + timedelta(days=1)).strftime('%Y-%m-%dT23:59:59+09:00')
+
+        params = urllib.parse.urlencode({
+            'timeMin': time_min,
+            'timeMax': time_max,
+            'singleEvents': 'true',
+        })
+        req2 = urllib.request.Request(
+            f'https://www.googleapis.com/calendar/v3/calendars/primary/events?{params}',
+            headers={'Authorization': f'Bearer {access_token}'},
+        )
+        with urllib.request.urlopen(req2, context=ctx, timeout=10) as res:
+            events_data = json.loads(res.read())
+
+        items = events_data.get('items', [])
+        candidates = []
+        for item in items:
+            existing_summary = item.get('summary', '')
+            if _is_similar_summary(summary, existing_summary):
+                start_info = item.get('start', {})
+                existing_start = start_info.get('dateTime', start_info.get('date', ''))
+                candidates.append({
+                    'id':          item['id'],
+                    'summary':     existing_summary,
+                    'start':       existing_start,
+                    'description': item.get('description', '') or '',
+                })
+
+        if len(candidates) == 1:
+            return candidates[0]
+        elif len(candidates) > 1:
+            logger.warning(f'類似イベントが{len(candidates)}件見つかりました。安全のためスキップします: {summary}')
+            return None
+        return None
+    except Exception as e:
+        logger.error(f'find_similar_calendar_event エラー: {e}')
+        return None
+
+
+def update_calendar_event(
+    event_id: str,
+    summary: str,
+    start_iso: str,
+    meeting_url: str = None,
+    old_summary: str = '',
+    old_start: str = '',
+    dry_run: bool = False,
+) -> bool:
+    """既存イベントを更新し、description に更新履歴を追記する"""
+    if dry_run:
+        logger.info(
+            f'[DRY-RUN] カレンダー更新スキップ: {old_summary} → {summary} / {old_start[:16]} → {start_iso[:16]}'
+        )
+        return True
+    try:
+        # アクセストークン取得
+        access_token = _get_calendar_access_token()
+        ctx = ssl.create_default_context()
+
+        # 既存の description を取得（PATCHだと省略フィールドは上書きされないが念のため取得済み値を使う）
+        # find_similar_calendar_event で取得した description が呼び出し元から渡される想定だが、
+        # ここでは event_id から再取得して確実に最新値を使う
+        req_get = urllib.request.Request(
+            f'https://www.googleapis.com/calendar/v3/calendars/primary/events/{event_id}',
+            headers={'Authorization': f'Bearer {access_token}'},
+        )
+        with urllib.request.urlopen(req_get, context=ctx, timeout=10) as res:
+            existing_event = json.loads(res.read())
+        existing_desc = existing_event.get('description', '') or ''
+
+        # 更新履歴の生成
+        jst = timezone(timedelta(hours=9))
+        now_jst = datetime.now(jst).strftime('%Y-%m-%d %H:%M')
+        history_line = (
+            f'{now_jst} 変更: {old_summary} {old_start[:16]} → {summary} {start_iso[:16]}'
+        )
+        if '【更新履歴】' in existing_desc:
+            new_desc = existing_desc + f'\n{history_line}'
+        else:
+            separator = '\n\n' if existing_desc else ''
+            new_desc = existing_desc + separator + f'【更新履歴】\n{history_line}'
+
+        # meeting_url がある場合: 既存 description の URL 部分は更新しない（履歴追記のみ）
+        # ただし既存 description に URL がなく meeting_url が新たに指定された場合は先頭に挿入
+        if meeting_url and meeting_url not in existing_desc:
+            url_block = meeting_url
+            if '【更新履歴】' in new_desc:
+                # 更新履歴セクションの手前に挿入
+                new_desc = url_block + '\n\n' + new_desc
+            else:
+                new_desc = url_block + ('\n\n' if new_desc else '') + new_desc
+
+        # 開始・終了時刻の再計算
+        start = datetime.fromisoformat(start_iso)
+        end   = start + timedelta(hours=1)
+        end_iso = end.strftime('%Y-%m-%dT%H:%M:%S+09:00')
+        if '+' not in start_iso and 'Z' not in start_iso:
+            start_iso = start.strftime('%Y-%m-%dT%H:%M:%S+09:00')
+
+        patch_body = json.dumps({
+            'summary':     summary,
+            'start':       {'dateTime': start_iso, 'timeZone': 'Asia/Tokyo'},
+            'end':         {'dateTime': end_iso,   'timeZone': 'Asia/Tokyo'},
+            'description': new_desc,
+        }).encode()
+        req_patch = urllib.request.Request(
+            f'https://www.googleapis.com/calendar/v3/calendars/primary/events/{event_id}',
+            data=patch_body,
+            headers={
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type':  'application/json',
+            },
+            method='PATCH',
+        )
+        with urllib.request.urlopen(req_patch, context=ctx, timeout=10) as res:
+            json.loads(res.read())
+
+        logger.info(f'既存イベント更新: {old_summary} → {summary} / {old_start[:16]} → {start_iso[:16]}')
+        return True
+    except Exception as e:
+        logger.error(f'update_calendar_event エラー: {e}')
         return False
 
 
@@ -858,13 +1015,34 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                 related_project = analysis.get('related_project', '')
                 add_or_update_notion_project(task_summary, related_project, dry_run=dry_run)
 
-            # スケジュール → Google Calendar
+            # スケジュール → Google Calendar（重複チェック・更新対応）
             if analysis.get('has_schedule'):
                 schedule_dt = analysis.get('schedule_datetime')
                 if schedule_dt:
                     summary_text = analysis.get('schedule_summary', body[:100])
                     meeting_url  = analysis.get('meeting_url')
-                    add_calendar_event(summary_text, schedule_dt, meeting_url=meeting_url, dry_run=dry_run)
+
+                    existing = find_similar_calendar_event(summary_text, schedule_dt)
+                    if existing is None:
+                        # 新規登録
+                        add_calendar_event(summary_text, schedule_dt, meeting_url=meeting_url, dry_run=dry_run)
+                    else:
+                        existing_start   = existing.get('start', '')
+                        existing_summary = existing.get('summary', '')
+                        if existing_summary == summary_text and existing_start[:16] == schedule_dt[:16]:
+                            # 完全一致 → スキップ
+                            logger.info(f'  スケジュール重複スキップ: {summary_text}')
+                        else:
+                            # 内容変更 → 既存イベントを更新
+                            update_calendar_event(
+                                existing['id'],
+                                summary_text,
+                                schedule_dt,
+                                meeting_url=meeting_url,
+                                old_summary=existing_summary,
+                                old_start=existing_start,
+                                dry_run=dry_run,
+                            )
                 else:
                     logger.info('  スケジュール日時が不明なためカレンダー追加をスキップ')
 
