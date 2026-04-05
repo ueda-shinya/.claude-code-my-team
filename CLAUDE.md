@@ -180,6 +180,23 @@ When a research request does not explicitly name a client, Asuka follows this pr
 - Process operations: always **check logs and usage** before killing a process
 - New scripts must use paths and formats verified to work on Windows
 
+## Agent File Editing Rules (Added 2026-04-05)
+
+Agent definition files under `~/.claude/agents/` are managed in two files:
+- `agents/*.ja.md` — Japanese version (source of truth; always edit this one)
+- `agents/*.md` — English version (used by Claude Code at runtime)
+
+**When editing an agent definition:**
+1. Edit `agents/<name>.ja.md` (Japanese)
+2. Reflect the same changes in `agents/<name>.md` (English translation)
+3. Both files must always be kept in sync with identical content
+4. **Do not edit `agents/*.md` directly. Always start from `.ja.md`.**
+5. **Before reporting completion, confirm both files are updated.**
+
+Always delegate the English translation (.md update) to Kanata (agent-builder). Asuka does not translate directly.
+
+※ Agent definition files (`.ja.md` / `.md`) are documentation, not code. Asuka may edit `.ja.md` directly — not subject to "Asuka Never Codes Directly".
+
 ## Web Development Coding Rules
 - Always include **JSON-LD** when creating sites/LPs (standard, no instruction needed)
 - Select type based on page type: LocalBusiness / WebPage / FAQPage / Product / Service, etc.
