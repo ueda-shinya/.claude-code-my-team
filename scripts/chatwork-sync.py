@@ -324,13 +324,13 @@ def build_analyze_prompt(my_account_id: str) -> str:
   "priority_reason": "優先度高と判断した理由（is_high_priorityがtrueの場合）"
 }}
 
-is_high_priority の判定基準（以下のすべてを満たす場合のみ true）：
-- 以下のいずれかに該当すること：
-  - [To:{my_account_id}] が本文に含まれている（自分宛の名指しメッセージ）
+is_high_priority の判定基準：
+- [To:{my_account_id}] が本文に含まれていない場合は必ず false
+- [To:{my_account_id}] が含まれている場合でも、以下のいずれかに該当する場合のみ true：
   - 今日中または明日中に自分が返答・対応する必要があるとわかるもの
   - 自分に関係する金額・契約・キャンセル・解約に関わる内容
   - 自分に関係するクレーム・トラブル・緊急対応が必要な内容
-- 他の人宛の [To:xxxxx] メッセージで自分のアカウントID（{my_account_id}）が含まれていない場合は false
+- [To:{my_account_id}] があっても、感謝・挨拶・確認の返信（「ありがとうございます」「承知しました」「よろしくお願いします」等）は false
 上記に該当しない場合は false とすること。"""
 
 
