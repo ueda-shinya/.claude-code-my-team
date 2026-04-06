@@ -14,6 +14,8 @@
 - chatwork-sync.py の Notion 案件リスト登録ロジックを修正（登録内容がよくない・後日対応）
 - エージェント精度向上ラウンドテーブル（日程未定・knowledge-buffer.mdに議題保存済み）
 - **【Mac確認】** LINE WORKS Bot / Chatwork APScheduler がMacで起動設定されていないか確認する（PC_ROLE=server はWindowsのみの想定）
+- **LPヒアリングシートのレビュー**（`skills/lp-create/hearing-sheet.md`）レン・コト・Kaiで内容検証・必要に応じて修正
+- **【4/14 sync 前に検討】** session-handoff ↔ Notion の差異原因を分析（lp-260326完了・岩本商店修正がNotionのみ反映されsession-handoffに残っていた）
 
 ---
 

@@ -235,6 +235,7 @@ When Asuka conveys a test execution command to Shinya or executes it herself, **
 - /blog-post: article creation
 - /commit: git commit
 - /sync: sync with GitHub
+- /lp-create: new LP creation (marketing-first flow)
 
 ## Template for Koto (copywriter) Requests
 
@@ -314,22 +315,22 @@ Remaining tasks are managed in the **Notion "残件タスク" DB** (`NOTION_TASK
 
 Script: `~/.claude/scripts/notion-tasks.py`
 
-### Migration Period (~2026-04-07)
+### Migration Period (~2026-04-14)
 
 Run `session-handoff.md` remaining-tasks section and Notion in **parallel** for one week.
 
 - Asuka handles registration/updates in both (other agents can use Notion only)
 - When reading, **Notion is authoritative**. If inconsistent, align to Notion
-- Asuka executes the migration completion work at the 2026-04-07 sync
+- Asuka executes the migration completion work at the 2026-04-14 sync
 
-#### Migration Completion Tasks (at 2026-04-07 sync — Asuka executes)
+#### Migration Completion Tasks (at 2026-04-14 sync — Asuka executes)
 1. Delete only the **remaining-tasks section** of `session-handoff.md` (keep the design/implementation log; keep the file itself)
 2. Remove the migration-period note from the "Session Handoff" section of CLAUDE.md and switch to Notion reference
 3. Remove the migration-period note from the sync skill
 
 ## Session Handoff
 - **At the start of every conversation**, run `git pull origin main` before checking `~/.claude/session-handoff.md` (to incorporate changes from other PCs). If `git pull` fails, report to Shinya and proceed by reading the local `session-handoff.md` as-is.
-- **During migration period (~2026-04-07)**: also check Notion remaining tasks with `notion-tasks.py --list`.
+- **During migration period (~2026-04-14)**: also check Notion remaining tasks with `notion-tasks.py --list`.
 - If the content is anything other than "no work", proactively report "I see the state before the restart. Was in the middle of X." before the normal response — even if the user says nothing.
 - When work is complete, reset the file to "no work"
 - **Regardless of who gives the instruction**, whenever prompting the user to restart, always update `~/.claude/session-handoff.md` first (applies to all agents: Asuka, So, Kanata, etc.)
