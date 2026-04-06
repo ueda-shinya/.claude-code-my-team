@@ -92,7 +92,6 @@ Execute the following 9 steps in order. Report completion of each step to Shinya
 ```
 1. Asuka references the hearing sheet (~/.claude/skills/lp-create/hearing-sheet.md)
    and asks Shinya questions starting from Phase 1 in order.
-   For Asuka's own company LP production, use hearing-sheet-self.md instead.
 
 2. Present all questions for each Phase in one batch (questions are presented once, but the number
    of round trips including deep-dives varies by Phase)
@@ -281,14 +280,27 @@ Shall we proceed with this structure?
 
 ### Step 5: Design Specification (Additional Request to Kai)
 
-Based on the approved wireframe, request design details from Kai:
+Based on the approved wireframe, this step **details and specifies the design direction established in Step 4**. Request design details from Kai.
 
-**Request:**
+**Information to provide:**
+- Kai's output from Step 4 (finalized section structure, copy skeleton, design direction)
+- Ren's output from Step 3 (messaging axes) → pass as the basis for what the visuals need to express
+- Target emotional state from Step 1 (Phase 4) → "What mindset does the user have when they open the page right after clicking the ad?"
+- Phase 7 reference LPs and NG designs (design-perspective reference URLs)
+
+**Request (Kai's scope):**
 - Color scheme (main / accent / background)
 - Font specification (headings / body)
+- FV (first view) design spec (relationship between headline, visual, and CTA placement; role of hero visual)
+- Visual flow pattern (Z pattern / F pattern / center-aligned) per section
+- Trust element placement (3-point design: near FV / mid-page / just before CTA)
 - Layout details (placement, spacing, decoration per section)
 - Responsive design approach (mobile display)
-- CTA button design
+- CTA design (number of placements, positions, button design, tap target size, microcopy character limit and placement position)
+- Distraction-free design policy (no global nav, no external links, etc.)
+- Performance design policy (image format, lazy loading targets, restrictions on heavy effects)
+
+**Microcopy wording is Koto's responsibility:** Kai defines the "placement position and character limit" for microcopy. Actual wording is handled by Koto (copywriter). If not covered in Step 4's Koto brushup step, request it from Koto here.
 
 ---
 
@@ -301,7 +313,10 @@ Since the overall structure is already approved via the wireframe, a quick confi
 [Approval Gate 2: Design Direction]
 -- Color: [Main] / [Accent]
 -- Font: [Headings] / [Body]
--- Notes: [Responsive approach, etc.]
+-- FV structure: [Overview of headline, visual, and CTA placement]
+-- CTA placement: [Number of placements and positions (e.g., 3 locations: FV / mid-page / end)]
+-- Trust element placement: [Placement policy near FV, mid-page, and just before CTA]
+-- Notes: [Responsive, distraction-free design, performance, etc.]
 
 Shall we proceed with this direction? (Quick confirmation)
 ```
