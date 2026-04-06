@@ -90,8 +90,9 @@ Execute the following 8 steps in order. Report completion of each step to Shinya
 #### Procedure
 
 ```
-1. Asuka references the hearing sheet (~/.claude/clients/officeueda/hearing-sheets/lp.md)
-   and asks Shinya questions starting from Phase 1 in order
+1. Asuka references the hearing sheet (~/.claude/skills/lp-create/hearing-sheet.md)
+   and asks Shinya questions starting from Phase 1 in order.
+   For Asuka's own company LP production, use hearing-sheet-self.md instead.
 
 2. Present all questions for each Phase in one batch (questions are presented once, but the number
    of round trips including deep-dives varies by Phase)

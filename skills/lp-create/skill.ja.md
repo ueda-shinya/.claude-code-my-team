@@ -90,8 +90,9 @@ LP（ランディングページ）の新規制作を、マーケ視点を先行
 #### 進行手順
 
 ```
-1. アスカがヒアリングシート（~/.claude/clients/officeueda/hearing-sheets/lp.md）を参照し、
-   Phase 1から順番にシンヤさんに質問する
+1. アスカがヒアリングシート（~/.claude/skills/lp-create/hearing-sheet.md）を参照し、
+   Phase 1から順番にシンヤさんに質問する。
+   自社LP制作の場合は hearing-sheet-self.md を使用すること。
 
 2. 各Phaseの質問はまとめて1回で提示する（質問提示は1回だが、深掘りを含む往復数はPhaseによって異なる）
 
