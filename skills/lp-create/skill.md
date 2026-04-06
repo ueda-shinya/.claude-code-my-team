@@ -20,7 +20,7 @@ Execute this skill when any of the following applies:
 
 ## Execution Steps
 
-Execute the following 8 steps in order. Report completion of each step to Shinya before proceeding to the next.
+Execute the following 9 steps in order. Report completion of each step to Shinya before proceeding to the next.
 
 ---
 
@@ -109,7 +109,7 @@ Execute the following 8 steps in order. Report completion of each step to Shinya
 5. When all required items in Phase 1-6, Phase 8, and Phase 9 are filled, declare "Hearing complete"
    and Asuka reports completion to Shinya before proceeding to Step 2
    (Phase 7 is not included because it is not required for Kai to start wireframing.
-    Phase 7 material information is confirmed when handing off to Kai in Step 3)
+    Phase 7 material information is confirmed when handing off to Kai in Step 4)
 ```
 
 **Step completion criteria:** All required items in Phase 1-6, Phase 8, and Phase 9 are filled in
@@ -117,12 +117,75 @@ Execute the following 8 steps in order. Report completion of each step to Shinya
 
 ---
 
-### Step 2: Messaging Strategy & Scenario Design (Delegate to Ren)
+### Step 2: Hearing Content Review (Pre-Finalization Check)
+
+After the hearing is complete, compile all answers into a list and provide Shinya with an opportunity to review and revise.
+Do not proceed to Step 3 until Shinya says "confirmed."
+
+#### Procedure
+
+**1. Request evaluation from Ren and Koto**
+
+Asuka passes all hearing answers to the following agents and requests evaluation and advice in parallel:
+- Ren (`subagent_type: marketing-planner`): Marketing perspective evaluation for Phase 1-6, 8, 9
+- Koto (`subagent_type: copywriter`): Copy and language perspective evaluation for Phase 4-6
+
+Request details:
+- Rate each item in the assigned Phases on a 1-5 star scale
+- Add advice for items rated 3 stars or below
+- Items rated 4 stars or above can be marked "-" (no special notes needed)
+- **Ren's scope:** Marketing-related items in Phase 1-6, 8, 9 (CV goals, traffic sources, target demographics, USP, track record, numbers, structure, technical)
+- **Koto's scope:** Language and emotion-related items in Phase 4-6 (pain points in words, objections, speech patterns, customer testimonials, CTA wording, tone)
+- Each item is evaluated by either Ren or Koto exclusively (no duplicate evaluations)
+
+**Star rating criteria:**
+```
+★★★★★ (5) Very helpful (specific, with numbers, real voices, episodes)
+★★★★☆ (4) Helpful (mostly specific)
+★★★☆☆ (3) Average (could be more detailed)
+★★☆☆☆ (2) Somewhat lacking (needs deeper probing)
+★☆☆☆☆ (1) Barely helpful (too abstract)
+```
+
+**2. Output the review list**
+
+After receiving evaluations from Ren and Koto, Asuka outputs in the following format:
+
+```
+-- Hearing Content Review
+
+| Phase | # | Item | Answer | LP Usefulness | Evaluator | Advice |
+|---|---|---|---|---|---|---|
+| Phase 1 | 1 | Project name | XX LP | ★★★★★ | Asuka | - |
+| Phase 2 | 5 | CV definition | Free consultation form submission | ★★★★★ | Ren | - |
+| Phase 4 | 18 | Target pain points | Built a website but no inquiries coming in | ★★★☆☆ | Koto | Adding 1-2 more specific episodes would strengthen the messaging |
+...
+
+If you want to revise any items, specify the number.
+If no revisions are needed, say "confirmed" to proceed to Step 3.
+```
+
+**3. Revision loop**
+
+- Shinya specifies item numbers and provides revised content -> Asuka updates the corresponding items on the hearing sheet
+- After updating, Asuka re-evaluates the revised answers and updates the star ratings herself (no re-delegation to Ren or Koto)
+- After updating, re-output the list (mark revised items with "(updated)" and reflect the updated star ratings)
+- Repeat until Shinya says "confirmed"
+
+**4. Finalization**
+
+When "confirmed" is given, save the hearing sheet as the final version and report to Shinya that the workflow will proceed to Step 3.
+
+**Step completion criteria:** Shinya says "confirmed"
+
+---
+
+### Step 3: Messaging Strategy & Scenario Design (Delegate to Ren)
 
 Delegate to Ren (`subagent_type: marketing-planner`) with the following:
 
 **Information to provide:**
-- Hearing sheet Phase 1-6 answer content (full)
+- Hearing sheet Phase 1-6 answer content (**the final version confirmed in Step 2**)
 - Phase 4 (Target/Persona) real voices and episodes
 - Phase 5 (USP/Track record/Customer testimonials)
 - GA4 data (if available)
@@ -142,12 +205,12 @@ Delegate to Ren (`subagent_type: marketing-planner`) with the following:
 
 ---
 
-### Step 3: Wireframe Creation (Delegate to Kai)
+### Step 4: Wireframe Creation (Delegate to Kai)
 
 Delegate to Kai (`subagent_type: lp-designer`) with the following:
 
 **Information to provide:**
-- Ren's messaging strategy & scenario (full output from Step 2) * Kai starts work only after receiving Ren's output
+- Ren's messaging strategy & scenario (full output from Step 3) * Kai starts work only after receiving Ren's output
 - Hearing sheet Phase 1-8 answer content
 - Phase 7 (Design direction) reference URLs, NG designs, and material information
 - Phase 8 (Section structure) Shinya's draft proposal (if any)
@@ -155,7 +218,7 @@ Delegate to Kai (`subagent_type: lp-designer`) with the following:
 **Request:**
 - Create wireframe based on Ren's section structure proposal
 - Copy skeleton for each section (heading and body direction)
-- Image list (existing reuse / new generation needed) — Kai decides
+- Image list (existing reuse / new generation needed) -- Kai decides
 - Design direction (color, font, layout direction)
 
 **Expected output from Kai:**
@@ -208,15 +271,15 @@ The LP will be built with the following structure. Please review.
 Shall we proceed with this structure?
 ```
 
-- **If approved** → Freeze the section structure. If section additions, removals, or reordering become necessary during coding, pause coding, report the impact scope to Shinya, and obtain re-approval before resuming. CSS and expression adjustments are not subject to the freeze
-- **If revision is requested** → Route the revision to the appropriate agent:
-  - Revision involves "section order, messaging axes, or messages" → **Send back to Ren**
-  - Revision involves "design, visuals, or copy expression" → **Send back to Kai**
+- **If approved** -> Freeze the section structure. If section additions, removals, or reordering become necessary during coding, pause coding, report the impact scope to Shinya, and obtain re-approval before resuming. CSS and expression adjustments are not subject to the freeze
+- **If revision is requested** -> Route the revision to the appropriate agent:
+  - Revision involves "section order, messaging axes, or messages" -> **Send back to Ren**
+  - Revision involves "design, visuals, or copy expression" -> **Send back to Kai**
   - After revision, run the approval gate again
 
 ---
 
-### Step 4: Design Specification (Additional Request to Kai)
+### Step 5: Design Specification (Additional Request to Kai)
 
 Based on the approved wireframe, request design details from Kai:
 
@@ -245,13 +308,13 @@ Shall we proceed with this direction? (Quick confirmation)
 
 ---
 
-### Step 5: Coding (Delegate to Shu)
+### Step 6: Coding (Delegate to Shu)
 
 Delegate to Shu (`subagent_type: backend-engineer`) with the following. In this skill, Shu operates as the **implementation lead (LP PHP/HTML/CSS/JS)**.
 
 **Information to provide:**
-- Approved section structure (finalized version from Step 3)
-- Design specifications (output from Step 4)
+- Approved section structure (finalized version from Step 4)
+- Design specifications (output from Step 5)
 - Hearing sheet Phase 2 (CV definition, post-CV flow)
 - Hearing sheet Phase 7 (material list)
 - Hearing sheet Phase 9 (CMS, deployment URL, form tool, analytics settings)
@@ -267,7 +330,7 @@ Delegate to Shu (`subagent_type: backend-engineer`) with the following. In this 
 
 ---
 
-### Step 6: Security & Code Review (Delegate to Sakura — Automatic)
+### Step 7: Security & Code Review (Delegate to Sakura -- Automatic)
 
 Delegate to Sakura (`subagent_type: code-reviewer`) with the following:
 
@@ -284,17 +347,17 @@ Delegate to Sakura (`subagent_type: code-reviewer`) with the following:
 
 ---
 
-### Step 7: Fix Issues (Delegate to Shu)
+### Step 8: Fix Issues (Delegate to Shu)
 
 Send Sakura's findings (high and medium severity) to Shu for correction.
 
 - After fixes are complete, request re-review from Sakura
-- **Repeat Steps 6-7 until all items pass**
+- **Repeat Steps 7-8 until all items pass**
 - No hard limit on iterations, but if it exceeds 3 rounds, Asuka reports the situation to Shinya
 
 ---
 
-### Step 8: Completion Report
+### Step 9: Completion Report
 
 Report to Shinya using the following format:
 
@@ -318,8 +381,8 @@ The following images need to be replaced later:
 ```
 
 Image generation (Luna) can be deferred. Confirm with Shinya:
-- "Proceed with image generation now" → Pass image list to Luna and delegate
-- "Do it later" → Save image placeholder list and complete
+- "Proceed with image generation now" -> Pass image list to Luna and delegate
+- "Do it later" -> Save image placeholder list and complete
 
 ## Interruption & Resumption
 
