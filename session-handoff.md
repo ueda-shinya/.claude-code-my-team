@@ -9,13 +9,17 @@
 
 ## 残件
 
-- lp-260326 を WordPress テーマに配置・動作確認（画像は `lp-260319/images/` からコピー）
-- 岩本商店の担当表記を確認して lp-260326 を修正
+### Windows 専用
 - chatwork-sync.py の Notion 案件リスト登録ロジックを修正（登録内容がよくない・後日対応）
+- メール自動化 Phase 1：mail-check.py の動作確認（`--dry-run` → 本番実行）
+- メール自動化にもスケジュール登録・変更検出を追加（Chatwork版と同様）
+- Chatwork 一次返信が発動したとき LINE WORKS 通知が届くか実動作確認（2026-03-30修正済み・未確認）
+
+### PC不問
 - エージェント精度向上ラウンドテーブル（日程未定・knowledge-buffer.mdに議題保存済み）
-- **【Mac確認】** LINE WORKS Bot / Chatwork APScheduler がMacで起動設定されていないか確認する（PC_ROLE=server はWindowsのみの想定）
 - **LPヒアリングシートのレビュー**（`skills/lp-create/hearing-sheet.md`）レン・コト・Kaiで内容検証・必要に応じて修正
-- **【4/14 sync 前に検討】** session-handoff ↔ Notion の差異原因を分析（lp-260326完了・岩本商店修正がNotionのみ反映されsession-handoffに残っていた）
+- 広告の直帰率改善をレンに相談（instagram/cpc: 90.2%、google/cpc: 93.3%）
+- オフィスウエダの今後の事業展開について話し合う（4/12 ラウンドテーブルで実施）
 
 ---
 
