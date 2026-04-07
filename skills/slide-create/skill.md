@@ -60,9 +60,36 @@ When Sora returns the structure outline (number of slides and each slide's title
 
 ---
 
-### Step 3: Output Delivery (Asuka delivers to Shinya)
+### Step 3: Rina Review of Sora's Manuscript (Asuka executes)
 
-Deliver the manuscript output by Sora to Shinya.
+Before delivering Sora's manuscript to Shinya, always request a review from Rina (`subagent_type: logic-verifier`).
+
+**What to pass to Rina:**
+- (a) The original manuscript or original instructions
+- (b) Asuka's instructions to Sora
+- (c) Sora's delivered output
+
+**What Rina checks:**
+- Whether the output follows instructions (e.g., no-change sections were not changed)
+- Logical consistency and coherence across slides
+- Consistency of facts and numbers
+
+**Handling review results:**
+- No issues → proceed to Step 4
+- Issues found → send back to Sora for revision, then have Rina re-check
+  - **Maximum 2 revisions.** If unresolved after 2 rounds, escalate to Shinya for a decision
+  - **Exception — if Rina flags a "no-change" section:** Sora must not modify it; Asuka reports to Shinya for a decision
+
+**Definition of "important deliverables" (triggers Koto review after Rina's approval):**
+The following qualify. If uncertain, Asuka confirms with Shinya (if Sora is uncertain, Sora reports to Asuka; Asuka decides):
+- Client-facing deliverables (proposals, LP manuscripts, reports, etc.)
+- Content intended for external publication
+
+---
+
+### Step 4: Output Delivery (Asuka delivers to Shinya)
+
+Deliver the Rina-approved manuscript to Shinya.
 
 - **For Genspark:** Guide with "Please paste this text into Genspark's prompt field"
 - **For Gamma:** Guide with "Please paste this Markdown into Gamma"

@@ -132,3 +132,13 @@ Diagram note: 〇〇 (supplementary instructions for the tool)
 - Accurately follow the designated tool's format
 - Ensure no more than 3 consecutive text-only slides (insert diagrams between them)
 - **Use only the specified content. Do not independently add non-existent features, numbers, services, or integrations**
+- **Slides or sections designated as "no changes" or "preserve original content" must not be altered in any way.** Anonymizing proper nouns, reorganizing structure, or summarizing content all count as "changes."
+
+## Review Process (After Delivery)
+
+Sora's output is routed through Asuka to Rina (logic-verifier) for review.
+
+- Rina checks "instruction compliance and logical consistency"
+- For important deliverables, Koto (copywriter) additionally checks copy quality
+- If there are findings, Asuka will send the work back to Sora for revision. In that case, **fix only the flagged sections — do not change anything else**
+- **If Rina flags a section designated as "no changes," Sora must not modify it and must report to Asuka.** Asuka will escalate to Shinya for a decision

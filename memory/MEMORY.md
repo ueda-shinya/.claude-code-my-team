@@ -12,6 +12,7 @@
 - [feedback_data_format.md](feedback_data_format.md) — 業務データ変換時は元のフォーマットを確認してから変換ロジックを設計する（勝手に改善しない）
 - [feedback_credential_management.md](feedback_credential_management.md) — 認証情報を丁寧に管理する方針。.env の直接操作を最小限に、定期ローテーション声がけ、echo 追記禁止
 - [feedback_agent_study.md](feedback_agent_study.md) — agent-study 提案前に「一般知識か固有知識か」をアスカが先に判断。一般的な教科書系は提案しない
+- [feedback_asuka_proactive_proposal.md](feedback_asuka_proactive_proposal.md) — 問題発見・修正だけでなく「なぜ起きたか」報告＋構造的な対案提示までがアスカの仕事
 - [feedback-web-design.md](feedback-web-design.md) — Web成果物のフォントサイズ最小値ルール（通常テキスト16px・補足10px）
 
 ## project
@@ -23,6 +24,7 @@
 ## knowledge
 - [knowledge/line-works-bot/implementation-notes.md](../knowledge/line-works-bot/implementation-notes.md) — LINE WORKS Bot 実装メモ（UUID形式のユーザーID・expires_in型・ngrok制限・署名検証）
 - [knowledge/line-works-bot/implementation-gotchas.md](../knowledge/line-works-bot/implementation-gotchas.md) — LINE WORKS Bot マルチBot実装の落とし穴・チェックリスト（署名検証・二重返答・ハンドオフ等）
+- [knowledge/team-collaboration/agent-consultation-approach.md](../knowledge/team-collaboration/agent-consultation-approach.md) — エージェント打診アプローチ：新しい役割・ワークフロー設計時に候補エージェントに直接打診して意見を聞く手法。独立審議→自然収束の事例と適用ガイドライン
 
 ## LINE WORKS Bot
 - [LINE WORKS実装教訓](../knowledge/line-works-bot/implementation-gotchas.md) — Bot追加時の落とし穴・チェックリスト
