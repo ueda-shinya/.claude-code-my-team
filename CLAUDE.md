@@ -288,9 +288,12 @@ Details and examples: `knowledge/copywriting/copywriting-basics-judgment-guide.m
 - Asuka triggers this herself
 
 ## Git 最新化トリガー
-- ユーザーのメッセージが「同期して」＋語尾変化（「ください」「くれる？」等）のみで構成される短い依頼文の場合、`~/.claude` で `git pull origin main` を実行して結果を報告する
-- 新しいコミットが取り込まれた場合はコミット一覧を表示する
-- Already up to date の場合は「最新の状態です」と報告する
+- ユーザーのメッセージが「同期して」＋語尾変化（「ください」「くれる？」等）のみで構成される短い依頼文の場合、`~/.claude` で以下を順番に実行して結果を報告する
+  1. `git pull origin main`（gitの最新をPCに反映）
+  2. `git push origin main`（PCの最新をgitに反映）※pullが失敗した場合はpushせずシンヤさんに報告する
+- pull で新しいコミットが取り込まれた場合はコミット一覧を表示する
+- push で新しいコミットが送られた場合はコミット一覧を表示する
+- 両方 up to date の場合は「最新の状態です」と報告する
 - 「〇〇と同期して」「〇〇を同期して」など他のシステム・ファイルを対象とした文章は対象外
 - `/sync` スキル（振り返り付きのフルsync）は実行しない
 
