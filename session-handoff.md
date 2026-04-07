@@ -31,13 +31,22 @@
 
 [2026-04-05] メールにスケジュール登録・変更検出を追加するタイミングで、カレンダー処理を `calendar_utils.py` として共通モジュールに切り出す（chatwork-sync.py・mail-check.py 両方から import して使う構成）
 
-[2026-04-07] /lp-create スキル ステップ⑤（デザイン設計）の仕組み化 → **完了**
 
-- `skills/lp-create/design-spec-template.md` 新規作成（Kaiが埋める9セクション構成）
-- `agents/lp-designer.ja.md` にStep 3.5＋デザイン設計知識ベース6カテゴリを追加
-- `skill.ja.md` ステップ⑤・⑥・承認ゲート②を整備（リナ確認済み）
-- 英語版（`skill.md` / `lp-designer.md`）同期済み
 
+---
+
+## 中断中の作業（再起動後すぐに再開）
+
+### 作業中②: サーバー解説スライド原稿（ソラへの依頼）
+
+再起動後すぐにソラ（slide-designer）に以下を依頼する：
+
+- テーマ：シンヤさんのPCで動く自動化サーバーの仕組みを初心者向けに解説
+- 対象読者：ITに詳しくない初心者
+- 出力：Gamma用・Genspark用・汎用形式の3種類
+- 構成：入門・教育パターン、7スライド程度
+- 注意：「ChatGPT連携」「AI分析」「Slack」など実在しない機能は含めない
+- 参考：`reports/server-explanation-slides.html`（既存スライドの内容）
 
 ---
 

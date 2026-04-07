@@ -12,8 +12,10 @@
 - [feedback_data_format.md](feedback_data_format.md) — 業務データ変換時は元のフォーマットを確認してから変換ロジックを設計する（勝手に改善しない）
 - [feedback_credential_management.md](feedback_credential_management.md) — 認証情報を丁寧に管理する方針。.env の直接操作を最小限に、定期ローテーション声がけ、echo 追記禁止
 - [feedback_agent_study.md](feedback_agent_study.md) — agent-study 提案前に「一般知識か固有知識か」をアスカが先に判断。一般的な教科書系は提案しない
+- [feedback-web-design.md](feedback-web-design.md) — Web成果物のフォントサイズ最小値ルール（通常テキスト16px・補足10px）
 
 ## project
+- [project_slide_workflow.md](project_slide_workflow.md) — スライド制作標準フロー（ソラ→Genspark）と品質向上ポイント
 - [project_officeueda_web.md](project_officeueda_web.md) — officeueda web事業コーディング方針・GMC対応など
 - [project_gmc_sync.md](project_gmc_sync.md) — カラーミー×GMC自動同期ツール開発プロジェクト（officeueda導入代行サービス）
 - [project_client_consultation_flow.md](project_client_consultation_flow.md) — クライアント相談受付の標準フロー（顧客確認→Notion登録→clientsディレクトリ作成）
