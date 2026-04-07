@@ -1,0 +1,106 @@
+/* ============================================================
+   officeueda LP 2026-04-07 — contact.css
+   lp-260319/contact.css をベースに調整
+   Contact Form 7 カスタムスタイル
+   ============================================================ */
+
+/* 個人情報同意チェックボックス */
+.cf-tr.kakunin .cf-th {
+  width: fit-content !important;
+}
+.cf-tr.kakunin .cf-td {
+  width: fit-content !important;
+}
+span[data-name="kakunin"] .wpcf7-checkbox .wpcf7-list-item.first.last {
+  display: flex !important;
+  width: fit-content !important;
+  margin-left: 0 !important;
+  gap: 0.5em !important;
+}
+span[data-name="kakunin"]
+  .wpcf7-checkbox
+  .wpcf7-list-item.first.last
+  input[type="checkbox"] {
+  display: block !important;
+  width: 1em !important;
+}
+span[data-name="kakunin"]
+  .wpcf7-checkbox
+  .wpcf7-list-item.first.last
+  .wpcf7-list-item-label {
+  display: block !important;
+  width: 3em !important;
+}
+
+/* 戻るボタン */
+.cf-btn-prev {
+  width: 100% !important;
+  margin: 1em auto !important;
+}
+.cf-btn-prev input[type="button"] {
+  width: 100% !important;
+  padding: 0.5em 0 !important;
+  border-radius: 4px !important;
+  letter-spacing: 1em !important;
+  filter: drop-shadow(0 4px 4px #888) !important;
+}
+.cf-btn-prev input[type="button"]:hover {
+  filter: drop-shadow(0 2px 2px #333) !important;
+  color: black !important;
+  font-weight: 600 !important;
+  transform: translateY(2px) !important;
+}
+
+/* 確認画面テーブルセル */
+.confirm .cf-td {
+  background-color: #f7f7f7 !important;
+  border-radius: 4px !important;
+  border: solid 1px hsla(0, 0%, 78%, .5) !important;
+}
+
+/* 必須マーク */
+.cf-required::after {
+  display: inline-block;
+  content: "必須";
+  height: auto;
+  font-size: 0.8em;
+  position: relative;
+  right: -1em;
+  vertical-align: middle;
+  background-color: #c0392b;
+  color: white;
+  border-radius: 4px;
+  line-height: 1;
+  padding: 0.2em 0.5em;
+}
+
+/* スピナー非表示 */
+.wpcf7-spinner {
+  display: none !important;
+}
+
+/* バリデーションエラーメッセージ（form-bgが明るいのでダーク色に） */
+.wpcf7-not-valid-tip {
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* 送信完了・エラーメッセージ */
+.wpcf7-response-output {
+  margin-top: 16px !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  border: none !important;
+}
+.wpcf7-response-output[data-status="mail_sent"] {
+  background: #d4edda !important;
+  color: #155724 !important;
+}
+.wpcf7-response-output[data-status="validation_failed"],
+.wpcf7-response-output[data-status="mail_failed"] {
+  background: #f8d7da !important;
+  color: #721c24 !important;
+}

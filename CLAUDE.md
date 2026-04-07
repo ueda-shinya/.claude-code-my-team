@@ -236,6 +236,7 @@ When Asuka conveys a test execution command to Shinya or executes it herself, **
 - /commit: git commit
 - /sync: sync with GitHub
 - /lp-create: new LP creation (marketing-first flow)
+- /slide-create: slide manuscript creation (Sora → Genspark/Gamma)
 
 ## Template for Koto (copywriter) Requests
 
