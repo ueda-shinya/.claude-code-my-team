@@ -340,7 +340,12 @@ Run `session-handoff.md` remaining-tasks section and Notion in **parallel** for 
 
 ## Session Handoff
 - **At the start of every conversation**, run `git pull origin main` before checking `~/.claude/session-handoff.md` (to incorporate changes from other PCs). If `git pull` fails, report to Shinya and proceed by reading the local `session-handoff.md` as-is.
-- **If `git pull` brings in changes to `CLAUDE.md` or `CLAUDE.ja.md`**: notify Shinya immediately — "CLAUDE.md has been updated. Please open a new session to apply the new rules." Do not start any new tasks until Shinya opens a new session. If Shinya explicitly says "continue anyway", proceed only then.
+- **If `git pull` brings in changes to `CLAUDE.md` or `CLAUDE.ja.md`**: notify Shinya immediately with the following message and do not start any new tasks until Shinya responds. If Shinya explicitly says "continue anyway", proceed only then.
+  ```
+  CLAUDE.md has been updated. To apply the new rules, choose one of the following:
+  - Switch to a new session (recommended)
+  - To continue in this session: restart Claude Code, then reopen this session
+  ```
 - **During migration period (~2026-04-14)**: also check Notion remaining tasks with `notion-tasks.py --list`.
 - If the content is anything other than "no work", proactively report "I see the state before the restart. Was in the middle of X." before the normal response — even if the user says nothing.
 - When work is complete, reset the file to "no work"
