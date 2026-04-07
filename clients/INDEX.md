@@ -17,6 +17,7 @@
 | [us-saijo/](us-saijo/) | 株式会社US-SAIJO | 進捗中 | ECサイト立ち上げ |
 | [yoshino-mayumi/](yoshino-mayumi/) | 吉野真由美様（プレゼン話し方研究所） | 進捗中 | メルマガ運用相談（提案中） |
 | [linnoa/](linnoa/) | 吉澤真美様（合同会社LinNoa） | 進捗中 | 名門会様LP制作 |
+| [inada-ryota/](inada-ryota/) | 稲田遼太様（弁護士） | 相談中 | ホームページ・LP制作 |
 | [ideas/](ideas/) | ※クライアントなし | — | アイデア・思いつきメモ置き場 |
 
 ---

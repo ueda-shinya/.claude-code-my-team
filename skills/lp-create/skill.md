@@ -217,14 +217,14 @@ Delegate to Kai (`subagent_type: lp-designer`) with the following:
 **Request:**
 - Create wireframe based on Ren's section structure proposal
 - Copy skeleton for each section (heading and body direction)
-- Image list (existing reuse / new generation needed) -- Kai decides
-- Design direction (color, font, layout direction)
+- Image list (existing reuse / new generation needed) -- Kai decides -> This list is detailed in Section 10 of the design specification document in Step 5
+- Design direction (tone, atmosphere, direction-level only. Detailed specs such as HEX codes and px sizes are determined in Step 5)
 
 **Expected output from Kai:**
 - Section structure (finalized)
 - Copy skeleton (headings, body overview)
 - Image list (existing / new generation)
-- Design direction
+- Design direction (direction-level)
 
 **Kai's responsibility scope:** Determines visual design, copy skeleton, and image list for each section (design responsibility)
 
@@ -254,8 +254,8 @@ Asuka presents the following to Shinya and obtains approval:
 The LP will be built with the following structure. Please review.
 
 -- Section Structure
-1. [Section name] — [Purpose]
-2. [Section name] — [Purpose]
+1. [Section name] -- [Purpose]
+2. [Section name] -- [Purpose]
 ...
 
 -- Key Copy Skeleton
@@ -282,25 +282,151 @@ Shall we proceed with this structure?
 
 Based on the approved wireframe, this step **details and specifies the design direction established in Step 4**. Request design details from Kai.
 
+**Kai's deliverable:** Use `skills/lp-create/design-spec-template.md` to create a design specification document. Fill in all sections of the template and pass the self-check before submitting.
+
 **Information to provide:**
 - Kai's output from Step 4 (finalized section structure, copy skeleton, design direction)
-- Ren's output from Step 3 (messaging axes) → pass as the basis for what the visuals need to express
-- Target emotional state from Step 1 (Phase 4) → "What mindset does the user have when they open the page right after clicking the ad?"
+- Ren's output from Step 3 (messaging axes and messages) -> pass as the basis for what the visuals need to express
+- Target emotional state from Step 1 (Phase 4) -> "What mindset does the user have when they open the page right after clicking the ad?"
 - Phase 7 reference LPs and NG designs (design-perspective reference URLs)
 
 **Request (Kai's scope):**
-- Color scheme (main / accent / background)
-- Font specification (headings / body)
-- FV (first view) design spec (relationship between headline, visual, and CTA placement; role of hero visual)
-- Visual flow pattern (Z pattern / F pattern / center-aligned) per section
-- Trust element placement (3-point design: near FV / mid-page / just before CTA)
-- Layout details (placement, spacing, decoration per section)
-- Responsive design approach (mobile display)
-- CTA design (number of placements, positions, button design, tap target size, microcopy character limit and placement position)
-- Distraction-free design policy (no global nav, no external links, etc.)
-- Performance design policy (image format, lazy loading targets, restrictions on heavy effects)
 
-**Microcopy wording is Koto's responsibility:** Kai defines the "placement position and character limit" for microcopy. Actual wording is handled by Koto (copywriter). If not covered in Step 4's Koto brushup step, request it from Koto here.
+#### 1. Color Scheme & Font
+
+- Specify main / accent / background colors in HEX codes
+- Specify heading and body font family, size, weight, and line height
+- CTA button color: choose the color with the highest contrast against the background. Do not hardcode a specific color
+
+#### 2. FV (First View) Design Spec
+
+Select the headline, hero visual, and CTA placement pattern from the following and provide the rationale:
+
+| Pattern | Layout | Best suited for |
+|---|---|---|
+| **A: Left text / Right visual** | Headline, sub-copy, CTA on left; image on right | BtoB, SaaS, tools, information-heavy products |
+| **B: Center-aligned** | Full-width background image or video with headline and CTA centered on top | BtoC, emotional appeal, brand appeal, travel, lifestyle |
+| **C: Right text / Left visual** | Product/person prominently on left; text on right | Beauty, cosmetics, food, product-focused cases |
+| **Mobile (common)** | Single-column vertical stack (headline -> visual -> CTA) | All patterns convert to this structure on mobile |
+
+**FV design prohibitions:**
+- Cramming headline, feature descriptions, awards, and CTA all into the FV (causes 3-second bounce)
+- Layouts where the visual is too large and the headline becomes unreadable
+- Layouts where the CTA does not fit within the FV (especially on mobile)
+
+#### 3. Eye-Flow Pattern
+
+Select a pattern based on the following criteria and determine CTA placement positions:
+
+| Condition | Adopted pattern | CTA position |
+|---|---|---|
+| Low information density, 2-column, PC-primary, emotional appeal | **Z pattern** | At the Z endpoint (bottom-right, end of diagonal) |
+| High information density, 1-column, text-heavy, comparison-minded target | **F pattern** | After each section heading + bottom of page |
+| Mobile-only, vertical scroll | **F pattern** (vertical scan) | After benefit section mid-scroll + end of page |
+
+#### 4. Trust Element Placement Design
+
+Place different content at 3 positions. Do not repeat the same element at all 3 locations:
+
+**Near FV (before scroll)** -- First impression of "this page is trustworthy"
+- Numbers such as implementation results, registered users ("XX million users")
+- Media coverage and award logos
+- Client logos (for BtoB)
+- Certification and accreditation badges
+
+**Mid-page (after story/comparison)** -- Resolving "does this actually work?" doubt
+- Customer testimonials with specific numbers, Before/After
+- Case studies (company name, industry, results -- 3-piece set)
+- Third-party reviews and rating scores
+
+**Just before CTA (directly above the button)** -- Removing the final hesitation of "is it OK to click?"
+- Numbers such as "XX million users" (social proof)
+- Money-back guarantee, free trial clearly stated
+- Privacy mark, SSL badge
+- Microcopy (-> wording is Koto's responsibility)
+
+#### 5. CTA Design
+
+**Number of placements and positions:**
+- Standard: 3 points -- within FV / after mid-page trust elements / end of page
+- Short LPs (2-3 scrolls): 2 points (FV and end) is acceptable
+- The principle is "place CTA before the benefit heat cools down"
+
+**Button design:**
+- Minimum size: 44px x 44px (WCAG standard)
+- Mobile recommended: 60-72px (assuming thumb tap)
+- Color: choose the highest contrast color against the background
+- Hover effect: PC only (not needed for mobile)
+- Ensure sufficient white space around the button
+- Label: state the benefit or action instead of "Submit" (e.g., "Get a free consultation", "Try it now") -> **wording is Koto's responsibility**. Kai defines the label direction and character limit
+
+**Microcopy (Kai's responsibility is placement position and character limit only):**
+- Placement: **directly below** the button (placing above may be read before the CTA, so below is safer)
+- Character limit: 20-40 characters
+- Content direction: words that lower psychological barriers (free, cancel anytime, done in X minutes, etc.) -> wording is Koto's responsibility
+
+**Sticky CTA (for long LPs):**
+- Present the option to place a fixed CTA bar at the bottom of the screen
+- Must be designed to not encroach on the main content viewing area
+
+#### 6. Layout Details & Bounce Prevention
+
+- Define placement, spacing, and decoration for each section
+- Do not install global navigation
+- Eliminate external links (do not create exit paths from the LP)
+- Minimum spacing between buttons: 8px or more (to prevent accidental taps)
+
+#### 7. Responsive & Mobile Design Approach
+
+- Design mobile-first, treat PC as the extension
+- 2-column is PC only. All sections convert to single-column vertical stack on mobile
+- Mobile font size: headings 20-28px (too-small headings are a common mistake)
+- Set wider margins and line height than PC
+- Phone numbers should use `tel:` links
+- Ensure sufficient tap area for form input fields
+
+#### 8. Performance Design Policy
+
+**Image format:**
+
+| Format | Use case |
+|---|---|
+| **WebP** | Default for all photos, illustrations, and LP images |
+| **SVG** | Icons, logos, simple shapes |
+| **PNG** | Fallback only for cases requiring transparency where WebP is not supported |
+| **JPEG** | Not used in principle (replaced by WebP) |
+
+Recommend `<picture>` tag with WebP -> JPEG fallback structure for implementation.
+
+**Lazy loading criteria:**
+- FV hero visual: `loading="eager"` (directly impacts LCP; do not lazy-load)
+- All images below FV: `loading="lazy"`
+
+**Prohibited effects:**
+- Particle animations, parallax scrolling
+- CSS animations on properties other than `transform` / `opacity`
+- Auto-playing background videos (critical on mobile data connections)
+
+**Performance targets:**
+- Page load time: within 3 seconds
+- LCP: within 2.5 seconds
+- FV image file size: within 300KB
+
+---
+
+**Expected output from Kai:**
+- Color scheme (HEX codes) and font specs (size, weight, line height)
+- FV design spec (selected pattern + rationale)
+- Eye-flow pattern (selected pattern + rationale)
+- Trust element placement design (element list for each of the 3 positions)
+- CTA design spec (number of placements, positions, button size, label direction, microcopy placement and character limit)
+- Layout details and bounce prevention design (no global nav, no external links, etc.)
+- Responsive design approach
+- Performance design policy (image formats, lazy loading targets, prohibited effects)
+
+**Additional request to Koto (required):** After Kai's design specification is complete, Asuka must delegate the following to Koto (`subagent_type: copywriter`):
+- CTA button label wording (based on the direction and character limit defined by Kai)
+- Microcopy wording (based on the placement position and character limit defined by Kai)
 
 ---
 
@@ -311,15 +437,49 @@ Since the overall structure is already approved via the wireframe, a quick confi
 
 ```
 [Approval Gate 2: Design Direction]
--- Color: [Main] / [Accent]
--- Font: [Headings] / [Body]
--- FV structure: [Overview of headline, visual, and CTA placement]
--- CTA placement: [Number of placements and positions (e.g., 3 locations: FV / mid-page / end)]
--- Trust element placement: [Placement policy near FV, mid-page, and just before CTA]
--- Notes: [Responsive, distraction-free design, performance, etc.]
+-- Color: Main [#XXXXXX] / Accent [#XXXXXX] / Background [#XXXXXX]
+-- Font: Headings [font name, size] / Body [font name, size]
+-- FV structure: [Pattern A/B/C + mobile layout] (include selection rationale)
+-- Eye-flow: [Z pattern / F pattern] (include selection rationale)
+-- CTA placement: [Number of placements and positions (e.g., 3 locations: FV / after mid-page benefit / end)]
+-- Trust elements: Near FV [element name] / Mid-page [element name] / Just before CTA [element name]
+-- Bounce prevention: No global nav / No external links / [Other notes]
+-- Mobile: [Notes (e.g., sticky CTA presence)]
+-- Performance: [Image format and prohibited effect notes]
+-- Images: New generation [count] / Existing materials [count] (definitions in spec document Section 10; not subject to approval)
 
 Shall we proceed with this direction? (Quick confirmation)
 ```
+
+---
+
+### Step 5.5: Image Prompt Design (Delegate to Luna)
+
+Based on Kai's design specification document (Section 10: Image Definition List), delegate image prompt design to Luna (`subagent_type: nano-banana`).
+
+**Purpose of this step:** Image generation is performed in Step 9. Here, only the prompts for "how to generate" are finalized and saved to a file.
+
+**Information to provide:**
+- Design specification document Section 10 (full Image Definition List)
+- Design specification document Section 1 (color scheme and tone) -> used for color consistency in images
+- Hearing sheet Phase 7 (reference LPs and NG designs) -> used as atmosphere reference
+
+**Request to Luna:**
+- For each image in Section 10 (new generation only), create a detailed generation prompt
+- Skip existing material images (no prompt needed)
+- Each prompt must include:
+  - Subject and composition details (based on Kai's definitions, made more specific)
+  - Style, tone, lighting, and color palette (aligned with the design specification's color scheme)
+  - Aspect ratio (carried over from Kai's specification)
+  - Negative prompt (if there are elements to avoid)
+
+**Expected output from Luna:**
+- Generation prompt for each image (number, proposed filename, prompt body, aspect ratio)
+- Asuka saves the output as `image-prompts.md` at the following path (per client directory structure rules):
+  - Multi-business client: `~/.claude/clients/<client-name>/biz-<business-name>/lp-<date>/image-prompts.md`
+  - Single-business client: `~/.claude/clients/<client-name>/lp-<date>/image-prompts.md`
+
+**Step completion criteria:** All images requiring new generation have their prompts saved in `image-prompts.md`
 
 ---
 
@@ -329,7 +489,8 @@ Delegate to Shu (`subagent_type: backend-engineer`) with the following. In this 
 
 **Information to provide:**
 - Approved section structure (finalized version from Step 4)
-- Design specifications (output from Step 5)
+- Design specifications (Kai's output from Step 5)
+- Finalized copy (Koto's output from Step 5: CTA button label wording and microcopy wording)
 - Hearing sheet Phase 2 (CV definition, post-CV flow)
 - Hearing sheet Phase 7 (material list)
 - Hearing sheet Phase 9 (CMS, deployment URL, form tool, analytics settings)
@@ -391,16 +552,22 @@ The following images need to be replaced later:
 
 -- Next Steps
 1. WordPress deployment procedure: [Procedure overview]
-2. Image generation: To request Luna, say "Generate images for this LP"
+2. Image generation: Generate using `image-prompts.md` saved in Step 5.5 -- choose to generate now or defer
 3. Pre-launch check: On-device display verification recommended
 ```
 
-Image generation (Luna) can be deferred. Confirm with Shinya:
-- "Proceed with image generation now" -> Pass image list to Luna and delegate
-- "Do it later" -> Save image placeholder list and complete
+**Confirm image generation timing with Shinya:**
+- "Generate now" -> Load `image-prompts.md` and Asuka executes image generation based on Luna's prompts (per CLAUDE.md Image Generation Flow)
+- "Do it later" -> Inform Shinya of the `image-prompts.md` save location, record the following in the "Design & Implementation Decision Log" section of `session-handoff.md`, then complete. Can be resumed later by saying "Generate images for the LP"
+  ```
+  [YYYY-MM-DD] LP image prompts created, awaiting generation (image-prompts.md: <save path>)
+  ```
+
+**Existing material replacement is done by Shinya directly from the WordPress admin panel.**
 
 ## Interruption & Resumption
 
 - This skill has a long workflow and sessions may be interrupted
 - When interrupting, record the current step and progress in `session-handoff.md`
+- If `image-prompts.md` has been created but image generation is not yet complete, always record the path as well
 - When resuming, check `session-handoff.md` and resume from the interrupted step
