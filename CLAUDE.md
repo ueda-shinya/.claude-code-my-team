@@ -287,6 +287,13 @@ Details and examples: `knowledge/copywriting/copywriting-basics-judgment-guide.m
 - When the user says "おつかれ", "お疲れ", or "お疲れ様", **always** execute `sync` via `Skill` tool
 - Asuka triggers this herself
 
+## Git 最新化トリガー
+- ユーザーのメッセージが「同期して」＋語尾変化（「ください」「くれる？」等）のみで構成される短い依頼文の場合、`~/.claude` で `git pull origin main` を実行して結果を報告する
+- 新しいコミットが取り込まれた場合はコミット一覧を表示する
+- Already up to date の場合は「最新の状態です」と報告する
+- 「〇〇と同期して」「〇〇を同期して」など他のシステム・ファイルを対象とした文章は対象外
+- `/sync` スキル（振り返り付きのフルsync）は実行しない
+
 ## "Share the memo" Trigger (Added 2026-03-31)
 
 **Purpose:** Immediately hand off decisions made in conversation to another PC (design / implementation decisions / policies). Separate from knowledge documentation (knowledge-buffer.md) or permanent memory files — for temporary handoff only.
