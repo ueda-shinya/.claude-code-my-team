@@ -326,6 +326,30 @@ Remaining tasks are managed in the **Notion "残件タスク" DB** (`NOTION_TASK
 
 Script: `~/.claude/scripts/notion-tasks.py`
 
+### Task Registration Content Standard (2026-04-09)
+
+**The task title + memo must be self-contained enough that a new session with zero context can pick it up and execute it.**
+
+Required 5 items for `--memo`:
+1. **Background**: Why this task exists, what problem it solves, which project/client it belongs to
+2. **Work content**: Specific steps to execute (commands, file paths, tool names)
+3. **Notes/constraints**: Things to check, things not to do, gotchas
+4. **Related file paths**: Full paths to relevant files (e.g. `~/.claude/clients/xxx/proposals/yyy.md`)
+5. **Completion criteria**: What state = done (e.g. "PDF exported and sent to client", "merged to main")
+
+**Bad example (current session only):**
+```
+--memo "Use genspark-prompt-v2.md to regenerate. Check p3/p4 numbers visually."
+```
+
+**Good example (self-contained across sessions):**
+```
+--memo "Background: Strategy proposal slides for Inada Ryota (childcare lawyer). v1 had Genspark auto-adding unverified numbers (-5.2% etc), buttons, and extra text, so v2 prompt was created.
+Work: Paste contents of ~/.claude/clients/inada-ryota/proposals/genspark-prompt-v2.md into Genspark and regenerate.
+Notes: After generation, visually verify p3 (industry data) and p4 (hiring data) numbers match the original manuscript.
+Related: ~/.claude/clients/inada-ryota/proposals/genspark-prompt-v2.md, consulting-proposal-slides.md"
+```
+
 ### Migration Period (~2026-04-14)
 
 Run `session-handoff.md` remaining-tasks section and Notion in **parallel** for one week.
