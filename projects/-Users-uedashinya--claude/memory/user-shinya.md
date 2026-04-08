@@ -38,6 +38,8 @@ type: user
 - **メイン PC**: Windows（LINE WORKS Bot サーバー等はここで運用・自動起動設定済み）
 - **サブ PC**: Mac（サブ利用）
 - 常時稼働が必要なものは Windows に集約する方針（2026-03-28）
+- **エディタ/IDE**: Antigravity（VSCode ではない）（2026-04-08）
+- **ターミナル**: cmux（Claude Code 並行作業用）（2026-04-08）
 
 ## 印象的なエピソード
 
