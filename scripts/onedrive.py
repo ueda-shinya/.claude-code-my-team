@@ -45,25 +45,42 @@ def _mcp_call(tool_name: str, arguments: dict) -> dict:
         proc.stdin.flush()
 
     def recv():
-        return json.loads(proc.stdout.readline())
+        line = proc.stdout.readline()
+        if not line:
+            # MCPサーバーが異常終了した場合、stderrを読んでエラーを報告
+            stderr_output = proc.stderr.read().decode(errors="replace").strip()
+            raise RuntimeError(
+                f"MCPサーバーが予期せず終了しました。stderr: {stderr_output or '(なし)'}"
+            )
+        return json.loads(line)
 
-    send({
-        "jsonrpc": "2.0", "id": 1, "method": "initialize",
-        "params": {
-            "protocolVersion": "2024-11-05",
-            "capabilities": {},
-            "clientInfo": {"name": "asuka", "version": "1.0"},
-        },
-    })
-    recv()
-    send({"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}})
-    send({
-        "jsonrpc": "2.0", "id": 2, "method": "tools/call",
-        "params": {"name": tool_name, "arguments": arguments},
-    })
-    resp = recv()
-    proc.stdin.close()
-    proc.wait(timeout=30)
+    try:
+        send({
+            "jsonrpc": "2.0", "id": 1, "method": "initialize",
+            "params": {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {},
+                "clientInfo": {"name": "asuka", "version": "1.0"},
+            },
+        })
+        recv()
+        send({"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}})
+        send({
+            "jsonrpc": "2.0", "id": 2, "method": "tools/call",
+            "params": {"name": tool_name, "arguments": arguments},
+        })
+        resp = recv()
+    finally:
+        # 正常・異常どちらの場合もプロセスをクリーンアップ
+        try:
+            proc.stdin.close()
+        except Exception:
+            pass
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait()
     return resp
 
 
@@ -104,17 +121,17 @@ def cmd_auth():
     Windows: keyring が失敗するためファイルに保存
     Mac:     keyring（macOS Keychain）が使えるが、ファイルへのフォールバックも機能する
     """
-    sys.path.insert(0, str(VENV_DIR / ("Lib/site-packages" if sys.platform == "win32" else "lib/python*/site-packages")))
-
     # site-packages を動的に解決
     import glob
-    sp_pattern = str(VENV_DIR / "lib" / "python*" / "site-packages")
-    for sp in glob.glob(sp_pattern):
-        sys.path.insert(0, sp)
-    # Windows の場合
-    win_sp = str(VENV_DIR / "Lib" / "site-packages")
-    if win_sp not in sys.path:
-        sys.path.insert(0, win_sp)
+    if sys.platform == "win32":
+        sp = str(VENV_DIR / "Lib" / "site-packages")
+        if sp not in sys.path:
+            sys.path.insert(0, sp)
+    else:
+        sp_pattern = str(VENV_DIR / "lib" / "python*" / "site-packages")
+        for sp in glob.glob(sp_pattern):
+            if sp not in sys.path:
+                sys.path.insert(0, sp)
 
     import msal
 
@@ -171,10 +188,19 @@ def main():
     if cmd == "list":
         cmd_list(args[1] if len(args) > 1 else "/")
     elif cmd == "search":
-        cmd_search(args[1] if len(args) > 1 else "")
+        if len(args) < 2:
+            print("使い方: onedrive.py search <クエリ>", file=sys.stderr)
+            sys.exit(1)
+        cmd_search(args[1])
     elif cmd == "download":
+        if len(args) < 2:
+            print("使い方: onedrive.py download <リモートパス> [保存先ディレクトリ]", file=sys.stderr)
+            sys.exit(1)
         cmd_download(args[1], args[2] if len(args) > 2 else "")
     elif cmd == "metadata":
+        if len(args) < 2:
+            print("使い方: onedrive.py metadata <ファイルパス>", file=sys.stderr)
+            sys.exit(1)
         cmd_metadata(args[1])
     elif cmd == "auth":
         cmd_auth()
