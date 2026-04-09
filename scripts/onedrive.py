@@ -1,7 +1,7 @@
 """OneDrive MCP ヘルパースクリプト
 
 onedrive-mcp バイナリを JSON-RPC で呼び出し、VS Code拡張からでも
-OneDrive にアクセスできるようにする。
+OneDrive にアクセスできるようにする。Windows/Mac 両対応。
 
 使い方:
     python onedrive.py list [フォルダパス]
@@ -10,21 +10,31 @@ OneDrive にアクセスできるようにする。
     python onedrive.py metadata <ファイルパス>
     python onedrive.py auth   # トークン再認証
 
-認証トークン: C:\\Users\\ueda-\\.config\\onedrive-mcp\\token_cache.json
+認証トークン:
+    Windows: %USERPROFILE%\\.config\\onedrive-mcp\\token_cache.json
+    Mac:     ~/.config/onedrive-mcp/token_cache.json
+             （Mac は keyring に保存される場合もある）
 """
 import subprocess
 import json
 import sys
+import os
 from pathlib import Path
 
-BINARY = r"C:\Users\ueda-\.claude\onedrive-mcp-venv\Scripts\onedrive-mcp.exe"
-VENV_PYTHON = r"C:\Users\ueda-\.claude\onedrive-mcp-venv\Scripts\python.exe"
+# --- パス解決（クロスプラットフォーム） ---
+VENV_DIR = Path.home() / ".claude" / "onedrive-mcp-venv"
+
+if sys.platform == "win32":
+    BINARY = VENV_DIR / "Scripts" / "onedrive-mcp.exe"
+else:
+    BINARY = VENV_DIR / "bin" / "onedrive-mcp"
+
 CACHE_FILE = Path.home() / ".config" / "onedrive-mcp" / "token_cache.json"
 
 
 def _mcp_call(tool_name: str, arguments: dict) -> dict:
     proc = subprocess.Popen(
-        [BINARY],
+        [str(BINARY)],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -89,7 +99,23 @@ def cmd_metadata(file_path: str):
 
 
 def cmd_auth():
-    """トークンを再認証する（keyringではなくファイルに保存）"""
+    """トークンを再認証する（ファイルキャッシュに保存）
+
+    Windows: keyring が失敗するためファイルに保存
+    Mac:     keyring（macOS Keychain）が使えるが、ファイルへのフォールバックも機能する
+    """
+    sys.path.insert(0, str(VENV_DIR / ("Lib/site-packages" if sys.platform == "win32" else "lib/python*/site-packages")))
+
+    # site-packages を動的に解決
+    import glob
+    sp_pattern = str(VENV_DIR / "lib" / "python*" / "site-packages")
+    for sp in glob.glob(sp_pattern):
+        sys.path.insert(0, sp)
+    # Windows の場合
+    win_sp = str(VENV_DIR / "Lib" / "site-packages")
+    if win_sp not in sys.path:
+        sys.path.insert(0, win_sp)
+
     import msal
 
     CLIENT_ID = "14d82eec-204b-4c2f-b7e8-296a70dab67e"
@@ -118,6 +144,10 @@ def cmd_auth():
 
     # デバイスコードフロー
     flow = app.initiate_device_flow(scopes=SCOPES)
+    if "user_code" not in flow:
+        print(f"Device flow failed: {flow.get('error_description', 'Unknown')}", file=sys.stderr)
+        sys.exit(1)
+
     print(f"\nTo sign in, visit: {flow['verification_uri']}", file=sys.stderr)
     print(f"Enter code: {flow['user_code']}\n", file=sys.stderr)
 
