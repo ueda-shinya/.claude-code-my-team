@@ -17,6 +17,10 @@
 - **Threads**: https://www.threads.com/@_shinyaueda
 - **Googleビジネスプロフィール**: https://www.google.com/search?q=%E3%82%AA%E3%83%95%E3%82%A3%E3%82%B9%E3%82%A6%E3%82%A8%E3%83%80
 
+## 共通資料
+
+- [単価マスター](price-master.md) — 全サービスの価格・内容・ID。見積り作成時はここを参照
+
 ## 事業一覧
 
 | ディレクトリ | 事業 |
