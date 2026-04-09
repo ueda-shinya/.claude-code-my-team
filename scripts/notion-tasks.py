@@ -1,21 +1,43 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Notion 残件タスク管理スクリプト
+Notion 案件管理スクリプト
 
 使い方:
-  notion-tasks.py --create-db <parent_page_id>   # DBを新規作成して .env に ID を書き込む
-  notion-tasks.py --list                          # タスク一覧をステータス順で表示
-  notion-tasks.py --add <タイトル> [--priority 高|中|低] [--category カテゴリ名] [--memo メモ]
-  notion-tasks.py --update <部分タイトル> --status <ステータス>
-  notion-tasks.py --add-history <部分タイトル> --text <テキスト>   # 作業履歴に追記
-  notion-tasks.py --update-memo <部分タイトル> --text <テキスト>   # メモを上書き更新
-  notion-tasks.py --import-from-handoff           # session-handoff.md の残件をインポート
+  notion-tasks.py --create-db <PARENT_PAGE_ID>
+      新スキーマでDBを作成して .env に NOTION_TASKS_DB_ID を書き込む
+      旧IDは NOTION_TASKS_DB_ID_OLD として退避
+
+  notion-tasks.py --list [--filter-status S] [--filter-type T]
+      [--filter-env E] [--filter-client C] [--filter-priority P]
+      案件一覧をステータス順で表示
+
+  notion-tasks.py --add タイトル
+      [--type 種別] [--priority 優先度] [--status ステータス]
+      [--category カテゴリ] [--env 環境] [--client クライアント]
+      [--assignee 担当] [--memo メモ] [--start-date YYYY-MM-DD]
+      案件を1件追加する
+
+  notion-tasks.py --update 部分タイトル
+      [--status S] [--priority P] [--assignee A] [--blocker テキスト]
+      案件のプロパティを更新する
+
+  notion-tasks.py --show 部分タイトル
+      全プロパティ + ページ本文（作業履歴）を表示
+
+  notion-tasks.py --add-block 部分タイトル --text テキスト
+      [--env 環境] [--assignee 担当]
+      ページ本文末尾に作業ブロックを追記する
+
+  notion-tasks.py --alerts
+      優先度別の閾値を超えた案件を一覧表示（朝のブリーフィング用）
+
+  notion-tasks.py --migrate
+      NOTION_TASKS_DB_ID_OLD の全件を新DBに移行する
 """
 
 import json
 import os
-import re
 import ssl
 import sys
 import argparse
@@ -24,20 +46,72 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timezone, timedelta
 
+# Windows環境での文字化け対策
+sys.stdout.reconfigure(encoding='utf-8')
+
 # ---- 定数 ----
 
 ENV_PATH = os.path.expanduser('~/.claude/.env')
-HANDOFF_PATH = os.path.expanduser('~/.claude/session-handoff.md')
 SSL_CTX = ssl.create_default_context()
 
 # Notion rich_text プロパティの文字数上限
 NOTION_RICH_TEXT_LIMIT = 2000
 
-# ステータスの表示順（ソート用）
-STATUS_ORDER = ['未着手', '進行中', '保留', '完了']
-STATUS_OPTIONS = ['未着手', '進行中', '完了', '保留']
-PRIORITY_OPTIONS = ['高', '中', '低']
-CATEGORY_OPTIONS = ['LP制作', '開発', 'GA4', 'Bot', 'その他']
+# 日本時間タイムゾーン
+JST = timezone(timedelta(hours=9))
+
+# 案件種別
+TYPE_OPTIONS = ['実装', '環境構築', '運用改善', '調査・相談', '手作業', '議題・検討']
+TYPE_DEFAULT = '実装'
+
+# ステータス
+STATUS_OPTIONS = ['未着手', '次にやる', '進行中', 'レビュー待ち', 'シンヤ確認待ち', '保留', '完了', '取下げ']
+STATUS_DEFAULT = '未着手'
+STATUS_ORDER = ['次にやる', '進行中', 'レビュー待ち', 'シンヤ確認待ち', '未着手', '保留', '完了', '取下げ']
+# アラート除外ステータス
+STATUS_ALERT_EXCLUDE = {'保留', '完了', '取下げ'}
+
+# 優先度
+PRIORITY_OPTIONS = ['P1-即時', 'P2-今週中', 'P3-今月中', 'P4-いつかやる', 'P5-アイデア']
+PRIORITY_DEFAULT = 'P3-今月中'
+# 優先度別アラート閾値（日数）
+PRIORITY_ALERT_DAYS = {
+    'P1-即時': 1,
+    'P2-今週中': 3,
+    'P3-今月中': 7,
+    'P4-いつかやる': 30,
+    # P5-アイデア はアラートなし
+}
+
+# カテゴリ
+CATEGORY_OPTIONS = ['LP制作', '開発', 'GA4', 'Bot', 'マーケ', 'クライアント', 'チーム運用', 'その他']
+CATEGORY_DEFAULT = 'その他'
+
+# 対象環境
+ENV_OPTIONS = ['Windows', 'Mac', 'クロスプラットフォーム', '環境不問']
+ENV_DEFAULT = '環境不問'
+
+# クライアント
+CLIENT_OPTIONS = ['officeueda', 'inada-ryota', 'us-saijo', '（内部）']
+
+# 担当
+ASSIGNEE_OPTIONS = ['Asuka', 'Shu', 'Sakura', 'シンヤ', 'その他']
+ASSIGNEE_DEFAULT = 'Asuka'
+
+# 旧ステータス→新ステータスのマッピング（--migrate用）
+OLD_STATUS_MAP = {
+    '未着手': '未着手',
+    '進行中': '進行中',
+    '完了': '完了',
+    '保留': '保留',
+}
+
+# 旧優先度→新優先度のマッピング（--migrate用）
+OLD_PRIORITY_MAP = {
+    '高': 'P2-今週中',
+    '中': 'P3-今月中',
+    '低': 'P4-いつかやる',
+}
 
 
 # ---- .env 読み込み・書き込み ----
@@ -78,7 +152,7 @@ def update_env_key(key, value):
     new_lines = []
     for line in lines:
         stripped = line.strip()
-        # コメント行は保持
+        # コメント行・空行は保持
         if stripped.startswith('#') or '=' not in stripped:
             new_lines.append(line)
             continue
@@ -134,9 +208,26 @@ def notion_request(method, path, data=None, token=None):
         sys.exit(1)
 
 
+def notion_query_all(db_id, token, filter_body=None):
+    """ページネーションを考慮して全件取得する"""
+    pages = []
+    body = filter_body.copy() if filter_body else {}
+    body['page_size'] = 100
+
+    while True:
+        result = notion_request('POST', f'/databases/{db_id}/query', body, token=token)
+        pages.extend(result.get('results', []))
+        if result.get('has_more'):
+            body['start_cursor'] = result['next_cursor']
+        else:
+            break
+    return pages
+
+
 # ---- プロパティ変換ヘルパー ----
 
 def get_text(props, key):
+    """title または rich_text プロパティのテキストを取得"""
     p = props.get(key, {})
     t = p.get('type', '')
     if t == 'title':
@@ -147,66 +238,146 @@ def get_text(props, key):
 
 
 def get_select(props, key):
+    """select プロパティの name を取得"""
     s = props.get(key, {}).get('select')
     return s['name'] if s else ''
 
 
+def get_multi_select(props, key):
+    """multi_select プロパティの name リストを取得"""
+    items = props.get(key, {}).get('multi_select', [])
+    return [i['name'] for i in items]
+
+
 def get_date(props, key):
+    """date プロパティの start を取得"""
     d = props.get(key, {}).get('date')
     return d['start'] if d else ''
 
 
-def page_to_task(page):
+def get_last_edited_time(props, key='最終編集日時'):
+    """last_edited_time プロパティの値を取得"""
+    return props.get(key, {}).get('last_edited_time', '')
+
+
+def get_created_time(props, key='作成日時'):
+    """created_time プロパティの値を取得"""
+    return props.get(key, {}).get('created_time', '')
+
+
+def page_to_item(page):
+    """Notion ページを案件 dict に変換"""
     p = page['properties']
     return {
         'id': page['id'],
         'タイトル': get_text(p, 'タイトル'),
+        '種別': get_select(p, '種別'),
         'ステータス': get_select(p, 'ステータス'),
         '優先度': get_select(p, '優先度'),
         'カテゴリ': get_select(p, 'カテゴリ'),
+        '対象環境': get_multi_select(p, '対象環境'),
+        'クライアント': get_select(p, 'クライアント'),
+        '担当': get_select(p, '担当'),
+        'ブロッカー': get_text(p, 'ブロッカー'),
         'メモ': get_text(p, 'メモ'),
-        '作業履歴': get_text(p, '作業履歴'),
-        '作成日': get_date(p, '作成日'),
+        '開始日': get_date(p, '開始日'),
+        '最終編集日時': get_last_edited_time(p),
+        '作成日時': get_created_time(p),
     }
 
 
-def status_sort_key(task):
+def status_sort_key(item):
     """ステータスを定義順でソートするためのキー関数"""
-    s = task['ステータス']
+    s = item['ステータス']
     try:
         return STATUS_ORDER.index(s)
     except ValueError:
         return len(STATUS_ORDER)
 
 
+def rich_text_prop(text):
+    """rich_text プロパティ用の値を生成"""
+    # Notion は1ブロックあたり2000文字上限
+    content = text[:NOTION_RICH_TEXT_LIMIT] if text else ''
+    return {'rich_text': [{'text': {'content': content}}]}
+
+
+def find_page_by_partial_title(partial_title, token, db_id):
+    """
+    部分タイトルで Notion DB を検索し、マッチしたページ一覧を返す。
+    """
+    result = notion_request('POST', f'/databases/{db_id}/query', {
+        'filter': {'property': 'タイトル', 'title': {'contains': partial_title}}
+    }, token=token)
+    return result.get('results', [])
+
+
+def resolve_single_page(partial_title, token, db_id):
+    """
+    部分タイトルで1件に絞り込む。
+    0件・複数件はエラーで終了。
+    """
+    pages = find_page_by_partial_title(partial_title, token, db_id)
+
+    if not pages:
+        print(f'[ERROR] 「{partial_title}」に一致する案件が見つかりません。')
+        sys.exit(1)
+
+    if len(pages) > 1:
+        print(f'[ERROR] {len(pages)} 件一致しました。タイトルをより具体的に指定してください。')
+        for p in pages:
+            t = page_to_item(p)
+            print(f'  - {t["タイトル"]} [{t["ステータス"]}]')
+        sys.exit(1)
+
+    return pages[0]
+
+
 # ---- --create-db ----
 
-def cmd_create_db(parent_page_id, token):
-    """Notion に残件タスク DB を作成し、DB ID を .env に書き込む"""
-    print(f'DB を作成中... (parent_page_id: {parent_page_id})')
+def cmd_create_db(parent_page_id, token, env):
+    """新スキーマで Notion DB を作成し、.env を更新する"""
+    print(f'案件管理DBを作成中... (parent_page_id: {parent_page_id})')
 
     body = {
         'parent': {'page_id': parent_page_id},
-        'title': [{'type': 'text', 'text': {'content': '残件タスク'}}],
+        'title': [{'type': 'text', 'text': {'content': '案件管理'}}],
         'properties': {
-            # title プロパティ（必須・キー名をタイトルに合わせる）
             'タイトル': {'title': {}},
+            '種別': {
+                'select': {
+                    'options': [
+                        {'name': '実装', 'color': 'blue'},
+                        {'name': '環境構築', 'color': 'purple'},
+                        {'name': '運用改善', 'color': 'green'},
+                        {'name': '調査・相談', 'color': 'yellow'},
+                        {'name': '手作業', 'color': 'orange'},
+                        {'name': '議題・検討', 'color': 'pink'},
+                    ]
+                }
+            },
             'ステータス': {
                 'select': {
                     'options': [
                         {'name': '未着手', 'color': 'gray'},
-                        {'name': '進行中', 'color': 'blue'},
-                        {'name': '完了', 'color': 'green'},
-                        {'name': '保留', 'color': 'yellow'},
+                        {'name': '次にやる', 'color': 'blue'},
+                        {'name': '進行中', 'color': 'green'},
+                        {'name': 'レビュー待ち', 'color': 'yellow'},
+                        {'name': 'シンヤ確認待ち', 'color': 'orange'},
+                        {'name': '保留', 'color': 'red'},
+                        {'name': '完了', 'color': 'default'},
+                        {'name': '取下げ', 'color': 'default'},
                     ]
                 }
             },
             '優先度': {
                 'select': {
                     'options': [
-                        {'name': '高', 'color': 'red'},
-                        {'name': '中', 'color': 'orange'},
-                        {'name': '低', 'color': 'default'},
+                        {'name': 'P1-即時', 'color': 'red'},
+                        {'name': 'P2-今週中', 'color': 'orange'},
+                        {'name': 'P3-今月中', 'color': 'yellow'},
+                        {'name': 'P4-いつかやる', 'color': 'blue'},
+                        {'name': 'P5-アイデア', 'color': 'gray'},
                     ]
                 }
             },
@@ -217,12 +388,48 @@ def cmd_create_db(parent_page_id, token):
                         {'name': '開発', 'color': 'blue'},
                         {'name': 'GA4', 'color': 'green'},
                         {'name': 'Bot', 'color': 'pink'},
+                        {'name': 'マーケ', 'color': 'orange'},
+                        {'name': 'クライアント', 'color': 'yellow'},
+                        {'name': 'チーム運用', 'color': 'red'},
                         {'name': 'その他', 'color': 'default'},
                     ]
                 }
             },
+            '対象環境': {
+                'multi_select': {
+                    'options': [
+                        {'name': 'Windows', 'color': 'blue'},
+                        {'name': 'Mac', 'color': 'gray'},
+                        {'name': 'クロスプラットフォーム', 'color': 'green'},
+                        {'name': '環境不問', 'color': 'default'},
+                    ]
+                }
+            },
+            'クライアント': {
+                'select': {
+                    'options': [
+                        {'name': 'officeueda', 'color': 'blue'},
+                        {'name': 'inada-ryota', 'color': 'green'},
+                        {'name': 'us-saijo', 'color': 'orange'},
+                        {'name': '（内部）', 'color': 'gray'},
+                    ]
+                }
+            },
+            '担当': {
+                'select': {
+                    'options': [
+                        {'name': 'Asuka', 'color': 'pink'},
+                        {'name': 'Shu', 'color': 'blue'},
+                        {'name': 'Sakura', 'color': 'green'},
+                        {'name': 'シンヤ', 'color': 'orange'},
+                        {'name': 'その他', 'color': 'gray'},
+                    ]
+                }
+            },
+            'ブロッカー': {'rich_text': {}},
             'メモ': {'rich_text': {}},
-            '作成日': {'date': {}},
+            '開始日': {'date': {}},
+            # last_edited_time / created_time は Notion 組み込みのため指定不要
         },
     }
 
@@ -233,335 +440,485 @@ def cmd_create_db(parent_page_id, token):
         print(json.dumps(result, ensure_ascii=False, indent=2))
         sys.exit(1)
 
-    # .env に書き込む
+    # 旧 ID を退避
+    old_db_id = env.get('NOTION_TASKS_DB_ID', '')
+    if old_db_id:
+        update_env_key('NOTION_TASKS_DB_ID_OLD', old_db_id)
+        print(f'  旧 DB ID を NOTION_TASKS_DB_ID_OLD に退避しました: {old_db_id}')
+
+    # 新 ID を書き込む
     update_env_key('NOTION_TASKS_DB_ID', db_id)
 
-    print(f'DB を作成しました。')
+    print(f'案件管理DBを作成しました。')
     print(f'  DB ID: {db_id}')
     print(f'  .env の NOTION_TASKS_DB_ID を更新しました。')
 
 
 # ---- --list ----
 
-def cmd_list(token, db_id):
-    """DB 内の全タスクをステータス順で表示"""
-    result = notion_request('POST', f'/databases/{db_id}/query', {}, token=token)
-    pages = result.get('results', [])
+def cmd_list(token, db_id, filter_status=None, filter_type=None,
+             filter_env=None, filter_client=None, filter_priority=None):
+    """案件一覧をステータス順で表示"""
+    # フィルター条件を構築
+    filters = []
+    if filter_status:
+        filters.append({'property': 'ステータス', 'select': {'equals': filter_status}})
+    if filter_type:
+        filters.append({'property': '種別', 'select': {'equals': filter_type}})
+    if filter_client:
+        filters.append({'property': 'クライアント', 'select': {'equals': filter_client}})
+    if filter_priority:
+        filters.append({'property': '優先度', 'select': {'equals': filter_priority}})
+    if filter_env:
+        filters.append({'property': '対象環境', 'multi_select': {'contains': filter_env}})
+
+    body = {}
+    if len(filters) == 1:
+        body['filter'] = filters[0]
+    elif len(filters) > 1:
+        body['filter'] = {'and': filters}
+
+    pages = notion_query_all(db_id, token, filter_body=body)
+
     if not pages:
-        print('タスクがありません。')
+        print('案件がありません。')
         return
 
-    tasks = [page_to_task(p) for p in pages]
-    tasks.sort(key=status_sort_key)
+    items = [page_to_item(p) for p in pages]
+    items.sort(key=status_sort_key)
 
-    for t in tasks:
-        priority_str = f'優先度: {t["優先度"]}' if t['優先度'] else '優先度: -'
-        category_str = f'  [{t["カテゴリ"]}]' if t['カテゴリ'] else ''
-        memo_str = f'\n      メモ: {t["メモ"]}' if t['メモ'] else ''
-        print(f'[{t["ステータス"]}] {t["タイトル"]}  ({priority_str}){category_str}{memo_str}')
+    for item in items:
+        priority_str = item['優先度'] if item['優先度'] else '-'
+        env_str = ','.join(item['対象環境']) if item['対象環境'] else '-'
+        client_str = f'  [{item["クライアント"]}]' if item['クライアント'] else ''
+        assignee_str = f'  担当:{item["担当"]}' if item['担当'] else ''
+        type_str = f'({item["種別"]})' if item['種別'] else ''
+        memo_str = f'\n      メモ: {item["メモ"]}' if item['メモ'] else ''
+        blocker_str = f'\n      ブロッカー: {item["ブロッカー"]}' if item['ブロッカー'] else ''
+        print(
+            f'[{item["ステータス"]}] {item["タイトル"]}  '
+            f'{type_str} {priority_str} / {env_str}'
+            f'{client_str}{assignee_str}'
+            f'{memo_str}{blocker_str}'
+        )
 
-    print(f'\n合計 {len(tasks)} 件')
+    print(f'\n合計 {len(items)} 件')
 
 
 # ---- --add ----
 
-def cmd_add(title, priority, category, memo, token, db_id):
-    """タスクを1件追加する"""
-    today_iso = datetime.now(timezone(timedelta(hours=9))).date().isoformat()
+def cmd_add(title, item_type, priority, status, category, env_list,
+            client, assignee, memo, start_date, token, db_id):
+    """案件を1件追加する"""
+    if not start_date:
+        start_date = datetime.now(JST).date().isoformat()
 
     props = {
         'タイトル': {'title': [{'text': {'content': title}}]},
-        'ステータス': {'select': {'name': '未着手'}},
+        '種別': {'select': {'name': item_type}},
+        'ステータス': {'select': {'name': status}},
         '優先度': {'select': {'name': priority}},
         'カテゴリ': {'select': {'name': category}},
-        '作成日': {'date': {'start': today_iso}},
+        '開始日': {'date': {'start': start_date}},
     }
+
+    if env_list:
+        props['対象環境'] = {
+            'multi_select': [{'name': e} for e in env_list]
+        }
+
+    if client:
+        props['クライアント'] = {'select': {'name': client}}
+
+    if assignee:
+        props['担当'] = {'select': {'name': assignee}}
+
     if memo:
-        props['メモ'] = {'rich_text': [{'text': {'content': memo}}]}
+        props['メモ'] = rich_text_prop(memo)
 
     notion_request('POST', '/pages', {
         'parent': {'database_id': db_id},
         'properties': props,
     }, token=token)
     print(f'追加しました: {title}')
+    print(f'  種別: {item_type} / ステータス: {status} / 優先度: {priority}')
+    print(f'  カテゴリ: {category} / 担当: {assignee} / 開始日: {start_date}')
 
 
 # ---- --update ----
 
-def cmd_update(partial_title, new_status, token, db_id):
-    """部分タイトルに一致するタスクのステータスを更新する"""
-    result = notion_request('POST', f'/databases/{db_id}/query', {
-        'filter': {'property': 'タイトル', 'title': {'contains': partial_title}}
-    }, token=token)
-    pages = result.get('results', [])
+def cmd_update(partial_title, new_status, new_priority, new_assignee, new_blocker, token, db_id):
+    """部分タイトルに一致する案件のプロパティを更新する"""
+    page = resolve_single_page(partial_title, token, db_id)
+    item = page_to_item(page)
 
-    if not pages:
-        print(f'[ERROR] 「{partial_title}」に一致するタスクが見つかりません。')
+    props = {}
+    changes = []
+
+    if new_status:
+        props['ステータス'] = {'select': {'name': new_status}}
+        changes.append(f'ステータス: [{item["ステータス"]}] → [{new_status}]')
+
+    if new_priority:
+        props['優先度'] = {'select': {'name': new_priority}}
+        changes.append(f'優先度: [{item["優先度"]}] → [{new_priority}]')
+
+    if new_assignee:
+        props['担当'] = {'select': {'name': new_assignee}}
+        changes.append(f'担当: [{item["担当"]}] → [{new_assignee}]')
+
+    if new_blocker is not None:
+        props['ブロッカー'] = rich_text_prop(new_blocker)
+        changes.append(f'ブロッカー: 更新')
+
+    if not props:
+        print('[ERROR] 更新するプロパティを --status / --priority / --assignee / --blocker で指定してください。')
         sys.exit(1)
 
-    if len(pages) > 1:
-        print(f'[ERROR] {len(pages)} 件一致しました。タイトルをより具体的に指定してください。')
-        for p in pages:
-            t = page_to_task(p)
-            print(f'  - {t["タイトル"]} [{t["ステータス"]}]')
-        sys.exit(1)
-
-    page = pages[0]
-    task = page_to_task(page)
-
-    notion_request('PATCH', f'/pages/{page["id"]}', {
-        'properties': {
-            'ステータス': {'select': {'name': new_status}}
-        }
-    }, token=token)
-    print(f'更新しました: {task["タイトル"]}  [{task["ステータス"]}] → [{new_status}]')
+    notion_request('PATCH', f'/pages/{page["id"]}', {'properties': props}, token=token)
+    print(f'更新しました: {item["タイトル"]}')
+    for c in changes:
+        print(f'  {c}')
 
 
-# ---- --add-history ----
+# ---- --show ----
 
-def find_page_by_partial_title(partial_title, token, db_id):
-    """
-    部分タイトルで Notion DB を検索し、マッチしたページ一覧を返す。
-    --update と同じ検索ロジック。
-    """
-    result = notion_request('POST', f'/databases/{db_id}/query', {
-        'filter': {'property': 'タイトル', 'title': {'contains': partial_title}}
-    }, token=token)
-    return result.get('results', [])
+def cmd_show(partial_title, token, db_id):
+    """全プロパティ + ページ本文を表示する"""
+    page = resolve_single_page(partial_title, token, db_id)
+    item = page_to_item(page)
 
+    print(f'== {item["タイトル"]} ==')
+    print(f'  種別      : {item["種別"]}')
+    print(f'  ステータス: {item["ステータス"]}')
+    print(f'  優先度    : {item["優先度"]}')
+    print(f'  カテゴリ  : {item["カテゴリ"]}')
+    print(f'  対象環境  : {", ".join(item["対象環境"]) if item["対象環境"] else "-"}')
+    print(f'  クライアント: {item["クライアント"] if item["クライアント"] else "-"}')
+    print(f'  担当      : {item["担当"]}')
+    print(f'  ブロッカー: {item["ブロッカー"] if item["ブロッカー"] else "-"}')
+    print(f'  開始日    : {item["開始日"] if item["開始日"] else "-"}')
+    print(f'  最終編集  : {item["最終編集日時"]}')
+    print(f'  作成日時  : {item["作成日時"]}')
+    if item['メモ']:
+        print(f'\n[メモ]')
+        print(item['メモ'])
 
-def cmd_add_history(partial_title, text, token, db_id):
-    """「作業履歴」プロパティに改行して追記する"""
-    pages = find_page_by_partial_title(partial_title, token, db_id)
+    # ページ本文（作業履歴ブロック）を取得（ページネーション対応）
+    blocks = []
+    cursor = None
+    while True:
+        path = f'/blocks/{page["id"]}/children?page_size=100'
+        if cursor:
+            path += f'&start_cursor={cursor}'
+        blocks_result = notion_request('GET', path, token=token)
+        blocks.extend(blocks_result.get('results', []))
+        if blocks_result.get('has_more'):
+            cursor = blocks_result['next_cursor']
+        else:
+            break
 
-    if not pages:
-        print(f'[ERROR] 該当タスクが見つかりません: {partial_title}')
-        sys.exit(1)
-
-    if len(pages) > 1:
-        print(f'[ERROR] {len(pages)} 件一致しました。タイトルをより具体的に指定してください。')
-        for p in pages:
-            t = page_to_task(p)
-            print(f'  - {t["タイトル"]} [{t["ステータス"]}]')
-        sys.exit(1)
-
-    page = pages[0]
-    task = page_to_task(page)
-
-    # 既存の作業履歴を取得して追記
-    existing = task['作業履歴']
-    if existing:
-        new_history = existing + '\n' + text
+    if blocks:
+        print(f'\n[作業履歴]')
+        for block in blocks:
+            block_type = block.get('type', '')
+            if block_type == 'paragraph':
+                texts = block.get('paragraph', {}).get('rich_text', [])
+                text = ''.join(t.get('plain_text', '') for t in texts)
+                if text:
+                    print(text)
+            elif block_type == 'heading_3':
+                texts = block.get('heading_3', {}).get('rich_text', [])
+                text = ''.join(t.get('plain_text', '') for t in texts)
+                if text:
+                    print(f'### {text}')
+            elif block_type == 'bulleted_list_item':
+                texts = block.get('bulleted_list_item', {}).get('rich_text', [])
+                text = ''.join(t.get('plain_text', '') for t in texts)
+                if text:
+                    print(f'- {text}')
     else:
-        new_history = text
+        print('\n[作業履歴] なし')
 
-    # 2,000文字上限対策：超過した場合は古い行から削除してトリム
-    if len(new_history) > NOTION_RICH_TEXT_LIMIT:
-        print(f'[WARN] 作業履歴が {len(new_history)} 文字に達します（上限: {NOTION_RICH_TEXT_LIMIT}文字）。古い履歴を削除します。')
-        lines = new_history.split('\n')
-        while len('\n'.join(lines)) > NOTION_RICH_TEXT_LIMIT and len(lines) > 1:
-            lines.pop(0)
-        new_history = '\n'.join(lines)
-        print(f'  {len(new_history)} 文字に調整しました。')
 
-    notion_request('PATCH', f'/pages/{page["id"]}', {
-        'properties': {
-            '作業履歴': {'rich_text': [{'text': {'content': new_history}}]}
+# ---- --add-block ----
+
+def cmd_add_block(partial_title, text, env_label, assignee, token, db_id):
+    """ページ本文末尾に作業ブロックを追記する"""
+    page = resolve_single_page(partial_title, token, db_id)
+    item = page_to_item(page)
+
+    today = datetime.now(JST).strftime('%Y-%m-%d')
+    env_label = env_label or '環境不問'
+    assignee = assignee or ASSIGNEE_DEFAULT
+
+    heading_content = f'[{today}] {env_label} / {assignee}'
+
+    # ブロック構造:
+    #   heading_3: "### [YYYY-MM-DD] <環境> / <担当>"
+    #   bulleted_list_item: "- <テキスト>"
+    blocks = [
+        {
+            'object': 'block',
+            'type': 'heading_3',
+            'heading_3': {
+                'rich_text': [
+                    {'type': 'text', 'text': {'content': heading_content[:NOTION_RICH_TEXT_LIMIT]}}
+                ]
+            }
+        },
+        {
+            'object': 'block',
+            'type': 'bulleted_list_item',
+            'bulleted_list_item': {
+                'rich_text': [
+                    {'type': 'text', 'text': {'content': text[:NOTION_RICH_TEXT_LIMIT]}}
+                ]
+            }
         }
-    }, token=token)
+    ]
 
-    print(f'履歴を追記しました: {task["タイトル"]}')
-    print(f'  作業履歴: {text}')
-
-
-# ---- --update-memo ----
-
-def cmd_update_memo(partial_title, text, token, db_id):
-    """「メモ」プロパティを上書き更新する"""
-    pages = find_page_by_partial_title(partial_title, token, db_id)
-
-    if not pages:
-        print(f'[ERROR] 該当タスクが見つかりません: {partial_title}')
-        sys.exit(1)
-
-    if len(pages) > 1:
-        print(f'[ERROR] {len(pages)} 件一致しました。タイトルをより具体的に指定してください。')
-        for p in pages:
-            t = page_to_task(p)
-            print(f'  - {t["タイトル"]} [{t["ステータス"]}]')
-        sys.exit(1)
-
-    page = pages[0]
-    task = page_to_task(page)
-
-    notion_request('PATCH', f'/pages/{page["id"]}', {
-        'properties': {
-            'メモ': {'rich_text': [{'text': {'content': text}}]}
-        }
-    }, token=token)
-
-    print(f'メモを更新しました: {task["タイトル"]}')
-    print(f'  メモ: {text}')
+    notion_request('PATCH', f'/blocks/{page["id"]}/children', {'children': blocks}, token=token)
+    print(f'ブロックを追記しました: {item["タイトル"]}')
+    print(f'  [{today}] {env_label} / {assignee}')
+    print(f'  - {text}')
 
 
-# ---- --import-from-handoff ----
+# ---- --alerts ----
 
-def strip_markdown_bold(text):
-    """**太字** マークダウンを除去する"""
-    return re.sub(r'\*\*(.+?)\*\*', r'\1', text)
+def cmd_alerts(token, db_id):
+    """優先度別の閾値を超えた案件を一覧表示する"""
+    pages = notion_query_all(db_id, token)
+    now_jst = datetime.now(JST)
 
+    alerts = []
+    for page in pages:
+        item = page_to_item(page)
 
-def parse_handoff_tasks():
-    """
-    session-handoff.md の「## 残件」セクションをパースして
-    タスクリストを返す。
-
-    戻り値: list of dict
-      - title: str
-      - memo: str（サブ箇条書きを連結）
-    """
-    if not os.path.exists(HANDOFF_PATH):
-        print(f'[ERROR] session-handoff.md が見つかりません: {HANDOFF_PATH}')
-        sys.exit(1)
-
-    with open(HANDOFF_PATH, encoding='utf-8') as f:
-        content = f.read()
-
-    # ## 残件 セクションを切り出す
-    # 次の ## が来るまで（または EOF まで）
-    match = re.search(r'^## 残件\s*\n(.*?)(?=^##|\Z)', content, re.MULTILINE | re.DOTALL)
-    if not match:
-        print('[WARN] session-handoff.md に「## 残件」セクションが見つかりません。')
-        return []
-
-    section = match.group(1)
-    lines = section.splitlines()
-
-    tasks = []
-    current_task = None
-
-    for line in lines:
-        # トップレベルの箇条書き（`- ` で始まる行、ただし先頭スペースなし）
-        top_match = re.match(r'^- (.+)$', line)
-        if top_match:
-            # 前のタスクを確定
-            if current_task:
-                tasks.append(current_task)
-            raw_title = top_match.group(1).strip()
-            title = strip_markdown_bold(raw_title).strip()
-            # インラインのサブ補足（最初の ` - ` 以降は後続行処理で拾う）
-            current_task = {'title': title, 'memo': ''}
+        # 除外ステータスをスキップ
+        if item['ステータス'] in STATUS_ALERT_EXCLUDE:
             continue
 
-        # サブ箇条書き（先頭にスペース + `- `）
-        sub_match = re.match(r'^[ \t]+- (.+)$', line)
-        if sub_match and current_task:
-            raw_sub = sub_match.group(1).strip()
-            sub = strip_markdown_bold(raw_sub)
-            if current_task['memo']:
-                current_task['memo'] += ' / ' + sub
-            else:
-                current_task['memo'] = sub
+        priority = item['優先度']
+        if priority not in PRIORITY_ALERT_DAYS:
+            continue  # P5-アイデア などはスキップ
 
-    # 最後のタスクを確定
-    if current_task:
-        tasks.append(current_task)
+        threshold_days = PRIORITY_ALERT_DAYS[priority]
+        last_edited_str = item['最終編集日時']
 
-    return tasks
+        if not last_edited_str:
+            continue
 
+        # ISO8601 形式 "2026-04-10T12:34:56.000Z" をパース
+        try:
+            last_edited_utc = datetime.fromisoformat(last_edited_str.replace('Z', '+00:00'))
+            last_edited_jst = last_edited_utc.astimezone(JST)
+        except ValueError:
+            continue
 
-def fetch_existing_titles(token, db_id):
-    """DB 内の既存タスクタイトル一覧を返す（重複チェック用）"""
-    result = notion_request('POST', f'/databases/{db_id}/query', {}, token=token)
-    pages = result.get('results', [])
-    return set(page_to_task(p)['タイトル'] for p in pages)
+        # JST 日付ベースで比較（23時間59分でも0日になる問題を防ぐ）
+        elapsed_days = (now_jst.date() - last_edited_jst.date()).days
 
+        if elapsed_days >= threshold_days:
+            alerts.append((priority, elapsed_days, item['タイトル'], item['ステータス']))
 
-def cmd_import_from_handoff(token, db_id):
-    """session-handoff.md の残件を Notion DB にインポートする"""
-    tasks = parse_handoff_tasks()
-    if not tasks:
-        print('インポートするタスクがありません。')
+    if not alerts:
+        print('アラート対象の案件はありません。')
         return
 
-    print(f'session-handoff.md から {len(tasks)} 件のタスクをインポートします...')
+    # 優先度順→経過日数の降順でソート
+    priority_order = {p: i for i, p in enumerate(PRIORITY_OPTIONS)}
+    alerts.sort(key=lambda x: (priority_order.get(x[0], 99), -x[1]))
 
-    existing_titles = fetch_existing_titles(token, db_id)
-    today_iso = datetime.now(timezone(timedelta(hours=9))).date().isoformat()
+    print(f'=== アラート: {len(alerts)} 件 ===')
+    for priority, elapsed_days, title, status in alerts:
+        print(f'[{priority}] {title} — {elapsed_days}日更新なし  ({status})')
 
-    added = 0
+
+# ---- --migrate ----
+
+def cmd_migrate(token, db_id, old_db_id):
+    """旧DBの全件を新DBに移行する"""
+    if not old_db_id:
+        print('[ERROR] .env に NOTION_TASKS_DB_ID_OLD が設定されていません。')
+        print('  --create-db を先に実行してください。')
+        sys.exit(1)
+
+    print(f'旧DB ({old_db_id}) から移行中...')
+    pages = notion_query_all(old_db_id, token)
+
+    if not pages:
+        print('旧DBにデータがありません。')
+        return
+
+    print(f'  {len(pages)} 件を移行します。')
+    today_iso = datetime.now(JST).date().isoformat()
+    migrated = 0
     skipped = 0
 
-    for task in tasks:
-        title = task['title']
-        memo = task['memo']
+    for page in pages:
+        p = page['properties']
 
-        if title in existing_titles:
-            print(f'  スキップ（既存）: {title}')
+        # 旧プロパティを取得
+        old_title = get_text(p, 'タイトル')
+        old_status = get_select(p, 'ステータス')
+        old_priority = get_select(p, '優先度')
+        old_category = get_select(p, 'カテゴリ')
+        old_memo = get_text(p, 'メモ')
+        old_history = get_text(p, '作業履歴')
+        old_created = get_date(p, '作成日')
+
+        if not old_title:
+            print(f'  スキップ（タイトルなし）')
             skipped += 1
             continue
 
-        props = {
-            'タイトル': {'title': [{'text': {'content': title}}]},
-            'ステータス': {'select': {'name': '未着手'}},
-            '優先度': {'select': {'name': '中'}},
-            'カテゴリ': {'select': {'name': 'その他'}},
-            '作成日': {'date': {'start': today_iso}},
-        }
-        if memo:
-            props['メモ'] = {'rich_text': [{'text': {'content': memo}}]}
+        # ステータス・優先度をマッピング
+        new_status = OLD_STATUS_MAP.get(old_status, '未着手')
+        new_priority = OLD_PRIORITY_MAP.get(old_priority, 'P3-今月中')
+        new_category = old_category if old_category in CATEGORY_OPTIONS else 'その他'
+        start_date = old_created if old_created else today_iso
 
-        notion_request('POST', '/pages', {
+        props = {
+            'タイトル': {'title': [{'text': {'content': old_title}}]},
+            '種別': {'select': {'name': TYPE_DEFAULT}},
+            'ステータス': {'select': {'name': new_status}},
+            '優先度': {'select': {'name': new_priority}},
+            'カテゴリ': {'select': {'name': new_category}},
+            '対象環境': {'multi_select': [{'name': ENV_DEFAULT}]},
+            '担当': {'select': {'name': ASSIGNEE_DEFAULT}},
+            '開始日': {'date': {'start': start_date}},
+        }
+
+        if old_memo:
+            props['メモ'] = rich_text_prop(old_memo)
+
+        # 新DBにページを作成
+        result = notion_request('POST', '/pages', {
             'parent': {'database_id': db_id},
             'properties': props,
         }, token=token)
-        print(f'  追加: {title}')
-        existing_titles.add(title)
-        added += 1
+        new_page_id = result.get('id', '')
 
-    print(f'完了: {added} 件追加、{skipped} 件スキップ')
+        # 旧「作業履歴」プロパティをページ本文に移動
+        if old_history and new_page_id:
+            # 段落ブロックとして追記
+            lines = old_history.split('\n')
+            blocks = []
+            for line in lines:
+                if line.strip():
+                    blocks.append({
+                        'object': 'block',
+                        'type': 'paragraph',
+                        'paragraph': {
+                            'rich_text': [
+                                {'type': 'text', 'text': {'content': line[:2000]}}
+                            ]
+                        }
+                    })
+                    # Notion API は一度に100ブロックまで
+                    if len(blocks) >= 90:
+                        notion_request('PATCH', f'/blocks/{new_page_id}/children',
+                                       {'children': blocks}, token=token)
+                        blocks = []
+            if blocks:
+                notion_request('PATCH', f'/blocks/{new_page_id}/children',
+                               {'children': blocks}, token=token)
+
+        print(f'  移行: {old_title}  [{old_status}→{new_status}] [{old_priority}→{new_priority}]')
+        migrated += 1
+
+    print(f'\n移行完了: {migrated} 件移行、{skipped} 件スキップ')
 
 
 # ---- エントリーポイント ----
 
-def main():
-    sys.stdout.reconfigure(encoding='utf-8')
+def parse_env_list(env_str):
+    """
+    "Windows,Mac" → ['Windows', 'Mac'] に変換する。
+    空文字列は空リストを返す。
+    """
+    if not env_str:
+        return []
+    return [e.strip() for e in env_str.split(',') if e.strip()]
 
+
+def main():
     parser = argparse.ArgumentParser(
-        description='Notion 残件タスク管理スクリプト',
+        description='Notion 案件管理スクリプト',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__
     )
+
+    # --- コマンド群 ---
     parser.add_argument('--create-db', metavar='PARENT_PAGE_ID',
-                        help='Notion DB を新規作成して .env に ID を書き込む')
+                        help='新スキーマでDBを作成して .env に書き込む')
     parser.add_argument('--list', action='store_true',
-                        help='タスク一覧をステータス順で表示')
+                        help='案件一覧をステータス順で表示')
     parser.add_argument('--add', metavar='タイトル',
-                        help='タスクを追加する')
-    parser.add_argument('--priority', default='中', choices=PRIORITY_OPTIONS,
-                        help='優先度（デフォルト: 中）')
-    parser.add_argument('--category', default='その他',
-                        help='カテゴリ（デフォルト: その他）')
+                        help='案件を追加する')
+    parser.add_argument('--update', metavar='部分タイトル',
+                        help='案件のプロパティを更新する')
+    parser.add_argument('--show', metavar='部分タイトル',
+                        help='全プロパティ + 作業履歴を表示する')
+    parser.add_argument('--add-block', metavar='部分タイトル',
+                        help='ページ本文末尾に作業ブロックを追記する')
+    parser.add_argument('--alerts', action='store_true',
+                        help='優先度別の閾値を超えた案件を一覧表示する')
+    parser.add_argument('--migrate', action='store_true',
+                        help='旧DBの全件を新DBに移行する')
+
+    # --- --add 用オプション ---
+    parser.add_argument('--type', dest='item_type', default=TYPE_DEFAULT,
+                        choices=TYPE_OPTIONS,
+                        help=f'種別（デフォルト: {TYPE_DEFAULT}）')
+    parser.add_argument('--priority', default=PRIORITY_DEFAULT,
+                        choices=PRIORITY_OPTIONS,
+                        help=f'優先度（デフォルト: {PRIORITY_DEFAULT}）')
+    parser.add_argument('--status', choices=STATUS_OPTIONS,
+                        metavar='ステータス',
+                        help=f'ステータス（--add デフォルト: {STATUS_DEFAULT}）選択肢: {"|".join(STATUS_OPTIONS)}')
+    parser.add_argument('--category', default=CATEGORY_DEFAULT,
+                        choices=CATEGORY_OPTIONS,
+                        metavar='カテゴリ',
+                        help=f'カテゴリ（デフォルト: {CATEGORY_DEFAULT}）選択肢: {"|".join(CATEGORY_OPTIONS)}')
+    parser.add_argument('--env', dest='env_str', default='',
+                        help='対象環境（カンマ区切り: "Windows,Mac"）')
+    parser.add_argument('--client', default='',
+                        help='クライアント')
+    parser.add_argument('--assignee', default=None,
+                        help=f'担当（--add デフォルト: {ASSIGNEE_DEFAULT}、--update は未指定時スキップ）')
     parser.add_argument('--memo', default='',
                         help='メモ（補足情報）')
-    parser.add_argument('--update', metavar='部分タイトル',
-                        help='タイトルが部分一致するタスクのステータスを更新する')
-    parser.add_argument('--status', metavar='ステータス',
-                        help='更新後のステータス（--update と併用）')
-    parser.add_argument('--add-history', metavar='部分タイトル',
-                        help='「作業履歴」プロパティに改行して追記する')
-    parser.add_argument('--update-memo', metavar='部分タイトル',
-                        help='「メモ」プロパティを上書き更新する')
+    parser.add_argument('--start-date', dest='start_date', default='',
+                        help='開始日（YYYY-MM-DD、省略時は今日）')
+
+    # --- --update 用追加オプション ---
+    parser.add_argument('--blocker', default=None,
+                        help='ブロッカーテキスト（--update と併用）')
+
+    # --- --add-block 用オプション ---
     parser.add_argument('--text', metavar='テキスト',
-                        help='追記・更新するテキスト（--add-history / --update-memo と併用）')
-    parser.add_argument('--import-from-handoff', action='store_true',
-                        help='session-handoff.md の残件をインポートする')
+                        help='追記するテキスト（--add-block と併用）')
+
+    # --- --list 用フィルターオプション ---
+    parser.add_argument('--filter-status', metavar='ステータス',
+                        help='ステータスでフィルター')
+    parser.add_argument('--filter-type', metavar='種別',
+                        help='種別でフィルター')
+    parser.add_argument('--filter-env', metavar='環境',
+                        help='対象環境でフィルター（1つ指定）')
+    parser.add_argument('--filter-client', metavar='クライアント',
+                        help='クライアントでフィルター')
+    parser.add_argument('--filter-priority', metavar='優先度',
+                        help='優先度でフィルター')
 
     args = parser.parse_args()
 
     # コマンドが何も指定されていない場合はヘルプ表示
-    if not any([args.create_db, args.list, args.add, args.update,
-                args.add_history, args.update_memo, args.import_from_handoff]):
+    commands = [args.create_db, args.list, args.add, args.update,
+                args.show, args.add_block, args.alerts, args.migrate]
+    if not any(commands):
         parser.print_help()
         sys.exit(0)
 
@@ -574,53 +931,92 @@ def main():
 
     # --create-db は DB ID 不要
     if args.create_db:
-        cmd_create_db(args.create_db, token)
+        cmd_create_db(args.create_db, token, env)
         return
 
     # それ以外は DB ID が必要
     db_id = env.get('NOTION_TASKS_DB_ID', '')
     if not db_id:
         print('[ERROR] .env に NOTION_TASKS_DB_ID が設定されていません。')
-        print('  先に --create-db <parent_page_id> を実行して DB を作成してください。')
+        print('  先に --create-db <PARENT_PAGE_ID> を実行してください。')
         sys.exit(1)
 
     if args.list:
-        cmd_list(token, db_id)
+        cmd_list(
+            token, db_id,
+            filter_status=args.filter_status,
+            filter_type=args.filter_type,
+            filter_env=args.filter_env,
+            filter_client=args.filter_client,
+            filter_priority=args.filter_priority,
+        )
 
     elif args.add:
+        env_list = parse_env_list(args.env_str)
+        add_status = args.status if args.status else STATUS_DEFAULT
+        add_assignee = args.assignee or ASSIGNEE_DEFAULT
         cmd_add(
             title=args.add,
+            item_type=args.item_type,
             priority=args.priority,
+            status=add_status,
             category=args.category,
+            env_list=env_list,
+            client=args.client,
+            assignee=add_assignee,
             memo=args.memo,
+            start_date=args.start_date,
             token=token,
             db_id=db_id,
         )
 
     elif args.update:
-        if not args.status:
-            print('[ERROR] --update を使う場合は --status も指定してください。')
-            print(f'  使用可能なステータス: {", ".join(STATUS_OPTIONS)}')
+        # --update は少なくとも1つの更新オプションが必要
+        if not any([args.status, args.priority, args.assignee, args.blocker is not None]):
+            print('[ERROR] --update を使う場合は --status / --priority / --assignee / --blocker のいずれかを指定してください。')
             sys.exit(1)
-        if args.status not in STATUS_OPTIONS:
-            print(f'[ERROR] ステータスは {", ".join(STATUS_OPTIONS)} のいずれかを指定してください。')
+        # バリデーション
+        if args.status and args.status not in STATUS_OPTIONS:
+            print(f'[ERROR] ステータスは次のいずれかを指定してください: {", ".join(STATUS_OPTIONS)}')
             sys.exit(1)
-        cmd_update(args.update, args.status, token, db_id)
+        if args.priority and args.priority not in PRIORITY_OPTIONS:
+            print(f'[ERROR] 優先度は次のいずれかを指定してください: {", ".join(PRIORITY_OPTIONS)}')
+            sys.exit(1)
+        if args.assignee and args.assignee not in ASSIGNEE_OPTIONS:
+            print(f'[ERROR] 担当は次のいずれかを指定してください: {", ".join(ASSIGNEE_OPTIONS)}')
+            sys.exit(1)
+        cmd_update(
+            partial_title=args.update,
+            new_status=args.status,
+            new_priority=args.priority,
+            new_assignee=args.assignee,  # None のまま渡す（未指定時はスキップされる）
+            new_blocker=args.blocker,
+            token=token,
+            db_id=db_id,
+        )
 
-    elif args.add_history:
+    elif args.show:
+        cmd_show(args.show, token, db_id)
+
+    elif args.add_block:
         if not args.text:
-            print('[ERROR] --add-history を使う場合は --text も指定してください。')
+            print('[ERROR] --add-block を使う場合は --text も指定してください。')
             sys.exit(1)
-        cmd_add_history(args.add_history, args.text, token, db_id)
+        cmd_add_block(
+            partial_title=args.add_block,
+            text=args.text,
+            env_label=args.env_str or None,
+            assignee=args.assignee,
+            token=token,
+            db_id=db_id,
+        )
 
-    elif args.update_memo:
-        if not args.text:
-            print('[ERROR] --update-memo を使う場合は --text も指定してください。')
-            sys.exit(1)
-        cmd_update_memo(args.update_memo, args.text, token, db_id)
+    elif args.alerts:
+        cmd_alerts(token, db_id)
 
-    elif args.import_from_handoff:
-        cmd_import_from_handoff(token, db_id)
+    elif args.migrate:
+        old_db_id = env.get('NOTION_TASKS_DB_ID_OLD', '')
+        cmd_migrate(token, db_id, old_db_id)
 
 
 if __name__ == '__main__':
