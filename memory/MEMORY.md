@@ -17,6 +17,7 @@
 - [feedback-web-design.md](feedback-web-design.md) — Web成果物のフォントサイズ最小値ルール（通常テキスト16px・補足10px）
 
 ## project
+- [project_notion_management.md](project_notion_management.md) — Notion DB一本化方針（案件リスト・残件タスク→案件管理に統合、スキーマ設計は持ち越し）
 - [project_slide_workflow.md](project_slide_workflow.md) — スライド制作標準フロー（ソラ→Genspark）と品質向上ポイント
 - [project_officeueda_web.md](project_officeueda_web.md) — officeueda web事業コーディング方針・GMC対応など
 - [project_gmc_sync.md](project_gmc_sync.md) — カラーミー×GMC自動同期ツール開発プロジェクト（officeueda導入代行サービス）
