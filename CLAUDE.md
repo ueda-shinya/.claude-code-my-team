@@ -314,17 +314,54 @@ When Shinya says **"メモを共有して" + content**, Asuka executes immediate
 3. Push success → report "Shared to other PC"
    Push failure → report "Recorded locally but push failed. Will be shared at next sync"
 
-## Remaining Task Management (2026-03-31)
+## Project Management (Updated 2026-04-10)
 
-Remaining tasks are managed in the **Notion "残件タスク" DB** (`NOTION_TASKS_DB_ID`).
-
-- When a new remaining task arises, register it in Notion with `notion-tasks.py --add`
-- When work progresses, append work history with `notion-tasks.py --add-history`
-- When work is complete, update the status with `notion-tasks.py --update --status 完了`
-- When a "carry-over" comes up in the sync skill retrospective, register it with `notion-tasks.py --add`
-- Notion is cloud-based so it can be checked from any PC
+All work is managed as **cases/projects** in the **Notion "案件管理" DB** (`NOTION_TASKS_DB_ID`).
 
 Script: `~/.claude/scripts/notion-tasks.py`
+
+### Key Commands
+
+```bash
+# Register new case
+notion-tasks.py --add "タイトル" --type 実装 --priority P2-今週中 --env Windows --memo "..."
+
+# Update status
+notion-tasks.py --update "部分タイトル" --status 進行中
+
+# Append work history to page body (environment-specific)
+notion-tasks.py --add-block "部分タイトル" --text "やったこと・結果" --env Windows --assignee Asuka
+
+# Show full detail including work history
+notion-tasks.py --show "部分タイトル"
+
+# Alert: cases overdue by priority (use in morning briefing)
+notion-tasks.py --alerts
+
+# List with filters
+notion-tasks.py --list --filter-status 未着手 --filter-env Windows
+```
+
+### Status options
+`未着手` `次にやる` `進行中` `レビュー待ち` `シンヤ確認待ち` `保留` `完了` `取下げ`
+
+### Priority options + alert thresholds
+| Priority | Alert threshold |
+|---|---|
+| P1-即時 | 1 day without update |
+| P2-今週中 | 3 days |
+| P3-今月中 | 7 days |
+| P4-いつかやる | 30 days |
+| P5-アイデア | No alert |
+
+### Type options
+`実装` `環境構築` `運用改善` `調査・相談` `手作業` `議題・検討`
+
+### Registration triggers
+- When "let's do this later" / "carry-over" comes up in conversation → register immediately
+- When a client makes a new request → register as a case
+- When Shinya says "I want to do X" → register as P5-アイデア or appropriate priority
+- Sync skill retrospective carry-overs → register
 
 ### Task Registration Content Standard (2026-04-09)
 
@@ -337,32 +374,6 @@ Required 5 items for `--memo`:
 4. **Related file paths**: Full paths to relevant files (e.g. `~/.claude/clients/xxx/proposals/yyy.md`)
 5. **Completion criteria**: What state = done (e.g. "PDF exported and sent to client", "merged to main")
 
-**Bad example (current session only):**
-```
---memo "Use genspark-prompt-v2.md to regenerate. Check p3/p4 numbers visually."
-```
-
-**Good example (self-contained across sessions):**
-```
---memo "Background: Strategy proposal slides for Inada Ryota (childcare lawyer). v1 had Genspark auto-adding unverified numbers (-5.2% etc), buttons, and extra text, so v2 prompt was created.
-Work: Paste contents of ~/.claude/clients/inada-ryota/proposals/genspark-prompt-v2.md into Genspark and regenerate.
-Notes: After generation, visually verify p3 (industry data) and p4 (hiring data) numbers match the original manuscript.
-Related: ~/.claude/clients/inada-ryota/proposals/genspark-prompt-v2.md, consulting-proposal-slides.md"
-```
-
-### Migration Period (~2026-04-14)
-
-Run `session-handoff.md` remaining-tasks section and Notion in **parallel** for one week.
-
-- Asuka handles registration/updates in both (other agents can use Notion only)
-- When reading, **Notion is authoritative**. If inconsistent, align to Notion
-- Asuka executes the migration completion work at the 2026-04-14 sync
-
-#### Migration Completion Tasks (at 2026-04-14 sync — Asuka executes)
-1. Delete only the **remaining-tasks section** of `session-handoff.md` (keep the design/implementation log; keep the file itself)
-2. Remove the migration-period note from the "Session Handoff" section of CLAUDE.md and switch to Notion reference
-3. Remove the migration-period note from the sync skill
-
 ## Session Handoff
 - **At the start of every conversation**, run `git pull origin main` before checking `~/.claude/session-handoff.md` (to incorporate changes from other PCs). If `git pull` fails, report to Shinya and proceed by reading the local `session-handoff.md` as-is.
 - **If `git pull` brings in changes to `CLAUDE.md` or `CLAUDE.ja.md`**: notify Shinya immediately with the following message and do not start any new tasks until Shinya responds. If Shinya explicitly says "continue anyway", proceed only then.
@@ -371,7 +382,7 @@ Run `session-handoff.md` remaining-tasks section and Notion in **parallel** for 
   - Switch to a new session (recommended)
   - To continue in this session: restart Claude Code, then reopen this session
   ```
-- **During migration period (~2026-04-14)**: also check Notion remaining tasks with `notion-tasks.py --list`.
+- Also check open cases with `notion-tasks.py --list --filter-status 次にやる` and `--filter-status 進行中`.
 - If the content is anything other than "no work", proactively report "I see the state before the restart. Was in the middle of X." before the normal response — even if the user says nothing.
 - When work is complete, reset the file to "no work"
 - **Regardless of who gives the instruction**, whenever prompting the user to restart, always update `~/.claude/session-handoff.md` first (applies to all agents: Asuka, So, Kanata, etc.)
