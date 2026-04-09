@@ -40,6 +40,14 @@ google-oauth-credentials.json
 mcp.json
 .mcp.json
 
+# ── Python 仮想環境（PC固有・Gitに上げない）────────────────
+onedrive-mcp-venv/
+*-venv/
+
+# ── Python キャッシュ ────────────────────────────────────
+__pycache__/
+*.pyc
+
 # ── 一時ファイル ─────────────────────────────────────────
 tmp/
 
