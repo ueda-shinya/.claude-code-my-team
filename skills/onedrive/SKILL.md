@@ -39,7 +39,7 @@ Windows/Mac 両対応。`PC_PLATFORM` で分岐する。
 
 **Mac:**
 ```bash
-python3 ~/.claude/scripts/onedrive.py <サブコマンド>
+~/.claude/onedrive-mcp-venv/bin/python ~/.claude/scripts/onedrive.py <サブコマンド>
 ```
 
 ### ファイル一覧（ルート）
@@ -47,34 +47,34 @@ python3 ~/.claude/scripts/onedrive.py <サブコマンド>
 # Windows
 "X:/Python310/python.exe" ~/.claude/scripts/onedrive.py list /
 # Mac
-python3 ~/.claude/scripts/onedrive.py list /
+~/.claude/onedrive-mcp-venv/bin/python ~/.claude/scripts/onedrive.py list /
 ```
 
 ### ファイル一覧（フォルダ指定）
 ```bash
-python onedrive.py list "Documents/仕事"
+~/.claude/onedrive-mcp-venv/bin/python ~/.claude/scripts/onedrive.py list "Documents/仕事"
 ```
 
 ### ファイル検索
 ```bash
-python onedrive.py search "請求書"
+~/.claude/onedrive-mcp-venv/bin/python ~/.claude/scripts/onedrive.py search "請求書"
 ```
 
 ### ファイルダウンロード
 ```bash
-python onedrive.py download "Documents/見積書.xlsx" "~/.claude/tmp"
+~/.claude/onedrive-mcp-venv/bin/python ~/.claude/scripts/onedrive.py download "Documents/見積書.xlsx" "~/.claude/tmp"
 ```
 
 - 保存先は `~/.claude/tmp/` を推奨
 
 ### メタデータ取得
 ```bash
-python onedrive.py metadata "Documents/見積書.xlsx"
+~/.claude/onedrive-mcp-venv/bin/python ~/.claude/scripts/onedrive.py metadata "Documents/見積書.xlsx"
 ```
 
 ### トークン再認証
 ```bash
-python onedrive.py auth 2>&1
+~/.claude/onedrive-mcp-venv/bin/python ~/.claude/scripts/onedrive.py auth 2>&1
 ```
 
 ## ダウンロードしたファイルの内容確認
@@ -131,7 +131,7 @@ Read ツールで読める（Claude Code は PDF 対応）。
 # Windows
 "X:/Python310/python.exe" ~/.claude/scripts/onedrive.py auth 2>&1
 # Mac
-python3 ~/.claude/scripts/onedrive.py auth 2>&1
+~/.claude/onedrive-mcp-venv/bin/python ~/.claude/scripts/onedrive.py auth 2>&1
 ```
 
 2. デバイスコードが表示されたらシンヤさんに伝える：
