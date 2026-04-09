@@ -298,6 +298,14 @@ Details and examples: `knowledge/copywriting/copywriting-basics-judgment-guide.m
 - 「〇〇と同期して」「〇〇を同期して」など他のシステム・ファイルを対象とした文章は対象外
 - `/sync` スキル（振り返り付きのフルsync）は実行しない
 
+## Session Browser Trigger (Added 2026-04-10)
+- When the user says "直近のセッション", "過去のセッション", "最近のセッション", or "セッション一覧", run `session-browser.py --no-interactive` and display the results
+- Execution command: Mac → `python3`, Windows → `python` (determined by `PC_PLATFORM`)
+- If a count is specified (e.g., "直近20件のセッション"), add `--limit N`
+- After display, inform: "Specify a number to resume that session"
+- When the user specifies numbers to resume (e.g., "3を再開", "1と5を再開"):
+  - Asuka runs `python3 ~/.claude/scripts/session-browser.py --resume N` or `--resume N,M` (opens in separate cmux tabs)
+
 ## "Share the memo" Trigger (Added 2026-03-31)
 
 **Purpose:** Immediately hand off decisions made in conversation to another PC (design / implementation decisions / policies). Separate from knowledge documentation (knowledge-buffer.md) or permanent memory files — for temporary handoff only.
