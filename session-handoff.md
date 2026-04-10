@@ -30,6 +30,7 @@
 
 [2026-04-05] メールにスケジュール登録・変更検出を追加するタイミングで、カレンダー処理を `calendar_utils.py` として共通モジュールに切り出す（chatwork-sync.py・mail-check.py 両方から import して使う構成）
 [2026-04-09] skill.md（英語版）を skill.ja.md に同期する（カナタにフォアグラウンドで依頼すること。バックグラウンドだと権限プロンプトに応答できず失敗する）
+[2026-04-10] has_schedule除外条件に「スケジュール確定の報告はfalseにしない」の但し書きを追加する（chatwork-sync.py の build_analyze_prompt 内）
 
 
 
