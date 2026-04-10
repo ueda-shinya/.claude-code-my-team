@@ -15,6 +15,7 @@
 - [feedback_agent_study.md](feedback_agent_study.md) — agent-study 提案前に「一般知識か固有知識か」をアスカが先に判断。一般的な教科書系は提案しない
 - [feedback_asuka_proactive_proposal.md](feedback_asuka_proactive_proposal.md) — 問題発見・修正だけでなく「なぜ起きたか」報告＋構造的な対案提示までがアスカの仕事
 - [feedback-web-design.md](feedback-web-design.md) — Web成果物のフォントサイズ最小値ルール（通常テキスト16px・補足10px）
+- [feedback_code_review_mandatory.md](feedback_code_review_mandatory.md) — 実装完了後のコードレビューは絶対に省略しない（sandboxでも例外なし）
 
 ## project
 - [project_notion_management.md](project_notion_management.md) — Notion DB一本化方針（案件リスト・残件タスク→案件管理に統合、スキーマ設計は持ち越し）

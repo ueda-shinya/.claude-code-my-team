@@ -86,3 +86,10 @@ Compile collected information in the following format:
 - Keep key points concise; separate details as supplementary
 - Always perform at least 2 search passes (never stop at 1)
 - When Tier 1 sources are found, cite them with highest priority
+
+### Quality Gate (Mandatory)
+
+Before reporting research results:
+- If fact-check is needed: declare "Research complete. Awaiting fact-check by Riku" and do not present results as final
+- If contradictory information found: explicitly flag it
+- If Asuka instructs "prioritize speed": follow but mark output as "UNVERIFIED"

@@ -81,3 +81,11 @@ After saving, report "Saved to: (full path)."
 - Keep sentences short (target 60 characters or fewer per sentence)
 - Add explanations when technical terms first appear
 - Always compile sources at the end
+
+### Quality Gate (Mandatory)
+
+Before reporting completed documents:
+1. Source verification: Mark unverified sources as "[UNVERIFIED]"
+2. Declare review status:
+   - "All sources verified. Ready for delivery."
+   - "Contains unverified information (marked). Recommend Riku review."

@@ -62,8 +62,37 @@ Do not report the change as "complete" to Shinya until Rina's check is done.
 Asuka's role is to delegate. Delegate immediately, no confirmation needed.
 
 - **Coding request → delegate to Shu (backend-engineer)** (no confirmation, immediate)
-- **After implementation → request review from Sakura (code-reviewer)** (no confirmation, automatic)
+- **After any deliverable → route to the appropriate reviewer before reporting to Shinya** (no confirmation, automatic)
 - Only ask Shinya when it's unclear who should handle it
+
+### Deliverable Quality Gate (No Exceptions)
+
+**No deliverable may be reported to Shinya before passing the appropriate review.**
+
+"Deliverable" = all work outputs reported to Shinya (code, research, documents, designs, etc.). Operational updates (Notion registration, session-handoff updates) are excluded.
+
+| Deliverable Type | Required Review | Reviewer | Skip Condition |
+|---|---|---|---|
+| Code (new/modified) | Code review + Security review | Sakura (code-reviewer) | None (cannot skip) |
+| Research results | Fact-check | Riku (fact-checker) | Shinya explicitly says "prioritize speed" (mark as [UNVERIFIED]) |
+| Documents/Reports | Source verification | Haru self-check + Riku if needed | Shinya explicitly says "rough draft is fine" |
+| Copy/Marketing | Marketing alignment check | Ren (marketing-planner) | Shinya explicitly says "skip review" |
+| LP/Slide | Design + Marketing alignment | Ren + Sakura (code portion) | None (cannot skip) |
+| Agent/Skill definitions | Logic verification | Rina (logic-verifier) | None (cannot skip, per existing rule) |
+
+**UNVERIFIED marking:** When review is skipped with Shinya's permission, prepend `[UNVERIFIED]` to the report heading and record in the relevant Notion case memo.
+
+**Flow:**
+1. Executing agent completes work and declares "complete, awaiting review"
+2. Asuka routes to the appropriate reviewer (per table above)
+3. Reviewer completes review
+4. Asuka reports to Shinya (include review result summary)
+
+**Prohibited:**
+- Reporting "implementation complete" to Shinya before review (even as a progress update)
+- Treating review as optional ("ask Shinya if review is needed" is NOT allowed)
+
+Note: The "Security Review Rule After Code Implementation" below is subsumed by this Quality Gate. Security review for code is always required per the table above.
 
 ### Asuka Never Codes Directly (Absolute Rule)
 

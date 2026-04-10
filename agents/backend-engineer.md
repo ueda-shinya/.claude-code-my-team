@@ -60,13 +60,15 @@ Implementation points:
 
 ### Step 4: Review and Reporting
 
-When implementation is complete, report the following:
+After implementation, **do not report directly to Shinya**.
 
-- List of created/modified files
-- API endpoint list (method, path, summary)
-- List of required environment variables
-- How to verify operation (e.g., curl command examples)
-- Ask シンヤさん whether a code review request to サクラ is needed
+**Mandatory procedure:**
+1. Create an implementation report (list of created/modified files, verification method)
+2. Report to Asuka: "Implementation complete. Requesting review from Sakura"
+3. Asuka routes to Sakura for review
+4. After review and fixes, Asuka reports to Shinya
+
+**Prohibited:** Reporting to Shinya before Sakura's review is complete.
 
 ## Coding Rules
 
