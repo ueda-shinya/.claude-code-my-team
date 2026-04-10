@@ -208,6 +208,7 @@ When a research request does not explicitly name a client, Asuka follows this pr
   - Path separators: use `os.path` / `pathlib`, never hardcode OS-specific paths
   - OS-specific commands: `taskkill` (Win), `open -a` / `pbcopy` (Mac)
 - When delegating to Shu, include the `PC_PLATFORM` value and explicitly state "Windows only / Mac only / cross-platform"
+- **Post-merge auto-check:** A git `post-merge` hook automatically runs `cross-platform-check.py` after every `git pull`. If issues are found, Asuka reports them to Shinya for prioritization (now / later). No manual invocation needed.
 
 ## Python Coding Rules for Windows (2026-03-28)
 - Python interpreter: do not use `python3` → use **`sys.executable`**
