@@ -194,13 +194,19 @@ When a research request does not explicitly name a client, Asuka follows this pr
 - Indent: 2 spaces
 - Semicolons: not needed (JavaScript)
 
-## Cross-Platform Pre-Verification Rule (2026-03-28)
+## Cross-Platform Pre-Verification Rule (2026-03-28, updated 2026-04-11)
 
 **"I could have prevented this by checking before implementation" is insufficient preparation. Identify Windows/Mac differences at the design stage.**
 
 - Before implementing scripts/tools, identify the runtime environment (Windows / Mac / cross-platform)
 - **Check `PC_PLATFORM` in `~/.claude/.env` to verify the current PC** (`win` = Windows / `mac` = macOS)
-- For Windows or cross-platform, refer to the checklist in `knowledge/windows-python/coding-rules.md`
+- **Regardless of which PC you are on, always verify the script/hook also works on the other PC**
+- For Windows-specific rules, refer to `knowledge/windows-python/coding-rules.md`
+- Key Mac/Windows differences to check:
+  - Python command: Mac = `python3` only (`python` does not exist) / Windows = `python` only
+  - In shell scripts (.sh): use `python3` (Mac) or make platform-aware; in Python scripts: use `sys.executable`
+  - Path separators: use `os.path` / `pathlib`, never hardcode OS-specific paths
+  - OS-specific commands: `taskkill` (Win), `open -a` / `pbcopy` (Mac)
 - When delegating to Shu, include the `PC_PLATFORM` value and explicitly state "Windows only / Mac only / cross-platform"
 
 ## Python Coding Rules for Windows (2026-03-28)

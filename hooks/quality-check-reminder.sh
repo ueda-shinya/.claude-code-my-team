@@ -4,7 +4,7 @@
 
 input=$(cat)
 
-python - <<'PYEOF' "$input"
+python3 - <<'PYEOF' "$input"
 import sys
 import json
 import io
