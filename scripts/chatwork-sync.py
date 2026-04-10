@@ -57,6 +57,9 @@ CHATWORK_URGENT_ROOM_IDS = set(
     x.strip() for x in _urgent_rooms_raw.split(',') if x.strip()
 )
 
+# タイムスタンプフィルタリング: チェック間隔に掛ける倍率（デフォルト 1.2）
+CHECK_INTERVAL_MULTIPLIER = float(os.environ.get('CHATWORK_CHECK_INTERVAL_MULTIPLIER', '1.2'))
+
 # ── 定数 ──────────────────────────────────────────────────────
 CHATWORK_API_BASE    = 'https://api.chatwork.com/v2'
 STATE_FILE           = os.path.expanduser('~/.claude/tmp/chatwork-state.json')
@@ -258,7 +261,10 @@ def cw_get(path: str, params: dict = None) -> dict | list | None:
         )
         ctx = ssl.create_default_context()
         with urllib.request.urlopen(req, context=ctx, timeout=10) as res:
-            return json.loads(res.read())
+            raw = res.read()
+        if not raw or not raw.strip():
+            return []
+        return json.loads(raw)
     except Exception as e:
         logger.error(f'Chatwork API エラー [{path}]: {e}')
         return None
@@ -297,14 +303,17 @@ def send_chatwork_message(room_id: int, body: str, dry_run: bool = False) -> boo
         return False
 
 
-def get_messages(room_id: int, force: int = 0) -> list:
+def get_messages(room_id: int) -> list:
     """
-    ルームのメッセージ一覧を取得
-    force=0: 未読メッセージのみ（サーバー側管理）
-    force=1: 最新100件を強制取得
+    ルームのメッセージ一覧を取得（force=1 で最新100件を強制取得）
+    フィルタリングは呼び出し元のタイムスタンプ方式で行う
     """
-    result = cw_get(f'/rooms/{room_id}/messages', {'force': force})
-    return result if isinstance(result, list) else []
+    result = cw_get(f'/rooms/{room_id}/messages', {'force': 1})
+    if not isinstance(result, list):
+        return []
+    if len(result) >= 100:
+        logger.warning(f'メッセージ取得件数が100件に達しました（room_id={room_id}）。古いメッセージが欠落している可能性があります。')
+    return result
 
 
 # ── Claude API 解析 ───────────────────────────────────────────
@@ -328,15 +337,36 @@ def build_analyze_prompt(my_account_id: str, now_str: str) -> str:
   "priority_reason": "優先度高と判断した理由（is_high_priorityがtrueの場合）"
 }}
 
-has_schedule の判定基準（以下をすべて満たす場合のみ true）：
-- 自分（アカウントID: {my_account_id}）が参加・対応する予定または期限であること
-  - 他の人同士の予定調整・第三者の予定は false
-  - [To:{my_account_id}] がある、または文脈から自分が関係者とわかる場合
+has_task の判定基準（以下のいずれかに該当する場合のみ true）：
+- 自分宛に具体的な作業依頼がある（[To:{my_account_id}] がある、または文脈から自分が対応者とわかる場合）
+- クライアントからの制作・修正・更新依頼（画像差し替え、テキスト変更、ページ追加、バナー制作等）
+- 納品物の確認・承認依頼
+- 見積もり・提案書の作成依頼
+- 自分が管轄するプロジェクトに関する作業依頼（第三者経由でも自分が対応者とわかるもの）
+該当しない場合は false。感謝・挨拶・雑談・完了済みの報告は false。
+
+has_schedule の判定基準（以下の【必須条件】を両方満たし、かつ【除外条件】に該当しない場合のみ true）：
+
+【必須条件（どちらも必要）】
+- 条件A: 具体的な日時・日付が含まれていること
+  - 例：「4月15日」「来週月曜」「14時」「午後3時」「〇〇日まで」等
+  - 「いつか」「近いうち」「そのうち」等、具体的な日時が不明なものは false
+- 条件B: 自分（アカウントID: {my_account_id}）が参加・対応すべきイベントであること
+  - MTG、打ち合わせ、納品、提出期限、訪問、電話等、自分が当事者として関わるもの
+  - [To:{my_account_id}] がある、または文脈から自分が関係者・対応者とわかる場合
   - または、送信者が「（自分の送信）」と示されており、予定が確定したことを報告・通知している場合
-- 具体的な日時（日付＋時刻、または日付のみ）が明示されていること
-  - 「いつか」「近いうち」など曖昧な表現は false
-- 過去の予定ではなく、未来の予定であること（上記の現在日時を基準とする）
+
+【除外条件（いずれかに該当する場合は false）】
+- 過去の日時に関する報告・振り返り（「昨日の打ち合わせで〜」「先週お伝えした〜」「〇日に対応しました」等）
+- 日時が含まれていても、自分への依頼・参加要請でない（「〇〇さんと△日にMTGしました」等、第三者のスケジュール報告）
+- 感謝・挨拶・完了報告の文脈でたまたま日時が登場するだけのもの
+- 過去の予定（上記の現在日時を基準として、すでに過ぎた日時は false）
 該当しない場合は false とすること。
+
+has_schedule: true の場合、以下の指針で各フィールドを抽出すること：
+- schedule_datetime: 可能な限り絶対日時（YYYY-MM-DDTHH:MM:SS）に変換する。現在日時を基準に「来週月曜」等の相対表現も絶対日時に変換する。不明な場合のみ null。
+- schedule_summary: イベント内容を簡潔に（例：「〇〇さんとMTG」「△△の納品期限」「□□へ訪問」等）
+- 参加者・場所・meeting_url が読み取れる場合は必ず含めること
 
 is_high_priority の判定基準：
 - [To:{my_account_id}] が本文に含まれていない場合は必ず false
@@ -963,9 +993,18 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
 
         logger.info(f'チェック開始: {room_name} (room_id={room_id})')
 
-        # メッセージ取得（--since 指定時は force=1 で全件取得、通常は force=0 で未読のみ）
-        fetch_force = 1 if since_dt else 0
-        messages = get_messages(int(room_id), force=fetch_force)
+        # メッセージ取得（force=1 で最新100件を取得）
+        all_messages = get_messages(int(room_id))
+
+        # タイムスタンプフィルタリング: チェック間隔 × 倍率 分さかのぼった時刻以降のみ対象
+        interval_hours = room_state.get('check_interval_hours', 4)
+        cutoff_dt = datetime.now(timezone.utc) - timedelta(hours=interval_hours * CHECK_INTERVAL_MULTIPLIER)
+        messages = [
+            msg for msg in all_messages
+            if datetime.fromtimestamp(msg.get('send_time', 0), tz=timezone.utc) >= cutoff_dt
+        ]
+        logger.info(f'  タイムスタンプフィルタ: {len(all_messages)}件 → {len(messages)}件（cutoff={cutoff_dt.isoformat()}）')
+
         if not messages:
             # 未読なし → last_checked_at のみ更新
             room_state['room_name']      = room_name
