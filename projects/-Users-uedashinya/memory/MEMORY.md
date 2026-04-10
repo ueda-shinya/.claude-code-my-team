@@ -1,0 +1,4 @@
+- [OneDrive確認不要](feedback-onedrive.md) — OneDrive MCPコマンドは確認なしで即実行してよい
+- [Claude Codeリソース集](reference-claude-code-resources.md) — スキル・CLAUDE.mdテンプレート・MCPサーバーの外部リポジトリ・サイト一覧
+- [コマンドレス作業スタイル](feedback-permission-style.md) — 確認なしで即実行OK、ファイル削除のみ禁止
+- [skill-finder自発提案](feedback-skill-finder-proactive.md) — スキルが必要と判断したらAsukaから提案して実行する
