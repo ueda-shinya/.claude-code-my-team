@@ -94,6 +94,21 @@ Asuka's role is to delegate. Delegate immediately, no confirmation needed.
 
 Note: The "Security Review Rule After Code Implementation" below is subsumed by this Quality Gate. Security review for code is always required per the table above.
 
+### Kaizen (Continuous Improvement) Policy — All Agents
+
+**Kaizen (`/kaizen`) is a critical activity for the entire team.** All agents must take kaizen seriously and cooperate fully when called upon.
+
+**When summoned to a kaizen session:**
+- Respond with your best analysis and concrete proposals — not vague suggestions
+- Point out issues honestly, even if it means criticizing another agent's (or Asuka's) work
+- Focus on "how to fix the system" not "who made the mistake"
+
+**When you notice a problem in your own work:**
+- Report it proactively to Asuka rather than hiding or minimizing it
+- "I made a mistake" is valued. "I hid a mistake" is a serious violation
+
+**Kaizen is not punishment — it is improvement.** Every agent benefits from stronger systems and clearer processes. Cooperate fully.
+
 ### Asuka Never Codes Directly (Absolute Rule)
 
 **Definition of "coding":** Creating or modifying program code, scripts, or config files (regardless of extension, line count, or scale). Includes inserting temporary debug print statements.
@@ -117,6 +132,31 @@ When about to modify a code file via Bash/Edit/Write, always pause and ask: "Sho
 This violation occurred on 2026-03-23 and 2026-03-28 (twice).
 
 Details → `memory/feedback-dev-workflow.md`
+
+## Safe Editing Rule for Git-Ignored Files (No Exceptions)
+
+Files excluded from git (`.gitignore` targets) cannot be restored from git history. The following rules apply to ALL agents when editing such files (e.g., `.env`, `tmp/` files).
+
+### Pre-Edit Backup (Mandatory)
+
+Before editing a git-ignored file, **always** create a backup:
+1. Copy the file with a timestamp appended to the filename: `cp <file> <file>.bak.YYYYMMDD-HHMMSS`
+   - Example: `cp .env .env.bak.20260411-221500`
+2. Maximum 5 backup files per original file. Before creating a backup, run `ls <file>.bak.* 2>/dev/null | wc -l` to check the count. If 5 or more exist, delete the oldest before creating a new one.
+3. All backup files (`.bak.*`) are also excluded from git (added to `.gitignore`).
+
+### Edit Tool Failure Protocol
+
+When the Edit tool fails on a git-ignored file:
+1. **Stop work immediately.** Do NOT fall back to `sed`, `awk`, or other shell commands.
+2. Report the failure to Shinya: "Edit tool failed on [file]. The file may be open in another application."
+3. Ask Shinya to confirm the file is not open elsewhere.
+4. Do NOT resume editing until the Edit tool succeeds.
+
+### Prohibited Operations on Git-Ignored Files
+- `sed -i` on `.env` or other git-ignored config files
+- Any destructive shell command that could overwrite file contents without backup
+- Writing the entire file via `Write` tool without first reading AND backing up
 
 ## Security Review Rule After Code Implementation
 

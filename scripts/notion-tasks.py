@@ -182,8 +182,11 @@ def update_env_key(key, value):
 
 # ---- Notion API 共通 ----
 
-def notion_request(method, path, data=None, token=None):
-    """Notion API へリクエストを送って JSON を返す"""
+def notion_request(method, path, data=None, token=None, allow_404=False):
+    """
+    Notion API へリクエストを送って JSON を返す。
+    allow_404=True の場合、404 は None を返す（sys.exit しない）。
+    """
     url = f'https://api.notion.com/v1{path}'
     body = json.dumps(data, ensure_ascii=False).encode('utf-8') if data is not None else None
     headers = {
@@ -196,6 +199,8 @@ def notion_request(method, path, data=None, token=None):
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=30) as res:
             return json.loads(res.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
+        if allow_404 and e.code == 404:
+            return None
         try:
             err = json.loads(e.read().decode('utf-8'))
             msg = err.get('message', '詳細不明')
@@ -206,6 +211,28 @@ def notion_request(method, path, data=None, token=None):
     except urllib.error.URLError as e:
         print(f'[ERROR] 接続エラー: {e.reason}')
         sys.exit(1)
+
+
+def search_db_by_title(db_name, token):
+    """
+    Notion Search API で同名のDBを検索する。
+    見つかった場合は最初のDBの id を返す。見つからなければ None を返す。
+    """
+    body = {
+        'filter': {'property': 'object', 'value': 'database'},
+        'query': db_name,
+        'page_size': 100,
+    }
+    result = notion_request('POST', '/search', body, token=token)
+    if not result:
+        return None
+    for db in result.get('results', []):
+        # タイトルが完全一致するDBを探す
+        titles = db.get('title', [])
+        title_text = ''.join(t.get('plain_text', '') for t in titles)
+        if title_text == db_name:
+            return db.get('id', '')
+    return None
 
 
 def notion_query_all(db_id, token, filter_body=None):
@@ -335,8 +362,36 @@ def resolve_single_page(partial_title, token, db_id):
 
 # ---- --create-db ----
 
-def cmd_create_db(parent_page_id, token, env):
+def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
     """新スキーマで Notion DB を作成し、.env を更新する"""
+
+    # ---- チェック1: .envにDB IDがある場合 ----
+    existing_id = env.get('NOTION_TASKS_DB_ID', '')
+    if existing_id and not force:
+        result = notion_request('GET', f'/databases/{existing_id}', token=token, allow_404=True)
+        if result is not None:
+            # DBが存在する → 作成を中断
+            db_title = ''.join(
+                t.get('plain_text', '') for t in result.get('title', [])
+            )
+            print(f'[INFO] 既に存在します: {db_title} ({existing_id})')
+            print('  再作成する場合は --force を指定してください。')
+            sys.exit(1)
+        # 404 → IDが古い/削除済み。チェック2へ進む
+
+    # ---- チェック2: 同名DBを検索 ----
+    if not force:
+        found_id = search_db_by_title('案件管理', token)
+        if found_id:
+            print(f'[INFO] 同名のDBが見つかりました: 案件管理 ({found_id})')
+            print('  このDBを使用する場合は --reuse を指定してください。')
+            print('  新規作成する場合は --force を指定してください。')
+            if reuse:
+                update_env_key('NOTION_TASKS_DB_ID', found_id)
+                print(f'  .env の NOTION_TASKS_DB_ID を更新しました: {found_id}')
+            sys.exit(1)
+
+    # --reuse のみ指定（--force なし）でDBが見つからなかった場合は通常作成
     print(f'案件管理DBを作成中... (parent_page_id: {parent_page_id})')
 
     body = {
@@ -853,6 +908,11 @@ def main():
     # --- コマンド群 ---
     parser.add_argument('--create-db', metavar='PARENT_PAGE_ID',
                         help='新スキーマでDBを作成して .env に書き込む')
+    idempotent_group = parser.add_mutually_exclusive_group()
+    idempotent_group.add_argument('--force', action='store_true',
+                        help='--create-db: 既存DBがあっても強制的に新規作成する')
+    idempotent_group.add_argument('--reuse', action='store_true',
+                        help='--create-db: 同名DBが見つかった場合にそのIDを .env に設定する（新規作成しない）')
     parser.add_argument('--list', action='store_true',
                         help='案件一覧をステータス順で表示')
     parser.add_argument('--add', metavar='タイトル',
@@ -931,7 +991,7 @@ def main():
 
     # --create-db は DB ID 不要
     if args.create_db:
-        cmd_create_db(args.create_db, token, env)
+        cmd_create_db(args.create_db, token, env, force=args.force, reuse=args.reuse)
         return
 
     # それ以外は DB ID が必要

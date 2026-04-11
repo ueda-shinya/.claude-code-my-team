@@ -28,6 +28,10 @@ Notion なぜなぜ分析 報告書管理スクリプト
 
   notion-kaizen.py --alerts
       30日検証期限のチェック（対策実施済み→30日超、30日検証中 を表示）
+
+  notion-kaizen.py --migrate-add-columns
+      既存DBに「なぜ(1回目)」「なぜ(2回目)」「なぜ(3回目)」「真の原因に対する対策」プロパティを追加する
+      ※一度だけ実行すればOK。既にプロパティが存在する場合はスキップ。
 """
 
 import json
@@ -149,8 +153,11 @@ def update_env_key(key, value):
 
 # ---- Notion API 共通 ----
 
-def notion_request(method, path, data=None, token=None):
-    """Notion API へリクエストを送って JSON を返す"""
+def notion_request(method, path, data=None, token=None, allow_404=False):
+    """
+    Notion API へリクエストを送って JSON を返す。
+    allow_404=True の場合、404 は None を返す（sys.exit しない）。
+    """
     url = f'https://api.notion.com/v1{path}'
     body = json.dumps(data, ensure_ascii=False).encode('utf-8') if data is not None else None
     headers = {
@@ -163,6 +170,8 @@ def notion_request(method, path, data=None, token=None):
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=30) as res:
             return json.loads(res.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
+        if allow_404 and e.code == 404:
+            return None
         try:
             err = json.loads(e.read().decode('utf-8'))
             msg = err.get('message', '詳細不明')
@@ -173,6 +182,28 @@ def notion_request(method, path, data=None, token=None):
     except urllib.error.URLError as e:
         print(f'[ERROR] 接続エラー: {e.reason}')
         sys.exit(1)
+
+
+def search_db_by_title(db_name, token):
+    """
+    Notion Search API で同名のDBを検索する。
+    見つかった場合は最初のDBの id を返す。見つからなければ None を返す。
+    """
+    body = {
+        'filter': {'property': 'object', 'value': 'database'},
+        'query': db_name,
+        'page_size': 100,
+    }
+    result = notion_request('POST', '/search', body, token=token)
+    if not result:
+        return None
+    for db in result.get('results', []):
+        # タイトルが完全一致するDBを探す
+        titles = db.get('title', [])
+        title_text = ''.join(t.get('plain_text', '') for t in titles)
+        if title_text == db_name:
+            return db.get('id', '')
+    return None
 
 
 def notion_query_all(db_id, token, filter_body=None):
@@ -236,6 +267,11 @@ def page_to_item(page):
         'ステータス': get_select(p, 'ステータス'),
         '関連ファイル': get_text(p, '関連ファイル'),
         '作成日時': get_created_time(p),
+        # 追加プロパティ（なぜなぜ分析の過程）
+        'なぜ(1回目)': get_text(p, 'なぜ(1回目)'),
+        'なぜ(2回目)': get_text(p, 'なぜ(2回目)'),
+        'なぜ(3回目)': get_text(p, 'なぜ(3回目)'),
+        '真の原因に対する対策': get_text(p, '真の原因に対する対策'),
     }
 
 
@@ -285,8 +321,37 @@ def resolve_single_page(partial_title, token, db_id):
 
 # ---- --create-db ----
 
-def cmd_create_db(parent_page_id, token):
+def cmd_create_db(parent_page_id, token, force=False, reuse=False):
     """なぜなぜ分析DBを作成し、.env を更新する"""
+
+    # ---- チェック1: .envにDB IDがある場合 ----
+    env = load_env()
+    existing_id = env.get('NOTION_KAIZEN_DB_ID', '')
+    if existing_id and not force:
+        result = notion_request('GET', f'/databases/{existing_id}', token=token, allow_404=True)
+        if result is not None:
+            # DBが存在する → 作成を中断
+            db_title = ''.join(
+                t.get('plain_text', '') for t in result.get('title', [])
+            )
+            print(f'[INFO] 既に存在します: {db_title} ({existing_id})')
+            print('  再作成する場合は --force を指定してください。')
+            sys.exit(1)
+        # 404 → IDが古い/削除済み。チェック2へ進む
+
+    # ---- チェック2: 同名DBを検索 ----
+    if not force:
+        found_id = search_db_by_title('なぜなぜ分析', token)
+        if found_id:
+            print(f'[INFO] 同名のDBが見つかりました: なぜなぜ分析 ({found_id})')
+            print('  このDBを使用する場合は --reuse を指定してください。')
+            print('  新規作成する場合は --force を指定してください。')
+            if reuse:
+                update_env_key('NOTION_KAIZEN_DB_ID', found_id)
+                print(f'  .env の NOTION_KAIZEN_DB_ID を更新しました: {found_id}')
+            sys.exit(1)
+
+    # --reuse のみ指定（--force なし）でDBが見つからなかった場合は通常作成
     print(f'なぜなぜ分析DBを作成中... (parent_page_id: {parent_page_id})')
 
     body = {
@@ -342,6 +407,11 @@ def cmd_create_db(parent_page_id, token):
                 }
             },
             '関連ファイル': {'rich_text': {}},
+            # なぜなぜ分析の過程を記録するプロパティ
+            'なぜ(1回目)': {'rich_text': {}},
+            'なぜ(2回目)': {'rich_text': {}},
+            'なぜ(3回目)': {'rich_text': {}},
+            '真の原因に対する対策': {'rich_text': {}},
         },
     }
 
@@ -379,9 +449,11 @@ def cmd_list(token, db_id):
         date_str = item['日付'] if item['日付'] else '-'
         root_str = item['真因カテゴリ'] if item['真因カテゴリ'] else '-'
         summary_str = f'\n      真因: {item["真因（要約）"]}' if item['真因（要約）'] else ''
+        # 「真の原因に対する対策」の有無を表示（詳細は --show で確認）
+        countermeasure_str = '✓対策あり' if item['真の原因に対する対策'] else '対策なし'
         print(
             f'[{item["ステータス"]}] {item["タイトル"]}'
-            f'  {level_str} / {area_str} / {root_str}  ({date_str})'
+            f'  {level_str} / {area_str} / {root_str}  ({date_str})  [{countermeasure_str}]'
             f'{summary_str}'
         )
 
@@ -390,7 +462,8 @@ def cmd_list(token, db_id):
 
 # ---- --add ----
 
-def cmd_add(title, level, area, root_category, root_summary, status, related, date_str, token, db_id):
+def cmd_add(title, level, area, root_category, root_summary, status, related, date_str,
+            why1, why2, why3, countermeasure, token, db_id):
     """報告書を1件追加する"""
     if not date_str:
         date_str = datetime.now(JST).date().isoformat()
@@ -414,6 +487,19 @@ def cmd_add(title, level, area, root_category, root_summary, status, related, da
     if related:
         props['関連ファイル'] = rich_text_prop(related)
 
+    # なぜなぜ分析の過程プロパティ（任意）
+    if why1:
+        props['なぜ(1回目)'] = rich_text_prop(why1)
+
+    if why2:
+        props['なぜ(2回目)'] = rich_text_prop(why2)
+
+    if why3:
+        props['なぜ(3回目)'] = rich_text_prop(why3)
+
+    if countermeasure:
+        props['真の原因に対する対策'] = rich_text_prop(countermeasure)
+
     notion_request('POST', '/pages', {
         'parent': {'database_id': db_id},
         'properties': props,
@@ -421,11 +507,20 @@ def cmd_add(title, level, area, root_category, root_summary, status, related, da
     print(f'追加しました: {title}')
     print(f'  対応レベル: {level} / 領域: {area or "-"} / ステータス: {status}')
     print(f'  真因カテゴリ: {root_category or "-"} / 日付: {date_str}')
+    if why1:
+        print(f'  なぜ(1回目): {why1[:60]}{"..." if len(why1) > 60 else ""}')
+    if why2:
+        print(f'  なぜ(2回目): {why2[:60]}{"..." if len(why2) > 60 else ""}')
+    if why3:
+        print(f'  なぜ(3回目): {why3[:60]}{"..." if len(why3) > 60 else ""}')
+    if countermeasure:
+        print(f'  真の原因に対する対策: {countermeasure[:60]}{"..." if len(countermeasure) > 60 else ""}')
 
 
 # ---- --update ----
 
-def cmd_update(partial_title, new_status, new_level, new_area, token, db_id):
+def cmd_update(partial_title, new_status, new_level, new_area,
+               why1, why2, why3, countermeasure, token, db_id):
     """部分タイトルに一致する報告書のプロパティを更新する"""
     page = resolve_single_page(partial_title, token, db_id)
     item = page_to_item(page)
@@ -450,8 +545,25 @@ def cmd_update(partial_title, new_status, new_level, new_area, token, db_id):
         props['領域'] = {'select': {'name': new_area}}
         changes.append(f'領域: [{item["領域"]}] → [{new_area}]')
 
+    # なぜなぜ分析プロパティ（空文字指定でクリアも可能）
+    if why1 is not None:
+        props['なぜ(1回目)'] = rich_text_prop(why1)
+        changes.append(f'なぜ(1回目): [{item["なぜ(1回目)"]}] → [{why1}]')
+
+    if why2 is not None:
+        props['なぜ(2回目)'] = rich_text_prop(why2)
+        changes.append(f'なぜ(2回目): [{item["なぜ(2回目)"]}] → [{why2}]')
+
+    if why3 is not None:
+        props['なぜ(3回目)'] = rich_text_prop(why3)
+        changes.append(f'なぜ(3回目): [{item["なぜ(3回目)"]}] → [{why3}]')
+
+    if countermeasure is not None:
+        props['真の原因に対する対策'] = rich_text_prop(countermeasure)
+        changes.append(f'真の原因に対する対策: [{item["真の原因に対する対策"]}] → [{countermeasure}]')
+
     if not props:
-        print('[ERROR] 更新するプロパティを --status / --level / --area で指定してください。')
+        print('[ERROR] 更新するプロパティを --status / --level / --area / --why1 / --why2 / --why3 / --countermeasure で指定してください。')
         sys.exit(1)
 
     notion_request('PATCH', f'/pages/{page["id"]}', {'properties': props}, token=token)
@@ -468,14 +580,19 @@ def cmd_show(partial_title, token, db_id):
     item = page_to_item(page)
 
     print(f'== {item["タイトル"]} ==')
-    print(f'  対応レベル    : {item["対応レベル"] if item["対応レベル"] else "-"}')
-    print(f'  日付          : {item["日付"] if item["日付"] else "-"}')
-    print(f'  領域          : {item["領域"] if item["領域"] else "-"}')
-    print(f'  真因カテゴリ  : {item["真因カテゴリ"] if item["真因カテゴリ"] else "-"}')
-    print(f'  真因（要約）  : {item["真因（要約）"] if item["真因（要約）"] else "-"}')
-    print(f'  ステータス    : {item["ステータス"] if item["ステータス"] else "-"}')
-    print(f'  関連ファイル  : {item["関連ファイル"] if item["関連ファイル"] else "-"}')
-    print(f'  作成日時      : {item["作成日時"]}')
+    print(f'  対応レベル        : {item["対応レベル"] if item["対応レベル"] else "-"}')
+    print(f'  日付              : {item["日付"] if item["日付"] else "-"}')
+    print(f'  領域              : {item["領域"] if item["領域"] else "-"}')
+    print(f'  真因カテゴリ      : {item["真因カテゴリ"] if item["真因カテゴリ"] else "-"}')
+    print(f'  真因（要約）      : {item["真因（要約）"] if item["真因（要約）"] else "-"}')
+    print(f'  ステータス        : {item["ステータス"] if item["ステータス"] else "-"}')
+    print(f'  関連ファイル      : {item["関連ファイル"] if item["関連ファイル"] else "-"}')
+    print(f'  作成日時          : {item["作成日時"]}')
+    # なぜなぜ分析の過程
+    print(f'  なぜ(1回目)       : {item["なぜ(1回目)"] if item["なぜ(1回目)"] else "-"}')
+    print(f'  なぜ(2回目)       : {item["なぜ(2回目)"] if item["なぜ(2回目)"] else "-"}')
+    print(f'  なぜ(3回目)       : {item["なぜ(3回目)"] if item["なぜ(3回目)"] else "-"}')
+    print(f'  真の原因に対する対策: {item["真の原因に対する対策"] if item["真の原因に対する対策"] else "-"}')
 
     # ページ本文を取得（ページネーション対応）
     blocks = []
@@ -564,6 +681,50 @@ def cmd_add_block(partial_title, text, token, db_id):
     print(f'  [{today}] {text[:80]}{"..." if len(text) > 80 else ""}')
 
 
+# ---- --migrate-add-columns ----
+
+def cmd_migrate_add_columns(token, db_id):
+    """
+    既存DBに分析過程プロパティ4つを追加する。
+    既にプロパティが存在する場合はスキップ。
+    """
+    # 現在のDBスキーマを取得して既存プロパティを確認
+    db_info = notion_request('GET', f'/databases/{db_id}', token=token)
+    existing_props = set(db_info.get('properties', {}).keys())
+
+    # 追加対象プロパティ（rich_text型）
+    new_props = [
+        'なぜ(1回目)',
+        'なぜ(2回目)',
+        'なぜ(3回目)',
+        '真の原因に対する対策',
+    ]
+
+    # 追加が必要なプロパティだけ抽出
+    to_add = [p for p in new_props if p not in existing_props]
+
+    if not to_add:
+        print('[INFO] 対象プロパティはすべて既に存在します。マイグレーション不要です。')
+        for p in new_props:
+            print(f'  ✓ {p}')
+        return
+
+    # PATCH /databases/{id} でプロパティを追加
+    props_body = {p: {'rich_text': {}} for p in to_add}
+    notion_request('PATCH', f'/databases/{db_id}', {'properties': props_body}, token=token)
+
+    print(f'プロパティを追加しました ({len(to_add)}件):')
+    for p in to_add:
+        print(f'  + {p}')
+
+    # スキップしたプロパティを表示
+    skipped = [p for p in new_props if p in existing_props]
+    if skipped:
+        print(f'スキップ（既存）:')
+        for p in skipped:
+            print(f'  = {p}')
+
+
 # ---- --alerts ----
 
 def cmd_alerts(token, db_id):
@@ -632,6 +793,11 @@ def main():
     # --- コマンド群 ---
     parser.add_argument('--create-db', action='store_true',
                         help='なぜなぜ分析DBを作成して .env に書き込む')
+    idempotent_group = parser.add_mutually_exclusive_group()
+    idempotent_group.add_argument('--force', action='store_true',
+                        help='--create-db: 既存DBがあっても強制的に新規作成する')
+    idempotent_group.add_argument('--reuse', action='store_true',
+                        help='--create-db: 同名DBが見つかった場合にそのIDを .env に設定する（新規作成しない）')
     parser.add_argument('--list', action='store_true',
                         help='報告書一覧をステータス順で表示')
     parser.add_argument('--add', metavar='タイトル',
@@ -644,6 +810,8 @@ def main():
                         help='ページ本文末尾にブロックを追記する')
     parser.add_argument('--alerts', action='store_true',
                         help='30日検証期限のチェック')
+    parser.add_argument('--migrate-add-columns', action='store_true',
+                        help='既存DBに分析過程プロパティ4つを追加する（一度だけ実行）')
 
     # --- --add 用オプション ---
     parser.add_argument('--level', default=None,
@@ -670,6 +838,20 @@ def main():
                         metavar='YYYY-MM-DD',
                         help='日付（省略時は今日）')
 
+    # --- なぜなぜ分析過程オプション（--add と併用） ---
+    parser.add_argument('--why1', default='',
+                        metavar='なぜ(1回目)',
+                        help='なぜ(1回目) — 1段目のなぜ')
+    parser.add_argument('--why2', default='',
+                        metavar='なぜ(2回目)',
+                        help='なぜ(2回目) — 2段目のなぜ')
+    parser.add_argument('--why3', default='',
+                        metavar='なぜ(3回目)',
+                        help='なぜ(3回目) — 3段目のなぜ')
+    parser.add_argument('--countermeasure', default='',
+                        metavar='真の原因に対する対策',
+                        help='真の原因に対する対策の内容')
+
     # --- --add-block 用オプション ---
     parser.add_argument('--text', metavar='テキスト',
                         help='追記するテキスト（--add-block と併用）')
@@ -678,7 +860,7 @@ def main():
 
     # コマンドが何も指定されていない場合はヘルプ表示
     commands = [args.create_db, args.list, args.add, args.update,
-                args.show, args.add_block, args.alerts]
+                args.show, args.add_block, args.alerts, args.migrate_add_columns]
     if not any(commands):
         parser.print_help()
         sys.exit(0)
@@ -696,7 +878,7 @@ def main():
         if not parent_page_id:
             print('[ERROR] .env に NOTION_ASUKA_PAGE_ID が設定されていません。')
             sys.exit(1)
-        cmd_create_db(parent_page_id, token)
+        cmd_create_db(parent_page_id, token, force=args.force, reuse=args.reuse)
         return
 
     # それ以外は DB ID が必要
@@ -732,13 +914,32 @@ def main():
             status=add_status,
             related=args.related,
             date_str=args.date_str,
+            why1=args.why1,
+            why2=args.why2,
+            why3=args.why3,
+            countermeasure=args.countermeasure,
             token=token,
             db_id=db_id,
         )
 
     elif args.update:
-        if not any([args.status, args.level, args.area]):
-            print('[ERROR] --update を使う場合は --status / --level / --area のいずれかを指定してください。')
+        # why1/why2/why3/countermeasure は default='' なので、未指定時は '' が入る
+        # Noneと区別するため、指定された場合のみ更新する（''指定でクリア可能）
+        # argparse の default='' の場合、未指定時も '' になるため、
+        # 指定有無を判別できるよう None をデフォルトとして扱う
+        why1_val = args.why1 if args.why1 != '' else None
+        why2_val = args.why2 if args.why2 != '' else None
+        why3_val = args.why3 if args.why3 != '' else None
+        countermeasure_val = args.countermeasure if args.countermeasure != '' else None
+
+        # 空文字明示指定（クリア目的）を許容するため、引数が実際に渡されたか確認
+        # argparse では default='' と明示指定'' を区別できないため、
+        # 呼び出し時に値がある場合は None 以外として扱う。
+        # ただし現行の仕様上、空文字指定 = クリアとして機能させる。
+        if not any([args.status, args.level, args.area,
+                    why1_val is not None, why2_val is not None,
+                    why3_val is not None, countermeasure_val is not None]):
+            print('[ERROR] --update を使う場合は --status / --level / --area / --why1 / --why2 / --why3 / --countermeasure のいずれかを指定してください。')
             sys.exit(1)
 
         # ステータスのバリデーション
@@ -756,6 +957,10 @@ def main():
             new_status=args.status,
             new_level=new_level,
             new_area=args.area,
+            why1=why1_val,
+            why2=why2_val,
+            why3=why3_val,
+            countermeasure=countermeasure_val,
             token=token,
             db_id=db_id,
         )
@@ -771,6 +976,9 @@ def main():
 
     elif args.alerts:
         cmd_alerts(token, db_id)
+
+    elif args.migrate_add_columns:
+        cmd_migrate_add_columns(token, db_id)
 
 
 if __name__ == '__main__':

@@ -109,6 +109,66 @@ Follow these save location rules:
 
 ---
 
+## SNS Post Production Rules (X / Threads)
+
+When receiving SNS post assignments from Minato (SNS Operations Director), follow the rules below.
+
+### 8 Viral Post Types
+
+Minato will specify the "type to use." Produce copy according to the specified type.
+
+| # | Type | Structure | Target Emotion |
+|---|---|------|----------|
+| 1 | Spouse-Block Type | Everyday event -> empathy | "I know, right!" |
+| 2 | Failure-to-Lesson Type | Own failure -> learning | Trust, empathy |
+| 3 | Authority x Surprise Type | Present a paradox: "Common wisdom is wrong" | "Wait, really?" |
+| 4 | Number Impact Type | Lead with specific numbers | Trust, surprise |
+| 5 | List/Summary Type | Useful info compactly | "Save for later" |
+| 6 | Before/After Type | Contrast past and present | Hope, aspiration |
+| 7 | Question Type | Pose a question to the reader | "I want to chime in!" |
+| 8 | Breaking News/First-Hand Type | Be the first to share | "I should follow this person" |
+
+Combining types is also effective (Number + Failure, Authority + Question, etc.).
+
+### 5 NG Patterns (Never Write These)
+
+| # | NG Pattern | Remedy |
+|---|-----------|--------|
+| 1 | Template-style summary ("Top 3 XX" only) | Add experience. "I tried 3 companies and only one produced results..." |
+| 2 | Stating the obvious condescendingly | Enter from the opposite. "Don't do XX. Start with YY first. Here's why..." |
+| 3 | Information dump with no emotional hook | Add an emotional hook at the opening. "Let me say just one thing" |
+| 4 | Preachy tone ("XX is important") | Use a "sharing a discovery" tone. "Something I realized recently" |
+| 5 | Hype-merchant tone ("OMG" / "Revolutionary" / "You'll lose out") | Gets short-term impressions but loses long-term trust. Never use |
+
+### Platform-Specific Rules for X / Threads
+
+**X (Twitter):**
+- Within 140 characters (strict. AI output often exceeds this. Always re-count)
+- Maximum 2-3 hashtags
+- One message per post
+- Include a "stop the scroll" hook in the first line
+- Assert. Change "might be" to "is"
+
+**Threads:**
+- Within 500 characters recommended (long-form OK but prioritize readability)
+- No hashtags needed
+- Use frequent line breaks for readability
+- Casual conversational tone and empathy-driven content performs well
+- Place keywords in the first line (affects recommendation display to non-followers)
+- Question type is especially effective (algorithm rewards "conversation starters")
+
+### SNS Post Self-Check (Always Verify Before Submission)
+
+- [ ] Does it follow the specified "type"?
+- [ ] "Would it stop the scroll?" (Rewrite if it triggers no emotion)
+- [ ] Does it match none of the 5 NG patterns?
+- [ ] Does the brand tone (first person, sentence endings, NG expressions) match specifications?
+- [ ] Does it touch one of the persona's top 3 pain points?
+- [ ] Is the X version within 140 characters? (re-count required)
+- [ ] Do the X and Threads versions have appropriately different tones?
+
+---
+
 ## Copywriting Knowledge Base (From: Copywriting Fundamentals and Judgment Criteria)
 
 ### 1. Three Core Principles of Copywriting

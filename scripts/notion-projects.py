@@ -126,8 +126,11 @@ def update_env_key(key, value):
 
 # ---- Notion API 共通 ----
 
-def notion_request(method, path, data=None, token=None):
-  """Notion API へリクエストを送って JSON を返す"""
+def notion_request(method, path, data=None, token=None, allow_404=False):
+  """
+  Notion API へリクエストを送って JSON を返す。
+  allow_404=True の場合、404 は None を返す（sys.exit しない）。
+  """
   url = f'https://api.notion.com/v1{path}'
   body = json.dumps(data, ensure_ascii=False).encode('utf-8') if data is not None else None
   headers = {
@@ -140,6 +143,8 @@ def notion_request(method, path, data=None, token=None):
     with urllib.request.urlopen(req, context=SSL_CTX, timeout=30) as res:
       return json.loads(res.read().decode('utf-8'))
   except urllib.error.HTTPError as e:
+    if allow_404 and e.code == 404:
+      return None
     try:
       err = json.loads(e.read().decode('utf-8'))
       msg = err.get('message', '詳細不明')
@@ -150,6 +155,28 @@ def notion_request(method, path, data=None, token=None):
   except urllib.error.URLError as e:
     print(f'[ERROR] 接続エラー: {e.reason}')
     sys.exit(1)
+
+
+def search_db_by_title(db_name, token):
+  """
+  Notion Search API で同名のDBを検索する。
+  見つかった場合は最初のDBの id を返す。見つからなければ None を返す。
+  """
+  body = {
+    'filter': {'property': 'object', 'value': 'database'},
+    'query': db_name,
+    'page_size': 100,
+  }
+  result = notion_request('POST', '/search', body, token=token)
+  if not result:
+    return None
+  for db in result.get('results', []):
+    # タイトルが完全一致するDBを探す
+    titles = db.get('title', [])
+    title_text = ''.join(t.get('plain_text', '') for t in titles)
+    if title_text == db_name:
+      return db.get('id', '')
+  return None
 
 
 def notion_query_all(db_id, token, filter_body=None):
@@ -265,8 +292,37 @@ def resolve_single_page(partial_name, token, db_id):
 
 # ---- --create-db ----
 
-def cmd_create_db(token, parent_page_id):
+def cmd_create_db(parent_page_id, token, force=False, reuse=False):
   """プロジェクト管理DBを作成し、.env を更新する"""
+
+  # ---- チェック1: .envにDB IDがある場合 ----
+  env = load_env()
+  existing_id = env.get('NOTION_PROJECTS_DB_ID', '')
+  if existing_id and not force:
+    result = notion_request('GET', f'/databases/{existing_id}', token=token, allow_404=True)
+    if result is not None:
+      # DBが存在する → 作成を中断
+      db_title = ''.join(
+        t.get('plain_text', '') for t in result.get('title', [])
+      )
+      print(f'[INFO] 既に存在します: {db_title} ({existing_id})')
+      print('  再作成する場合は --force を指定してください。')
+      sys.exit(1)
+    # 404 → IDが古い/削除済み。チェック2へ進む
+
+  # ---- チェック2: 同名DBを検索 ----
+  if not force:
+    found_id = search_db_by_title('プロジェクト管理', token)
+    if found_id:
+      print(f'[INFO] 同名のDBが見つかりました: プロジェクト管理 ({found_id})')
+      print('  このDBを使用する場合は --reuse を指定してください。')
+      print('  新規作成する場合は --force を指定してください。')
+      if reuse:
+        update_env_key('NOTION_PROJECTS_DB_ID', found_id)
+        print(f'  .env の NOTION_PROJECTS_DB_ID を更新しました: {found_id}')
+      sys.exit(1)
+
+  # --reuse のみ指定（--force なし）でDBが見つからなかった場合は通常作成
   print(f'プロジェクト管理DBを作成中... (parent_page_id: {parent_page_id})')
 
   body = {
@@ -491,6 +547,13 @@ def main():
   group.add_argument('--show', metavar='部分名称', help='プロジェクトの詳細を表示する')
   group.add_argument('--add-block', metavar='部分名称', help='ページ本文に作業履歴を追記する')
 
+  # --create-db サブオプション（--force と --reuse は排他）
+  idempotent_group = parser.add_mutually_exclusive_group()
+  idempotent_group.add_argument('--force', action='store_true',
+                      help='--create-db: 既存DBがあっても強制的に新規作成する')
+  idempotent_group.add_argument('--reuse', action='store_true',
+                      help='--create-db: 同名DBが見つかった場合にそのIDを .env に設定する（新規作成しない）')
+
   # オプション
   parser.add_argument('--filter-status', metavar='ステータス', help='一覧のステータスフィルタ')
   parser.add_argument('--status', metavar='ステータス', help=f'ステータス: {" / ".join(STATUS_OPTIONS)}')
@@ -517,7 +580,7 @@ def main():
     if not parent_page_id:
       print('[ERROR] .env に NOTION_ASUKA_PAGE_ID が設定されていません。')
       sys.exit(1)
-    cmd_create_db(token, parent_page_id)
+    cmd_create_db(parent_page_id, token, force=args.force, reuse=args.reuse)
     return
 
   # 以降は DB ID が必須
