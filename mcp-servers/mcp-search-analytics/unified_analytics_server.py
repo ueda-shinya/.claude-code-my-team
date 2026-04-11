@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Unified Google Analytics MCP Server - MINIMAL MULTI-SITE CHANGES
-Only modified the parts needed to support both sites
+Unified Google Analytics MCP Server
+Supports multiple sites (officeueda, ussaijo) via shared credentials
 """
 
 import json
@@ -49,11 +49,11 @@ class UnifiedAnalyticsMCPServer:
         
         # 両サイトの設定を環境変数から読み込む（デフォルト値なし）
         self.sites = {
-            'vesivanov': {
+            'officeueda': {
                 'gsc_url': os.environ.get('GSC_SITE_URL'),
                 'ga4_property_id': os.environ.get('GA4_PROPERTY_ID')
             },
-            'mebelcenter': {
+            'ussaijo': {
                 'gsc_url': os.environ.get('MEBELCENTER_GSC_URL'),
                 'ga4_property_id': os.environ.get('MEBELCENTER_GA4_PROPERTY_ID')
             }
@@ -61,10 +61,10 @@ class UnifiedAnalyticsMCPServer:
 
         # 全サイトの必須環境変数が設定されているか検証する
         required_env = {
-            'GSC_SITE_URL': self.sites['vesivanov']['gsc_url'],
-            'GA4_PROPERTY_ID': self.sites['vesivanov']['ga4_property_id'],
-            'MEBELCENTER_GSC_URL': self.sites['mebelcenter']['gsc_url'],
-            'MEBELCENTER_GA4_PROPERTY_ID': self.sites['mebelcenter']['ga4_property_id'],
+            'GSC_SITE_URL': self.sites['officeueda']['gsc_url'],
+            'GA4_PROPERTY_ID': self.sites['officeueda']['ga4_property_id'],
+            'MEBELCENTER_GSC_URL': self.sites['ussaijo']['gsc_url'],
+            'MEBELCENTER_GA4_PROPERTY_ID': self.sites['ussaijo']['ga4_property_id'],
         }
         missing = [key for key, val in required_env.items() if not val]
         if missing:
@@ -85,7 +85,7 @@ class UnifiedAnalyticsMCPServer:
         async def handle_list_tools() -> List[Tool]:
             """List available analytics tools"""
             return [
-                # GSC Tools - CHANGE 2: Add site parameter to all tools
+                # GSC Tools
                 Tool(
                     name="gsc_search_analytics",
                     description="Get Google Search Console search analytics data",
@@ -94,9 +94,9 @@ class UnifiedAnalyticsMCPServer:
                         "properties": {
                             "site": {
                                 "type": "string",
-                                "enum": ["vesivanov", "mebelcenter"],
-                                "description": "Which site to analyze: vesivanov or mebelcenter",
-                                "default": "vesivanov"
+                                "enum": ["officeueda", "ussaijo"],
+                                "description": "Which site to analyze: officeueda or ussaijo",
+                                "default": "officeueda"
                             },
                             "start_date": {"type": "string", "description": "Start date in YYYY-MM-DD format"},
                             "end_date": {"type": "string", "description": "End date in YYYY-MM-DD format"},
@@ -118,9 +118,9 @@ class UnifiedAnalyticsMCPServer:
                         "properties": {
                             "site": {
                                 "type": "string",
-                                "enum": ["vesivanov", "mebelcenter"],
-                                "description": "Which site to analyze: vesivanov or mebelcenter",
-                                "default": "vesivanov"
+                                "enum": ["officeueda", "ussaijo"],
+                                "description": "Which site to analyze: officeueda or ussaijo",
+                                "default": "officeueda"
                             },
                             "start_date": {"type": "string", "description": "Start date in YYYY-MM-DD format"},
                             "end_date": {"type": "string", "description": "End date in YYYY-MM-DD format"},
@@ -130,7 +130,7 @@ class UnifiedAnalyticsMCPServer:
                     }
                 ),
                 
-                # GA4 Tools - CHANGE 2: Add site parameter to all tools
+                # GA4 Tools
                 Tool(
                     name="ga4_traffic_overview",
                     description="Get GA4 traffic overview with key metrics",
@@ -139,9 +139,9 @@ class UnifiedAnalyticsMCPServer:
                         "properties": {
                             "site": {
                                 "type": "string",
-                                "enum": ["vesivanov", "mebelcenter"],
-                                "description": "Which site to analyze: vesivanov or mebelcenter",
-                                "default": "vesivanov"
+                                "enum": ["officeueda", "ussaijo"],
+                                "description": "Which site to analyze: officeueda or ussaijo",
+                                "default": "officeueda"
                             },
                             "start_date": {"type": "string", "description": "Start date in YYYY-MM-DD format"},
                             "end_date": {"type": "string", "description": "End date in YYYY-MM-DD format"}
@@ -157,9 +157,9 @@ class UnifiedAnalyticsMCPServer:
                         "properties": {
                             "site": {
                                 "type": "string",
-                                "enum": ["vesivanov", "mebelcenter"],
-                                "description": "Which site to analyze: vesivanov or mebelcenter",
-                                "default": "vesivanov"
+                                "enum": ["officeueda", "ussaijo"],
+                                "description": "Which site to analyze: officeueda or ussaijo",
+                                "default": "officeueda"
                             },
                             "start_date": {"type": "string", "description": "Start date in YYYY-MM-DD format"},
                             "end_date": {"type": "string", "description": "End date in YYYY-MM-DD format"},
@@ -182,9 +182,9 @@ class UnifiedAnalyticsMCPServer:
                         "properties": {
                             "site": {
                                 "type": "string",
-                                "enum": ["vesivanov", "mebelcenter"],
-                                "description": "Which site to analyze: vesivanov or mebelcenter",
-                                "default": "vesivanov"
+                                "enum": ["officeueda", "ussaijo"],
+                                "description": "Which site to analyze: officeueda or ussaijo",
+                                "default": "officeueda"
                             },
                             "start_date": {"type": "string", "description": "Start date in YYYY-MM-DD format"},
                             "end_date": {"type": "string", "description": "End date in YYYY-MM-DD format"},
@@ -194,7 +194,7 @@ class UnifiedAnalyticsMCPServer:
                     }
                 ),
                 
-                # Combined Analysis Tools - CHANGE 2: Add site parameter
+                # Combined Analysis Tools
                 Tool(
                     name="combined_performance_report",
                     description="Combined GSC + GA4 performance analysis for a date range",
@@ -203,9 +203,9 @@ class UnifiedAnalyticsMCPServer:
                         "properties": {
                             "site": {
                                 "type": "string",
-                                "enum": ["vesivanov", "mebelcenter"],
-                                "description": "Which site to analyze: vesivanov or mebelcenter",
-                                "default": "vesivanov"
+                                "enum": ["officeueda", "ussaijo"],
+                                "description": "Which site to analyze: officeueda or ussaijo",
+                                "default": "officeueda"
                             },
                             "start_date": {"type": "string", "description": "Start date in YYYY-MM-DD format"},
                             "end_date": {"type": "string", "description": "End date in YYYY-MM-DD format"}
@@ -221,9 +221,9 @@ class UnifiedAnalyticsMCPServer:
                         "properties": {
                             "site": {
                                 "type": "string",
-                                "enum": ["vesivanov", "mebelcenter"],
-                                "description": "Which site to analyze: vesivanov or mebelcenter",
-                                "default": "vesivanov"
+                                "enum": ["officeueda", "ussaijo"],
+                                "description": "Which site to analyze: officeueda or ussaijo",
+                                "default": "officeueda"
                             },
                             "page_path": {"type": "string", "description": "Page path to analyze (e.g., '/blog/article')"},
                             "start_date": {"type": "string", "description": "Start date in YYYY-MM-DD format"},
@@ -269,7 +269,7 @@ class UnifiedAnalyticsMCPServer:
         async def handle_list_resources() -> List[Resource]:
             """List available analytics resources"""
             resources = []
-            for site in ['vesivanov', 'mebelcenter']:
+            for site in ['officeueda', 'ussaijo']:
                 for period, description in [
                     ("today", "Today's Analytics Dashboard"),
                     ("yesterday", "Yesterday's Analytics Dashboard"),
@@ -340,8 +340,8 @@ class UnifiedAnalyticsMCPServer:
     async def _initialize_services(self):
         """Initialize both GSC and GA4 services with shared credentials"""
         try:
-            print(f"[INFO] Initializing services with credentials from: {self.credentials_path}")
-            
+            print(f"[INFO] Initializing services with credentials from: {self.credentials_path}", file=sys.stderr)
+
             # Load credentials with both scopes
             credentials = service_account.Credentials.from_service_account_file(
                 self.credentials_path,
@@ -350,28 +350,27 @@ class UnifiedAnalyticsMCPServer:
                     'https://www.googleapis.com/auth/analytics.readonly'
                 ]
             )
-            
+
             # Initialize GSC service
             self.gsc_service = build('searchconsole', 'v1', credentials=credentials)
-            print("[SUCCESS] GSC service initialized")
-            
+            print("[SUCCESS] GSC service initialized", file=sys.stderr)
+
             # Initialize GA4 client
             self.ga4_client = BetaAnalyticsDataClient(credentials=credentials)
-            print("[SUCCESS] GA4 client initialized")
+            print("[SUCCESS] GA4 client initialized", file=sys.stderr)
             
         except Exception as e:
             error_msg = f"Failed to initialize services: {str(e)}"
             print(f"[ERROR] {error_msg}", file=sys.stderr)
             raise Exception(error_msg)
     
-    # CHANGE 3: Modify methods to accept site parameter and use site config
     def _validate_site(self, site: str) -> None:
         """siteパラメータの入力検証。不正な値の場合はValueErrorを送出する"""
         if site not in self.sites:
             raise ValueError(f"Unknown site: {site}. Valid sites: {list(self.sites.keys())}")
 
     async def _gsc_search_analytics(self, start_date: str, end_date: str,
-                                   site: str = "vesivanov",
+                                   site: str = "officeueda",
                                    dimensions: Optional[List[str]] = None,
                                    row_limit: int = 1000) -> Dict[str, Any]:
         """Get GSC search analytics data"""
@@ -411,7 +410,7 @@ class UnifiedAnalyticsMCPServer:
             raise Exception(f"GSC API error: {str(e)}")
     
     async def _gsc_top_queries(self, start_date: str, end_date: str, 
-                              site: str = "vesivanov", limit: int = 50) -> Dict[str, Any]:
+                              site: str = "officeueda", limit: int = 50) -> Dict[str, Any]:
         """Get top queries from GSC"""
         return await self._gsc_search_analytics(
             start_date=start_date,
@@ -421,10 +420,9 @@ class UnifiedAnalyticsMCPServer:
             row_limit=limit
         )
     
-    # GA4 Methods - CHANGE 3: Add site parameter
     async def _ga4_run_report(self, dimensions: List[str], metrics: List[str],
                              start_date: str, end_date: str,
-                             site: str = "vesivanov", limit: int = 100) -> Dict[str, Any]:
+                             site: str = "officeueda", limit: int = 100) -> Dict[str, Any]:
         """Run a GA4 report"""
 
         # siteパラメータの入力検証
@@ -471,7 +469,7 @@ class UnifiedAnalyticsMCPServer:
             raise Exception(f"GA4 API error: {str(e)}")
     
     async def _ga4_traffic_overview(self, start_date: str, end_date: str, 
-                                   site: str = "vesivanov") -> Dict[str, Any]:
+                                   site: str = "officeueda") -> Dict[str, Any]:
         """Get GA4 traffic overview"""
         metrics = [
             "sessions", "totalUsers", "newUsers", "screenPageViews", 
@@ -488,7 +486,7 @@ class UnifiedAnalyticsMCPServer:
         return result
     
     async def _ga4_top_pages(self, start_date: str, end_date: str, 
-                            site: str = "vesivanov",
+                            site: str = "officeueda",
                             metric: str = "screenPageViews", limit: int = 20) -> Dict[str, Any]:
         """Get top pages from GA4"""
         dimensions = ["pagePath", "pageTitle"]
@@ -497,16 +495,15 @@ class UnifiedAnalyticsMCPServer:
         return await self._ga4_run_report(dimensions, metrics, start_date, end_date, site, limit)
     
     async def _ga4_acquisition_report(self, start_date: str, end_date: str, 
-                                     site: str = "vesivanov", limit: int = 25) -> Dict[str, Any]:
+                                     site: str = "officeueda", limit: int = 25) -> Dict[str, Any]:
         """Get GA4 acquisition data"""
         dimensions = ["sessionSource", "sessionMedium"]
         metrics = ["sessions", "totalUsers", "newUsers", "bounceRate", "averageSessionDuration"]
         
         return await self._ga4_run_report(dimensions, metrics, start_date, end_date, site, limit)
     
-    # Combined Analysis Methods - CHANGE 3: Add site parameter
     async def _combined_performance_report(self, start_date: str, end_date: str, 
-                                          site: str = "vesivanov") -> Dict[str, Any]:
+                                          site: str = "officeueda") -> Dict[str, Any]:
         """Generate combined GSC + GA4 performance report"""
         
         # Get GSC data
@@ -542,7 +539,7 @@ class UnifiedAnalyticsMCPServer:
         }
     
     async def _page_analysis(self, page_path: str, start_date: str, end_date: str, 
-                            site: str = "vesivanov") -> Dict[str, Any]:
+                            site: str = "officeueda") -> Dict[str, Any]:
         """Analyze specific page across both GSC and GA4"""
         
         # GSC data for specific page
@@ -592,27 +589,27 @@ class UnifiedAnalyticsMCPServer:
 async def main():
     """Main server entry point"""
     
-    print("[START] Starting Unified Analytics MCP Server...")
-    
+    print("[START] Starting Unified Analytics MCP Server...", file=sys.stderr)
+
     # Load environment variables from .env file
     load_dotenv()
-    print("[SUCCESS] Environment variables loaded")
-    
+    print("[SUCCESS] Environment variables loaded", file=sys.stderr)
+
     # Configuration - get from environment variables
     credentials_path = os.environ.get('ANALYTICS_CREDENTIALS_PATH')
-    
-    print(f"[INFO] Credentials path: {credentials_path}")
-    
+
+    print(f"[INFO] Credentials path: {credentials_path}", file=sys.stderr)
+
     if not credentials_path:
         print("[ERROR] Error: ANALYTICS_CREDENTIALS_PATH environment variable is required", file=sys.stderr)
         sys.exit(1)
-    
+
     if not os.path.exists(credentials_path):
         print(f"[ERROR] Error: Credentials file not found at {credentials_path}", file=sys.stderr)
         sys.exit(1)
-    
-    print("[SUCCESS] All configuration checks passed")
-    
+
+    print("[SUCCESS] All configuration checks passed", file=sys.stderr)
+
     # Test credentials quickly
     try:
         credentials = service_account.Credentials.from_service_account_file(
@@ -622,40 +619,40 @@ async def main():
                 'https://www.googleapis.com/auth/analytics.readonly'
             ]
         )
-        print("[SUCCESS] Credentials loaded successfully")
+        print("[SUCCESS] Credentials loaded successfully", file=sys.stderr)
     except Exception as e:
         print(f"[ERROR] Error loading credentials: {e}", file=sys.stderr)
         sys.exit(1)
-    
+
     # Create and run server
-    print("[INFO] Creating analytics server...")
+    print("[INFO] Creating analytics server...", file=sys.stderr)
     try:
         analytics_server = UnifiedAnalyticsMCPServer(credentials_path)
-        print("[SUCCESS] Analytics server created successfully")
-        print(f"[INFO] Configured sites: vesivanov, mebelcenter")
+        print("[SUCCESS] Analytics server created successfully", file=sys.stderr)
+        print(f"[INFO] Configured sites: officeueda, ussaijo", file=sys.stderr)
     except Exception as e:
         print(f"[ERROR] Error creating server: {e}", file=sys.stderr)
         sys.exit(1)
-    
+
     # Run the server with proper MCP protocol
-    print("[INFO] Starting MCP stdio server...")
+    print("[INFO] Starting MCP stdio server...", file=sys.stderr)
     try:
         async with stdio_server() as (read_stream, write_stream):
-            print("[SUCCESS] MCP server is running and waiting for connections...")
-            print("[INFO] Server ready to receive requests from Claude Desktop")
-            
+            print("[SUCCESS] MCP server is running and waiting for connections...", file=sys.stderr)
+            print("[INFO] Server ready to receive requests from Claude Desktop", file=sys.stderr)
+
             # Run the server using the correct MCP pattern
             await analytics_server.server.run(
                 read_stream,
                 write_stream,
                 analytics_server.server.create_initialization_options()
             )
-                
+
     except KeyboardInterrupt:
-        print("[INFO] Server stopped by user")
+        print("[INFO] Server stopped by user", file=sys.stderr)
     except Exception as e:
-        print(f"[ERROR] Error running server: {e}")
-        print(f"[ERROR] Error type: {type(e).__name__}")
+        print(f"[ERROR] Error running server: {e}", file=sys.stderr)
+        print(f"[ERROR] Error type: {type(e).__name__}", file=sys.stderr)
         import traceback
         traceback.print_exc()
         sys.exit(1)

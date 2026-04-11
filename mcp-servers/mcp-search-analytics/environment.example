@@ -8,4 +8,8 @@ ANALYTICS_CREDENTIALS_PATH=/path/to/your/service-account-credentials.json
 GSC_SITE_URL=https://your-website.com
 
 # Your Google Analytics 4 Property ID (e.g., 123456789)
-GA4_PROPERTY_ID=your-ga4-property-id 
+GA4_PROPERTY_ID=your-ga4-property-id
+
+# Second site (ussaijo) configuration
+MEBELCENTER_GSC_URL=https://your-second-site.com
+MEBELCENTER_GA4_PROPERTY_ID=your-second-ga4-property-id

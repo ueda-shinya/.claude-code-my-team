@@ -48,6 +48,7 @@ onedrive-mcp-venv/
 *-venv/
 .venv/
 **/.venv/
+**/venv/
 
 # ── Python キャッシュ ────────────────────────────────────
 __pycache__/

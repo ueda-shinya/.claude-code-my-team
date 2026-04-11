@@ -34,12 +34,12 @@
 - メール自動化 Phase 1：mail-check.py の動作確認（`--dry-run` → 本番実行）
 - メール自動化にもスケジュール登録・変更検出を追加（Chatwork版と同様）
 - Chatwork 一次返信が発動したとき LINE WORKS 通知が届くか実動作確認（2026-03-30修正済み・未確認）
-- **hourei MCPサーバーの追加**：`claude mcp add hourei --scope user -- npx -y hourei-mcp-server`（e-Gov法令API。ケンの法務判断で条文参照に使用。Mac側は追加済み）
-- **git post-merge hookの配置**：Mac側で `cross-platform-check.py` が `post-merge` hookで自動発火する仕組みを作成済み。Win側の `.git/hooks/post-merge` にも同じファイルを配置する必要あり（Mac側の `.git/hooks/post-merge` を参考に）
+- ~~hourei MCPサーバーの追加~~ → **4/11 完了**
+- ~~git post-merge hookの配置~~ → **4/11 完了**
 
 ### PC不問
 - ~~GA4 MCPサーバー 認証セットアップ~~ → **4/11 完了**（analytics-mcp + search-analytics 両方接続確認済み）
-- GA4 MCPサーバー リネーム: search-analytics のサイト名を vesivanov→officeueda / mebelcenter→ussaijo に変更（動作に支障なし・後日対応）
+- ~~GA4 MCPサーバー リネーム~~ → **4/11 完了**（vesivanov→officeueda / mebelcenter→ussaijo + サクラレビュー済み）
 - エージェント精度向上ラウンドテーブル（日程未定・knowledge-buffer.mdに議題保存済み）
 - 広告の直帰率改善をレンに相談（instagram/cpc: 95.2%、google/cpc: 83.3%）※2026-04-11 GA4更新
 - ~~オフィスウエダの今後の事業展開について話し合う~~ → **4/11 ラウンドテーブル実施済み** → `clients/officeueda/reports/20260411_business-plan.md`
@@ -58,6 +58,7 @@
 [2026-04-05] メールにスケジュール登録・変更検出を追加するタイミングで、カレンダー処理を `calendar_utils.py` として共通モジュールに切り出す（chatwork-sync.py・mail-check.py 両方から import して使う構成）
 [2026-04-09] skill.md（英語版）を skill.ja.md に同期する（カナタにフォアグラウンドで依頼すること。バックグラウンドだと権限プロンプトに応答できず失敗する）
 [2026-04-10] has_schedule除外条件に「スケジュール確定の報告はfalseにしない」の但し書きを追加する（chatwork-sync.py の build_analyze_prompt 内）
+[2026-04-11] Mac側の .env に `NOTION_KAIZEN_DB_ID=33eb7112-f5f8-8127-bf9f-fb119bbac7e2` を追加する（重複DB発生防止。Win側は設定済み）
 
 
 
