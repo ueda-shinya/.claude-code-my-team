@@ -69,3 +69,4 @@ Thumbs.db
 google-oauth-token*.json
 mcp-google-calendar-token.json
 history.jsonl
+mcp-servers/
