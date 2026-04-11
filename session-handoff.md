@@ -9,6 +9,14 @@
 ### 完了済み
 - ラウンドテーブル実施（ナギ・レン・ツムギ）→ 方針決定
 - ミナト（sns-director）エージェント作成・リナ検証済み
+- x-auto-wizardの知見をミナト・コトに反映・リナ検証済み
+- Notion「プロジェクト管理」DB新設 + スクリプト（notion-projects.py / NOTION_PROJECTS_DB_ID）
+- レン月間テーマ・KPI初期設定済み
+- 初週投稿カレンダー作成・型指定済み（`clients/officeueda/sns/calendar/2026-04-W3.md`）
+- twitter-mcp 導入済み（`~/.claude/mcp-servers/twitter-mcp/` / APIキー設定待ち）
+- meta-mcp 導入済み（`~/.claude/mcp-servers/meta-mcp/` / APIキー設定待ち）
+- 初週コンテンツ制作完了（コト7本 + ハル2本 + 画像3点）
+- Notionに投稿内容アップ済み
 
 ### 決定事項
 - アカウント統合1本（Web + AI を「DXまるごと相談」で一本化）
@@ -16,14 +24,25 @@
 - Instagram広告は一旦停止
 - 投稿実行: 初期2-3ヶ月はシンヤさん手動 → 安定後にAPI自動化検討
 - シンヤさんの関与: 月1承認 + 事例素材提供 + 月1顔出し投稿
+- 所在地: 広島県（※宇和島ではない）
 
-### 次にやること（再起動後）
-1. Notion「プロジェクト管理」DB新設 + スクリプト作成（シュウに依頼）
-2. レンに月間テーマ・KPI初期設定を依頼
-3. ミナトに初月の投稿カレンダーを作成させる
+### 次にやること
+1. **3人の意見を仕組みに反映**（レン・ミナト・コト共通指摘）— 初週データ記録フロー、判定基準設定、次週フィードバックループをミナトの運用フロー（sns-director.ja.md）に組み込む
+2. **Notionの投稿文表示の改善** — シンヤさんのイメージと違ったので修正（どう変えたいかヒアリングから）
+3. X / Threads APIキー取得・設定（シンヤさん作業）
+4. Xアカウント開設・プロフィール設定
+5. 月曜画像のFigma仕上げ（L1+L2合成 + 屋号テキスト）
+6. 投稿開始（4/14〜）
 
 ### チーム体制
 レン（戦略）→ ミナト（実行ディレクション）→ コト/ハル/ルナ（制作）→ シンヤさん（投稿・月次承認）
+
+### 関連ファイル
+- 投稿カレンダー: `~/.claude/clients/officeueda/sns/calendar/2026-04-W3.md`
+- 投稿テキスト: `~/.claude/clients/officeueda/sns/drafts/2026-04-W3-posts.md`
+- Threads長文: `~/.claude/clients/officeueda/sns/drafts/2026-04-W3-threads-long.md`
+- 画像: `~/.claude/clients/officeueda/sns/images/`
+- x-auto-wizard: `~/.claude/reports/x-auto-wizard.md`
 
 ---
 
