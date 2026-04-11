@@ -2,3 +2,5 @@
 - [Claude Codeリソース集](reference-claude-code-resources.md) — スキル・CLAUDE.mdテンプレート・MCPサーバーの外部リポジトリ・サイト一覧
 - [コマンドレス作業スタイル](feedback-permission-style.md) — 確認なしで即実行OK、ファイル削除のみ禁止
 - [skill-finder自発提案](feedback-skill-finder-proactive.md) — スキルが必要と判断したらAsukaから提案して実行する
+- [テンプレ販売・規約ガイド](../knowledge/template-sales/anthropic-terms-guide.md) — Anthropic規約上のテンプレ販売可否・商標制限・特商法対応
+- [サービス化・日常底上げ戦略](../knowledge/template-sales/daily-improvement-strategy.md) — Why併記・成果数値化・低頻度エージェント実戦投入の3点

@@ -6,6 +6,9 @@
 .credentials.json
 mcp-needs-auth-cache.json
 
+# サービスアカウントキー等の認証情報ディレクトリ（漏洩すると不正利用される）
+credentials/
+
 # LINE WORKS Private Key（漏洩すると不正利用される）
 line-works-bot/*.key
 line-works-bot/*.pem
