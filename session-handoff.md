@@ -15,6 +15,7 @@
 - **git post-merge hookの配置**：Mac側で `cross-platform-check.py` が `post-merge` hookで自動発火する仕組みを作成済み。Win側の `.git/hooks/post-merge` にも同じファイルを配置する必要あり（Mac側の `.git/hooks/post-merge` を参考に）
 
 ### PC不問
+- **GA4 MCPサーバー 認証セットアップ**（2026-04-11追加）→ 下記「中断中の作業」に詳細あり
 - エージェント精度向上ラウンドテーブル（日程未定・knowledge-buffer.mdに議題保存済み）
 - 広告の直帰率改善をレンに相談（instagram/cpc: 95.2%、google/cpc: 83.3%）※2026-04-11 GA4更新
 - ~~オフィスウエダの今後の事業展開について話し合う~~ → **4/11 ラウンドテーブル実施済み** → `clients/officeueda/reports/20260411_business-plan.md`
@@ -38,6 +39,62 @@
 ---
 
 ## 中断中の作業
+
+### 作業中: GA4 MCPサーバー 認証セットアップ（2026-04-11）
+
+GA4データ分析・マーケ支援のためのMCPサーバー2つを導入済み。認証セットアップが残っている。
+
+**導入済みMCP：**
+- `analytics-mcp`（Google公式）— GA4データ取得・レポート・広告分析
+- `search-analytics`（GSC統合版）— SEOキーワード分析・GA4+GSC相関
+
+**settings.json 登録済み、コードレビュー済み。認証のみ未完了。**
+
+**セットアップ手順：**
+
+#### Step 1: Google Cloud Console でサービスアカウント作成
+1. https://console.cloud.google.com/ にアクセス
+2. 「IAMと管理」→「サービスアカウント」→「サービスアカウントを作成」
+3. 名前: `ga4-mcp`（任意）
+4. 役割:「閲覧者」（Viewer）を付与
+5. 「キー」タブ → 「鍵を追加」→「新しい鍵を作成」→ JSON を選択 → ダウンロード
+
+#### Step 2: GA4プロパティへのアクセス権付与
+1. GA4管理画面 → 「プロパティのアクセス管理」
+2. サービスアカウントのメールアドレス（`ga4-mcp@xxx.iam.gserviceaccount.com`）を「閲覧者」で追加
+3. search-analytics でGSCも使う場合: Google Search Console → 設定 → ユーザーと権限 → 同じメールを追加
+
+#### Step 3: JSONキーの配置
+```bash
+# ダウンロードしたJSONを配置
+cp ~/Downloads/xxxx.json ~/.claude/credentials/ga4-service-account.json
+```
+
+#### Step 4: search-analytics の .env 編集
+```bash
+# ファイル: ~/.claude/mcp-servers/mcp-search-analytics/.env
+# 以下を実際の値に書き換え:
+ANALYTICS_CREDENTIALS_PATH=/Users/uedashinya/.claude/credentials/ga4-service-account.json
+GSC_SITE_URL=sc-domain:実際のドメイン
+GA4_PROPERTY_ID=実際のプロパティID
+# 2サイト目がなければ MEBELCENTER_* は仮値でOK（起動時チェックで弾かれるので要対応）
+```
+
+#### Step 5: Claude Code 再起動
+再起動後、MCPツールが使えるようになる。
+
+**確認コマンド（再起動後）：**
+- analytics-mcp: `get_account_summaries` が呼べればOK
+- search-analytics: GSCデータが取得できればOK
+
+**背景:** マーケ支援の自動化基盤として導入。分析結果 → Ren（マーケティング）が施策提案 → 広告運用・SEO対策をエージェントで回すのがゴール。詳細は `knowledge/template-sales/daily-improvement-strategy.md` 参照。
+
+**Sakura レビュー残件（Medium 2点、次回改善でOK）：**
+- `_initialize_services` の raise メッセージを汎用化
+- `load_dotenv()` にファイルパスを明示指定
+対象: `~/.claude/mcp-servers/mcp-search-analytics/unified_analytics_server.py`
+
+---
 
 ### 作業中①: メール自動化 Phase 1
 
