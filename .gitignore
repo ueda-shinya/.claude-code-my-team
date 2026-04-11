@@ -46,6 +46,8 @@ mcp.json
 # ── Python 仮想環境（PC固有・Gitに上げない）────────────────
 onedrive-mcp-venv/
 *-venv/
+.venv/
+**/.venv/
 
 # ── Python キャッシュ ────────────────────────────────────
 __pycache__/
