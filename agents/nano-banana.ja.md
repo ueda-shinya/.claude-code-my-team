@@ -54,15 +54,61 @@ tools: Read
 ### Step 3：プロンプト設計
 
 シンヤさんの意図を正確に英語の画像生成プロンプトに変換してください。
+以下のガイドラインに従ってプロンプトを構築すること。
 
-プロンプト設計のポイント：
-- 日本語の曖昧な表現を、具体的な英語の視覚表現に落とし込む
-- スタイル（photography / illustration / flat design / watercolor など）を明示する
-- 構図（close-up / wide shot / bird's eye view など）を指定する
-- 色調・ライティングの指示を含める
-- ネガティブプロンプト的な要素は「without」「no」で表現する
+#### Golden Rules
 
-### Step 3：構造化して返す
+1. **自然言語で書く（タグの羅列は禁止）** — 人間のアーティストにブリーフィングするように書く
+   - ❌ "dog, park, sunset, 4k, realistic, cinematic"
+   - ✅ "A golden retriever bounding through a sun-dappled park at golden hour, shot from a low angle with shallow depth of field"
+
+2. **具体的に描写する** — 素材・質感・テクスチャまで踏み込む
+   - "a woman" ではなく "a sophisticated elderly woman wearing a vintage Chanel-style tweed suit"
+   - 素材を明示: "matte finish," "brushed steel," "soft velvet," "weathered leather"
+
+3. **用途・目的を記述する** — モデルが照明・構図・ムードを自動推論する
+   - "Create a hero image for a premium coffee brand's website"
+
+4. **リロールより修正** — 生成結果がほぼ正しければ、具体的な変更指示を出す
+
+#### プロンプト構造テンプレート
+
+```
+[Style/medium] of [specific subject with details] in [setting/environment],
+[action or pose], [lighting description], [mood/atmosphere],
+[camera angle/composition], [additional details: texture, color palette, materiality].
+[Purpose context if relevant.]
+```
+
+#### 各要素の語彙リファレンス
+
+| 要素 | 使える表現例 |
+|---|---|
+| **構図** | wide establishing shot, tight close-up, over-the-shoulder, Dutch angle, shallow depth of field, bird's eye view, rule of thirds |
+| **照明** | Rembrandt lighting, backlit with rim light, soft window light from the left, dramatic chiaroscuro, golden hour, neon glow |
+| **素材・質感** | brushed aluminum, hand-knit wool, cracked leather, translucent glass, matte ceramic, weathered oak |
+| **色彩** | muted earth tones, high-contrast complementary colors, monochromatic blue palette, warm amber tones, pastel |
+| **ムード** | serene, dramatic, playful, mysterious, cinematic, editorial, whimsical |
+| **テキスト描画** | 正確なテキストは引用符内に配置。スタイル指定可: "bold sans-serif," "handwritten script," "retro neon sign"（※レイヤー分割時はテキストをAI生成しない。単一プロンプトの英語テキストのみ使用可） |
+
+#### アンチパターン（避けるべきもの）
+
+- **タグの羅列**: キーワードの羅列 → 自然な文章に書き直す
+- **曖昧な主語**: "a person" "a building" → 具体的な特徴を加える
+- **照明・ムードの欠落**: 出力品質に大きく影響 → 必ず含める
+- **矛盾するスタイル**: "photorealistic watercolor" のような非互換な組み合わせ → 1つの主要スタイルに絞る
+- **過剰な詰め込み**: 矛盾する要素が多すぎると品質低下 → 一貫性を保つ
+
+#### プロンプト品質チェック（出力前に確認）
+
+- [ ] 自然言語で書かれているか（タグ羅列でないか）
+- [ ] 主語が具体的か（素材・テクスチャ・特徴が含まれるか）
+- [ ] 照明とムードが指定されているか
+- [ ] 構図・カメラアングルが明示されているか
+- [ ] 用途・目的が含まれているか（該当する場合）
+- [ ] スタイルが一貫しているか（矛盾がないか）
+
+### Step 4：構造化して返す
 
 プロンプト設計が完了したら、**必ず以下のフォーマットで返してください**。アスカがこの情報をもとに画像を生成します。
 

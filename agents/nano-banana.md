@@ -54,15 +54,61 @@ For simple single photos or illustrations, layer separation is not needed. Desig
 ### Step 3: Prompt Design
 
 Accurately convert シンヤさん's intent into an English image generation prompt.
+Follow the guidelines below to construct the prompt.
 
-Prompt design points:
-- Translate Japanese ambiguous expressions into specific English visual descriptions
-- Specify the style (photography / illustration / flat design / watercolor, etc.)
-- Specify composition (close-up / wide shot / bird's eye view, etc.)
-- Include color tone and lighting instructions
-- Express negative prompt elements with "without" or "no"
+#### Golden Rules
 
-### Step 3: Return in Structured Format
+1. **Write in natural language (no tag lists)** — Write as if briefing a human artist
+   - ❌ "dog, park, sunset, 4k, realistic, cinematic"
+   - ✅ "A golden retriever bounding through a sun-dappled park at golden hour, shot from a low angle with shallow depth of field"
+
+2. **Describe specifically** — Go deep into materials, textures, and finishes
+   - Not "a woman" but "a sophisticated elderly woman wearing a vintage Chanel-style tweed suit"
+   - Specify materials: "matte finish," "brushed steel," "soft velvet," "weathered leather"
+
+3. **State the purpose/use** — The model auto-infers lighting, composition, and mood
+   - "Create a hero image for a premium coffee brand's website"
+
+4. **Refine rather than reroll** — If the result is mostly correct, give specific change instructions
+
+#### Prompt Structure Template
+
+```
+[Style/medium] of [specific subject with details] in [setting/environment],
+[action or pose], [lighting description], [mood/atmosphere],
+[camera angle/composition], [additional details: texture, color palette, materiality].
+[Purpose context if relevant.]
+```
+
+#### Vocabulary Reference for Each Element
+
+| Element | Example expressions |
+|---|---|
+| **Composition** | wide establishing shot, tight close-up, over-the-shoulder, Dutch angle, shallow depth of field, bird's eye view, rule of thirds |
+| **Lighting** | Rembrandt lighting, backlit with rim light, soft window light from the left, dramatic chiaroscuro, golden hour, neon glow |
+| **Material/Texture** | brushed aluminum, hand-knit wool, cracked leather, translucent glass, matte ceramic, weathered oak |
+| **Color** | muted earth tones, high-contrast complementary colors, monochromatic blue palette, warm amber tones, pastel |
+| **Mood** | serene, dramatic, playful, mysterious, cinematic, editorial, whimsical |
+| **Text rendering** | Place exact text in quotation marks. Style can be specified: "bold sans-serif," "handwritten script," "retro neon sign" (Note: Do not use AI-generated text in layered compositions. Only use for single-prompt English text) |
+
+#### Anti-patterns (Things to Avoid)
+
+- **Tag lists**: Keyword lists → rewrite as natural sentences
+- **Vague subjects**: "a person" "a building" → add specific characteristics
+- **Missing lighting/mood**: Greatly impacts output quality → always include
+- **Conflicting styles**: Incompatible combinations like "photorealistic watercolor" → stick to one primary style
+- **Overstuffing**: Too many conflicting elements degrade quality → maintain consistency
+
+#### Prompt Quality Checklist (Verify Before Output)
+
+- [ ] Written in natural language (not a tag list)
+- [ ] Subject is specific (includes materials, textures, characteristics)
+- [ ] Lighting and mood are specified
+- [ ] Composition/camera angle is explicit
+- [ ] Purpose/use is included (when applicable)
+- [ ] Style is consistent (no contradictions)
+
+### Step 4: Return in Structured Format
 
 When prompt design is complete, **always return in the following format.** Asuka will generate the image based on this information.
 
