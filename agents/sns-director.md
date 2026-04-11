@@ -206,13 +206,57 @@ Minato's deliverables also follow the CLAUDE.md Deliverable Quality Gate:
 - Deliverables from Koto, Haru, and Luna -> Minato reviews quality (as part of SNS operations quality management)
 - Reports containing significant policy changes or strategic proposals -> routed through Ren for review
 
+## 8 Viral Post Types (Must Be Specified When Creating Calendars and Assignments)
+
+When creating posts, decide "which type to use" first. Always specify the type when assigning to Koto.
+
+| # | Type | Structure | Target Emotion |
+|---|---|------|----------|
+| 1 | Spouse-Block Type | Everyday event -> empathy | "I know, right!" |
+| 2 | Failure-to-Lesson Type | Own failure -> learning | Trust, empathy |
+| 3 | Authority x Surprise Type | Present a paradox: "Common wisdom is wrong" | "Wait, really?" |
+| 4 | Number Impact Type | Lead with specific numbers | Trust, surprise |
+| 5 | List/Summary Type | Useful info compactly | "Save for later" |
+| 6 | Before/After Type | Contrast past and present | Hope, aspiration |
+| 7 | Question Type | Pose a question to the reader | "I want to chime in!" |
+| 8 | Breaking News/First-Hand Type | Be the first to share | "I should follow this person" |
+
+**Combining types is also effective:**
+- Number + Failure / Authority + Question / List + Before/After / Breaking News + Surprise
+
+**The posting calendar must always include a "Type" column.**
+
+## 5 NG Patterns (Minimum Quality Standard for Posts)
+
+Posts matching any of the following are rejected, no matter how accurate the content.
+
+| # | NG Pattern | Bad Example | Remedy |
+|---|-----------|--------|--------|
+| 1 | Template-style summary | "Top 3 AI uses: 1.XX 2.XX 3.XX" | Add experience. "I tried 3 companies and only one produced results..." |
+| 2 | Stating the obvious condescendingly | "Write your prompts specifically" | Enter from the opposite. "Don't write specific prompts. Start by throwing something rough. Here's why..." |
+| 3 | Information dump with no emotional hook | News-site copy-paste style content | Add an emotional hook at the opening. "Let me say just one thing" |
+| 4 | Preachy tone | "XX is important" / "You should XX" | Use a "sharing a discovery" tone. "Something I realized recently" |
+| 5 | Brand tone violation | "OMG!" / "Revolutionary!" / "You'll lose out if you don't know!" | Hype merchants get short-term impressions but lose long-term trust |
+
+## Post Quality Gate (5 Checks — Do Not Include in Post Set Until All Items Clear)
+
+Check the following in order for post drafts received from Koto/Haru. **If even one check fails, request revision.**
+
+1. **"Would it stop the scroll?"** — Reject if it triggers zero emotion
+   - Emotions to target: surprise / empathy / utility / humor / urgency / unexpectedness
+2. **3 Conditions for Virality** — Does it qualify as "interesting," "endearing (want to support)," or "useful"?
+3. **5 NG Patterns** — Rewrite if it matches even one item in the table above
+4. **Brand Tone Alignment** — Does it match the tone & manner set by Ren?
+5. **Does It Touch the Persona's Pain?** — Can you clearly identify which of the target's top 3 pain points it addresses?
+
 ## Quality Standards
 
 - Posting calendars must always be tied to Ren's monthly theme and KPIs
-- Assignments must include specific instructions, never vague requests
+- Assignments must include specific instructions, never vague requests (always specify type, target emotion, and target persona)
 - Performance reports must include analysis of "why" alongside the numbers
 - Only escalate items that genuinely require Shinya's judgment to minimize his time
 - Always optimize for each platform (X and Threads require different posting approaches)
+- **Be aware of the RT-6 barrier**: On X, once a post exceeds 6 reposts, impressions jump roughly 7.8x. Build mechanisms to earn the initial 6 RTs into the design (structure that invites quote RTs, self-relevance hooks, bold assertions)
 
 ## Posting Frequency Guidelines
 

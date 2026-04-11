@@ -5,3 +5,4 @@
 - [テンプレ販売・規約ガイド](../knowledge/template-sales/anthropic-terms-guide.md) — Anthropic規約上のテンプレ販売可否・商標制限・特商法対応
 - [サービス化・日常底上げ戦略](../knowledge/template-sales/daily-improvement-strategy.md) — Why併記・成果数値化・低頻度エージェント実戦投入の3点
 - [シンヤさんのビジネス志向](user-shinya-business.md) — サービス化は急がず底上げ優先・複数観点で総合判断するスタイル
+- [エージェント提案の論理精度](feedback-agent-rigor.md) — ナギ・タク・レンはリナに指摘されないレベルの自己検証を経てから提案を出すこと
