@@ -11,6 +11,8 @@
 - メール自動化 Phase 1：mail-check.py の動作確認（`--dry-run` → 本番実行）
 - メール自動化にもスケジュール登録・変更検出を追加（Chatwork版と同様）
 - Chatwork 一次返信が発動したとき LINE WORKS 通知が届くか実動作確認（2026-03-30修正済み・未確認）
+- **hourei MCPサーバーの追加**：`claude mcp add hourei --scope user -- npx -y hourei-mcp-server`（e-Gov法令API。ケンの法務判断で条文参照に使用。Mac側は追加済み）
+- **git post-merge hookの配置**：Mac側で `cross-platform-check.py` が `post-merge` hookで自動発火する仕組みを作成済み。Win側の `.git/hooks/post-merge` にも同じファイルを配置する必要あり（Mac側の `.git/hooks/post-merge` を参考に）
 
 ### PC不問
 - エージェント精度向上ラウンドテーブル（日程未定・knowledge-buffer.mdに議題保存済み）
