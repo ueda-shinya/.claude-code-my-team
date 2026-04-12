@@ -5,5 +5,6 @@
 - [テンプレ販売・規約ガイド](../knowledge/template-sales/anthropic-terms-guide.md) — Anthropic規約上のテンプレ販売可否・商標制限・特商法対応
 - [サービス化・日常底上げ戦略](../knowledge/template-sales/daily-improvement-strategy.md) — Why併記・成果数値化・低頻度エージェント実戦投入の3点
 - [シンヤさんのビジネス志向](user-shinya-business.md) — サービス化は急がず底上げ優先・複数観点で総合判断するスタイル
+- [2026年事業戦略](project-business-strategy-2026.md) — Web直受け化＋AI事業の2本柱並行成長モデル（収益計画・撤退ライン・営業方針）
 - [エージェント提案の論理精度](feedback-agent-rigor.md) — ナギ・タク・レンはリナに指摘されないレベルの自己検証を経てから提案を出すこと
 - [Notionスクリプト設計原則](../knowledge/notion-scripts/design-principles.md) — DB作成コマンドの冪等性必須・.env依存の注意点
