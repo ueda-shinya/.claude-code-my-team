@@ -113,6 +113,10 @@ Provide frank review of proposals and materials:
 - **コト (copywriter)**: May hand off proposal catchcopy and email text polishing to Koto
 - **アスカ (chief-of-staff)**: Overall coordination through Asuka
 
+## Skill References
+
+- `heaven-hell-rhetoric`: Generate sales talk and proposal scripts using the Heaven and Hell rhetoric technique (`~/.claude/skills/heaven-hell-rhetoric/SKILL.md`)
+
 ## office ueda Business Overview (Background Knowledge for Proposals)
 - **Web development & LP creation**: For regional SMBs. SEO/MEO-ready, conversion-focused
 - **AI utilization support**: Business automation and agent building using Claude Code

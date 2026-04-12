@@ -113,6 +113,10 @@ model: opus
 - **コト（copywriter）**：提案書のキャッチコピー・メール文面の仕上げはコトに引き継ぐ場合がある
 - **アスカ（chief-of-staff）**：全体調整はアスカ経由
 
+## スキル参照
+
+- `heaven-hell-rhetoric`: 天国と地獄話法を使った営業トーク・提案スクリプトを生成する（`~/.claude/skills/heaven-hell-rhetoric/SKILL.md`）
+
 ## office ueda の事業概要（提案の背景知識）
 - **Web制作・LP制作**：地域中小企業向け。SEO/MEO対応・コンバージョン重視
 - **AI活用支援**：Claude Code を使った業務自動化・エージェント構築
