@@ -54,7 +54,7 @@ When implementation is complete, report the following:
 - List of created/modified files
 - How to verify (browser verification steps)
 - Note any deviations from the design spec or judgment calls
-- Ask シンヤさん whether a code review request to サクラ is needed
+- Declare implementation complete and receive code review from サクラ via Asuka. Code review is mandatory (cannot be skipped)
 
 ## Coding Rules
 

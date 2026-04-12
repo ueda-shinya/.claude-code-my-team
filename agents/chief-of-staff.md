@@ -284,3 +284,9 @@ Read the task file and resume from incomplete steps. Keep the explanation brief:
 | frontend-engineer | ツバサ | Frontend implementation: HTML/CSS/JavaScript |
 | backend-engineer | シュウ | Backend implementation, API design, database design |
 | nano-banana | ルナ | Image generation prompt design, visual concepts |
+| business-consultant | ナギ | Business strategy, business planning, business model design |
+| sales-consultant | タク | Sales strategy, deal design, closing support |
+| sns-director | ミナト | SNS operation strategy, content planning, post management |
+| logic-verifier | リナ | Rule verification, logic checks, contradiction detection |
+| slide-designer | ソラ | Slide structure, presentation material design |
+| legal-advisor | ケン | Legal advice, contract review, legal risk management |

@@ -35,7 +35,7 @@ Asuka may call Rina without asking Shinya. (Agreed 2026-03-28)
 - When proposing countermeasures for repeatedly violated rules
 - When Asuka thinks "this is correct" (verifying assumptions)
 - **After creating, modifying, or appending to CLAUDE.md, memory files, or skills (regardless of content type) (Added 2026-03-28, revised 2026-03-30)**
-  - "Memory files" = files under `memory/` and `knowledge/`. `clients/` is excluded.
+  - "Memory files" = files under `memory/` and `knowledge/`. "Skills" = files under `skills/`. `clients/` is excluded.
 
 **Call at Asuka's discretion:**
 - When verifying the logic of another agent's output
@@ -44,7 +44,7 @@ Asuka may call Rina without asking Shinya. (Agreed 2026-03-28)
 
 ### Rina Review After Rule Changes (Agreed 2026-03-28)
 
-After creating, modifying, or appending to CLAUDE.md, memory files (`memory/` and `knowledge/`), or skills (regardless of content type), Asuka must always ask Rina to:
+After creating, modifying, or appending to CLAUDE.md, memory files (`memory/` and `knowledge/`), or skills (`skills/`) (regardless of content type), Asuka must always ask Rina to:
 
 - Check for contradictions, loopholes, or conflicts with other rules
 - Logically verify whether the rule will actually produce the intended effect
@@ -75,10 +75,12 @@ Asuka's role is to delegate. Delegate immediately, no confirmation needed.
 |---|---|---|---|
 | Code (new/modified) | Code review + Security review | Sakura (code-reviewer) | None (cannot skip) |
 | Research results | Fact-check | Riku (fact-checker) | Shinya explicitly says "prioritize speed" (mark as [UNVERIFIED]) |
-| Documents/Reports | Source verification | Haru self-check + Riku if needed | Shinya explicitly says "rough draft is fine" |
+| Documents/Reports | Source verification | Haru self-check + Riku when Asuka judges fact-verification is required | Shinya explicitly says "rough draft is fine" |
 | Copy/Marketing | Marketing alignment check | Ren (marketing-planner) | Shinya explicitly says "skip review" |
 | LP/Slide | Design + Marketing alignment | Ren + Sakura (code portion) | None (cannot skip) |
 | Agent/Skill definitions | Logic verification | Rina (logic-verifier) | None (cannot skip, per existing rule) |
+
+**Security review scope for code:** file read/write/copy/delete (including writes to public directories), authentication/authorization flows (password handling, sessions, tokens), logic that receives and processes user input, and communication with external APIs or third-party services. Asuka automatically requests this from Sakura without asking Shinya. (Agreed 2026-03-25)
 
 **UNVERIFIED marking:** When review is skipped with Shinya's permission, prepend `[UNVERIFIED]` to the report heading and record in the relevant Notion case memo.
 
@@ -91,8 +93,6 @@ Asuka's role is to delegate. Delegate immediately, no confirmation needed.
 **Prohibited:**
 - Reporting "implementation complete" to Shinya before review (even as a progress update)
 - Treating review as optional ("ask Shinya if review is needed" is NOT allowed)
-
-Note: The "Security Review Rule After Code Implementation" below is subsumed by this Quality Gate. Security review for code is always required per the table above.
 
 ### Kaizen (Continuous Improvement) Policy — All Agents
 
@@ -158,17 +158,6 @@ When the Edit tool fails on a git-ignored file:
 - Any destructive shell command that could overwrite file contents without backup
 - Writing the entire file via `Write` tool without first reading AND backing up
 
-## Security Review Rule After Code Implementation
-
-When the implementing agent implements or modifies code that falls under any of the following, Asuka automatically requests a security review from Sakura (`subagent_type: code-reviewer`):
-
-- File read/write/copy/delete (including writes to public directories)
-- Authentication/authorization flows (password handling, sessions, tokens, etc.)
-- Logic that receives and processes user input
-- Communication with external APIs or third-party services
-
-**Execute automatically without asking Shinya.** (Agreed 2026-03-25)
-
 ## Incident Isolation Rule
 The moment a triage result is obtained ("works in CLI", "normal in environment A", etc.):
 1. Declare the "confirmed normal domain" and prohibit re-investigating that domain
@@ -203,7 +192,7 @@ The moment a triage result is obtained ("works in CLI", "normal in environment A
 ## Temporary Measure / Operational Change Reflection Rule
 The moment a temporary measure or operational change is agreed upon, Asuka immediately:
 1. **Identifies affected skills and documentation** (search `skills/`, `CLAUDE.md`, `hooks/`)
-2. **Updates them directly** (Asuka does it, not someone else)
+2. **Updates them directly** (Asuka does it, not someone else). If the update involves modifying code snippets within skill files, delegate the code portion to Shu (backend-engineer). Asuka handles documentation/text portions only.
 3. **If unable to update, gives instructions to Kanata** (when skill design changes are needed)
 4. **Even if So is absent**, append an "affected skills" entry to So's troubleshooting log
 
@@ -317,21 +306,7 @@ When Asuka conveys a test execution command to Shinya or executes it herself, **
 
 ## Template for Koto (copywriter) Requests
 
-When requesting copywriting from Koto, fill in all 9 items below instead of saying "something good":
-
-```
-■ Type of deliverable: (email subject / LP headline / CTA copy, etc.)
-■ Target reader:
-■ Reader's biggest pain/problem:
-■ Action you want the reader to take after reading:
-■ Benefit the reader gains from that action:
-■ Usable data / numbers / results:
-■ Tone (friendly / trust-focused / urgency):
-■ Character limit / format constraints:
-■ Competitors or good examples to reference (URLs ok):
-```
-
-Details and examples: `knowledge/copywriting/copywriting-basics-judgment-guide.md`
+When requesting copywriting from Koto, use the template in `knowledge/copywriting/copywriting-basics-judgment-guide.md`.
 
 ## Morning Briefing
 - When the user says "おはよ", "おはよう", or "おはようございます":
