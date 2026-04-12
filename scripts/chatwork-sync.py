@@ -513,11 +513,12 @@ def _format_event_datetime(iso_str: str) -> str:
         return iso_str[:16]
 
 
-def add_calendar_event(summary: str, start_iso: str, meeting_url: str = None, dry_run: bool = False) -> bool:
+def add_calendar_event(summary: str, start_iso: str, meeting_url: str = None, chatwork_link: str = None, dry_run: bool = False) -> bool:
     """Google Calendar にイベントを追加（server.py の実装を参考）"""
     if dry_run:
         url_info = f' / {meeting_url}' if meeting_url else ''
-        logger.info(f'[DRY-RUN] カレンダー追加スキップ: {summary} / {start_iso}{url_info}')
+        link_info = f' / {chatwork_link}' if chatwork_link else ''
+        logger.info(f'[DRY-RUN] カレンダー追加スキップ: {summary} / {start_iso}{url_info}{link_info}')
         return True
     try:
         # アクセストークン取得
@@ -531,13 +532,21 @@ def add_calendar_event(summary: str, start_iso: str, meeting_url: str = None, dr
         if '+' not in start_iso and 'Z' not in start_iso:
             start_iso = start.strftime('%Y-%m-%dT%H:%M:%S+09:00')
 
+        # description の組み立て: meeting_url → chatwork_link の順
+        desc_parts = []
+        if meeting_url:
+            desc_parts.append(meeting_url)
+        if chatwork_link:
+            desc_parts.append(f'元メッセージ: {chatwork_link}')
+        description = '\n'.join(desc_parts) if desc_parts else None
+
         event_dict = {
             'summary': summary,
             'start': {'dateTime': start_iso, 'timeZone': 'Asia/Tokyo'},
             'end':   {'dateTime': end_iso,   'timeZone': 'Asia/Tokyo'},
         }
-        if meeting_url:
-            event_dict['description'] = meeting_url
+        if description:
+            event_dict['description'] = description
         event_data = json.dumps(event_dict).encode()
         req2 = urllib.request.Request(
             'https://www.googleapis.com/calendar/v3/calendars/primary/events',
@@ -557,6 +566,8 @@ def add_calendar_event(summary: str, start_iso: str, meeting_url: str = None, dr
         notify_lines = ['【カレンダー登録】', f'📅 {summary}', f'🕐 {dt_str}']
         if meeting_url:
             notify_lines.append(f'🔗 {meeting_url}')
+        if chatwork_link:
+            notify_lines.append(f'💬 {chatwork_link}')
         send_line_works_message('\n'.join(notify_lines), dry_run=dry_run)
         return True
     except Exception as e:
@@ -676,6 +687,7 @@ def update_calendar_event(
     summary: str,
     start_iso: str,
     meeting_url: str = None,
+    chatwork_link: str = None,
     old_summary: str = '',
     old_start: str = '',
     dry_run: bool = False,
@@ -724,6 +736,14 @@ def update_calendar_event(
             else:
                 new_desc = url_block + ('\n\n' if new_desc else '') + new_desc
 
+        # chatwork_link がある場合: 既存 description に含まれていなければ末尾（履歴セクションの手前）に挿入
+        if chatwork_link and chatwork_link not in existing_desc:
+            link_line = f'元メッセージ: {chatwork_link}'
+            if '【更新履歴】' in new_desc:
+                new_desc = new_desc.replace('【更新履歴】', f'{link_line}\n\n【更新履歴】', 1)
+            else:
+                new_desc = new_desc + ('\n\n' if new_desc else '') + link_line
+
         # 開始・終了時刻の再計算
         start = datetime.fromisoformat(start_iso)
         end   = start + timedelta(hours=1)
@@ -758,6 +778,8 @@ def update_calendar_event(
             notify_lines.append(f'↩️ 変更前: {old_summary} {old_dt_str}'.strip())
         if meeting_url:
             notify_lines.append(f'🔗 {meeting_url}')
+        if chatwork_link:
+            notify_lines.append(f'💬 {chatwork_link}')
         send_line_works_message('\n'.join(notify_lines), dry_run=dry_run)
         return True
     except Exception as e:
@@ -1025,6 +1047,9 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
             body        = msg.get('body', '')
             send_time_ts = msg.get('send_time', 0)
 
+            # Chatwork メッセージへのリンク（room_id / msg_id が空の場合は None）
+            chatwork_link = f'https://www.chatwork.com/#!rid{room_id}-{msg_id}' if room_id and msg_id else None
+
             # 送信時刻をフォーマット
             try:
                 send_dt  = datetime.fromtimestamp(send_time_ts, tz=jst)
@@ -1101,13 +1126,13 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
             if analysis.get('has_schedule'):
                 schedule_dt = analysis.get('schedule_datetime')
                 if schedule_dt:
-                    summary_text = analysis.get('schedule_summary', body[:100])
-                    meeting_url  = analysis.get('meeting_url')
+                    summary_text   = analysis.get('schedule_summary', body[:100])
+                    meeting_url    = analysis.get('meeting_url')
 
                     existing = find_similar_calendar_event(summary_text, schedule_dt)
                     if existing is None:
                         # 新規登録
-                        add_calendar_event(summary_text, schedule_dt, meeting_url=meeting_url, dry_run=dry_run)
+                        add_calendar_event(summary_text, schedule_dt, meeting_url=meeting_url, chatwork_link=chatwork_link, dry_run=dry_run)
                     else:
                         existing_start   = existing.get('start', '')
                         existing_summary = existing.get('summary', '')
@@ -1121,6 +1146,7 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                                 summary_text,
                                 schedule_dt,
                                 meeting_url=meeting_url,
+                                chatwork_link=chatwork_link,
                                 old_summary=existing_summary,
                                 old_start=existing_start,
                                 dry_run=dry_run,
@@ -1135,7 +1161,7 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                     f'【Chatwork 要確認】\n'
                     f'{room_name}｜{account_name}\n'
                     f'「{body_excerpt}」\n\n'
-                    f'https://www.chatwork.com/#!rid{room_id}-{msg_id}'
+                    f'{chatwork_link}'
                 )
                 send_line_works_message(notify_text, dry_run=dry_run)
 
