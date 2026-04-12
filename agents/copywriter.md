@@ -157,6 +157,128 @@ Combining types is also effective (Number + Failure, Authority + Question, etc.)
 - Place keywords in the first line (affects recommendation display to non-followers)
 - Question type is especially effective (algorithm rewards "conversation starters")
 
+### SNS Post Structure (Hook -> Body -> Closing)
+
+SNS posts are structured in 3 parts: "Hook (first line) -> Body (development) -> Closing (lingering impression or CTA)." If the hook (first line) fails to stop the scroll, the body will never be read no matter how good it is.
+
+Note: This framework is a Japanese-localized, X-post-customized adaptation of the linkedin-writer Hook Framework (3-Step Hook Formula).
+
+#### Hook (First Line): 3-Step Hook Design
+
+**Step 1: Context Lean-In**
+
+The first line where the reader determines "this is relevant to me." Pull them in with one of the following:
+
+- **Shared experience**: Present a situation the reader instantly relates to
+- **Benefit/Pain**: Start with something the reader wants to gain or a pain they want to avoid
+- **Surprising fact**: Shock them with a single line that overturns common wisdom
+- **Metaphor**: Replace something complex with something familiar
+
+Examples (for X, targeting local SMB owners aged 40-60):
+- "At a 10-person company, 3 people joined with zero recruiting costs." (Benefit)
+- "We post job ads, but nobody applies." (Shared experience / Pain)
+
+**Step 2: Scroll Stop Interjection**
+
+Cut the flow of the first line with a contrasting word like "But," "However," or "Except." Betray the reader's expectations and freeze their scrolling thumb.
+
+- "But we didn't use a single job site."
+- "However, it wasn't because we spent money."
+
+**Step 3: Contrarian Snapback**
+
+Snap in the opposite direction of the reader's expectations. The greater the gap from Step 1, the stronger the hook. This completes the curiosity loop: "I MUST read on."
+
+- "The trigger was something the president does every morning."
+- "Actually, the most effective thing was employee SNS posts."
+
+#### Body: Experience-Based Development
+
+Answer the curiosity created by the hook with experience, specific examples, and numbers.
+
+- Base it on personal (or client) real experience
+- Narrate with "what was done -> what happened," not abstractions
+- For X's 140-character limit, compress the body to the minimum (1-2 sentences)
+
+#### Closing: Lingering Impression or CTA
+
+Choose based on the post's objective:
+
+- **Lingering type**: End with an assertion. Leave it in the reader's mind (e.g., "In the end, hiring is determined by the company's daily life.")
+- **CTA type**: Prompt the next action (e.g., "If you have the same problem, DM me.")
+- **Question type**: Make the reader think and invite replies (e.g., "What communicates best at your company?")
+
+### Hook Patterns (First Line Writing Patterns)
+
+Choose from the following 5 patterns based on the post's theme and the "8 Viral Post Types."
+
+#### 1. Contrarian Type
+
+Strike the opposite of common sense or assumptions. Pairs well with "Authority x Surprise Type."
+
+- "The idea that 'good talent won't come' is a lie."
+- "Lower your prices and you lose customers."
+- "The better a president is at sales talk, the less they sell."
+
+#### 2. Personal Confession Type
+
+Start from your own weakness or failure. Pairs well with "Failure-to-Lesson Type."
+
+- "I also failed miserably at first by delegating everything to employees."
+- "Honestly, last year we were barely above red."
+- "After 10 years, I realized: meetings are unnecessary."
+
+#### 3. Number Impact Type
+
+Boost opening credibility with specific numbers. The go-to for "Number Impact Type."
+
+- "Monthly revenue went from 3M to 8M yen in half a year."
+- "5 employees surpassing 100M yen in annual revenue."
+- "Just 15 minutes a day tripled our inquiries."
+
+#### 4. Question Type
+
+Speak directly to the reader to make it personal. Directly connects to "Question Type."
+
+- "Can you instantly name this month's profit margin?"
+- "Is your company's website actually generating inquiries?"
+- "What would you do if your right-hand employee quit tomorrow?"
+
+#### 5. Quote Type
+
+Start from someone's words or an event. Borrow authority to strengthen the hook.
+
+- "'Don't hire people, hire systems.' Words from a certain president."
+- "A client's president quietly said, 'We don't need salespeople anymore.'"
+- "My accountant told me recently, 'All these expenses are wasted.'"
+
+### Hook Amplification Techniques
+
+#### 1. Start with Benefit/Pain, Not Topic
+
+Readers don't react to "topics." They react to "what's in it for me or what hurts me."
+
+- NG: "I'll introduce hiring tips" (topic presentation)
+- OK: "3 people joined with zero recruiting costs." (benefit presentation)
+
+#### 2. Keep the First Line Short and Compressed (Staccato)
+
+The shorter the first line of the hook, the stronger it is. If even one word can be cut, cut it. Maximize information density.
+
+- NG: "Something I've only recently come to realize is that, as it turns out, meetings are actually unnecessary"
+- OK: "Meetings are unnecessary."
+
+On X with the 140-character limit, opening compression is especially critical. Write with the mindset of packing 30% of the total impact into the first line.
+
+#### 3. Use Power Words
+
+Placing the following words at the start of a hook signals "personal experience" and "specific scene," making it easier to capture reader attention.
+
+- **"I" / "My"**: Starting with first person signals a personal story ("I also failed at first")
+- **"When..."**: Evokes a specific scene ("When I hired my first employee")
+- **"Actually"**: Suggests hidden information exists ("Actually, price cuts were the cause")
+- **"Just... alone"**: Creates a sense of ease and surprise ("Just 15 minutes a day changed everything")
+
 ### SNS Post Self-Check (Always Verify Before Submission)
 
 - [ ] Does it follow the specified "type"?
@@ -166,6 +288,9 @@ Combining types is also effective (Number + Failure, Authority + Question, etc.)
 - [ ] Does it touch one of the persona's top 3 pain points?
 - [ ] Is the X version within 140 characters? (re-count required)
 - [ ] Do the X and Threads versions have appropriately different tones?
+- [ ] Does the hook follow the 3-step design (lean-in -> scroll stop -> snapback)?
+- [ ] Is the first line staccato (short and compressed)?
+- [ ] Does it start with benefit/pain rather than topic presentation?
 
 ---
 
