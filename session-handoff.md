@@ -124,6 +124,63 @@ Notion案件管理DB「GSC・GA4計測診断＆改善提案ツール」（P2-今
 
 ---
 
+## 作業中: 稲田さん戦略スライド指摘事項 → v3 精査済み
+
+**2026-04-14 セッションで着手、指摘リスト整理まで完了。**
+
+### 完了
+- 稲田さん戦略スライド（PDF 19ページ）を v3 原稿と照合し、修正箇所を精査
+- 11件の修正点を特定：独自追加削除4件（P11期間/P12達成度/P13担当欄/P5競合説明文）・情報欠落補充4件（表紙v3表記/定員充足率/完了基準/ROI脚注）・文言揺れ3件（伴走→一緒に走る/誰とやる→誰と走る/WP→ホワイトペーパー）
+
+### 次にやること
+- Gensparkに再生成依頼するか、既存スライドを直接修正するか判断
+- 戦略レポートv3のPDF/Word版は出力済み（tmp や clients/inada-ryota/proposals/ 配下）
+
+---
+
+## 作業中: Office Ueda 標準サービス資料化
+
+**2026-04-14 セッションで着手、資料化＋スライド化テストまで完了。**
+
+### 完了
+- Phase 2 継続運用プラン（梅竹松）の詳細設計 → `clients/inada-ryota/proposals/phase2-plans-detail.md`
+- Office Ueda 標準サービス「Web運用パートナーサービス」資料化 → `clients/officeueda/services/web-partner-service.md`（Phase 1 STEP 1-3 + Phase 2 梅竹松 + オプション7種 + FAQ + 運用ルール）
+- スライド化ツール導入（Marp CLI / pptx-from-layouts-skill）
+- 比較テスト実施 → `tmp/slide-comparison/` に両ツール成果物あり
+
+### 次にやること
+- 両ツールの成果物を PowerPoint で開いて見栄え比較 → 商談用にどちらを採用するか判断
+- Section 12（実績・プロフィール等）の埋め込みは Notion タスクへ登録済み（P4）
+- Office Ueda ブランド用 Marp カスタムテーマ CSS 作成は Notion タスク登録済み（P3）
+
+### 関連ファイル
+- サービス資料: `~/.claude/clients/officeueda/services/web-partner-service.md`
+- Phase 2 詳細: `~/.claude/clients/inada-ryota/proposals/phase2-plans-detail.md`
+- 比較テスト: `~/.claude/tmp/slide-comparison/`
+
+---
+
+## 導入済みツール（2026-04-14）
+
+### Marp CLI v4.3.1（グローバル）
+- `npm i -g @marp-team/marp-cli` で導入済み
+- 使い方: `marp input.md --pptx -o output.pptx`（html/pdf も可）
+- 既存 Edge を自動検出するので追加 Chromium 不要
+- サクラ監査条件: `--server` モード使用禁止・npm run version等禁止
+
+### pptx-from-layouts skill
+- 配置先: `~/.claude/skills/pptx-from-layouts/`（51ファイル）
+- テンプレ: `~/template/inner-chapter.pptx`（think-cell系・要 VirusTotal 手動スキャン推奨）
+- **Python 3.12 必須**（typing.Self 依存）。python-pptx / pydantic は 3.12 側に導入済み
+- 既知バグ: profile.py / validate.py が `_archive` 依存で動作不可（generate.py は独立動作OK） → Notion 登録済み（P3）
+- サクラ監査条件: thumbnail 機能禁止（LibreOffice/ImageMagick 非導入）
+
+### 変換スクリプト（既存）
+- `~/.claude/scripts/md-to-html.py` — Markdown → HTML（ブラウザ印刷PDF用）
+- `~/.claude/scripts/md-to-docx.py` — Markdown → Word
+
+---
+
 ## 設計・実装決定ログ
 
 形式：`[YYYY-MM-DD] <決定内容>（対象ファイル or 機能）`
