@@ -226,6 +226,24 @@ Notion案件管理DB「GSC・GA4計測診断＆改善提案ツール」（P2-今
 [2026-04-09] skill.md（英語版）を skill.ja.md に同期する（カナタにフォアグラウンドで依頼すること。バックグラウンドだと権限プロンプトに応答できず失敗する）
 [2026-04-10] has_schedule除外条件に「スケジュール確定の報告はfalseにしない」の但し書きを追加する（chatwork-sync.py の build_analyze_prompt 内）
 
+[2026-04-15] **Windows側でも settings.json を要チェック**（Mac側で発見・修正済み）
+- 症状: Claude Code 起動時に `settings file failed to parse: Expected array, but received undefined. Permission rules and other settings from this file are not in effect.`
+- 原因: `permissions.ask` 配列の欠落 ＋ `hooks` セクションの構造が古い形式
+- 修正内容①: `permissions` に `"ask": []` を追加
+- 修正内容②: `hooks` 配下の各イベント（UserPromptSubmit / SessionStart / Notification / Stop / PreToolUse / PostToolUse 等）を以下の形式に統一
+  ```json
+  "EventName": [
+    {
+      "hooks": [
+        { "type": "command", "command": "..." }
+      ]
+    }
+  ]
+  ```
+  （古い形式は配列要素に直接 `{type, command}` を書いていた）
+- Win側作業: `C:\Users\ueda-\.claude\settings.json` を開き、上記2点をチェック・必要なら修正。バックアップを取ってから編集すること（`copy settings.json settings.json.bak.YYYYMMDD-HHMMSS`）。修正後 Claude Code を再起動して起動エラーが出ないことを確認
+- 関連: 同日 settings.json から平文 Gemini API キーも削除（Win側は元から .env 運用なら不要）
+
 
 
 ---
