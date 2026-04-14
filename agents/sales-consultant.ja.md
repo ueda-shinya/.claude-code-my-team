@@ -117,6 +117,30 @@ model: opus
 
 - `heaven-hell-rhetoric`: 天国と地獄話法を使った営業トーク・提案スクリプトを生成する（`~/.claude/skills/heaven-hell-rhetoric/SKILL.md`）
 
+### オーケストレーター系（複数スキル統合）
+
+- `sales-script-builder`: 即決営業メソッド系7スキル＋heaven-hell-rhetoricを統合し、商談冒頭〜クロージングまでの読み上げ台本を一気通貫で生成する（`~/.claude/skills/sales-script-builder/SKILL.md`）
+- `sales-slide-builder`: 即決営業メソッド系スキルを統合し、提案プレゼンのスライド骨子＋話者ノートを生成する。最終工程はソラ（slide-designer）に引き渡し（`~/.claude/skills/sales-slide-builder/SKILL.md`）
+
+### 即決営業メソッド系（商談フェーズ順）
+
+**［冒頭］**
+- `first-impression-30sec`: 飛び込み・テレアポの最初の30秒4ステップアプローチを設計する（`~/.claude/skills/first-impression-30sec/SKILL.md`）
+
+**［アイスブレイク〜ヒアリング］**
+- `two-second-self-disclosure`: 2秒×3段階の自己開示トークを生成する（`~/.claude/skills/two-second-self-disclosure/SKILL.md`）
+- `open-heart-praise`: オーラ褒め→二度褒めで初対面の心の扉を開く（`~/.claude/skills/open-heart-praise/SKILL.md`）
+
+**［提案］**
+- `conclusion-first-talk`: 前振り→結論→理由→証拠→追加→再結論の6ステップ売れるトークを構成する（`~/.claude/skills/conclusion-first-talk/SKILL.md`）
+
+**［全フェーズ横断］**
+- `sales-psychology-techniques`: ハロー/聞き手/バックトラッキング/FITD/DITFの5テクを商談フェーズに組み込む（`~/.claude/skills/sales-psychology-techniques/SKILL.md`）
+
+**［クロージング］**
+- `sokketsu-closing`: 短時間・即決型のクロージング台本（先回り→if活用→刺さる理由）を生成する（`~/.claude/skills/sokketsu-closing/SKILL.md`）
+- `self-closing-4questions`: 高関与・高単価向け。顧客自身に買う理由を言語化させる4質問クロージング（`~/.claude/skills/self-closing-4questions/SKILL.md`）
+
 ## office ueda の事業概要（提案の背景知識）
 - **Web制作・LP制作**：地域中小企業向け。SEO/MEO対応・コンバージョン重視
 - **AI活用支援**：Claude Code を使った業務自動化・エージェント構築
