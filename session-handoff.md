@@ -1,5 +1,32 @@
 # セッション引き継ぎ
 
+## 🔴 最優先・再起動後すぐ再開（2026-04-15）
+
+**Claude Code レーダー Cron 登録の再試行**
+
+- 実装・レビュー・承認すべて完了済み（Shu/Sakura/Kanata/Rina）
+- 残りは `/schedule` スキルで毎日6:00 JSTのCron登録のみ
+- 本セッションで2回試行したが `remote claude.ai 接続エラー` で失敗
+- 再起動後、以下のコマンドで再試行：
+
+```
+/schedule 毎日 06:00 JST に /claude-code-radar を自動実行。名前: claude-code-radar-daily
+```
+
+### 完成している基盤
+- Notion DB「Claude Code レーダー」作成済み（`NOTION_RADAR_DB_ID=342b7112-f5f8-81c2-b10b-c421b1f440f3`）
+- `scripts/notion-radar.py`（サクラ承認済み・未コミット）
+- `skills/claude-code-radar/SKILL.md`（リナ承認済み・未コミット）
+- `skills/morning-briefing/SKILL.md` にステップ7統合済み（リナ承認済み・未コミット）
+
+### 未コミット変更ファイル（Cron登録後に一括コミット）
+- scripts/notion-radar.py（新規）
+- skills/claude-code-radar/（新規）
+- skills/morning-briefing/SKILL.md（変更）
+- .env（NOTION_RADAR_DB_ID 追記・git管理外）
+
+---
+
 ## 予定
 
 - **4/12（日）エージェント精度向上ラウンドテーブル**（仮・knowledge-buffer.md に議題保存済み）

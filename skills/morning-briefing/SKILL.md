@@ -295,6 +295,22 @@ print('IS_SECOND_SUNDAY:', str(today.day == second_sunday))
 取得・更新・Gitコミットは行わない（週次版でのみ実施）。
 ファイルが存在しない場合はセクション省略。
 
+### ステップ 7: Claude Code レーダー最新結果
+
+`~/.claude/tmp/claude-code-radar-latest.json` を Read ツールで読み込む。
+
+- **ファイルが存在しない** → 「本日未実行」と1行表示
+- **ファイル存在するが `executed_at` の日付が当日でない** → 「本日未実行（最終実行: YYYY-MM-DD）」と1行表示
+- ファイル存在＆当日実行済みの場合、JSON から以下を取得して報告に含める：
+  - `executed_at`（最終実行日時）
+  - `registered`（新規登録件数）
+  - `star5_count`（⭐5 件数）
+  - `star4plus_entries`（⭐4 以上のエントリ配列。各要素は category / title / verdict_reason 等を含む）
+- **`registered == 0`** の場合は「本日の新着はありません」と1行だけ表示
+- **`star5_count ≥ 1`** の場合は見出しに `🔥` を付けて強調
+- `star4plus_entries` から上位最大3件を「- [カテゴリ] タイトル — 理由」の形式でバレット表示
+- 「詳細は Notion『Claude Code レーダー』DB で確認してください」と案内を末尾に1行追加
+
 ## 報告フォーマット
 
 全ステップの結果を以下のフォーマットで報告してください。アスカとして報告すること。
@@ -349,6 +365,12 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 
 ## YouTube ダイジェスト（最終更新: YYYY-MM-DD HH:MM）
 （youtube-digest.md の内容をそのまま転記。ファイルが存在しない場合はセクション省略）
+
+## Claude Code レーダー（最終実行: YYYY-MM-DD HH:MM）※ star5_count≥1 なら 🔥 を付与
+- 新規 X 件 / ⭐5 X 件
+- [カテゴリ] タイトル — 理由（⭐4以上を上位最大3件）
+- 詳細は Notion「Claude Code レーダー」DB で確認
+※ ファイル未存在 or executed_at が当日でない場合は「本日未実行」1行のみ。registered==0 の場合は「本日の新着はありません」1行のみ
 
 ## 定期タスク（※ 第2日曜日のみ表示）
 今日は **月次ルール棚卸し** の日です。
