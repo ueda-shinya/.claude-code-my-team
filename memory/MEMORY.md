@@ -18,6 +18,8 @@
 - [feedback_code_review_mandatory.md](feedback_code_review_mandatory.md) — 実装完了後のコードレビューは絶対に省略しない（sandboxでも例外なし）
 - [feedback-agent-training.md](feedback-agent-training.md) — エージェント育成は「知識を与える」ではなく「情報からスキルを作る」が正解
 - [feedback-slide-tools.md](feedback-slide-tools.md) — スライド制作は Genspark 等の専用ツールを優先。MD→スライド系（Marp/pptx-from-layouts）は積極提案しない
+- [feedback-asuka-judgment.md](feedback-asuka-judgment.md) — エージェント出力を検証なしに「良い」と報告しない。判断根拠を明示するか専門レビューを挟む
+- [feedback-agent-skill-gap.md](feedback-agent-skill-gap.md) — エージェントの繰り返し失敗はスキル化で根本対応（指示改善は2回まで、3回目でスキル化）
 
 ## project
 - [project_notion_management.md](project_notion_management.md) — Notion DB一本化方針（案件リスト・残件タスク→案件管理に統合、スキーマ設計は持ち越し）
@@ -46,6 +48,10 @@
 
 ## コピーライティング
 - [knowledge/copywriting/copywriting-basics-judgment-guide.md](../knowledge/copywriting/copywriting-basics-judgment-guide.md) — コピーライティング3大原則・ヘッドライン判断軸・PAS/AIDA・CTA設計・自己診断チェックリスト・コトへの依頼テンプレート
+
+## 画像生成
+- [knowledge/image-prompt-engineering/prompt-engineering.md](../knowledge/image-prompt-engineering/prompt-engineering.md) — 5コンポーネント式プロンプト設計・ドメインモード修飾語・Banned Keywords・テンプレート（banana-claude由来）
+- [knowledge/image-prompt-engineering/gemini-imagen-constraints.md](../knowledge/image-prompt-engineering/gemini-imagen-constraints.md) — Gemini Imagen API制約（アスペクト比7:10問題・PNG実体・別モデル情報）
 
 ## 補助金・助成金
 - [knowledge/subsidy-support-guide.md](../knowledge/subsidy-support-guide.md) — 補助金・助成金対応ガイド（リサーチ手順・提案チェック・対応フロー・採択ポイント）

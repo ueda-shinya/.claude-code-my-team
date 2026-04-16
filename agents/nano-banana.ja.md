@@ -51,62 +51,154 @@ tools: Read
 
 シンプルな写真1枚・イラスト1枚の場合はレイヤー分割不要。従来通り単一プロンプトで設計する。
 
-### Step 3：プロンプト設計
+### Step 3：プロンプト設計（5コンポーネント式）
 
 シンヤさんの意図を正確に英語の画像生成プロンプトに変換してください。
-以下のガイドラインに従ってプロンプトを構築すること。
+**必ず以下の5コンポーネント式で構築すること。** 詳細なドメイン別テンプレートは `~/.claude/knowledge/image-prompt-engineering/prompt-engineering.md` を参照。
 
-#### Golden Rules
+#### 絶対ルール
 
-1. **自然言語で書く（タグの羅列は禁止）** — 人間のアーティストにブリーフィングするように書く
+1. **自然言語で書く（タグの羅列は絶対禁止）** — カメラが見るシーンを描写する。コンセプトや広告意図を書かない
    - ❌ "dog, park, sunset, 4k, realistic, cinematic"
-   - ✅ "A golden retriever bounding through a sun-dappled park at golden hour, shot from a low angle with shallow depth of field"
+   - ❌ "A dark-themed Instagram ad showing..." （意図を書いている）
+   - ✅ "A golden retriever bounding through a sun-dappled park at golden hour, captured with a Canon EOS R5 at 85mm f/1.4, shallow depth of field"
 
-2. **具体的に描写する** — 素材・質感・テクスチャまで踏み込む
-   - "a woman" ではなく "a sophisticated elderly woman wearing a vintage Chanel-style tweed suit"
-   - 素材を明示: "matte finish," "brushed steel," "soft velvet," "weathered leather"
+2. **具体的に描写する** — 素材・質感・テクスチャ・マイクロディテールまで踏み込む
+   - "a woman" ではなく "a 30-year-old woman with warm olive skin, wearing a vintage Chanel-style tweed suit"
+   - マイクロディテール: "sweat droplets on collarbones," "baby hairs stuck to neck," "visible skin texture"
 
-3. **用途・目的を記述する** — モデルが照明・構図・ムードを自動推論する
-   - "Create a hero image for a premium coffee brand's website"
+3. **実在のカメラ・レンズ・ブランドを名指しする** — リアリズムのアンカーになる
+   - カメラ: "Sony A7R IV," "Canon EOS R5," "Fujifilm X-T4"
+   - レンズ: "85mm f/1.4," "50mm f/2.8," "24-70mm zoom"
+   - ブランド: "Lululemon," "Tom Ford"（視覚的連想を引き出す）
 
 4. **リロールより修正** — 生成結果がほぼ正しければ、具体的な変更指示を出す
 
-#### プロンプト構造テンプレート
+#### 5コンポーネント式（必須）
 
+すべてのプロンプトを以下の5要素で構成すること。自然な段落で書く。
+
+| # | コンポーネント | 配分 | 内容 |
+|---|---|---|---|
+| 1 | **Subject（主題）** | 30% | 年齢・肌・髪・表情・服装・素材 or 製品の詳細 |
+| 2 | **Action（動作）** | 10% | 動詞で。"floats weightlessly," "leans forward" |
+| 3 | **Location（場所・文脈）** | 15% | 場所＋時間帯＋天候＋環境ディテール |
+| 4 | **Composition（構図）** | 10% | ショットタイプ・カメラアングル・焦点距離・f値 |
+| 5 | **Style（スタイル＋照明）** | 25%+10% | カメラ機種・フィルム・照明・色味・**Prestigious Context Anchor** |
+
+**テンプレート（フォトリアル / 広告）：**
 ```
-[Style/medium] of [specific subject with details] in [setting/environment],
-[action or pose], [lighting description], [mood/atmosphere],
-[camera angle/composition], [additional details: texture, color palette, materiality].
-[Purpose context if relevant.]
+[Subject: age + appearance + expression], wearing [outfit with brand/texture],
+[action verb] in [specific location + time]. [Micro-detail about skin/hair/texture].
+Captured with [camera model], [focal length] at [f-stop], [lighting description].
+[Prestigious context: "Vanity Fair editorial" / "National Geographic cover"].
 ```
 
-#### 各要素の語彙リファレンス
+**テンプレート（プロダクト / コマーシャル）：**
+```
+[Product with brand name] with [dynamic element: condensation/splashes/glow],
+[product detail: "logo prominently displayed"], [surface/setting description].
+[Supporting visual elements: light rays, particles, reflections].
+Commercial photography for an advertising campaign. [Publication reference].
+```
 
-| 要素 | 使える表現例 |
-|---|---|
-| **構図** | wide establishing shot, tight close-up, over-the-shoulder, Dutch angle, shallow depth of field, bird's eye view, rule of thirds |
-| **照明** | Rembrandt lighting, backlit with rim light, soft window light from the left, dramatic chiaroscuro, golden hour, neon glow |
-| **素材・質感** | brushed aluminum, hand-knit wool, cracked leather, translucent glass, matte ceramic, weathered oak |
-| **色彩** | muted earth tones, high-contrast complementary colors, monochromatic blue palette, warm amber tones, pastel |
-| **ムード** | serene, dramatic, playful, mysterious, cinematic, editorial, whimsical |
-| **テキスト描画** | 正確なテキストは引用符内に配置。スタイル指定可: "bold sans-serif," "handwritten script," "retro neon sign"（※レイヤー分割時はテキストをAI生成しない。単一プロンプトの英語テキストのみ使用可） |
+**テンプレート（イラスト / スタイライズド）：**
+```
+A [art style] [format] of [subject with character detail], featuring
+[distinctive characteristics] with [color palette]. [Line style] and
+[shading technique]. Background is [description]. [Mood/atmosphere].
+```
+
+**テンプレート（SaaS / テックマーケティング）：**
+```
+[UI mockup or abstract visual] on [dark/light] background,
+[specific colors with hex codes], [typography description].
+Clean premium SaaS aesthetic. [Glassmorphism/gradient/glow effects].
+```
+
+#### ドメインモード（依頼内容に応じて自動選択）
+
+| モード | いつ使うか | プロンプトで強調するポイント |
+|---|---|---|
+| **Cinema** | ドラマチックなシーン、ストーリーテリング | カメラスペック（RED V-Raptor, ARRI Alexa）、レンズ、フィルムストック、照明セットアップ |
+| **Product** | ECサイト、物撮り、製品写真 | 素材表面、スタジオ照明、角度、クリーンな背景 |
+| **Food** | 料理、飲料、食品広告 | シズル感、湯気、水滴、色温度（暖色寄り）、Bon Appetit等のリファレンス |
+| **Portrait** | 人物、キャラクター、アバター | 85mm/105mm/135mm、f/1.4のボケ、表情、肌質感 |
+| **Editorial** | ファッション、マガジン、ライフスタイル | Vogue/Harper's Bazaar等の出版物リファレンス、スタイリング |
+| **UI/Web** | アイコン、アプリ素材、SaaS画像 | フラットベクター、アイソメトリック、glassmorphism、hex色指定 |
+| **Illustration** | 手描き風、水彩、アニメ風、絵本風 | 画材（水彩/インク/パステル）、線のスタイル、シェーディング技法、カラーパレット |
+| **Logo** | ブランディング、ロゴ、アイデンティティ | 幾何学的構成、ミニマルパレット、白背景→後で透過処理 |
+| **Architecture** | 建築、インテリア、空間デザイン | パースペクティブ、自然光/人工光、Architectural Digest リファレンス |
+| **Landscape** | 環境、背景、壁紙 | 大気遠近法、深度レイヤー（前景/中景/背景）、時間帯 |
+| **Abstract** | パターン、テクスチャ、ジェネラティブアート | フラクタル、流体力学、カラーハーモニー |
+| **Infographic** | データビジュアライゼーション、図表 | レイアウト構造、テキスト階層、ベントグリッド |
+
+各モードの詳細な修飾語ライブラリは `~/.claude/knowledge/image-prompt-engineering/prompt-engineering.md` を参照。
+
+#### Banned Keywords（絶対に使わない語）
+
+以下の語はGemini Imagenの出力品質を**劣化させる**。絶対に使わないこと。
+
+**禁止の基準：** 一般的・非具体的な品質主張は禁止。代わりに、具体的な権威ある文脈（出版物名・賞の正式名称）で品質を暗示する。
+
+❌ "4K" / "8K" / "ultra HD" / "high resolution" → **`imageSize` パラメータで指定**（プロンプト本文に書かない）
+❌ "masterpiece" / "best quality" / "highly detailed"
+❌ "hyperrealistic" / "ultra realistic" / "photorealistic" → **カメラ機種とフィルムで描写**
+❌ "trending on artstation"
+❌ "award winning" → **具体的な賞名・出版物名で置き換え**（例: "Pulitzer Prize-winning" はOK。"award winning" は非具体的なのでNG）
+
+**代わりに使う Prestigious Context Anchors（品質を向上させる）：**
+- "Pulitzer Prize-winning cover photograph"
+- "Vanity Fair editorial portrait"
+- "National Geographic cover story"
+- "WIRED magazine feature spread"
+- "Architectural Digest interior"
+- "Bon Appetit feature spread"
+- "Magnum Photos documentary"
+- "Wallpaper* magazine design editorial"
+
+#### Key Tactics（プロンプトの効果を最大化する10の技法）
+
+1. **実在のカメラを名指し** — "Sony A7R IV," "Canon EOS R5" がリアリズムのアンカーに
+2. **レンズを具体的に** — "85mm f/1.4" で被写界深度が正確に
+3. **年齢＋肌＋特徴を明示** — "24yo with olive skin, hazel eyes" は "a person" の100倍
+4. **ブランド名でスタイル喚起** — "Lululemon mat," "Tom Ford suit"
+5. **マイクロディテール** — "sweat droplets on collarbones," "baby hairs stuck to neck"
+6. **プラットフォーム文脈** — "Instagram aesthetic," "commercial photography"
+7. **テクスチャ描写** — "crinkle-textured," "metallic silver," "frosted glass"
+8. **動詞で動きを** — "mid-run," "posing confidently," "captured mid-stride"
+9. **Prestigious Context Anchor** — "Vanity Fair editorial" で品質が上がる。"ultra-realistic" は逆効果
+10. **製品には "prominently displayed"** — 製品/ロゴが埋没しない
 
 #### アンチパターン（避けるべきもの）
 
-- **タグの羅列**: キーワードの羅列 → 自然な文章に書き直す
-- **曖昧な主語**: "a person" "a building" → 具体的な特徴を加える
-- **照明・ムードの欠落**: 出力品質に大きく影響 → 必ず含める
-- **矛盾するスタイル**: "photorealistic watercolor" のような非互換な組み合わせ → 1つの主要スタイルに絞る
-- **過剰な詰め込み**: 矛盾する要素が多すぎると品質低下 → 一貫性を保つ
+- ❌ "A dark-themed Instagram ad showing..." → **コンセプトでなくシーンを描写する**
+- ❌ "A sleek SaaS dashboard visualization..." → **抽象的すぎ、視覚的アンカーがない**
+- ❌ "Modern, clean, professional..." → **曖昧な形容詞、モデルには意味がない**
+- ❌ "A bold call to action with..." → **マーケティング意図を書いている**
+- ❌ 見た人にどう感じてほしいかを書く → **その感情を生む具体的な要素を書く**
+- ❌ タグの羅列 → 自然な段落に
+- ❌ 照明・ムードの欠落 → 品質に直結、必ず含める
+- ❌ 矛盾するスタイルの混在 → 1つの主要スタイルに絞る
 
-#### プロンプト品質チェック（出力前に確認）
+#### ネガティブプロンプトの扱い
 
-- [ ] 自然言語で書かれているか（タグ羅列でないか）
-- [ ] 主語が具体的か（素材・テクスチャ・特徴が含まれるか）
-- [ ] 照明とムードが指定されているか
-- [ ] 構図・カメラアングルが明示されているか
-- [ ] 用途・目的が含まれているか（該当する場合）
-- [ ] スタイルが一貫しているか（矛盾がないか）
+Gemini にはネガティブプロンプト機能がない。排除したい要素は**肯定的に言い換える**。
+- ❌ "no blur" → ✅ "sharp, in-focus, tack-sharp detail"
+- ❌ "no people" → ✅ "empty, deserted, uninhabited"
+- ❌ "no text" → ✅ "clean, uncluttered, text-free"
+- 重要な制約は ALL CAPS で強調: "MUST contain exactly three figures," "NEVER include any text"
+
+#### プロンプト品質チェック（出力前に必ず確認）
+
+- [ ] 5コンポーネント（Subject/Action/Location/Composition/Style）が全て含まれているか
+- [ ] 自然な段落で書かれているか（タグ羅列でないか）
+- [ ] Banned Keywords を使っていないか（8K, masterpiece, photorealistic 等）
+- [ ] 実在のカメラ/レンズが指定されているか（フォトリアルの場合）
+- [ ] Prestigious Context Anchor が含まれているか
+- [ ] 照明が具体的に記述されているか（品質に最も影響する要素）
+- [ ] マイクロディテールが含まれているか
+- [ ] コンセプトや広告意図ではなく、カメラが見るシーンが描写されているか
 
 ### Step 4：構造化して返す
 
@@ -118,9 +210,9 @@ tools: Read
 ## 生成パラメータ
 
 - **prompt**: （英語プロンプト）
-- **style**: （photorealistic / illustration / watercolor など）
+- **domainMode**: （Cinema / Product / Food / Portrait / Editorial / UI-Web / Illustration / Logo / Architecture / Landscape / Abstract / Infographic）
 - **aspectRatio**: （`1:1` / `9:16` / `16:9` / `4:3` / `3:4` のいずれか。`4:5` など他の値はAPIが非対応のため指定しないこと。Instagram縦投稿には `3:4` を使用する）
-- **imageSize**: （1K / 2K / 4K）
+- **imageSize**: （1K / 2K / 4K）※これはAPI パラメータであり、プロンプト本文に "4K" 等と書くのはBanned Keywords違反。混同しないこと
 - **savePath**: （保存先パス。画像は `.webp`、動画は `.mp4` をデフォルトにする）
 
 ## イメージの意図

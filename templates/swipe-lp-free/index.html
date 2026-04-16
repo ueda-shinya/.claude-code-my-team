@@ -1,0 +1,492 @@
+<!--
+  Swipe LP Template v1.0 (Free Edition)
+  Template by オフィスウエダ
+  コーディングのご相談: https://example.com/contact
+  高機能版（GA4計測/SEO/OGP込み）についてもお気軽にどうぞ
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!--
+    =====================================================
+    設定エリア（ここだけ編集してください）
+    =====================================================
+  -->
+
+  <!-- アスペクト比: 9:16 / 1:1 / 4:5 / 16:9 -->
+  <meta name="lp-ratio" content="4:5">
+
+  <!-- CTAボタンの色（背景色 / 文字色） -->
+  <meta name="cta-bg-color" content="#e74c3c">
+  <meta name="cta-text-color" content="#ffffff">
+
+  <!-- ページタイトル -->
+  <title>LP タイトル</title>
+
+  <!--
+    =====================================================
+    Swiper.js CDN (swiper@11)
+    =====================================================
+  -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+  >
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <style>
+    /* =====================================================
+       CSS変数 — アスペクト比はJSで上書きされる
+       ===================================================== */
+    :root {
+      --ratio-w: 9;
+      --ratio-h: 16;
+      --cta-height: 80px;
+      --pagination-height: 36px;
+      --slide-bg: #111;
+      --cta-bg: #e74c3c;
+      --cta-text: #ffffff;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    }
+
+    /* =====================================================
+       ページネーション（上部固定）
+       ===================================================== */
+    #pagination-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--pagination-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      z-index: 100;
+    }
+
+    /* =====================================================
+       スライダーラッパー
+       スマホ: 幅100%基準
+       PC: 高さ基準で中央寄せ
+       ===================================================== */
+    #slider-wrapper {
+      position: fixed;
+      top: var(--pagination-height);
+      left: 0;
+      right: 0;
+      bottom: var(--cta-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    #swiper-container {
+      position: relative;
+      background: var(--slide-bg);
+      overflow: hidden;
+    }
+
+    .swiper-slide {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--slide-bg);
+    }
+
+    .swiper-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+    }
+
+    /* =====================================================
+       0枚のときのエラー表示
+       ===================================================== */
+    #no-slides-message {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      text-align: center;
+      padding: 24px;
+      gap: 12px;
+    }
+
+    #no-slides-message.visible {
+      display: flex;
+    }
+
+    #no-slides-message p {
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    #no-slides-message code {
+      background: #222;
+      color: #ccc;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    /* =====================================================
+       スワイプヒント（初回のみ、3秒後に消える）
+       ===================================================== */
+    #swipe-hint {
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      pointer-events: none;
+      z-index: 50;
+      white-space: nowrap;
+      animation: hint-pulse 1s ease-in-out infinite alternate;
+    }
+
+    #swipe-hint.hidden {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    @keyframes hint-pulse {
+      from { opacity: 0.6; }
+      to   { opacity: 1.0; }
+    }
+
+    /* =====================================================
+       CTA（下部固定）
+       ===================================================== */
+    #cta-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--cta-height);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      padding: 8px 16px;
+      gap: 4px;
+    }
+
+    /* =====================================================
+       CTAボタン — テキストとリンク先はここを差し替え
+       ===================================================== */
+    #cta-button {
+      display: block;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      background: var(--cta-bg);
+      color: var(--cta-text);
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 6px;
+      padding: 12px 20px;
+      letter-spacing: 0.05em;
+      transition: opacity 0.15s ease;
+    }
+
+    #cta-button:active {
+      opacity: 0.8;
+    }
+
+    /* PC: ホバー */
+    @media (hover: hover) {
+      #cta-button:hover {
+        opacity: 0.85;
+      }
+    }
+
+    /* クレジット */
+    .credit {
+      text-align: center;
+      opacity: 0.6;
+    }
+
+    .credit small {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .credit a {
+      color: #666;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ページネーション（上部） -->
+  <div id="pagination-bar">
+    <span id="pagination-text">- / -</span>
+  </div>
+
+  <!-- スライダー本体 -->
+  <div id="slider-wrapper">
+    <div id="swiper-container" class="swiper">
+      <div class="swiper-wrapper" id="swiper-wrapper"></div>
+
+      <!-- 0枚のときのメッセージ -->
+      <div id="no-slides-message">
+        <p>
+          <code>images/</code> フォルダに<br>
+          <code>slide-01.webp</code> を配置してください
+        </p>
+        <p style="font-size:13px; color:#666;">
+          対応形式: webp / jpg / png
+        </p>
+      </div>
+
+      <!-- スワイプヒント（初回のみ） -->
+      <div id="swipe-hint">← スワイプ →</div>
+    </div>
+  </div>
+
+  <!-- CTA（下部固定） -->
+  <div id="cta-bar">
+    <!--
+      ↓↓↓ ここを差し替えてください ↓↓↓
+      href: リンク先URL
+      テキスト: ボタンのラベル
+    -->
+    <a id="cta-button" href="https://officeueda.com/contact" rel="noopener noreferrer">制作のご相談はこちら</a>
+    <div class="credit">
+      <small>Template by <a href="https://officeueda.com" rel="noopener noreferrer">オフィスウエダ</a></small>
+    </div>
+  </div>
+
+  <script>
+    'use strict'
+
+    /* =====================================================
+       設定読み込み
+       ===================================================== */
+
+    /**
+     * <meta name="lp-ratio"> からアスペクト比を読み取り、
+     * CSS変数と数値ペアを返す。
+     * 不正値の場合は 9:16 にフォールバック。
+     */
+    const readRatio = () => {
+      const meta = document.querySelector('meta[name="lp-ratio"]')
+      const raw = meta ? meta.getAttribute('content') : '9:16'
+      const allowed = { '9:16': [9, 16], '1:1': [1, 1], '4:5': [4, 5], '16:9': [16, 9] }
+      return allowed[raw] || [9, 16]
+    }
+
+    const [ratioW, ratioH] = readRatio()
+    document.documentElement.style.setProperty('--ratio-w', ratioW)
+    document.documentElement.style.setProperty('--ratio-h', ratioH)
+
+    /**
+     * <meta name="cta-bg-color"> / <meta name="cta-text-color"> から
+     * CTAボタンの色を読み取り、CSS変数に反映する。
+     * meta タグがなければデフォルト色にフォールバック。
+     */
+    const ctaBg = document.querySelector('meta[name="cta-bg-color"]')?.content || '#e74c3c'
+    const ctaText = document.querySelector('meta[name="cta-text-color"]')?.content || '#ffffff'
+    document.documentElement.style.setProperty('--cta-bg', ctaBg)
+    document.documentElement.style.setProperty('--cta-text', ctaText)
+
+    /* =====================================================
+       スライダーサイズ計算
+       ===================================================== */
+
+    /**
+     * 利用可能エリア（pagination + CTA を除いた領域）に
+     * アスペクト比を維持して最大サイズを計算する。
+     */
+    const calcSliderSize = () => {
+      const ctaHeight = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--cta-height'), 10
+      )
+      const paginationHeight = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--pagination-height'), 10
+      )
+      const availW = window.innerWidth
+      const availH = window.innerHeight - ctaHeight - paginationHeight
+
+      // 幅基準で高さを計算
+      const hFromW = availW * ratioH / ratioW
+      if (hFromW <= availH) {
+        return { width: availW, height: Math.round(hFromW) }
+      }
+      // 高さ基準で幅を計算（PC等の横長画面）
+      const wFromH = availH * ratioW / ratioH
+      return { width: Math.round(wFromH), height: availH }
+    }
+
+    const applySliderSize = () => {
+      const { width, height } = calcSliderSize()
+      const container = document.getElementById('swiper-container')
+      container.style.width = width + 'px'
+      container.style.height = height + 'px'
+    }
+
+    applySliderSize()
+    window.addEventListener('resize', applySliderSize)
+
+    /* =====================================================
+       SlideLoader — imagesフォルダを連番で自動探索する
+       ===================================================== */
+
+    /**
+     * images/slide-{n}.{ext} を HEAD リクエストで存在確認し、
+     * 見つかった順に画像パスの配列を返す。
+     * 拡張子は webp → jpg → png の順に試す。
+     * 404 になった番号で打ち止め。
+     */
+    const SlideLoader = {
+      EXTS: ['webp', 'jpg', 'png'],
+      IMAGE_DIR: 'images',
+      MAX_SLIDES: 200,
+
+      _pad: (n) => String(n).padStart(2, '0'),
+
+      _checkExists: async (url) => {
+        try {
+          const res = await fetch(url, { method: 'HEAD' })
+          return res.ok
+        } catch {
+          return false
+        }
+      },
+
+      /**
+       * 連番スライドを探索して見つかったURLリストを返す。
+       * @returns {Promise<string[]>}
+       */
+      load: async function() {
+        const paths = []
+        let n = 1
+        while (n <= this.MAX_SLIDES) {
+          const base = `${this.IMAGE_DIR}/slide-${this._pad(n)}`
+          let found = null
+          for (const ext of this.EXTS) {
+            const url = `${base}.${ext}`
+            if (await this._checkExists(url)) {
+              found = url
+              break
+            }
+          }
+          if (!found) break
+          paths.push(found)
+          n++
+        }
+        return paths
+      }
+    }
+
+    /* =====================================================
+       SwipeHint — 初回のみ3秒後に非表示
+       ===================================================== */
+
+    const SwipeHint = {
+      _el: null,
+      _timer: null,
+
+      init(el) {
+        this._el = el
+        this._timer = setTimeout(() => this.hide(), 3000)
+      },
+
+      hide() {
+        if (!this._el) return
+        this._el.classList.add('hidden')
+        clearTimeout(this._timer)
+      }
+    }
+
+    /* =====================================================
+       メイン処理
+       ===================================================== */
+
+    const init = async () => {
+      const slidePaths = await SlideLoader.load()
+
+      // 0枚のとき: エラーメッセージ表示してSwiper初期化しない
+      if (slidePaths.length === 0) {
+        document.getElementById('no-slides-message').classList.add('visible')
+        document.getElementById('swipe-hint').style.display = 'none'
+        return
+      }
+
+      // スライドをDOMに注入
+      const wrapper = document.getElementById('swiper-wrapper')
+      slidePaths.forEach((src) => {
+        const slide = document.createElement('div')
+        slide.className = 'swiper-slide'
+        const img = document.createElement('img')
+        img.src = src
+        img.alt = ''
+        img.loading = 'eager'
+        slide.appendChild(img)
+        wrapper.appendChild(slide)
+      })
+
+      // ページネーション初期表示
+      const updatePagination = (index) => {
+        document.getElementById('pagination-text').textContent =
+          `${index + 1} / ${slidePaths.length}`
+      }
+      updatePagination(0)
+
+      // Swiper 初期化
+      new Swiper('#swiper-container', {
+        loop: false,
+        touchRatio: 1,
+        grabCursor: true,
+        on: {
+          slideChange() {
+            updatePagination(this.activeIndex)
+            SwipeHint.hide()
+          }
+        }
+      })
+
+      // スワイプヒント初期化
+      SwipeHint.init(document.getElementById('swipe-hint'))
+    }
+
+    init()
+  </script>
+</body>
+</html>

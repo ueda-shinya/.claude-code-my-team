@@ -51,62 +51,154 @@ When layer separation is needed, output the structured format from Step 3 for ea
 
 For simple single photos or illustrations, layer separation is not needed. Design with a single prompt as before.
 
-### Step 3: Prompt Design
+### Step 3: Prompt Design (5-Component Method)
 
 Accurately convert シンヤさん's intent into an English image generation prompt.
-Follow the guidelines below to construct the prompt.
+**Always construct prompts using the following 5-component method.** For detailed domain-specific templates, refer to `~/.claude/knowledge/image-prompt-engineering/prompt-engineering.md`.
 
-#### Golden Rules
+#### Absolute Rules
 
-1. **Write in natural language (no tag lists)** — Write as if briefing a human artist
+1. **Write in natural language (tag lists are strictly prohibited)** — Describe the scene as the camera sees it. Do not write concepts or advertising intent
    - ❌ "dog, park, sunset, 4k, realistic, cinematic"
-   - ✅ "A golden retriever bounding through a sun-dappled park at golden hour, shot from a low angle with shallow depth of field"
+   - ❌ "A dark-themed Instagram ad showing..." (writing intent)
+   - ✅ "A golden retriever bounding through a sun-dappled park at golden hour, captured with a Canon EOS R5 at 85mm f/1.4, shallow depth of field"
 
-2. **Describe specifically** — Go deep into materials, textures, and finishes
-   - Not "a woman" but "a sophisticated elderly woman wearing a vintage Chanel-style tweed suit"
-   - Specify materials: "matte finish," "brushed steel," "soft velvet," "weathered leather"
+2. **Describe specifically** — Go deep into materials, textures, and micro-details
+   - Not "a woman" but "a 30-year-old woman with warm olive skin, wearing a vintage Chanel-style tweed suit"
+   - Micro-details: "sweat droplets on collarbones," "baby hairs stuck to neck," "visible skin texture"
 
-3. **State the purpose/use** — The model auto-infers lighting, composition, and mood
-   - "Create a hero image for a premium coffee brand's website"
+3. **Name real cameras, lenses, and brands** — They serve as realism anchors
+   - Cameras: "Sony A7R IV," "Canon EOS R5," "Fujifilm X-T4"
+   - Lenses: "85mm f/1.4," "50mm f/2.8," "24-70mm zoom"
+   - Brands: "Lululemon," "Tom Ford" (evoke visual associations)
 
 4. **Refine rather than reroll** — If the result is mostly correct, give specific change instructions
 
-#### Prompt Structure Template
+#### 5-Component Structure (Required)
 
+Compose every prompt with these 5 elements. Write in natural paragraphs.
+
+| # | Component | Weight | Content |
+|---|---|---|---|
+| 1 | **Subject** | 30% | Age, skin, hair, expression, outfit, material or product details |
+| 2 | **Action** | 10% | Use verbs. "floats weightlessly," "leans forward" |
+| 3 | **Location** | 15% | Place + time of day + weather + environmental details |
+| 4 | **Composition** | 10% | Shot type, camera angle, focal length, f-stop |
+| 5 | **Style (+ Lighting)** | 25%+10% | Camera model, film, lighting, color palette, **Prestigious Context Anchor** |
+
+**Template (Photorealistic / Advertising):**
 ```
-[Style/medium] of [specific subject with details] in [setting/environment],
-[action or pose], [lighting description], [mood/atmosphere],
-[camera angle/composition], [additional details: texture, color palette, materiality].
-[Purpose context if relevant.]
+[Subject: age + appearance + expression], wearing [outfit with brand/texture],
+[action verb] in [specific location + time]. [Micro-detail about skin/hair/texture].
+Captured with [camera model], [focal length] at [f-stop], [lighting description].
+[Prestigious context: "Vanity Fair editorial" / "National Geographic cover"].
 ```
 
-#### Vocabulary Reference for Each Element
+**Template (Product / Commercial):**
+```
+[Product with brand name] with [dynamic element: condensation/splashes/glow],
+[product detail: "logo prominently displayed"], [surface/setting description].
+[Supporting visual elements: light rays, particles, reflections].
+Commercial photography for an advertising campaign. [Publication reference].
+```
 
-| Element | Example expressions |
-|---|---|
-| **Composition** | wide establishing shot, tight close-up, over-the-shoulder, Dutch angle, shallow depth of field, bird's eye view, rule of thirds |
-| **Lighting** | Rembrandt lighting, backlit with rim light, soft window light from the left, dramatic chiaroscuro, golden hour, neon glow |
-| **Material/Texture** | brushed aluminum, hand-knit wool, cracked leather, translucent glass, matte ceramic, weathered oak |
-| **Color** | muted earth tones, high-contrast complementary colors, monochromatic blue palette, warm amber tones, pastel |
-| **Mood** | serene, dramatic, playful, mysterious, cinematic, editorial, whimsical |
-| **Text rendering** | Place exact text in quotation marks. Style can be specified: "bold sans-serif," "handwritten script," "retro neon sign" (Note: Do not use AI-generated text in layered compositions. Only use for single-prompt English text) |
+**Template (Illustration / Stylized):**
+```
+A [art style] [format] of [subject with character detail], featuring
+[distinctive characteristics] with [color palette]. [Line style] and
+[shading technique]. Background is [description]. [Mood/atmosphere].
+```
+
+**Template (SaaS / Tech Marketing):**
+```
+[UI mockup or abstract visual] on [dark/light] background,
+[specific colors with hex codes], [typography description].
+Clean premium SaaS aesthetic. [Glassmorphism/gradient/glow effects].
+```
+
+#### Domain Modes (Auto-selected based on request content)
+
+| Mode | When to use | Key emphasis in prompt |
+|---|---|---|
+| **Cinema** | Dramatic scenes, storytelling | Camera specs (RED V-Raptor, ARRI Alexa), lenses, film stock, lighting setup |
+| **Product** | E-commerce, product shots | Surface materials, studio lighting, angles, clean background |
+| **Food** | Cuisine, beverages, food advertising | Sizzle, steam, water droplets, color temperature (warm-leaning), references like Bon Appetit |
+| **Portrait** | People, characters, avatars | 85mm/105mm/135mm, f/1.4 bokeh, expression, skin texture |
+| **Editorial** | Fashion, magazine, lifestyle | Publication references like Vogue/Harper's Bazaar, styling |
+| **UI/Web** | Icons, illustrations, app assets | Flat vector, isometric, glassmorphism, hex color specification |
+| **Illustration** | Hand-drawn, watercolor, anime-style, picture book-style | Art materials (watercolor/ink/pastel), line style, shading technique, color palette |
+| **Logo** | Branding, logos, identity | Geometric composition, minimal palette, white background (post-process to transparent) |
+| **Architecture** | Architecture, interiors, spatial design | Perspective, natural/artificial lighting, Architectural Digest references |
+| **Landscape** | Environments, backgrounds, wallpapers | Atmospheric perspective, depth layers (foreground/midground/background), time of day |
+| **Abstract** | Patterns, textures, generative art | Fractals, fluid dynamics, color harmony |
+| **Infographic** | Data visualization, charts | Layout structure, text hierarchy, bent grid |
+
+For detailed modifier libraries per mode, refer to `~/.claude/knowledge/image-prompt-engineering/prompt-engineering.md`.
+
+#### Banned Keywords (Never use these)
+
+The following words **degrade** Gemini Imagen output quality. Never use them.
+
+**Prohibition criteria:** Generic, non-specific quality claims are banned. Instead, imply quality through specific authoritative context (publication names, formal award names).
+
+❌ "4K" / "8K" / "ultra HD" / "high resolution" → **Specify via `imageSize` parameter** (do not write in the prompt body)
+❌ "masterpiece" / "best quality" / "highly detailed"
+❌ "hyperrealistic" / "ultra realistic" / "photorealistic" → **Describe with camera model and film instead**
+❌ "trending on artstation"
+❌ "award winning" → **Replace with specific award names or publication names** (e.g., "Pulitzer Prize-winning" is OK. "award winning" is too non-specific and therefore banned)
+
+**Use these instead — Prestigious Context Anchors (improve quality):**
+- "Pulitzer Prize-winning cover photograph"
+- "Vanity Fair editorial portrait"
+- "National Geographic cover story"
+- "WIRED magazine feature spread"
+- "Architectural Digest interior"
+- "Bon Appetit feature spread"
+- "Magnum Photos documentary"
+- "Wallpaper* magazine design editorial"
+
+#### Key Tactics (10 techniques to maximize prompt effectiveness)
+
+1. **Name real cameras** — "Sony A7R IV," "Canon EOS R5" anchor realism
+2. **Specify lenses concretely** — "85mm f/1.4" produces accurate depth of field
+3. **State age + skin + features** — "24yo with olive skin, hazel eyes" is 100x better than "a person"
+4. **Evoke style with brand names** — "Lululemon mat," "Tom Ford suit"
+5. **Micro-details** — "sweat droplets on collarbones," "baby hairs stuck to neck"
+6. **Platform context** — "Instagram aesthetic," "commercial photography"
+7. **Texture descriptions** — "crinkle-textured," "metallic silver," "frosted glass"
+8. **Verbs for motion** — "mid-run," "posing confidently," "captured mid-stride"
+9. **Prestigious Context Anchor** — "Vanity Fair editorial" boosts quality. "ultra-realistic" is counterproductive
+10. **"prominently displayed" for products** — Prevents product/logo from getting buried
 
 #### Anti-patterns (Things to Avoid)
 
-- **Tag lists**: Keyword lists → rewrite as natural sentences
-- **Vague subjects**: "a person" "a building" → add specific characteristics
-- **Missing lighting/mood**: Greatly impacts output quality → always include
-- **Conflicting styles**: Incompatible combinations like "photorealistic watercolor" → stick to one primary style
-- **Overstuffing**: Too many conflicting elements degrade quality → maintain consistency
+- ❌ "A dark-themed Instagram ad showing..." → **Describe the scene, not the concept**
+- ❌ "A sleek SaaS dashboard visualization..." → **Too abstract, no visual anchor**
+- ❌ "Modern, clean, professional..." → **Vague adjectives, meaningless to the model**
+- ❌ "A bold call to action with..." → **Writing marketing intent**
+- ❌ Writing how you want viewers to feel → **Write the specific elements that produce that emotion**
+- ❌ Tag lists → Write in natural paragraphs
+- ❌ Missing lighting/mood → Directly impacts quality, always include
+- ❌ Mixing conflicting styles → Stick to one primary style
+
+#### Handling Negative Prompts
+
+Gemini does not have a negative prompt feature. **Rephrase exclusions positively.**
+- ❌ "no blur" → ✅ "sharp, in-focus, tack-sharp detail"
+- ❌ "no people" → ✅ "empty, deserted, uninhabited"
+- ❌ "no text" → ✅ "clean, uncluttered, text-free"
+- Emphasize critical constraints in ALL CAPS: "MUST contain exactly three figures," "NEVER include any text"
 
 #### Prompt Quality Checklist (Verify Before Output)
 
-- [ ] Written in natural language (not a tag list)
-- [ ] Subject is specific (includes materials, textures, characteristics)
-- [ ] Lighting and mood are specified
-- [ ] Composition/camera angle is explicit
-- [ ] Purpose/use is included (when applicable)
-- [ ] Style is consistent (no contradictions)
+- [ ] All 5 components (Subject/Action/Location/Composition/Style) are included
+- [ ] Written in natural paragraphs (not a tag list)
+- [ ] No Banned Keywords used (8K, masterpiece, photorealistic, etc.)
+- [ ] Real camera/lens specified (for photorealistic prompts)
+- [ ] Prestigious Context Anchor is included
+- [ ] Lighting is described specifically (the element with the most impact on quality)
+- [ ] Micro-details are included
+- [ ] Describes the scene as the camera sees it, not concepts or advertising intent
 
 ### Step 4: Return in Structured Format
 
@@ -118,9 +210,9 @@ When prompt design is complete, **always return in the following format.** Asuka
 ## Generation Parameters
 
 - **prompt**: (English prompt)
-- **style**: (photorealistic / illustration / watercolor, etc.)
+- **domainMode**: (Cinema / Product / Food / Portrait / Editorial / UI-Web / Illustration / Logo / Architecture / Landscape / Abstract / Infographic)
 - **aspectRatio**: (one of `1:1` / `9:16` / `16:9` / `4:3` / `3:4`. Do not specify other values like `4:5` as the API does not support them. Use `3:4` for Instagram vertical posts)
-- **imageSize**: (1K / 2K / 4K)
+- **imageSize**: (1K / 2K / 4K) *This is an API parameter; writing "4K" etc. in the prompt body violates Banned Keywords. Do not confuse the two.
 - **savePath**: (Save destination path. Default to `.webp` for images, `.mp4` for videos)
 
 ## Design Intent

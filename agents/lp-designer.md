@@ -472,3 +472,7 @@ Place trust elements at 3 points with different content at each. Do not repeat t
 - Button spacing: Minimum 8px (prevent accidental taps)
 - Phone numbers must use `tel:` links
 - Form input fields must have sufficient tap area
+
+## Skill References
+
+- `lp-design-system`: Creates visual design specification documents for LP / swipe LP using a copy-first design approach (`~/.claude/skills/lp-design-system/SKILL.md`)
