@@ -1062,6 +1062,10 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
         new_last_id     = last_message_id
         since_skip_count = 0  # --since フィルタでスキップした件数
 
+        # バグ1修正: タイムスタンプフィルタで過去の自分の返信が切り落とされても
+        # last_outgoing_at が巻き戻らないよう、状態ファイルの既存値を保持しておく
+        persisted_last_outgoing_at = room_state.get('last_outgoing_at', '')
+
         for msg in messages:
             msg_id      = msg.get('message_id', '')
             account     = msg.get('account', {})
@@ -1078,6 +1082,7 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                 send_time = f'{send_dt.year}-{send_dt.month:02d}-{send_dt.day:02d} {send_dt.hour:02d}:{send_dt.minute:02d}'
             except Exception:
                 send_time = str(send_time_ts)
+                send_dt = None  # フォールバック
 
             # メッセージIDの更新（since フィルタ対象でも既読扱いにするため先に更新）
             try:
@@ -1087,11 +1092,16 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                 pass
 
             # 一次返信対象ルームの送受信状況を記録（全メッセージ対象・解析前）
-            if room_id in CHATWORK_URGENT_ROOM_IDS and CHATWORK_MY_ACCOUNT_ID:
+            if room_id in CHATWORK_URGENT_ROOM_IDS and CHATWORK_MY_ACCOUNT_ID and send_dt is not None:
                 sender_account_id = str(account.get('account_id', ''))
                 if sender_account_id == CHATWORK_MY_ACCOUNT_ID:
                     # 自分の送信 → 返信済みとして記録・自動返信フラグをリセット
-                    room_state['last_outgoing_at'] = send_dt.isoformat()
+                    # バグ1修正: 状態ファイルの永続化値と比較し、より新しい値のみ上書き（タイムスタンプフィルタによる巻き戻り防止）
+                    current_outgoing = send_dt.isoformat()
+                    if not persisted_last_outgoing_at or current_outgoing > persisted_last_outgoing_at:
+                        room_state['last_outgoing_at'] = current_outgoing
+                        persisted_last_outgoing_at = current_outgoing  # ループ内でも最新値を保持
+                    # NOTE: 自動返信・手動返信の区別なくフラグをリセット（check_urgent_rooms の last_outgoing >= last_incoming 判定とセットで機能する）
                     room_state['urgent_auto_reply_sent'] = False
                 else:
                     # 相手からの受信 → 最新着信を更新
@@ -1102,7 +1112,11 @@ def run_sync(dry_run: bool = False, since_dt=None, test_mode: bool = False):
                         room_state['last_incoming_msg_id']  = msg_id
                         room_state['last_incoming_sender']  = account_name
                         room_state['last_incoming_excerpt'] = body[:100]
-                        room_state['urgent_auto_reply_sent'] = False
+                        # バグ2修正: 相手が追加メッセージを送っても、自分が既に返信済みならフラグをリセットしない
+                        # リセット条件: 自分がまだ返信していない（last_outgoing_at < last_incoming_at）場合のみ
+                        latest_outgoing = room_state.get('last_outgoing_at', '')
+                        if not latest_outgoing or latest_outgoing < cur:
+                            room_state['urgent_auto_reply_sent'] = False
 
             # --since フィルタ: 指定日時より前のメッセージはスキップ（last_message_id は更新済み）
             if since_dt is not None:

@@ -308,8 +308,11 @@ print('IS_SECOND_SUNDAY:', str(today.day == second_sunday))
   - `star4plus_entries`（⭐4 以上のエントリ配列。各要素は category / title / verdict_reason 等を含む）
 - **`registered == 0`** の場合は「本日の新着はありません」と1行だけ表示
 - **`star5_count ≥ 1`** の場合は見出しに `🔥` を付けて強調
-- `star4plus_entries` から上位最大3件を「- [カテゴリ] タイトル — 理由」の形式でバレット表示
+- `star4plus_entries` から上位最大3件を以下の形式でバレット表示：
+  - `seq` フィールドがある場合: `- #042 [カテゴリ] タイトル — 理由`（seq を3桁ゼロパディング）
+  - `seq` フィールドがない場合（旧データ）: `- [カテゴリ] タイトル — 理由`（番号なしでフォールバック）
 - 「詳細は Notion『Claude Code レーダー』DB で確認してください」と案内を末尾に1行追加
+- 「**『N番詳しく』『#042の詳細』などと言えば再照会できます**」を案内の後に追加
 
 ## 報告フォーマット
 
@@ -368,8 +371,9 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 
 ## Claude Code レーダー（最終実行: YYYY-MM-DD HH:MM）※ star5_count≥1 なら 🔥 を付与
 - 新規 X 件 / ⭐5 X 件
-- [カテゴリ] タイトル — 理由（⭐4以上を上位最大3件）
+- #042 [カテゴリ] タイトル — 理由（⭐4以上を上位最大3件。seq なし旧データは番号省略）
 - 詳細は Notion「Claude Code レーダー」DB で確認
+- **『N番詳しく』『#042の詳細』などと言えば再照会できます**
 ※ ファイル未存在 or executed_at が当日でない場合は「本日未実行」1行のみ。registered==0 の場合は「本日の新着はありません」1行のみ
 
 ## 定期タスク（※ 第2日曜日のみ表示）

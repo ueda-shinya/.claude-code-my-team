@@ -20,6 +20,8 @@
 - [feedback-slide-tools.md](feedback-slide-tools.md) — スライド制作は Genspark 等の専用ツールを優先。MD→スライド系（Marp/pptx-from-layouts）は積極提案しない
 - [feedback-asuka-judgment.md](feedback-asuka-judgment.md) — エージェント出力を検証なしに「良い」と報告しない。判断根拠を明示するか専門レビューを挟む
 - [feedback-agent-skill-gap.md](feedback-agent-skill-gap.md) — エージェントの繰り返し失敗はスキル化で根本対応（指示改善は2回まで、3回目でスキル化）
+- [feedback-dev-workflow.md](feedback-dev-workflow.md) — アスカのコーディング禁止ルール違反履歴（.env以外のコード・スクリプト・設定ファイルは必ずシュウに委任）
+- [feedback-asuka-interpretation.md](feedback-asuka-interpretation.md) — シンヤさんの指示の対象範囲・前提を勝手に広げない（拡大解釈禁止）
 
 ## project
 - [project_notion_management.md](project_notion_management.md) — Notion DB一本化方針（案件リスト・残件タスク→案件管理に統合、スキーマ設計は持ち越し）

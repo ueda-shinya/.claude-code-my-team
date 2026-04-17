@@ -52,6 +52,13 @@ from datetime import datetime, timezone, timedelta
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
+# ---- カスタム例外 ----
+
+class NotionRadarError(Exception):
+    """notion-radar.py 内部で使用する基底例外クラス"""
+    pass
+
+
 # ---- 定数 ----
 
 ENV_PATH = pathlib.Path.home() / '.claude' / '.env'
@@ -251,6 +258,56 @@ def notion_request(method, path, data=None, token=None, allow_404=False):
         print(f'[ERROR] 接続エラー: {e.reason}')
         sys.exit(1)
 
+
+
+
+def notion_request_with_retry(method, path, data=None, token=None, allow_404=False,
+                               max_retries=5, base_wait=1.0):
+    """
+    Notion API へリクエストを送る。429（レートリミット）時は指数バックオフでリトライ。
+    その他のエラーは NotionRadarError を raise する（sys.exit は行わない）。
+    バックオフ上限は 60 秒。
+    """
+    url = f'https://api.notion.com/v1{path}'
+    body = json.dumps(data, ensure_ascii=False).encode("utf-8") if data is not None else None
+    headers = {
+        'Authorization': f'Bearer {token}',
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json',
+    }
+    req = urllib.request.Request(url, data=body, headers=headers, method=method)
+    attempt = 0
+    wait = base_wait
+    while True:
+        try:
+            with urllib.request.urlopen(req, context=SSL_CTX, timeout=30) as res:
+                return json.loads(res.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            if allow_404 and e.code == 404:
+                return None
+            if e.code == 429 and attempt < max_retries:
+                attempt += 1
+                retry_after = e.headers.get('Retry-After')
+                # 指数バックオフ上限: 60秒
+                try:
+                    retry_sec = float(retry_after) if retry_after else wait
+                except (TypeError, ValueError):
+                    retry_sec = wait
+                sleep_sec = min(retry_sec, 60.0)
+                print(f'[WARN] レートリミット(429)。{sleep_sec:.1f}秒後にリトライ '
+                      f'({attempt}/{max_retries})...')
+                time.sleep(sleep_sec)
+                wait *= 2
+                continue
+            try:
+                err = json.loads(e.read().decode("utf-8"))
+                msg = err.get('message', '詳細不明')
+            except Exception:
+                msg = 'レスポンス解析不可'
+            extra = ' (レートリミット超過・リトライ上限)' if e.code == 429 else ''
+            raise NotionRadarError(f'HTTP {e.code} {method} {path}: {msg}{extra}')
+        except urllib.error.URLError as e:
+            raise NotionRadarError(f'接続エラー: {e.reason}')
 
 def notion_query_all(db_id, token, filter_body=None):
     """ページネーションを考慮して全件取得する"""
@@ -507,6 +564,165 @@ def cmd_list(token, db_id, filter_status=None):
     print(f'合計 {len(items)} 件')
 
 
+# ---- 通し番号採番 ----
+
+def get_next_sequence_number(db_id, token):
+    """
+    Notion DB をクエリして既存レコードの「通し番号」最大値を取得し、最大値+1 を返す。
+    - page_size=1 + descending sort で最大値を 1 クエリで取得（O(1)）
+    - filter で is_not_empty を指定し null レコードを除外（全件 null でも安全に 1 を返す）
+    - DB が空 or 全件 null の場合は 1 を返す
+    - クエリ失敗時は NotionRadarError を raise する（呼び出し元で捕捉すること）
+
+    Returns:
+        int: 採番した通し番号
+    Raises:
+        NotionRadarError: Notion API リクエスト失敗時
+    """
+    body = {
+        'page_size': 1,
+        'sorts': [{'property': '通し番号', 'direction': 'descending'}],
+        'filter': {'property': '通し番号', 'number': {'is_not_empty': True}}
+    }
+    result = notion_request_with_retry('POST', f'/databases/{db_id}/query', body, token=token)
+    results = result.get('results', [])
+    if not results:
+        return 1
+    num = results[0].get('properties', {}).get('通し番号', {}).get('number')
+    if num is None:
+        return 1
+    return int(num) + 1
+
+
+# ---- --show-seq ----
+
+def cmd_show_seq(token, db_id, n):
+    """通し番号 N のエントリを1件取得して詳細表示する"""
+    if n < 1:
+        print('[ERROR] --show-seq には 1 以上の整数を指定してください。')
+        sys.exit(1)
+
+    body = {
+        'filter': {
+            'property': '通し番号',
+            'number': {'equals': n}
+        }
+    }
+    # TODO: 複数件ヒット時、page_size=100 を超える重複がある場合は取りこぼす。
+    # 通常運用では 1件のはず（通し番号はユニーク採番）。100件超の重複発生時は
+    # notion_query_all への切り替え or 独自ページネーションを検討。
+    result = notion_request_with_retry(
+        'POST', f'/databases/{db_id}/query', body, token=token
+    )
+    pages = result.get('results', [])
+
+    if not pages:
+        seq_str = f'#{n:03d}'
+        print(f'[INFO] 通し番号 {seq_str} のエントリは見つかりませんでした')
+        return
+
+    if len(pages) > 1:
+        print(f'[WARN] 通し番号 #{n:03d} が複数件ヒットしました（{len(pages)} 件）。全件表示します。')
+
+    for idx, page in enumerate(pages, 1):
+        if len(pages) > 1:
+            print(f'--- {idx}/{len(pages)} 件目（page_id: {page.get("id", "")}） ---')
+        props = page['properties']
+        seq_val = props.get('通し番号', {}).get('number')
+        seq_str = f'#{int(seq_val):03d}' if seq_val is not None else f'#{n:03d}'
+
+        title     = get_text(props, 'タイトル') or '(無題)'
+        category  = get_select(props, 'カテゴリ') or '-'
+        source    = get_select(props, '情報源') or '-'
+        url       = get_url(props, 'リンク') or '-'
+        date      = get_date(props, '投稿日時') or '-'
+        summary   = get_text(props, '要約') or '-'
+        riku      = get_select(props, 'リク検証') or '-'
+        verdict   = get_select(props, 'カナタ判定') or '-'
+        reason    = get_text(props, 'カナタ判定理由') or '-'
+        recommend = get_select(props, 'おすすめ度') or '-'
+
+        print(f'=== Claude Code レーダー {seq_str} ===')
+        print(f'タイトル: {title}')
+        print(f'カテゴリ: {category}')
+        print(f'情報源: {source}')
+        print(f'URL: {url}')
+        print(f'登録日: {date}')
+        print(f'要約: {summary}')
+        print()
+        print('[評価]')
+        print(f'  信頼性: {riku}')
+        print(f'  判定: {verdict}')
+        print(f'  理由: {reason}')
+        print(f'  おすすめ度: {recommend}')
+
+        if len(pages) > 1:
+            print()
+
+
+# ---- --add-sequence-property ----
+
+def cmd_add_sequence_property(token, db_id):
+    """
+    Notion DB に「通し番号」プロパティ（number型, format: number）を追加する。
+    既に存在する場合はスキップ（冪等）。
+    """
+    db_info = notion_request_with_retry("GET", f"/databases/{db_id}", token=token)
+    existing_props = db_info.get('properties', {})
+
+    if '通し番号' in existing_props:
+        existing_type = existing_props['通し番号'].get('type', '')
+        print(f'[INFO] 「通し番号」プロパティは既に存在します（type: {existing_type}）。スキップします。')
+        return
+
+    body = {
+        'properties': {
+            '通し番号': {
+                'number': {
+                    'format': 'number'
+                }
+            }
+        }
+    }
+    notion_request_with_retry("PATCH", f"/databases/{db_id}", body, token=token)
+    print('[OK] 「通し番号」プロパティを Notion DB に追加しました（number型）。')
+
+
+# ---- --list-recent ----
+
+def cmd_list_recent(token, db_id, n):
+    """直近N件のエントリを通し番号付きで一覧表示する"""
+    if n <= 0:
+        print('[ERROR] --list-recent には 1 以上の整数を指定してください。')
+        sys.exit(1)
+
+    body = {
+        'page_size': min(n, 100),
+        'sorts': [{'property': '通し番号', 'direction': 'descending'}],
+    }
+    result = notion_request_with_retry(
+        'POST', f'/databases/{db_id}/query', body, token=token
+    )
+    pages = result.get('results', [])
+
+    if not pages:
+        print('エントリはありません。')
+        return
+
+    print(f'=== Claude Code レーダー 直近 {n} 件 ===')
+    for page in pages:
+        props = page['properties']
+        num_prop = props.get('通し番号', {})
+        seq = num_prop.get('number')
+        seq_str = f'#{int(seq):03d}' if seq is not None else '#---'
+
+        category = get_select(props, 'カテゴリ') or ''
+        category_str = f'[{category}]' if category else ''
+        title = get_text(props, 'タイトル') or '(無題)'
+        print(f'{seq_str} {category_str} {title}')
+
+    print(f'合計 {len(pages)} 件表示')
+
 # ---- --add ----
 
 def cmd_add(args, token, db_id):
@@ -555,6 +771,13 @@ def cmd_add(args, token, db_id):
             print(f'[SKIP] 既にNotion登録済み: {url_val}')
             sys.exit(0)
 
+    # 通し番号採番（失敗時は警告のみ・登録は続行）
+    seq_num = None
+    try:
+        seq_num = get_next_sequence_number(db_id, token)
+    except NotionRadarError as e:
+        print(f'[WARN] 通し番号の採番に失敗しました（{e}）。通し番号なしで登録を続行します。')
+
     props = {
         'タイトル': {'title': [{'text': {'content': args.title}}]},
         '投稿日時': {'date': {'start': date_str}},
@@ -562,6 +785,9 @@ def cmd_add(args, token, db_id):
         '情報源': {'select': {'name': source}},
         '実施可否': {'select': {'name': status}},
     }
+
+    if seq_num is not None:
+        props['通し番号'] = {'number': seq_num}
 
     if args.summary:
         props['要約'] = rich_text_prop(args.summary)
@@ -601,7 +827,10 @@ def cmd_add(args, token, db_id):
         'properties': props,
     }, token=token)
 
-    print(f'登録しました: {args.title}')
+    if seq_num is not None:
+        print(f'[OK] 登録完了: #{seq_num:03d} {args.title}')
+    else:
+        print(f'[OK] 登録完了（通し番号なし）: {args.title}')
     print(f'  日付: {date_str}  カテゴリ: {category}  情報源: {source}')
     print(f'  実施可否: {status}（登録時デフォルト）')
 
@@ -796,6 +1025,18 @@ def main():
         )
     )
     group.add_argument('--seen-add', metavar='URL', help='URLを既知として登録する')
+    group.add_argument(
+        '--add-sequence-property', action='store_true',
+        help='Notion DB に「通し番号」プロパティ（number型）を追加する（冪等）'
+    )
+    group.add_argument(
+        '--list-recent', metavar='N', type=int,
+        help='直近N件のエントリを通し番号付きで一覧表示'
+    )
+    group.add_argument(
+        '--show-seq', metavar='N', type=int, dest='show_seq',
+        help='指定した通し番号のエントリを詳細表示'
+    )
 
     # --add オプション
     parser.add_argument('--title',          help='タイトル（--add 必須）')
@@ -850,17 +1091,27 @@ def main():
         cmd_create_db(token, env)
         return
 
-    # --list / --add は DB ID が必要
+    # --list / --add / --add-sequence-property / --list-recent / --show-seq は DB ID が必要
     db_id = env.get('NOTION_RADAR_DB_ID', '')
     if not db_id:
         print('[ERROR] .env に NOTION_RADAR_DB_ID が設定されていません。')
         print('  先に --create-db を実行してください。')
         sys.exit(1)
 
-    if args.list:
-        cmd_list(token, db_id, filter_status=args.filter_status)
-    elif args.add:
-        cmd_add(args, token, db_id)
+    try:
+        if args.add_sequence_property:
+            cmd_add_sequence_property(token, db_id)
+        elif args.list:
+            cmd_list(token, db_id, filter_status=args.filter_status)
+        elif args.list_recent is not None:
+            cmd_list_recent(token, db_id, args.list_recent)
+        elif args.show_seq is not None:
+            cmd_show_seq(token, db_id, args.show_seq)
+        elif args.add:
+            cmd_add(args, token, db_id)
+    except NotionRadarError as e:
+        print(f'[ERROR] {e}')
+        sys.exit(1)
 
 
 if __name__ == '__main__':

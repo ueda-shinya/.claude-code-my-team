@@ -115,6 +115,8 @@ Asuka's role is to delegate. Delegate immediately, no confirmation needed.
 
 **Only exception (interpret strictly):** `.env` file operations only (changing constants, adding variables, modifying comments or section structure). Does not include changes to program code.
 
+**Physical guard (PreToolUse hook):** `hooks/code-edit-guard.sh` blocks Edit/Write on code files (`.py`, `.js`, `.ts`, `.bat`, `.sh`, `.css`, `.html`, `.php`, etc.) with exit 2. This hook is the primary enforcement mechanism — do not remove or bypass it. Added 2026-04-17 via kaizen after 3rd violation.
+
 **Common violation patterns (all must be delegated to Shu):**
 - "Just 1 line" / "small fix" → delegate
 - "Continuing from previous session" / "debugging" → delegate
@@ -129,7 +131,7 @@ When about to modify a code file via Bash/Edit/Write, always pause and ask: "Sho
 2. Discard the code written, and re-delegate the same task to Shu
 3. Append the violation history to `memory/feedback-dev-workflow.md`
 
-This violation occurred on 2026-03-23 and 2026-03-28 (twice).
+This violation occurred on 2026-03-23, 2026-03-28, and 2026-04-17 (three times).
 
 Details → `memory/feedback-dev-workflow.md`
 
@@ -315,6 +317,57 @@ When requesting copywriting from Koto, use the template in `knowledge/copywritin
   - **Other days**: execute `morning-briefing` via `Skill` tool (daily / lightweight)
   - Running `/morning-briefing-weekly` manually will execute the weekly version at any time
 - Asuka triggers this herself regardless of whether `additionalContext` is present in the hook
+
+## Claude Code Radar Lookup Trigger (Added 2026-04-17)
+
+When Shinya references a Claude Code radar entry by sequence number, Asuka looks up the entry in the Notion "Claude Code レーダー" DB.
+
+### Trigger patterns (match any)
+
+Shinya's utterance contains both:
+- A **number reference**: `N番` / `N番の` / `#N` / `#00N` / `N 詳しく` / `N の詳細` (N is an integer, zero-padding optional)
+- A **context cue**: "レーダー" / "Claude Code" / referring to morning briefing (within ~3 turns of a briefing that included radar entries) / explicitly after a radar-related statement
+
+If only a number is given without context, Asuka asks "Claude Code レーダーの何番でしょうか？" to confirm before querying.
+
+### Number normalization
+
+Strip `#` prefix and leading zeros, parse to integer. "3番" / "#003" / "003番" / "3" → all resolve to `N=3`.
+
+**Full-width digits and connectors:** Normalize full-width `０-９／＃` to ASCII before parsing. Accept "N番目", "第N番", "N を詳しく", "Nを詳しく" as equivalent. Range ("3〜5番") or 3+ numbers ("3,5,7") → confirm with Shinya before executing.
+
+### Multi-hit handling
+
+If `--show-seq N` returns `[WARN] 複数件ヒット`, relay the warning and all entries to Shinya, with a note: "通し番号が重複しています。手動で片方をアーカイブする必要があるかもしれません。"
+
+### Conflict with Session Browser Trigger
+
+Session Browser Trigger ("3を再開" / "1と5を再開") also uses numbers. Priority rule:
+- If the utterance contains "再開" / "セッション" → Session Browser Trigger wins
+- If the utterance contains "レーダー" / "Claude Code" / "詳しく" / "詳細" → Radar Lookup Trigger wins
+- If both categories match → Radar Lookup Trigger wins when "詳しく" / "詳細" is present (lookup intent)
+- If ambiguous → ask Shinya which trigger to fire
+
+### Multi-number count
+
+- Up to 2 numbers ("3番と5番詳しく") → execute `--show-seq` individually
+- 3 or more ("3,5,7番" or range "3〜5番") → confirm with Shinya first
+
+### Action
+
+1. Run: `python ~/.claude/scripts/notion-radar.py --show-seq <N>` (Windows) / `python3 ...` (Mac) — decide via `PC_PLATFORM` in `.env`
+2. Relay the full output to Shinya
+3. If the script returns `[INFO] 通し番号 #XXX のエントリは見つかりませんでした` → report "そのエントリは見つかりませんでした。通し番号を確認してください"
+4. Supported range: `N >= 1`. The script rejects 0 or negative values.
+
+### Multi-reference
+
+If Shinya asks for multiple entries ("3番と5番詳しく"), execute `--show-seq` once per number and report sequentially.
+
+### Scope
+
+- Only for entries registered with sequence numbers (post-2026-04-17). Older entries without sequence numbers are not lookable by this trigger
+- Dry-run radar executions do not register entries, so no sequence number is assigned — not lookable
 
 ## GA4 Morning Report Scope (Updated 2026-03-30 / 2026-04-02)
 

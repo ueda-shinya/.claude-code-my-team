@@ -1,39 +1,8 @@
 # セッション引き継ぎ
 
-## 🔴 最優先・再起動後すぐ再開（2026-04-15）
+## 再開時リマインド（2026-04-18）
 
-**Claude Code レーダー Cron 登録の再試行**
-
-- 実装・レビュー・承認すべて完了済み（Shu/Sakura/Kanata/Rina）
-- 残りは `/schedule` スキルで毎日6:00 JSTのCron登録のみ
-- 本セッションで2回試行したが `remote claude.ai 接続エラー` で失敗
-- 再起動後、以下のコマンドで再試行：
-
-```
-/schedule 毎日 06:00 JST に /claude-code-radar を自動実行。名前: claude-code-radar-daily
-```
-
-### 完成している基盤
-- Notion DB「Claude Code レーダー」作成済み（`NOTION_RADAR_DB_ID=342b7112-f5f8-81c2-b10b-c421b1f440f3`）
-- `scripts/notion-radar.py`（サクラ承認済み・未コミット）
-- `skills/claude-code-radar/SKILL.md`（リナ承認済み・未コミット）
-- `skills/morning-briefing/SKILL.md` にステップ7統合済み（リナ承認済み・未コミット）
-
-### 未コミット変更ファイル（Cron登録後に一括コミット）
-- scripts/notion-radar.py（新規）
-- skills/claude-code-radar/（新規）
-- skills/morning-briefing/SKILL.md（変更）
-- .env（NOTION_RADAR_DB_ID 追記・git管理外）
-
----
-
-## 予定
-
-- **4/12（日）エージェント精度向上ラウンドテーブル**（仮・knowledge-buffer.md に議題保存済み）
-
-## 再開時リマインド（2026-04-17）
-
-### X ポスト確認（前回取得失敗・シンヤさんから再挑戦指示あり）
+### X ポスト確認（継続）
 以下の2つのXポストの内容を確認する。前回は WebFetch で 402 エラーにより取得できなかった。次回セッションで別の方法（シンヤさんにテキスト/スクショ共有を依頼、または別ツールでの取得を試行）でチャレンジする。
 - https://x.com/Hoshino_AISales/status/2043832144078963038
 - https://x.com/Kashiko_AIart/status/2010636586137100687
@@ -267,6 +236,17 @@ Notion案件管理DB「GSC・GA4計測診断＆改善提案ツール」（P2-今
 [2026-04-05] メールにスケジュール登録・変更検出を追加するタイミングで、カレンダー処理を `calendar_utils.py` として共通モジュールに切り出す（chatwork-sync.py・mail-check.py 両方から import して使う構成）
 [2026-04-09] skill.md（英語版）を skill.ja.md に同期する（カナタにフォアグラウンドで依頼すること。バックグラウンドだと権限プロンプトに応答できず失敗する）
 [2026-04-10] has_schedule除外条件に「スケジュール確定の報告はfalseにしない」の但し書きを追加する（chatwork-sync.py の build_analyze_prompt 内）
+
+[2026-04-18] **Claude Code レーダーは API 直接方式に書き換え方針**（Notion案件登録済み・P3-今月中）
+- 現状: claude.exe -p のClaude Codeセッション方式。詳細検証フェーズ追加でブリーフィング遅延リスク
+- 方針: chatwork-sync.py と同じパターンで Anthropic SDK 直接呼び出しスクリプト (scripts/radar-daily.py) を新規作成
+- Phase 1〜5: リサーチ/ファクトチェック/判定/詳細検証(導入推奨のみ)/Notion登録
+- 詳細はNotion案件「Claude Code レーダー API直接方式へ書き換え + 詳細検証フェーズ追加」を参照
+
+[2026-04-18] **code-edit-guard.sh hook は warn-only 運用中**
+- 設計ミス（サブエージェントも一律ブロック）により warn-only に変更
+- 恒久対応は サブエージェント識別機能の追加（再kaizen 待ち）
+- 詳細: knowledge/claude-code-hooks/sub-agent-identification-challenge.md
 
 [2026-04-15] **settings.json パースエラー問題（Mac発生・真因未特定）**
 - 症状: Claude Code 起動時に `settings file failed to parse: Expected array, but received undefined. Permission rules and other settings from this file are not in effect.`（Mac側）

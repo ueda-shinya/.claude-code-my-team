@@ -5,6 +5,66 @@
       "title": "Claude Code 公式リポジトリ",
       "hash": "13d96f6971fff698ebc53296b5f40ff14d755c304dc9f7e1b703b58e032f85a9",
       "first_seen": "2026-04-14T22:13:20.735519+00:00"
+    },
+    {
+      "url": "https://github.blog/changelog/2026-04-16-claude-opus-4-7-is-generally-available/",
+      "title": "Claude Opus 4.7 正式リリース",
+      "hash": "6ea753158c5716db64bef90c9f49f8fe317830f0974af45faf2f46ef9e9cc082",
+      "first_seen": "2026-04-16T23:36:57.282531+00:00"
+    },
+    {
+      "url": "https://github.com/anthropics/claude-code/releases",
+      "title": "Claude Code v2.1.111",
+      "hash": "867f64ca41c7c01e049eea46359778908a4f6a6d71eaa9c596f5a40a9cb5f496",
+      "first_seen": "2026-04-16T23:36:57.523630+00:00"
+    },
+    {
+      "url": "https://github.com/Piebald-AI/claude-code-system-prompts",
+      "title": "システムプロンプト公開リポ",
+      "hash": "1b9376ea992cd70bd38e48774c15fbcd294e280d3f124f80dd06291999229573",
+      "first_seen": "2026-04-16T23:36:57.768111+00:00"
+    },
+    {
+      "url": "https://9to5mac.com/2026/04/14/anthropic-adds-repeatable-routines-feature-to-claude-code-heres-how-it-works/",
+      "title": "デスクトップアプリ刷新",
+      "hash": "1f9b2eaecfb0ea3f65678e75e9cc794b205e14d22b0418c824144bb6c8752364",
+      "first_seen": "2026-04-16T23:36:58.010554+00:00"
+    },
+    {
+      "url": "https://releasebot.io/updates/anthropic",
+      "title": "Managed Agents β",
+      "hash": "76fe5d5444eca339608f199362aec45bae0c6c30b03238543328b9cff5e48863",
+      "first_seen": "2026-04-16T23:36:58.254351+00:00"
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/release-notes/overview",
+      "title": "Batches API 300k",
+      "hash": "4182359e79e632d3734e01b3cd5836ba41ea87f9ffa80056ead3738bb3c1b686",
+      "first_seen": "2026-04-16T23:36:59.929428+00:00"
+    },
+    {
+      "url": "https://github.com/affaan-m/everything-claude-code",
+      "title": "everything-claude-code",
+      "hash": "257ed09536576a0405556a39c1b7b9863b3ccb6d9798a92051e491a948c6e84f",
+      "first_seen": "2026-04-16T23:37:00.162811+00:00"
+    },
+    {
+      "url": "https://github.com/rohitg00/awesome-claude-code-toolkit",
+      "title": "awesome-claude-code-toolkit",
+      "hash": "4919bf7e67ede943b0652a83fcbe09470df5c839093ade06e4df6a8292c26c7a",
+      "first_seen": "2026-04-16T23:37:00.396717+00:00"
+    },
+    {
+      "url": "https://www.ibtimes.com.au/claude-down-now-claude-ai-outage-hits-users-hard-anthropics-chatbot-down-again-april-15-2026-1866682",
+      "title": "Claude障害4/15",
+      "hash": "897a3490268c69fbd9f58250d7fef77c3163e6fe8a426bb823eb375745de46cf",
+      "first_seen": "2026-04-16T23:37:00.627628+00:00"
+    },
+    {
+      "url": "https://dev.to/williamwangai/claude-code-skills-vs-mcp-servers-what-to-use-how-to-install-and-the-best-ones-in-2026-548k",
+      "title": "スキルvsMCPガイド",
+      "hash": "02d03d4c4a06adc0fa425c390b15b9be297ff8179b835d30531dd933c3911823",
+      "first_seen": "2026-04-16T23:37:00.865516+00:00"
     }
   ]
 }
