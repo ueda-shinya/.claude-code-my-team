@@ -1,5 +1,75 @@
 # セッション引き継ぎ
 
+## 🔴 再開ポイント（2026-04-18 最優先）: LINE WORKS Bot Claude Code セッション継続機能
+
+**feature-flow でステップ4（KYT）まで完了。次はステップ5（リナ統合検証）から再開。**
+
+### 進捗サマリー
+- ステップ1（ヒアリング）・ステップ2（要件 v3）・ステップ3（設計 v3.3）・ステップ4（KYT）**完了**
+- Notion 案件: 「LINE WORKS Bot に Claude Code セッション継続機能を追加（claude -p --resume 方式）」P2-今週中
+- 設計書: `~/.claude/plans/line-works-bot-claude-code-design-v3.3.md`（343行）
+
+### シンヤさん最終判断（KYT 後）
+**Phase 1 縮小案を採用**: allowedTools を **Read / Grep / Glob / WebFetch / WebSearch のみ** に絞る（Bash / Edit / Task は Phase 2 以降で解禁・code-edit-guard.sh 再kaizen完了後）。
+→ これにより Q3.a（スキル呼び出し対象）は Phase 1 では事実上非対象に。要件の更新が必要。
+
+### 次回再開手順
+1. `python ~/.claude/scripts/notion-tasks.py --show "LINE WORKS Bot に Claude Code"` で全工程確認
+2. シュウに設計 v3.4 修正を依頼（下記の変更点を反映）
+3. リナの統合検証を実施
+4. ステップ6（実装）へ
+
+### v3.4 への変更点（シュウ依頼内容）
+- **要件側**: Q3 を「スキル呼び出しは Phase 2 非対象」に更新（Phase 1 は自然対話・リサーチ・ファイル参照のみ）
+- **設計 C-1**: allowedTools を `Read,Grep,Glob,WebFetch,WebSearch` に縮小
+- **KYT 実装前対処 11件** をすべて反映:
+  1. session_id 取得・更新ロジック実装（J-1/J-2 解決、stdout から session_id をパース）
+  2. TimeoutExpired 時の Popen.kill() + wait()
+  3. status='running' 固着対策（state書込二重例外ハンドラ + 起動時 stale リセット強化）
+  4. Phase 1 縮小（上記）
+  5. 日次累積コストハードストップ（api-cost-history.json + 日次$5超で拒否）
+  6. .gitignore に claude-session.json 追加
+  7. user_message 引数の subprocess 配列渡し安全性検証
+  8. エラー/disabled からの「リセット」復帰
+  9. CLAUDE_EXE_PATH の実環境パス確認・.env 必須明記
+  10. 子プロセスツリー kill（taskkill /F /T /PID）実装確認
+  11. LINE WORKS Webhook 2秒タイムアウト動作確認
+
+### 本日の検証結果
+- `claude -p --resume <uuid>` は 2026-04-18 時点最新版で動作確認済（Issue #1967 解消）
+- session_id は stdout JSON のトップレベル `session_id` フィールド（検証テスト済）
+- 初回 $0.146、2回目以降 $0.02（キャッシュ効果）
+- 検証テスト結果: `tmp/lw-test[1-6]*.json` に保存
+
+---
+
+## 🔄 再起動後の動作確認（2026-04-18 プラグイン導入）
+
+Claude Codeセッションを再起動して、以下のプラグインが有効化されているか確認してください。
+
+### 本日導入したプラグイン（全てuser scope、enabled）
+- `claude-md-management@claude-plugins-official` — CLAUDE.md 監査・改善ツール
+- `hookify@claude-plugins-official` — hooks作成支援
+- `github@claude-plugins-official` — GitHub MCP連携
+
+### 確認コマンド（再起動後）
+```bash
+claude plugin list
+```
+3本すべて `Status: ✔ enabled` なら成功。
+
+### 初回試用候補
+- `/claude-md-management:audit`（仮コマンド名、実際は `/plugin-name:skill-name` 形式）で CLAUDE.md の監査を試す
+- プラグイン固有のコマンド一覧: `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/<plugin-name>/commands/` 配下を参照
+
+### 同日の関連作業
+- CLAUDE.md に「External Skill Guard Rules」セクション追加（frontend-design A/B評価モード等）→ リナ7回レビュー承認済み
+- skill-finder 更新（skills.sh を必須検索対象に追加）
+- `~/.claude/skills/` に外部スキル3本追加: frontend-design / web-design-guidelines / seo-audit
+- `~/.agents/` 削除（他AIエージェント用汚染ディレクトリ撤去）
+
+---
+
 ## 再開時リマインド（2026-04-18）
 
 ### X ポスト確認（継続）
