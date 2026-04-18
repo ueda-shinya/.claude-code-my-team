@@ -209,12 +209,13 @@ print(f'MINUTES_AFTER: {minutes_count}')
 `~/.claude/youtube-digest.md` の最終更新日時を確認し、**24時間以上経過している場合（またはファイルが存在しない場合）のみ**、以下を実行してください。
 
 **検索キーワード（各最大3件）：**
-- `Claude AI ニュース`
-- `ChatGPT 新機能 2026`
-- `Gemini 新機能 アップデート`
-- `NotebookLM`
-- `Genspark`
-- `AI 業界 ニュース`
+- `Claude Code`
+- `Claude Code 使い方`
+- `Claude Code チュートリアル`
+- `Claude Code MCP`
+- `Claude Code スキル`
+- `Claude Code エージェント`
+- `Anthropic Claude`
 - `WordPress`
 - `ワードプレス`
 
@@ -265,14 +266,15 @@ if os.path.exists(seen_path):
 published_after = (now - timedelta(hours=168)).strftime('%Y-%m-%dT%H:%M:%S+09:00')
 
 queries = [
-    ('Claude AI ニュース', 'AI関連'),
-    ('ChatGPT 新機能 2026', 'AI関連'),
-    ('Gemini 新機能 アップデート', 'AI関連'),
-    ('NotebookLM', 'AI関連'),
-    ('Genspark', 'AI関連'),
-    ('AI 業界 ニュース', 'AI関連'),
-    ('WordPress', 'WordPress関連'),
-    ('ワードプレス', 'WordPress関連'),
+    ('Claude Code', 'Claude Code関連', False),
+    ('Claude Code 使い方', 'Claude Code関連', False),
+    ('Claude Code チュートリアル', 'Claude Code関連', False),
+    ('Claude Code MCP', 'Claude Code関連', False),
+    ('Claude Code スキル', 'Claude Code関連', False),
+    ('Claude Code エージェント', 'Claude Code関連', False),
+    ('Anthropic Claude', 'Claude Code関連', True),   # 英語一次情報を含めるため言語フィルタなし
+    ('WordPress', 'WordPress関連', False),
+    ('ワードプレス', 'WordPress関連', False),
 ]
 
 # リスト集め・インフルエンサー系コンテンツの除外キーワード
@@ -282,19 +284,22 @@ SPAM_CHANNELS = ['大学', 'スクール', '塾', 'アカデミー']
 results = []
 new_ids = []
 
-for query, category in queries:
+for query, category, no_lang_filter in queries:
     # ステップ1: search で候補動画IDを取得（多めに取得して絞り込む）
-    params = urllib.parse.urlencode({
+    # 'Anthropic Claude' は英語一次情報が多いため言語フィルタを適用しない
+    search_params = {
         'part': 'snippet',
         'q': query,
         'type': 'video',
         'publishedAfter': published_after,
         'order': 'viewCount',
         'maxResults': 10,
-        'relevanceLanguage': 'ja',
-        'regionCode': 'JP',
         'key': api_key
-    })
+    }
+    if not no_lang_filter:
+        search_params['relevanceLanguage'] = 'ja'
+        search_params['regionCode'] = 'JP'
+    params = urllib.parse.urlencode(search_params)
     url = 'https://www.googleapis.com/youtube/v3/search?' + params
     req = urllib.request.Request(url)
     with urllib.request.urlopen(req) as res:
@@ -327,7 +332,8 @@ for query, category in queries:
         snippet = item['snippet']
         lang = snippet.get('defaultAudioLanguage') or snippet.get('defaultLanguage') or ''
         # 言語が未設定 or ja の動画のみ採用（英語・韓国語等を除外）
-        if lang and not lang.startswith('ja'):
+        # ただし no_lang_filter=True のクエリ（Anthropic Claude）は言語チェックをスキップ
+        if not no_lang_filter and lang and not lang.startswith('ja'):
             continue
         vid = item['id']
         view_count = int(item.get('statistics', {}).get('viewCount', 0))
@@ -355,7 +361,7 @@ with open(seen_path, 'w', encoding='utf-8') as f:
 # ファイル書き出し
 lines = ['# YouTube ダイジェスト', f'最終更新: {now.isoformat()}', '']
 
-for category in ['AI関連', 'WordPress関連']:
+for category in ['Claude Code関連', 'WordPress関連']:
     cat_results = [r for r in results if r['category'] == category]
     if not cat_results:
         continue
@@ -591,7 +597,7 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 ・（内容）
 
 ## YouTube ダイジェスト（最終更新: YYYY-MM-DD HH:MM）
-### AI関連
+### Claude Code関連
 - [動画タイトル](URL)
   - チャンネル：チャンネル名
   - 概要：説明文
