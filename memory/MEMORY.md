@@ -22,6 +22,7 @@
 - [feedback-agent-skill-gap.md](feedback-agent-skill-gap.md) — エージェントの繰り返し失敗はスキル化で根本対応（指示改善は2回まで、3回目でスキル化）
 - [feedback-dev-workflow.md](feedback-dev-workflow.md) — アスカのコーディング禁止ルール違反履歴（.env以外のコード・スクリプト・設定ファイルは必ずシュウに委任）
 - [feedback-asuka-interpretation.md](feedback-asuka-interpretation.md) — シンヤさんの指示の対象範囲・前提を勝手に広げない（拡大解釈禁止）
+- [feedback-rina-risk-threshold.md](feedback-rina-risk-threshold.md) — リナ検証はリスク1-5併記で、リスク3以上対処・2以下許容の閾値運用（無限ループ防止）
 
 ## project
 - [project_notion_management.md](project_notion_management.md) — Notion DB一本化方針（案件リスト・残件タスク→案件管理に統合、スキーマ設計は持ち越し）
@@ -45,6 +46,7 @@
 ## エージェント運用
 - [knowledge/agent-ops/background-agent-permissions.md](../knowledge/agent-ops/background-agent-permissions.md) — バックグラウンドエージェントはファイル書き込み権限プロンプトに応答できない。書き込みタスクはフォアグラウンドで実行する
 - [knowledge/claude-code-cli/session-continuation.md](../knowledge/claude-code-cli/session-continuation.md) — claude -p --resume の動作仕様・cwd依存・コスト・セッションファイル形式（2026-04-18 実機検証）
+- [knowledge/claude-code-cli/plugins-vs-skills.md](../knowledge/claude-code-cli/plugins-vs-skills.md) — Plugin/Skill/Marketplaceの階層関係、導入ルート3種、公式マーケ、名前空間、シンヤさん環境での選択基準
 
 ## PM
 - [knowledge/pm/wbs-scope-management.md](../knowledge/pm/wbs-scope-management.md) — WBS・スコープ管理・MoSCoW・依存関係4タイプ・変更管理プロセス（マルチエージェント運用向けPM実務）
