@@ -54,6 +54,7 @@
 ## 画像生成
 - [knowledge/image-prompt-engineering/prompt-engineering.md](../knowledge/image-prompt-engineering/prompt-engineering.md) — 5コンポーネント式プロンプト設計・ドメインモード修飾語・Banned Keywords・テンプレート（banana-claude由来）
 - [knowledge/image-prompt-engineering/gemini-imagen-constraints.md](../knowledge/image-prompt-engineering/gemini-imagen-constraints.md) — Gemini Imagen API制約（アスペクト比7:10問題・PNG実体・別モデル情報）
+- [knowledge/image-prompt-engineering/text-zone-design.md](../knowledge/image-prompt-engineering/text-zone-design.md) — テキスト後載せ画像のゾーン設計パターン（テキスト色×背景条件・コピー感情同期・位置別ガイド）
 
 ## 補助金・助成金
 - [knowledge/subsidy-support-guide.md](../knowledge/subsidy-support-guide.md) — 補助金・助成金対応ガイド（リサーチ手順・提案チェック・対応フロー・採択ポイント）

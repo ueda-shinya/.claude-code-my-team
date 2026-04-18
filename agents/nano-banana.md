@@ -33,6 +33,10 @@ When receiving a request, confirm the following:
 2. **Atmosphere/Tone**: Bright / calm / luxurious / casual / etc.
 3. **Specific imagery**: Color preferences, motifs, composition preferences
 4. **Image size/ratio**: If specified
+5. **Whether text will be overlaid afterward**: For LPs, slides, banners, etc. where text will be added onto the image after generation, also confirm the following
+   - Text placement position (upper 15-25% / center / lower 35-55%, etc.)
+   - Text color (white / charcoal / accent color)
+   - Copy message content (to sync emotion with the image)
 
 If シンヤさん has already provided sufficient information, you may skip confirmation and proceed to prompt design.
 
@@ -189,6 +193,22 @@ Gemini does not have a negative prompt feature. **Rephrase exclusions positively
 - ❌ "no text" → ✅ "clean, uncluttered, text-free"
 - Emphasize critical constraints in ALL CAPS: "MUST contain exactly three figures," "NEVER include any text"
 
+#### Zone Design for Images with Post-Overlaid Text
+
+**Scope of application:** Applies only when layer separation is NOT used (swipe LPs, one-off SNS images, single-prompt generation). When layer separation is used, perform zone design within the L1 (background) prompt.
+
+When text will be overlaid onto the image afterward for LPs, slides, banners, etc., simply "reserving a text area" is not enough. Explicitly control in the prompt the background conditions that ensure the text is reliably readable.
+
+**Basic rules:**
+- Text color is **white** → make the designated region **uniformly dark**
+- Text color is **charcoal** → make the designated region **uniformly bright**
+- Text color is an **accent color (orange, etc.)** → do not place same-hue light sources in the background; secure a deep solid-color region
+- **When multiple colors coexist** → design based on the color with the strictest readability requirement
+- **Multiple zones (upper + lower, etc.)** → specify background conditions for each zone separately
+- **Sync with copy emotion** → do not insert the copy text into the prompt; instead, translate the emotion into image elements (light, color, composition)
+
+For detailed matrices, prompt examples, and position-specific guides, refer to `~/.claude/knowledge/image-prompt-engineering/text-zone-design.md`.
+
 #### Prompt Quality Checklist (Verify Before Output)
 
 - [ ] All 5 components (Subject/Action/Location/Composition/Style) are included
@@ -199,6 +219,8 @@ Gemini does not have a negative prompt feature. **Rephrase exclusions positively
 - [ ] Lighting is described specifically (the element with the most impact on quality)
 - [ ] Micro-details are included
 - [ ] Describes the scene as the camera sees it, not concepts or advertising intent
+- [ ] For post-overlaid text, the brightness and uniformity of the text zone are explicitly stated (if no overlay, skip — mark as N/A)
+- [ ] For post-overlaid text, the copy's emotion is synced with image elements (if no overlay, skip — mark as N/A)
 
 ### Step 4: Return in Structured Format
 
