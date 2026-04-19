@@ -46,6 +46,7 @@
 ## エージェント運用
 - [knowledge/agent-ops/background-agent-permissions.md](../knowledge/agent-ops/background-agent-permissions.md) — バックグラウンドエージェントはファイル書き込み権限プロンプトに応答できない。書き込みタスクはフォアグラウンドで実行する
 - [knowledge/claude-code-cli/session-continuation.md](../knowledge/claude-code-cli/session-continuation.md) — claude -p --resume の動作仕様・cwd依存・コスト・セッションファイル形式（2026-04-18 実機検証）
+- [knowledge/claude-code-cli/session-resume-troubleshooting.md](../knowledge/claude-code-cli/session-resume-troubleshooting.md) — VSCode Claude で覚えのないセッション再開が起きた時の切り分け手順（jsonl初回メッセージ・permissionMode・USD budgetの3点診断）
 - [knowledge/claude-code-cli/plugins-vs-skills.md](../knowledge/claude-code-cli/plugins-vs-skills.md) — Plugin/Skill/Marketplaceの階層関係、導入ルート3種、公式マーケ、名前空間、シンヤさん環境での選択基準
 
 ## PM
@@ -57,6 +58,7 @@
 ## 画像生成
 - [knowledge/image-prompt-engineering/prompt-engineering.md](../knowledge/image-prompt-engineering/prompt-engineering.md) — 5コンポーネント式プロンプト設計・ドメインモード修飾語・Banned Keywords・テンプレート（banana-claude由来）
 - [knowledge/image-prompt-engineering/gemini-imagen-constraints.md](../knowledge/image-prompt-engineering/gemini-imagen-constraints.md) — Gemini Imagen API制約（アスペクト比7:10問題・PNG実体・別モデル情報）
+- [knowledge/image-prompt-engineering/x-thumbnail-templates.md](../knowledge/image-prompt-engineering/x-thumbnail-templates.md) — Xサムネイル用プロンプト100選（テキストなし50 + テキスト入り50・用途別インデックス）
 - [knowledge/image-prompt-engineering/text-zone-design.md](../knowledge/image-prompt-engineering/text-zone-design.md) — テキスト後載せ画像のゾーン設計パターン（テキスト色×背景条件・コピー感情同期・位置別ガイド）
 
 ## 補助金・助成金
