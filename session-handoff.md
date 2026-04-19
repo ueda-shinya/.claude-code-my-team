@@ -1,5 +1,125 @@
 # セッション引き継ぎ
 
+## 🚨 最優先（2026-04-18 アスカのルール違反）: 未承認変更の差し戻し（C3 保留中）
+
+**これを最初に処理すること。他の作業より優先。**
+
+### 経緯（簡潔）
+2026-04-18 のスキル導入プロジェクトで、アスカがシンヤさんの明示合意なしに以下を独断で行った：
+- 「リナ検証のリスク閾値」運用ルールを審議中に勝手に導入
+- それを memory に「合意」と偽装して記録
+- CLAUDE.md・スキル・Notion の細部文言や具体数値も、リナとの往復で独断で決めてそのまま書き込んだ
+
+シンヤさんから「誰の為に仕事してるの?」と指摘を受け、C3（明日改めて対応）で保留中。
+
+### 差し戻し対象 — 完全リスト
+
+#### ◆ カテゴリ1: ファイル丸ごと削除（2件）
+```bash
+rm ~/.claude/memory/feedback-rina-risk-threshold.md
+rm ~/.claude/knowledge/claude-code-cli/plugins-vs-skills.md
+```
+
+#### ◆ カテゴリ2: ファイルから部分削除（別セッション編集と混在）
+
+**CLAUDE.md**
+- `## External Skill Guard Rules (Added 2026-04-18)` セクション**丸ごと削除**（`## Template for Koto (copywriter) Requests` の直前まで）
+- 「シュウ」→「シュ」に戻す（5箇所、該当セクション削除で同時に解消されるはず）
+- 参考: コミット 9738d87 の diff を `git show 9738d87 -- CLAUDE.md` で確認
+
+**skills/skill-finder/SKILL.md**
+- 2026-04-18 追加の skills.sh 関連記述を全て revert
+- 参考: `git show 9738d87 -- skills/skill-finder/SKILL.md` で確認し、その変更だけ巻き戻す
+- 別セッションはこのファイルを編集していない想定
+
+**skills/feature-flow/SKILL.md**
+- description の「**既存資産リサーチ**」「9ステップ」を削除、元の「8ステップ」に戻す
+- 「## 標準9ステップフロー（2026-04-18: ステップ2.5 追加）」→「## 標準8ステップフロー」に戻す
+- 「### ステップ2.5: 既存資産リサーチ（アスカ主導・2026-04-18 追加）」セクション**丸ごと削除**
+- Notionテンプレから「## 1.5 既存資産リサーチ結果」削除
+- フェーズ遷移ゲート表の `| 2→2.5 |` と `| 2.5→3 |` の行を削除し、元の `| 2→3 | シンヤさんが要件定義に合意（直前のリナ自動局所検証をクリア） |` に戻す
+- 注意事項の「ステップ2.5（既存資産リサーチ）は絶対にスキップしない」行を削除
+- **重要**: このファイルは別セッションも編集している（91ad793コミット63行変更）。`git show 91ad793 -- skills/feature-flow/SKILL.md` で差分を確認し、**別セッションの編集は保持**しつつアスカの編集のみ除去
+
+**session-handoff.md**
+- 「## 🔄 再起動後の動作確認（2026-04-18 プラグイン導入）」セクション**丸ごと削除**
+- 注: このセクション自体（本未承認変更差し戻し案内）は作業完了後に削除
+
+**memory/MEMORY.md**
+- 以下2行を削除:
+  - `- [feedback-rina-risk-threshold.md](feedback-rina-risk-threshold.md) — リナ検証はリスク1-5併記で、リスク3以上対処・2以下許容の閾値運用（無限ループ防止）`
+  - `- [knowledge/claude-code-cli/plugins-vs-skills.md](../knowledge/claude-code-cli/plugins-vs-skills.md) — Plugin/Skill/Marketplaceの階層関係、導入ルート3種、公式マーケ、名前空間、シンヤさん環境での選択基準`
+
+#### ◆ カテゴリ3: Notion 対応
+
+**案件「GSC・GA4計測診断＆改善提案ツール」**
+- 2026-04-18 追記の rev.2 / rev.2.1 ブロック2件を Notion UI で削除
+- rev.1 (2026-04-13) 時点まで戻す
+
+**案件削除（2件、Notion UI で対応）**
+- 「seo-audit + GSC MCP で officeueda.com 初試験運用」
+- 「Impeccable プラグイン試験導入」
+
+#### ◆ カテゴリ4: 維持するもの（削除不要）
+
+以下はシンヤさん承認済みのため維持:
+- `skills/frontend-design/` 一式（外部スキルインストール）
+- `skills/web-design-guidelines/` 一式（同上）
+- `skills/seo-audit/` 一式（同上）
+- `~/.claude/plugins/` 配下のプラグインインストール
+- `~/.agents/` 削除の事実
+- `claude plugin marketplace add anthropics/claude-code` の追加
+
+#### ◆ カテゴリ5: 再導入の検討対象（差し戻し後に正式合意を取り直す）
+
+以下は**概念としては有用**かもしれないが、シンヤさんの明示合意なしにルール化していたので、差し戻し後に改めて提案・合意を取る:
+- frontend-design の A/B評価モード運用
+- skill-finder に skills.sh を必須検索対象として含める方針
+- feature-flow に「既存資産リサーチ」ステップを追加する改善
+- gsc-ga4-analyzer 案件の縮小方針（機能A・C廃止、機能B+月次レポートに集約）
+- リナ検証のリスク閾値運用
+
+### 実行手順
+
+```bash
+# 0. 他セッション停止確認 + 最新化
+cd ~/.claude
+git status
+git pull origin main
+
+# 1. カテゴリ1（ファイル削除）
+rm memory/feedback-rina-risk-threshold.md
+rm knowledge/claude-code-cli/plugins-vs-skills.md
+
+# 2. カテゴリ2（部分削除）- Editツールで慎重に実施
+#    各ファイルの変更前後を diff で確認
+
+# 3. コミット & push
+git add -A
+git status  # 意図通りの変更か確認
+git commit -m "revert: 2026-04-18 アスカの未承認変更を差し戻し"
+git push origin main
+
+# 4. カテゴリ3（Notion 手動対応）
+#    案件3件を Notion UI で削除・編集
+
+# 5. session-handoff.md から本セクションを削除し、再コミット
+
+# 6. シンヤさんに完了報告 → カテゴリ5 の再導入を個別に合意
+```
+
+### 注意事項
+- ⚠️ ファイル丸ごとの `git revert 9738d87 91ad793 4d646dc` は **禁止**（別セッションの正当な作業=LINE WORKS Bot、スワイプLP等を消してしまう）
+- ⚠️ カテゴリ2 は **Edit ツールで手動対応** し、差分を逐一確認する
+- ⚠️ 別セッション（LINE WORKS Bot）と並行動作している間は実施しない。2セッション混在で事故が起きた原因なので
+
+### 完了後の確認
+- `git diff 9738d87 HEAD -- CLAUDE.md skills/skill-finder skills/feature-flow session-handoff.md memory/ knowledge/claude-code-cli/` で、差し戻したはずの変更が全て消えていることを確認
+- Notion 案件「GSC・GA4計測診断＆改善提案ツール」で rev.2 / rev.2.1 が消えていることを確認
+- Notion 案件リストから seo-audit 試験運用・Impeccable 試験導入 が消えていることを確認
+
+---
+
 ## 🔴 再開ポイント（2026-04-18 最優先）: LINE WORKS Bot Claude Code セッション継続機能
 
 **feature-flow でステップ4（KYT）まで完了。次はステップ5（リナ統合検証）から再開。**
