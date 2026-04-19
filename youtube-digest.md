@@ -1,24 +1,19 @@
 # YouTube ダイジェスト
-最終更新: 2026-04-12T15:53:25.845414+09:00
+最終更新: 2026-04-20T08:15:46.634318+09:00
 
-## AI関連
-- [【危険すぎてAnthropicが封印「Claude Mythos」爆誕】今井翔太「人類は一線を超えた」／“エイプリルフール”を疑う高性能／メタは新型モデルでAI競争に本格参戦【AI QUEST】](https://www.youtube.com/watch?v=tSOjux2CMM0)
-  - チャンネル：TBS CROSS DIG with Bloomberg / 再生数：231,040
-  - 概要：https://youtube.com/@tbs_bloomberg 👆チャンネル登録・高評価をよろしくお願いします  AI研究者の今井翔太さんと知能の未来について探求する「AI QUEST」 テーマ
-- [【Google公式の新機能　写真から動画生成】 #chatgpt #ai活用 #aiツール　#sns](https://www.youtube.com/watch?v=GKyMIqVbKf0)
-  - チャンネル：ゆの　AI×SNS活用術 / 再生数：5
-  - 概要：最近出たGoogleの新機能がマジでヤバいです。 いまだに難しいソフトを使って動画編集をしている人は、知らないうちに膨大な時間を無駄にしているかもしれません。 多くの人が動画制作に苦戦していますが、実
-- [🧐👉 GeminiがNotebookLMと完全同期、AIノート機能で研究効率が激変 #QixNewsAI](https://www.youtube.com/watch?v=EoxcggwhSTU)
-  - チャンネル：QixNews クイッククリアニュース / 再生数：19
-  - 概要：📝GoogleのGeminiがNotebookLMと完全同期する新ノート機能を発表！  - Gemini内でノート作成・PDFやドキュメント、過去の会話も一括管理 - NotebookLMとの双方向同
-- [新生活の準備で悩む妻を救ってみた](https://www.youtube.com/watch?v=bB7GS58UJ4c)
-  - チャンネル：ゆみみンゴTV / 再生数：62,700
-  - 概要：Gensparkを使うと調べる、まとめる、資料を作るが爆速でできて本当に便利だよ！ 新生活準備でも活躍するし、学校や仕事の課題をこなすときにも大活躍だと思うよ✊  👇Gensparkはここから使えるよ
-
-## WordPress関連
-- [Claude CodeでWordPressサイト更新を自動化する方法](https://www.youtube.com/watch?v=qzjEAzDjJCY)
-  - チャンネル：KEITO【AI&WEB ch】 / 再生数：15,413
-  - 概要：
-- [Claude CodeでWordPressサイト更新を自動化する方法](https://www.youtube.com/watch?v=qzjEAzDjJCY)
-  - チャンネル：KEITO【AI&WEB ch】 / 再生数：15,413
-  - 概要：
+## Claude Code関連
+- [【爆速起業】Claude Codeを使った全く新しい起業・副業の方法を解説します！](https://www.youtube.com/watch?v=XCrAMXIaI-8)
+  - チャンネル：プログラミングチュートリアル / 再生数：29,896
+  - 概要：#claudecode #claude #vibecoding #バイブコーディング #ai   cc-company Skillsは以下から無料で利用できます👇 https://github.com
+- [Claude Codeの便利な機能7選！知っておくとよい便利な機能や普段使っているものを解説してみた](https://www.youtube.com/watch?v=3fegETw9GFQ)
+  - チャンネル：にゃんたのAIチャンネル / 再生数：15,368
+  - 概要：にゃんた初の書籍が発売中！📚 Amazonのページ ▶︎https://amzn.to/3QMrFnY 『ゼロからわかるDifyの教科書 ～生成AI × ノーコードでかんたん業務効率化』  こんにちは
+- [Introducing Claude Design by Anthropic Labs](https://www.youtube.com/watch?v=t_LBECIQQqs)
+  - チャンネル：Claude / 再生数：534,853
+  - 概要：Claude Design is a new Anthropic Labs product that lets you collaborate with Claude to create polish
+- [Claude Design is INSANE](https://www.youtube.com/watch?v=-tGH2tLwCEw)
+  - チャンネル：Chase AI / 再生数：201,733
+  - 概要：⚡Master Claude Code, Build Your Agency, Land Your First Client⚡ https://www.skool.com/chase-ai  🔥FRE
+- [Why do AI models hallucinate?](https://www.youtube.com/watch?v=005JLRt3gXI)
+  - チャンネル：Claude / 再生数：182,314
+  - 概要：Learn what AI researchers mean when they talk about hallucination in AI models, why it may occur, an
