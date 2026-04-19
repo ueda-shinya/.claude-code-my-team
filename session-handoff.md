@@ -140,8 +140,16 @@ git push origin main
 4. ステップ6（実装）へ
 
 ### v3.4 への変更点（シュウ依頼内容）
-- **要件側**: Q3 を「スキル呼び出しは Phase 2 非対象」に更新（Phase 1 は自然対話・リサーチ・ファイル参照のみ）
+- **要件側 v4**:
+  - Q3 を「スキル呼び出しは Phase 2 非対象」に更新（Phase 1 は自然対話・リサーチ・ファイル参照のみ）
+  - **セッション継続を明示トリガー制に変更**（2026-04-18 追加合意）
+    - デフォルト: one-shot（--resume なし）
+    - 「セッション開始」完全一致でモードON、「セッション終了」完全一致でモードOFF
+    - 継続モード中の「リセット」「新しい話」は session_id を新規発行（モード維持）
+    - state に `in_session: bool` フィールド追加
 - **設計 C-1**: allowedTools を `Read,Grep,Glob,WebFetch,WebSearch` に縮小
+- **設計 F-3 追加**: SESSION_START_WORD='セッション開始' / SESSION_END_WORD='セッション終了'
+- **設計 B-6 変更**: dispatch 時 `in_session==False` なら `--resume` 引数を省略
 - **KYT 実装前対処 11件** をすべて反映:
   1. session_id 取得・更新ロジック実装（J-1/J-2 解決、stdout から session_id をパース）
   2. TimeoutExpired 時の Popen.kill() + wait()
