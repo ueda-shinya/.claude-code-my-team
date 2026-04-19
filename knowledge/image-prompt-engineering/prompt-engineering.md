@@ -479,3 +479,137 @@ Layer 2 (output filter) analyzes the generated image, not just the prompt.
 Even well-phrased prompts can be blocked if the model's interpretation triggers
 the output filter. When this happens, try shifting the visual concept further
 from the trigger rather than just changing words.
+
+---
+
+## Nano Banana 2 / Pro 特有の機能と制約（2026-04-18追記）
+
+Google が 2026年2月にリリースした Nano Banana 2（正式名称: Gemini 3.1 Flash Image、ドキュメント上は `gemini-3.1-flash-image-preview`）は、Imagen 4.0 と比較して以下の特徴を持つ。
+
+### 1. ハイブリッド言語戦略（日本語テキスト描画）
+
+Nano Banana 2 は画像内に**正確な日本語文字を描画できる**（Imagen 4.0 は英語のみ）。プロンプト内の言語を役割で使い分けることで、日本語テキスト入りの画像を生成可能。
+
+**使い分けルール：**
+- **視覚的描写（Visuals）** → 英語
+  - キャラクター外見、背景、画風、構図、照明、スタイル、カメラ指定
+- **文字描画（Text Rendering）** → 日本語
+  - ダブルクォートで囲む: `Text: "こんにちは"`
+
+**プロンプト例：**
+```
+A young woman looking out the window at dawn, warm amber light,
+Canon EOS R5 35mm f/1.8, shallow depth of field.
+Text: "今日は頼んだ。"
+```
+
+**Imagen 4.0 との使い分け：**
+- 日本語を画像内に描画したい → Nano Banana 2 使用
+- 画像にはテキスト不要、Canvaで後載せ → どちらでも可（Nano Banana 2推奨）
+- 英語テキストのみ → どちらでも可
+
+### 2. STRICT CONSISTENCY（複数画像の一貫性保持）
+
+スワイプLP・漫画・シリーズ投稿等で**複数画像にわたるキャラクター・画風の一貫性**を保つための手法。
+
+**適用範囲（重要）：**
+- **単発画像生成**: 不要。1プロンプト1画像で完結する場合は STRICT CONSISTENCY ブロックは書かない（ノイズになる）
+- **レイヤー分割（L1背景/L2メイン/L3エフェクト）**: 原則不要。各レイヤーは異なる役割・構図のため。同一キャラを複数レイヤーで一貫させたい特殊ケースのみ L2（メインビジュアル）内で適用
+- **複数セッション・複数プロンプト生成**: 必須。スワイプLP、漫画、SNSシリーズ、商品画像シリーズ、広告カルーセル等
+
+**基本原理：** 画像生成AIはプロンプトを独立生成するため、前の画像のキャラ設定を覚えていない。**定義文を全プロンプトで一言一句変えずに全文繰り返す**ことで一貫性を保つ。
+
+**実装手順：**
+
+1. **キャラクター定義の作成（英語・詳細に）**:
+   ```
+   # STRICT CHARACTER CONSISTENCY (DO NOT CHANGE)
+   A Japanese woman in her late twenties, natural medium-length chestnut hair
+   with soft waves, warm almond-shaped dark brown eyes, wearing a cream
+   oversized knit sweater. Slim build, height 165cm.
+   ```
+
+2. **画風定義の作成（英語・詳細に）**:
+   ```
+   # STRICT STYLE CONSISTENCY (DO NOT CHANGE)
+   Editorial photography, Canon EOS R5 50mm f/2.0, soft natural window light,
+   warm amber color palette, shallow depth of field, low-contrast shadows,
+   Kinfolk magazine aesthetic.
+   ```
+
+3. **全ページ・全プロンプトに全文記述**:
+   - 「省略」「As above」「(see page 1)」等の短縮表記は**厳禁**
+   - 必ず全プロンプトで定義文全体を繰り返す
+
+**なぜ効くか：** AI は各プロンプトを独立処理するので、省略すると定義を忘れる。毎回全文記述することで、同じ入力を与え続け、出力の分散を最小化する。
+
+**適用シーン：**
+- スワイプLP（同一人物が複数スライドに登場）
+- 漫画・コミック（同じキャラの複数コマ）
+- SNSシリーズ投稿（ブランド・人物の一貫性）
+- 商品画像シリーズ（同じ商品の角度違い等）
+
+### 3. Xサムネイル特化プロンプトの3層構造（テキストなし）
+
+2500×1000（--ar 2500:1000）で作るXサムネイル（テキストなし・画像だけで目を止める）の定番構成。
+
+**構造：**
+1. **スタイル指定** — どんな画風・雰囲気か
+   - 例: "cinematic lighting," "photorealistic," "surreal magical realism," "Ghibli-inspired"
+2. **コンテンツ指定** — 何を・どこに・どんな構図で描くか
+   - 被写体、配置、スケール感、色彩、ムードを具体的に
+3. **品質指定** — 解像度とアスペクト比
+   - 末尾に `8k, --ar 2500:1000` を必ず付ける
+
+**実例：**
+```
+A colossal ancient castle floating on a massive rock high above the clouds,
+waterfalls pouring off the edges into the void below, golden sunset light
+hitting the castle walls, birds circling the towers, clean atmospheric
+perspective, 8k, --ar 2500:1000
+```
+
+### 4. Xサムネイル特化プロンプトの5鉄則（テキスト入り）
+
+文字入りサムネを作る際の、文字を目立たせるための5つの指示パターン。
+
+**❶ 文字サイズを「巨大」と明示する**
+- `"enormous"`, `"dominant"`, `"filling 60-75% of the frame width"` 等
+- 占有率を数字で指示しないと小さく生成される
+
+**❷ フォントスタイルを具体的に指定する**
+- `"heavy bold condensed sans-serif"`, `"cinematic title font"`, `"thin serif"` 等
+- 「font」だけでは曖昧すぎる
+
+**❸ 文字にエフェクトをかける**
+- `"glowing"`, `"metallic"`, `"embossed"`, `"with light rays"` 等
+- 文字自体を光らせたり質感を持たせる
+
+**❹ 文字と背景を融合させる**
+- `"text integrated into the scene"`, `"letters affected by the environment"` 等
+- 文字が背景と一体化するように指示
+
+**❺ テキストは必ずダブルクォートで囲む**
+- `"AI時代の生存戦略"` のように書く
+- ハイブリッド言語戦略と併用可能（日本語テキストをNano Banana 2で描画する場合）
+
+**プロンプト例（ダークネイビー×白タイトル）：**
+```
+A deep navy blue gradient background, slightly textured like fine fabric.
+Enormous clean text "AI時代の生存戦略" in bold condensed white sans-serif font,
+centered, filling 70% of the frame width. The text has a very subtle soft
+white glow behind it. Nothing else. Minimalist, powerful, editorial magazine
+cover feel, 8k, --ar 2500:1000
+```
+
+### 5. 文字入りサムネの背景シンプル化原則
+
+文字入りサムネでは**背景を引き立て役に徹させる**のが鉄則。
+
+- **OK**: 単色、グラデーション、軽いテクスチャ（コンクリート・和紙・木目）、ぼかしたシーン
+- **NG**: 複雑な景色、多くの被写体、ビビッドな色使い（文字が埋もれる）
+- **一点アクセント**: シンプル背景に1つだけ目を引く要素（赤い線、光る球、幾何形状）を加えるとベター
+
+### Source
+- ほしの氏（@Hoshino_AISales）「プロンプト100選」（2026年4月公開）
+- かし子氏（@Kashiko_AIart）「NanoBananaPRO 10ページ漫画作成プロンプト Ver.6」

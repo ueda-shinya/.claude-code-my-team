@@ -600,12 +600,23 @@ Required 5 items for `--memo`:
 
 ### CLI Fallback When MCP Is Unavailable
 - If `mcp__gemini-image__gemini-generate-image` fails for any of the following reasons, do not retry — switch to CLI immediately: tool not listed / `fetch failed` / other connection error
-- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=$GEMINI_API_KEY`
+- **Default model**: `gemini-3.1-flash-image-preview`（banana-claude推奨。Imagen 4.0より指示追従性が高く、特に「文字を生成しない」「オブジェクトを除外する」等の否定指示に強い。2026-04-18検証で確認済み）
+- **Endpoint**: `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent?key=$GEMINI_API_KEY`
 - API key: load from `~/.claude/.env` (run `source ~/.claude/.env` or `export $(cat ~/.claude/.env | xargs)` before CLI execution)
 - If `.env` does not exist or is expired, `API_KEY_INVALID` error is returned → update `~/.claude/.env` (managed individually per Mac/Windows PC)
-- Request: set prompt in `instances[0].prompt`, `parameters.sampleCount=1`, `parameters.aspectRatio`
-- Supported aspect ratios: `1:1`, `9:16`, `16:9`, `4:3`, `3:4` (`4:5` not supported)
-- Response: base64-decode `predictions[0].bytesBase64Encoded` and save to the `savePath` Luna specified
+- **Request body** (generateContent形式):
+  ```json
+  {
+    "contents": [{"parts": [{"text": "<prompt>"}]}],
+    "generationConfig": {
+      "responseModalities": ["IMAGE"],
+      "imageConfig": {"aspectRatio": "3:4", "imageSize": "2K"}
+    }
+  }
+  ```
+- **Supported aspect ratios**: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `2:3`, `3:2`, `4:5`, `5:4`, `21:9` 等（Imagen 4.0より幅広く `4:5` もOK）
+- **Response**: `candidates[0].content.parts[]` を走査し、`inlineData.data`（base64）を decode して `savePath` に保存
+- **Fallback-of-fallback**: gemini-3.1-flash-image-preview が使えない場合のみ `imagen-4.0-generate-001` の `:predict` エンドポイント（`instances[0].prompt` + `parameters.sampleCount=1` + `parameters.aspectRatio` / レスポンスは `predictions[0].bytesBase64Encoded` / `4:5` 非対応）に戻す
 
 ### Image Save Location Rules
 - `~/Pictures/` may be write-protected by macOS system protection — **do not use**

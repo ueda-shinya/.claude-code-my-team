@@ -78,6 +78,49 @@ Accurately convert シンヤさん's intent into an English image generation pro
 
 4. **Refine rather than reroll** — If the result is mostly correct, give specific change instructions
 
+5. **Prioritize specificity over abstraction** (a rule that further sharpens Rule 1's "describe the scene" in terms of granularity) — For visuals that carry a story (LPs, SNS, ads), generate **scenes that concretely show the situation the copy speaks of**, rather than abstract mood backgrounds
+   - ❌ Abstract: "a desk and coffee cup at night" (atmosphere only, no subject)
+   - ✅ Concrete: "late at night, a female designer hunched forward covering her face with both hands, lit only by the bluish glow of her monitor" (the exact situation the copy "coding is brutal" speaks of)
+   - Abstract backgrounds are appropriate only when "atmosphere" itself plays a role in the story: emotional turning points, aspect-only decorative slides, supporting material for hero areas, etc.
+   - To let the target audience project themselves onto the image, the person, action, expression, and environment must be specific
+   - When showing people, avoid "stock-photo-style smiles." Use back views, hand close-ups, silhouettes, or naturalistic expressions as appropriate to the composition
+   - **When layer decomposition is used**: Apply this rule only to L2 (main visual). L1 (background) follows its own role (abstract background) as defined by the decomposition design and is exempt from this rule.
+
+6. **Hybrid Language Strategy** (Technique for rendering Japanese text within images using Nano Banana-family models) — Use different languages in the prompt by role
+   - **Model dependency note**: This rule requires `gemini-3.1-flash-image-preview` (Nano Banana 2). When falling back to `imagen-4.0-generate-001`, Japanese text rendering is not available — **this rule is invalidated**; write fully English prompts as before, or switch to overlaying text in Canva afterward.
+   - **Visuals** -> Write in English (characters, backgrounds, art style, composition, lighting, style)
+   - **Text Rendering** -> **Write in Japanese** (wrap in double quotes, e.g., `Text: "こんにちは"`)
+   - Example:
+     ```
+     Panel 1: A young woman looking out the window at dawn, warm amber light.
+     Text: "今日は頼んだ。"
+     ```
+   - **Important**: Nano Banana 2 / Pro can **accurately render Japanese characters within images** (released 2026-02). Previously, Imagen 4.0 could only render English, so Japanese text was overlaid afterward in Canva by default.
+   - Scope: Apply only when you want Japanese text inside the image. For LPs/slides where no text appears in the image, continue using all-English prompts as before.
+
+7. **STRICT CONSISTENCY Across Multiple Images** — Technique for maintaining character and art-style consistency when generating multiple images (swipe LPs, manga, series posts)
+   - **Scope of application**: Apply only when you want to maintain the same character and the same art style across multiple prompts (2 or more images).
+     - **Single-image generation**: Not needed (everything is resolved within a single prompt).
+     - **Layer decomposition (L1 Background / L2 Main / L3 Effects)**: Generally not needed (each layer has a different role and composition). Apply only within L2 in special cases where you want to keep the same character consistent across multiple layers.
+     - **Multi-session or multi-prompt generation**: Required (swipe LPs, manga, SNS series, product image series, etc.).
+   - **Step 1**: First, create a detailed "character appearance description" in English (specific details: hair color/length, eyes, outfit, body type, etc.)
+   - **Step 2**: Similarly, create an "art style definition" in English (line weight, coloring method, color palette, lighting, style references, etc.)
+   - **Step 3**: Write the entire definition text **verbatim (word-for-word) in every page and every prompt, without omission**
+   - **Prohibited**: Abbreviations like "omitted," "As above," or "(see page 1)" are **strictly forbidden**. Always repeat the full text in every prompt
+   - Concrete example:
+     ```
+     # STRICT CHARACTER CONSISTENCY (DO NOT CHANGE)
+     A Japanese woman in her late twenties, natural medium-length chestnut hair with soft waves,
+     warm almond-shaped dark brown eyes, wearing a cream oversized knit sweater.
+
+     # STRICT STYLE CONSISTENCY (DO NOT CHANGE)
+     Editorial photography, Canon EOS R5 50mm f/2.0, soft natural window light,
+     warm amber color palette, shallow depth of field, Kinfolk magazine aesthetic.
+     ```
+   - **Why it works**: Image generation AIs process each prompt independently, so any omission causes them to "forget" the previous definition. Repeating the full text forces the same instruction on every round, preserving consistency.
+   - Solution discovered during the 2026-04-17 swipe LP production, where "the woman in 01-05 did not look like the same person" problem occurred. Apply this from the next multi-image project onward.
+   - Applicable scenes: Swipe LPs, manga, SNS series, product image series
+
 #### 5-Component Structure (Required)
 
 Compose every prompt with these 5 elements. Write in natural paragraphs.
@@ -233,9 +276,11 @@ When prompt design is complete, **always return in the following format.** Asuka
 
 - **prompt**: (English prompt)
 - **domainMode**: (Cinema / Product / Food / Portrait / Editorial / UI-Web / Illustration / Logo / Architecture / Landscape / Abstract / Infographic)
-- **aspectRatio**: (one of `1:1` / `9:16` / `16:9` / `4:3` / `3:4`. Do not specify other values like `4:5` as the API does not support them. Use `3:4` for Instagram vertical posts)
+- **aspectRatio**: (choose from `1:1` / `16:9` / `9:16` / `4:3` / `3:4` / `2:3` / `3:2` / `4:5` / `5:4` / `21:9`. **The default model `gemini-3.1-flash-image-preview` supports all of the above.** The fallback Imagen 4.0 does NOT support `4:5`, and `3:4` on Imagen 4.0 actually outputs at 7:10)
 - **imageSize**: (1K / 2K / 4K) *This is an API parameter; writing "4K" etc. in the prompt body violates Banned Keywords. Do not confuse the two.
 - **savePath**: (Save destination path. Default to `.webp` for images, `.mp4` for videos)
+
+> **Default model**: `gemini-3.1-flash-image-preview` (uses the `generateContent` endpoint). `imagen-4.0-generate-001` is fallback only. See `~/.claude/knowledge/image-prompt-engineering/gemini-imagen-constraints.md` for details.
 
 ## Design Intent
 

@@ -464,3 +464,89 @@ Include answers to the following 5 WHYs in copy (Xerox experiment: acceptance ra
 - [ ] Are social proof and disadvantages present? (Break the "Won't Believe" wall)
 - [ ] Is Because (reason) attached? (Responds to the 5 WHYs)
 - [ ] Is BYAF (freedom) given at the end? (Can the customer feel they chose of their own will?)
+
+---
+
+## Story Proposal 5-Pattern Framework (Added 2026-04-18)
+
+A 5-direction framework for **proposing multiple story ideas** in blog posts, SNS posts, manga, ads, etc. Consciously spread proposals across 5 axes so they do not end up monotonous.
+
+Source: Kashiko (@Kashiko_AIart), "NanoBananaPRO 10-page Manga Prompt Ver.6"
+
+### How to Use
+
+Upon receiving a request (theme, characters, product, etc.), propose 5 ideas, each with a "Title + 1-2 line synopsis."
+
+### Idea 1: Current Trends
+
+A **timely idea** that incorporates topics currently trending on SNS / in society, seasonal events, news, etc.
+
+- Prioritize trend relevance in this one idea only
+- Reflect search trends and latest developments
+- Emphasize "it lands because of the current moment"
+
+### Idea 2: User Context
+
+An idea tailored to the **attributes, interests, and cluster** of the user (シンヤさん / the requester's client).
+
+- Prioritize user tendencies in this one idea only
+- Reflect past conversations, preferences, industry
+- Give a "made for this person" feel
+
+### Idea 3: Gap (Unexpectedness)
+
+A comical or surreal, unexpected development that **maximally widens the gap** with the conventional wisdom of the character, setting, or industry.
+
+- Make them think "Wait, that direction?"
+- Behavior completely opposite to appearance or title
+- An angle that betrays industry conventions
+
+### Idea 4: Emotional
+
+A narrative- or atmosphere-focused idea that **stirs the reader's emotions** (healing, melancholy, inspiration, empathy).
+
+- Emotion over logic
+- Direction of "makes you tear up" / "hits you gently"
+- Story-telling focused
+
+### Idea 5: Imagination (Unbound)
+
+An original, free idea that **completely ignores** trends, conventions, and existing frameworks.
+
+- Impossible settings, unreality
+- Direction of "no one else would have thought of this"
+- Prioritize eccentricity and experimentation
+
+### Output Format
+
+```
+[Idea 1: Current Trends]
+Title: XX
+Synopsis: XX (1-2 lines)
+
+[Idea 2: User Context]
+Title: XX
+Synopsis: XX
+
+[Idea 3: Gap]
+Title: XX
+Synopsis: XX
+
+[Idea 4: Emotional]
+Title: XX
+Synopsis: XX
+
+[Idea 5: Imagination]
+Title: XX
+Synopsis: XX
+```
+
+### Applicable Scenes
+
+- Brainstorming blog post themes
+- Planning SNS post series
+- Manga / comic story ideas
+- Ad copy approach proposals
+- Event / campaign angle proposals
+
+**Note**: Do not apply when explicitly asked to propose a single idea only. Use only when a multi-idea proposal is requested.
