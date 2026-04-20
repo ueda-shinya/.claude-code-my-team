@@ -1,5 +1,43 @@
 # セッション引き継ぎ
 
+## 🔄 再起動後の動作確認（2026-04-19 search-analytics サブドメイン追加）
+
+**Claude Code 再起動で新 `.env` を MCP に読み込ませてから動作確認してください。**
+
+### 今回の変更
+- `.env` に officeueda_lp / officeueda_lpwp の2サイトを追加（GA4プロパティID・GSC URL・`ANALYTICS_SITES` 更新）
+- `.env` の GA4 MCP セクションを整理（セクションヘッダー・サイト別ブロック化）
+- `unified_analytics_server.py` を動的サイト化リファクタ済み（サクラ最終承認）
+- バックアップ: `.env.bak.20260420-234905`
+
+### 確認コマンド（再起動後）
+Claude Code 再起動後、以下を実行して4サイトすべてから応答が返るか確認:
+```
+gsc_top_queries で site="officeueda_lp" と site="officeueda_lpwp" を日付指定して呼び出す
+ga4_traffic_overview で同様に呼び出す
+```
+※ サブドメイン作成直後なのでデータは空でもOK。エラーにならず結果返却されればゼロの値で正常。
+
+### 未完了タスク（再起動後に実施）
+1. **code-edit-guard フックの現状調査**
+   - session-handoff.md L447-450 に「2026-04-18 warn-only に変更済み」と記載されているが、今セッション（2026-04-19）でシュウの `.py` 編集が Edit ブロックされた事象あり。warn-only化が本当に効いているか／別経路で止まっているか要確認
+2. **test_credentials.py の変数名統一**（フック対応後）
+   - L20-21 の `GSC_SITE_URL` / `GA4_PROPERTY_ID` を `OFFICEUEDA_*` フォールバック形式に変更
+   - シュウに差分確定済み（hook さえ通れば1分作業）
+3. **.env の officeueda / ussaijo を統一命名にリネーム**（上記②完了後）
+   - `GSC_SITE_URL` → `OFFICEUEDA_GSC_URL`
+   - `GA4_PROPERTY_ID` → `OFFICEUEDA_GA4_PROPERTY_ID`
+   - `MEBELCENTER_GSC_URL` → `USSAIJO_GSC_URL`
+   - `MEBELCENTER_GA4_PROPERTY_ID` → `USSAIJO_GA4_PROPERTY_ID`
+   - `.env` 冒頭コメントの TODO 注記も削除
+
+### 関連 Notion 案件
+「officeueda LP/LPWP サブドメインを解析ツールに登録」（P3-今月中）
+
+---
+
+
+
 ## 🚨 最優先（2026-04-18 アスカのルール違反）: 未承認変更の差し戻し（C3 保留中）
 
 **これを最初に処理すること。他の作業より優先。**
@@ -120,7 +158,35 @@ git push origin main
 
 ---
 
-## 🔴 再開ポイント（2026-04-18 最優先）: LINE WORKS Bot Claude Code セッション継続機能
+## 🔴 再開ポイント（2026-04-21 更新）: LINE WORKS Bot Claude Code セッション継続機能
+
+**ステップ7（サクラレビュー）完了・ステップ8（動作確認）で問題発見 → server.py を v3.4 前（1157行）に一旦復元。再開時は v3.4.3 以降の修正 + 動作確認ブロッカー解消から。**
+
+### 動作確認で判明した問題（2026-04-21）
+1. **初期起動時の孤児 claude.exe 大量kill バグ** → v3.4.2 で修正済（state.pid 単発対象化）
+2. **subprocess で日本語引数が claude.exe に届かない** → v3.4.3 で stdin 経由に変更済
+3. **state='error' 固着で dispatch_claude_code 内部ログが出ない問題** → 未解消（ユーザーメッセージ受信後 `claude -p 経路へルーティング` ログの後に何も出ない。state リセットしても再発）
+4. **既存コマンド `/tasks` で Notion API HTTP 400** → 別件・既存バグ
+
+### 再開時の手順
+1. `~/.claude/line-works-bot/scripts/server.py.bak.20260421-005827-v3.4.3` を server.py に戻す
+2. `claude-session.json` を新規生成（status=idle 初期状態）
+3. dispatch_claude_code 内の未解消ログ出ない問題を調査:
+   - threading.Thread で起動されていない同期呼び出しになっている（F-1設計と齟齬）→ Thread 化が必要
+   - 実際にはスレッド化されず Flask ハンドラをブロックしている可能性
+   - _send_line_works_to_allowed_user 失敗時のログが出ない問題も別途調査
+4. ステップ8 動作確認を続行
+
+### 設計書
+`~/.claude/plans/line-works-bot-claude-code-design-v3.4.md`（681行）
+
+### 現在の状態
+- server.py: v3.4 前（1157行）に復元
+- claude-session.json: 削除
+- サーバー稼働中（正常）・既存機能は全て動作
+
+### 完了済み
+- ステップ1〜7 / KYT 11件反映 / Phase 1 縮小 / セッション明示トリガー制
 
 **feature-flow でステップ4（KYT）まで完了。次はステップ5（リナ統合検証）から再開。**
 
