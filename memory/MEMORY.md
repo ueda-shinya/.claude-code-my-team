@@ -14,6 +14,7 @@
 - [feedback_credential_management.md](feedback_credential_management.md) — 認証情報を丁寧に管理する方針。.env の直接操作を最小限に、定期ローテーション声がけ、echo 追記禁止
 - [feedback_agent_study.md](feedback_agent_study.md) — agent-study 提案前に「一般知識か固有知識か」をアスカが先に判断。一般的な教科書系は提案しない
 - [feedback_asuka_proactive_proposal.md](feedback_asuka_proactive_proposal.md) — 問題発見・修正だけでなく「なぜ起きたか」報告＋構造的な対案提示までがアスカの仕事
+- [feedback_asuka_proactive_flagging.md](feedback_asuka_proactive_flagging.md) — 定型レポート中に気になる情報があれば、頼まれなくても「気になる点」としてフラグを立て調査打診まで行う
 - [feedback-web-design.md](feedback-web-design.md) — Web成果物のフォントサイズ最小値ルール（通常テキスト16px・補足10px）
 - [feedback_code_review_mandatory.md](feedback_code_review_mandatory.md) — 実装完了後のコードレビューは絶対に省略しない（sandboxでも例外なし）
 - [feedback-agent-training.md](feedback-agent-training.md) — エージェント育成は「知識を与える」ではなく「情報からスキルを作る」が正解
@@ -63,3 +64,6 @@
 
 ## 補助金・助成金
 - [knowledge/subsidy-support-guide.md](../knowledge/subsidy-support-guide.md) — 補助金・助成金対応ガイド（リサーチ手順・提案チェック・対応フロー・採択ポイント）
+
+## メール運用
+- [knowledge/email-routing/xserver-local-delivery.md](../knowledge/email-routing/xserver-local-delivery.md) — Xサーバー ローカル配送問題の診断と解決（同サーバー内からGoogle Workspace運用ドメイン宛で user unknown バウンスする問題の3ステップ診断フロー・強制回収手順・禁忌事項）
