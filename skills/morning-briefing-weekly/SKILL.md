@@ -169,7 +169,7 @@ with open(env_path, encoding='utf-8') as f:
 ctx = ssl.create_default_context()
 query = json.dumps({
     'filter': {
-        'property': '日時',
+        'property': '日付',
         'date': {'on_or_after': yesterday}
     }
 }).encode()

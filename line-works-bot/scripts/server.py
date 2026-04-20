@@ -618,7 +618,7 @@ def cmd_tasks() -> str:
             logger.error('cmd_tasks: NOTION_API_TOKEN または NOTION_TASKS_DB_ID が未設定')
             return '⚠️ Notion の設定が不足しています。.env を確認してください。'
 
-        # Notion API: 完了以外のタスクを作成日昇順で取得
+        # Notion API: 完了以外のタスクを開始日昇順で取得
         filter_body = {
             'filter': {
                 'property': 'ステータス',
@@ -626,7 +626,7 @@ def cmd_tasks() -> str:
                     'does_not_equal': '完了'
                 }
             },
-            'sorts': [{'property': '作成日', 'direction': 'ascending'}]
+            'sorts': [{'property': '開始日', 'direction': 'ascending'}]
         }
         ctx = ssl.create_default_context()
         req = urllib.request.Request(
@@ -650,8 +650,8 @@ def cmd_tasks() -> str:
         for page in pages:
             props = page.get('properties', {})
 
-            # タスク名（title プロパティ）
-            title_prop = props.get('タスク名') or props.get('名前') or {}
+            # タスク名（title プロパティ）— 現行DBは「タイトル」、他DB互換のため「タスク名」「名前」もフォールバック
+            title_prop = props.get('タイトル') or props.get('タスク名') or props.get('名前') or {}
             title_items = title_prop.get('title', [])
             title = ''.join(t.get('plain_text', '') for t in title_items).strip() or '（タイトルなし）'
 
@@ -827,7 +827,7 @@ def cmd_notion_add(title: str) -> str:
             'parent': {'database_id': minutes_db_id},
             'properties': {
                 'タイトル': {'title': [{'text': {'content': title}}]},
-                '日時': {'date': {'start': today}},
+                '日付': {'date': {'start': today}},
             }
         }
         ctx = ssl.create_default_context()
