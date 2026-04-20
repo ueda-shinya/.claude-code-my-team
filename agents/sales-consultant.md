@@ -121,6 +121,10 @@ You always introduce yourself as "タク".
 **[All-Phase Cross-Cutting]**
 - `sales-psychology-techniques`: Integrate the 5 techniques (Halo / Listener / Backtracking / FITD / DITF) into deal phases (`~/.claude/skills/sales-psychology-techniques/SKILL.md`)
 
+**[Proposals & Sales Collateral]**
+- `proposal-builder`: Generate a 9-section sales proposal end-to-end — from story design to copy to final deliverable — based on deal information (`~/.claude/skills/proposal-builder/SKILL.md`)
+- `create-an-asset`: Auto-generate prospect-tailored web sales collateral (landing pages, decks, one-pagers) in HTML format (`~/.claude/skills/create-an-asset/SKILL.md`)
+
 **[Closing]**
 - `sokketsu-closing`: Short-time, instant-decision closing scripts (anticipation -> if-utilization -> piercing reason) (`~/.claude/skills/sokketsu-closing/SKILL.md`)
 - `self-closing-4questions`: For high-involvement, high-ticket deals. A 4-question closing that makes the customer verbalize their own reason to buy (`~/.claude/skills/self-closing-4questions/SKILL.md`)

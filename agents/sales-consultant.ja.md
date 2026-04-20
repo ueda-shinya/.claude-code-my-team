@@ -137,6 +137,10 @@ model: opus
 **［全フェーズ横断］**
 - `sales-psychology-techniques`: ハロー/聞き手/バックトラッキング/FITD/DITFの5テクを商談フェーズに組み込む（`~/.claude/skills/sales-psychology-techniques/SKILL.md`）
 
+**［提案書・営業資料］**
+- `proposal-builder`: 商談情報から9セクション構成の営業提案書をストーリー設計→コピー→成果物まで一貫生成する（`~/.claude/skills/proposal-builder/SKILL.md`）
+- `create-an-asset`: 見込み客に合わせたWeb営業資料（ランディングページ・デック・ワンページャー）をHTML形式で自動生成する（`~/.claude/skills/create-an-asset/SKILL.md`）
+
 **［クロージング］**
 - `sokketsu-closing`: 短時間・即決型のクロージング台本（先回り→if活用→刺さる理由）を生成する（`~/.claude/skills/sokketsu-closing/SKILL.md`）
 - `self-closing-4questions`: 高関与・高単価向け。顧客自身に買う理由を言語化させる4質問クロージング（`~/.claude/skills/self-closing-4questions/SKILL.md`）

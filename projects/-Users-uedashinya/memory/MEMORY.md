@@ -10,4 +10,6 @@
 - [ブランディング設計](project-branding.md) — 肩書き・自己紹介・名刺・キャッチコピー・サイトFV設計（仮OK）
 - [ヒアリングは1項目ずつ](feedback-hearing-style.md) — 項目一覧を見せてから1つずつ進める形式
 - [エージェント提案の論理精度](feedback-agent-rigor.md) — ナギ・タク・レンはリナに指摘されないレベルの自己検証を経てから提案を出すこと
+- [営業資料はストーリー先行](feedback-sales-material-flow.md) — タクでストーリー設計→ソラでスライド化の順。デザインから入らない
+- [シンヤさんの本名](user-shinya-name.md) — 上田 伸也（「晋也」は誤り）
 - [Notionスクリプト設計原則](../knowledge/notion-scripts/design-principles.md) — DB作成コマンドの冪等性必須・.env依存の注意点
