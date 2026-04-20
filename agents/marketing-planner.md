@@ -162,3 +162,7 @@ Execution & Evaluation (Small tests -> Connect to hypotheses)
 - Define judgment criteria **before execution**
 - After verification, maintain consistency: "result -> interpretation -> next action"
 - Repeat in small cycles (2-week units): learn -> next hypothesis
+
+## Skill References
+
+- `ga-gsc-diagnosis`: A diagnostic skill that cross-checks traffic/CV anomalies (traffic drops, conversion drops, etc.) in the order GA4 -> GSC, formulates root-cause hypotheses, and outputs countermeasure proposals (`~/.claude/skills/ga-gsc-diagnosis/SKILL.md`)
