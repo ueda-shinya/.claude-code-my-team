@@ -132,10 +132,12 @@ DB_DEFINITIONS = [
             RadarDB.SUMMARY:        'rich_text',
             RadarDB.LINK:           'url',
             RadarDB.SEQ_NO:         'number',
+            RadarDB.SOURCE:         'select',
             RadarDB.RIKU_VERIFIED:  'select',
             RadarDB.KANATA_VERDICT: 'select',
             RadarDB.KANATA_REASON:  'rich_text',
             RadarDB.RECOMMEND:      'select',
+            RadarDB.STATUS:         'select',
         },
     },
     {

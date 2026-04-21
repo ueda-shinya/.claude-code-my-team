@@ -48,6 +48,12 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone, timedelta
 
+# notion_schema は同ディレクトリに存在するため直接インポート可
+_SCRIPTS_DIR = str(pathlib.Path(__file__).resolve().parent)
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+from notion_schema import RadarDB
+
 # Windows環境での文字化け対策
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -372,17 +378,17 @@ def page_to_item(page):
     p = page['properties']
     return {
         'id': page['id'],
-        'タイトル': get_text(p, 'タイトル'),
-        '投稿日時': get_date(p, '投稿日時'),
-        'カテゴリ': get_select(p, 'カテゴリ'),
-        '要約': get_text(p, '要約'),
-        'リンク': get_url(p, 'リンク'),
-        '情報源': get_select(p, '情報源'),
-        'リク検証': get_select(p, 'リク検証'),
-        'カナタ判定': get_select(p, 'カナタ判定'),
-        'カナタ判定理由': get_text(p, 'カナタ判定理由'),
-        'おすすめ度': get_select(p, 'おすすめ度'),
-        '実施可否': get_select(p, '実施可否'),
+        RadarDB.TITLE:          get_text(p, RadarDB.TITLE),
+        RadarDB.POST_DATE:      get_date(p, RadarDB.POST_DATE),
+        RadarDB.CATEGORY:       get_select(p, RadarDB.CATEGORY),
+        RadarDB.SUMMARY:        get_text(p, RadarDB.SUMMARY),
+        RadarDB.LINK:           get_url(p, RadarDB.LINK),
+        RadarDB.SOURCE:         get_select(p, RadarDB.SOURCE),
+        RadarDB.RIKU_VERIFIED:  get_select(p, RadarDB.RIKU_VERIFIED),
+        RadarDB.KANATA_VERDICT: get_select(p, RadarDB.KANATA_VERDICT),
+        RadarDB.KANATA_REASON:  get_text(p, RadarDB.KANATA_REASON),
+        RadarDB.RECOMMEND:      get_select(p, RadarDB.RECOMMEND),
+        RadarDB.STATUS:         get_select(p, RadarDB.STATUS),
     }
 
 
@@ -399,7 +405,7 @@ def check_notion_url_duplicate(url, token, db_id):
     """
     filter_body = {
         'filter': {
-            'property': 'リンク',
+            'property': RadarDB.LINK,
             'url': {'equals': url}
         }
     }
@@ -432,9 +438,9 @@ def cmd_create_db(token, env):
         'parent': {'page_id': parent_page_id},
         'title': [{'type': 'text', 'text': {'content': 'Claude Code レーダー'}}],
         'properties': {
-            'タイトル': {'title': {}},
-            '投稿日時': {'date': {}},
-            'カテゴリ': {
+            RadarDB.TITLE:    {'title': {}},
+            RadarDB.POST_DATE: {'date': {}},
+            RadarDB.CATEGORY: {
                 'select': {
                     'options': [
                         {'name': 'スキル',         'color': 'blue'},
@@ -445,9 +451,9 @@ def cmd_create_db(token, env):
                     ]
                 }
             },
-            '要約': {'rich_text': {}},
-            'リンク': {'url': {}},
-            '情報源': {
+            RadarDB.SUMMARY: {'rich_text': {}},
+            RadarDB.LINK:    {'url': {}},
+            RadarDB.SOURCE: {
                 'select': {
                     'options': [
                         {'name': 'GitHub',   'color': 'gray'},
@@ -458,7 +464,7 @@ def cmd_create_db(token, env):
                     ]
                 }
             },
-            'リク検証': {
+            RadarDB.RIKU_VERIFIED: {
                 'select': {
                     'options': [
                         {'name': '✅信頼',   'color': 'green'},
@@ -467,7 +473,7 @@ def cmd_create_db(token, env):
                     ]
                 }
             },
-            'カナタ判定': {
+            RadarDB.KANATA_VERDICT: {
                 'select': {
                     'options': [
                         {'name': '導入推奨', 'color': 'green'},
@@ -476,8 +482,8 @@ def cmd_create_db(token, env):
                     ]
                 }
             },
-            'カナタ判定理由': {'rich_text': {}},
-            'おすすめ度': {
+            RadarDB.KANATA_REASON: {'rich_text': {}},
+            RadarDB.RECOMMEND: {
                 'select': {
                     'options': [
                         {'name': '⭐5', 'color': 'yellow'},
@@ -488,7 +494,7 @@ def cmd_create_db(token, env):
                     ]
                 }
             },
-            '実施可否': {
+            RadarDB.STATUS: {
                 'select': {
                     'options': [
                         {'name': '未確認', 'color': 'gray'},
@@ -527,7 +533,7 @@ def cmd_list(token, db_id, filter_status=None):
 
     filter_body = {
         'filter': {
-            'property': '実施可否',
+            'property': RadarDB.STATUS,
             'select': {'equals': target_status}
         }
     }
@@ -540,25 +546,25 @@ def cmd_list(token, db_id, filter_status=None):
 
     items = [page_to_item(p) for p in pages]
     # 投稿日時の降順でソート（新しい順）
-    items.sort(key=lambda x: x['投稿日時'] or '', reverse=True)
+    items.sort(key=lambda x: x[RadarDB.POST_DATE] or '', reverse=True)
 
     print(f'=== Claude Code レーダー [{target_status}] {len(items)} 件 ===')
     for item in items:
-        date_str = item['投稿日時'] or '-'
-        category_str = f'[{item["カテゴリ"]}]' if item['カテゴリ'] else ''
-        source_str = item['情報源'] or '-'
-        riku_str = item['リク検証'] or '-'
-        kanata_str = item['カナタ判定'] or '-'
-        recommend_str = item['おすすめ度'] or '-'
-        summary_short = item['要約'][:60] + '...' if len(item['要約']) > 60 else item['要約']
+        date_str = item[RadarDB.POST_DATE] or '-'
+        category_str = f'[{item[RadarDB.CATEGORY]}]' if item[RadarDB.CATEGORY] else ''
+        source_str = item[RadarDB.SOURCE] or '-'
+        riku_str = item[RadarDB.RIKU_VERIFIED] or '-'
+        kanata_str = item[RadarDB.KANATA_VERDICT] or '-'
+        recommend_str = item[RadarDB.RECOMMEND] or '-'
+        summary_short = item[RadarDB.SUMMARY][:60] + '...' if len(item[RadarDB.SUMMARY]) > 60 else item[RadarDB.SUMMARY]
         print(
-            f'{date_str}  {category_str} {item["タイトル"]}\n'
+            f'{date_str}  {category_str} {item[RadarDB.TITLE]}\n'
             f'  情報源: {source_str}  リク検証: {riku_str}  カナタ: {kanata_str}  '
             f'おすすめ度: {recommend_str}\n'
             f'  {summary_short}'
         )
-        if item['リンク']:
-            print(f'  URL: {item["リンク"]}')
+        if item[RadarDB.LINK]:
+            print(f'  URL: {item[RadarDB.LINK]}')
         print()
 
     print(f'合計 {len(items)} 件')
@@ -581,14 +587,14 @@ def get_next_sequence_number(db_id, token):
     """
     body = {
         'page_size': 1,
-        'sorts': [{'property': '通し番号', 'direction': 'descending'}],
-        'filter': {'property': '通し番号', 'number': {'is_not_empty': True}}
+        'sorts': [{'property': RadarDB.SEQ_NO, 'direction': 'descending'}],
+        'filter': {'property': RadarDB.SEQ_NO, 'number': {'is_not_empty': True}}
     }
     result = notion_request_with_retry('POST', f'/databases/{db_id}/query', body, token=token)
     results = result.get('results', [])
     if not results:
         return 1
-    num = results[0].get('properties', {}).get('通し番号', {}).get('number')
+    num = results[0].get('properties', {}).get(RadarDB.SEQ_NO, {}).get('number')
     if num is None:
         return 1
     return int(num) + 1
@@ -604,7 +610,7 @@ def cmd_show_seq(token, db_id, n):
 
     body = {
         'filter': {
-            'property': '通し番号',
+            'property': RadarDB.SEQ_NO,
             'number': {'equals': n}
         }
     }
@@ -628,19 +634,19 @@ def cmd_show_seq(token, db_id, n):
         if len(pages) > 1:
             print(f'--- {idx}/{len(pages)} 件目（page_id: {page.get("id", "")}） ---')
         props = page['properties']
-        seq_val = props.get('通し番号', {}).get('number')
+        seq_val = props.get(RadarDB.SEQ_NO, {}).get('number')
         seq_str = f'#{int(seq_val):03d}' if seq_val is not None else f'#{n:03d}'
 
-        title     = get_text(props, 'タイトル') or '(無題)'
-        category  = get_select(props, 'カテゴリ') or '-'
-        source    = get_select(props, '情報源') or '-'
-        url       = get_url(props, 'リンク') or '-'
-        date      = get_date(props, '投稿日時') or '-'
-        summary   = get_text(props, '要約') or '-'
-        riku      = get_select(props, 'リク検証') or '-'
-        verdict   = get_select(props, 'カナタ判定') or '-'
-        reason    = get_text(props, 'カナタ判定理由') or '-'
-        recommend = get_select(props, 'おすすめ度') or '-'
+        title     = get_text(props, RadarDB.TITLE) or '(無題)'
+        category  = get_select(props, RadarDB.CATEGORY) or '-'
+        source    = get_select(props, RadarDB.SOURCE) or '-'
+        url       = get_url(props, RadarDB.LINK) or '-'
+        date      = get_date(props, RadarDB.POST_DATE) or '-'
+        summary   = get_text(props, RadarDB.SUMMARY) or '-'
+        riku      = get_select(props, RadarDB.RIKU_VERIFIED) or '-'
+        verdict   = get_select(props, RadarDB.KANATA_VERDICT) or '-'
+        reason    = get_text(props, RadarDB.KANATA_REASON) or '-'
+        recommend = get_select(props, RadarDB.RECOMMEND) or '-'
 
         print(f'=== Claude Code レーダー {seq_str} ===')
         print(f'タイトル: {title}')
@@ -670,14 +676,14 @@ def cmd_add_sequence_property(token, db_id):
     db_info = notion_request_with_retry("GET", f"/databases/{db_id}", token=token)
     existing_props = db_info.get('properties', {})
 
-    if '通し番号' in existing_props:
-        existing_type = existing_props['通し番号'].get('type', '')
+    if RadarDB.SEQ_NO in existing_props:
+        existing_type = existing_props[RadarDB.SEQ_NO].get('type', '')
         print(f'[INFO] 「通し番号」プロパティは既に存在します（type: {existing_type}）。スキップします。')
         return
 
     body = {
         'properties': {
-            '通し番号': {
+            RadarDB.SEQ_NO: {
                 'number': {
                     'format': 'number'
                 }
@@ -698,7 +704,7 @@ def cmd_list_recent(token, db_id, n):
 
     body = {
         'page_size': min(n, 100),
-        'sorts': [{'property': '通し番号', 'direction': 'descending'}],
+        'sorts': [{'property': RadarDB.SEQ_NO, 'direction': 'descending'}],
     }
     result = notion_request_with_retry(
         'POST', f'/databases/{db_id}/query', body, token=token
@@ -712,13 +718,13 @@ def cmd_list_recent(token, db_id, n):
     print(f'=== Claude Code レーダー 直近 {n} 件 ===')
     for page in pages:
         props = page['properties']
-        num_prop = props.get('通し番号', {})
+        num_prop = props.get(RadarDB.SEQ_NO, {})
         seq = num_prop.get('number')
         seq_str = f'#{int(seq):03d}' if seq is not None else '#---'
 
-        category = get_select(props, 'カテゴリ') or ''
+        category = get_select(props, RadarDB.CATEGORY) or ''
         category_str = f'[{category}]' if category else ''
-        title = get_text(props, 'タイトル') or '(無題)'
+        title = get_text(props, RadarDB.TITLE) or '(無題)'
         print(f'{seq_str} {category_str} {title}')
 
     print(f'合計 {len(pages)} 件表示')
@@ -779,38 +785,38 @@ def cmd_add(args, token, db_id):
         print(f'[WARN] 通し番号の採番に失敗しました（{e}）。通し番号なしで登録を続行します。')
 
     props = {
-        'タイトル': {'title': [{'text': {'content': args.title}}]},
-        '投稿日時': {'date': {'start': date_str}},
-        'カテゴリ': {'select': {'name': category}},
-        '情報源': {'select': {'name': source}},
-        '実施可否': {'select': {'name': status}},
+        RadarDB.TITLE:    {'title': [{'text': {'content': args.title}}]},
+        RadarDB.POST_DATE: {'date': {'start': date_str}},
+        RadarDB.CATEGORY: {'select': {'name': category}},
+        RadarDB.SOURCE:   {'select': {'name': source}},
+        RadarDB.STATUS:   {'select': {'name': status}},
     }
 
     if seq_num is not None:
-        props['通し番号'] = {'number': seq_num}
+        props[RadarDB.SEQ_NO] = {'number': seq_num}
 
     if args.summary:
-        props['要約'] = rich_text_prop(args.summary)
+        props[RadarDB.SUMMARY] = rich_text_prop(args.summary)
 
     if url_val:
-        props['リンク'] = {'url': url_val}
+        props[RadarDB.LINK] = {'url': url_val}
 
     if args.riku_check:
         err = validate_whitelist(args.riku_check, RIKU_CHECK_OPTIONS, '--riku-check')
         if err:
             print(err)
             sys.exit(1)
-        props['リク検証'] = {'select': {'name': args.riku_check}}
+        props[RadarDB.RIKU_VERIFIED] = {'select': {'name': args.riku_check}}
 
     if args.kanata_verdict:
         err = validate_whitelist(args.kanata_verdict, KANATA_VERDICT_OPTIONS, '--kanata-verdict')
         if err:
             print(err)
             sys.exit(1)
-        props['カナタ判定'] = {'select': {'name': args.kanata_verdict}}
+        props[RadarDB.KANATA_VERDICT] = {'select': {'name': args.kanata_verdict}}
 
     if args.kanata_reason:
-        props['カナタ判定理由'] = rich_text_prop(args.kanata_reason)
+        props[RadarDB.KANATA_REASON] = rich_text_prop(args.kanata_reason)
 
     if args.recommend:
         try:
@@ -820,7 +826,7 @@ def cmd_add(args, token, db_id):
         except ValueError:
             print('[ERROR] --recommend は 1〜5 の整数で指定してください。')
             sys.exit(1)
-        props['おすすめ度'] = {'select': {'name': recommend_num_to_str(rec_num)}}
+        props[RadarDB.RECOMMEND] = {'select': {'name': recommend_num_to_str(rec_num)}}
 
     notion_request('POST', '/pages', {
         'parent': {'database_id': db_id},

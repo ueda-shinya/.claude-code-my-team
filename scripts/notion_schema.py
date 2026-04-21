@@ -161,10 +161,12 @@ class RadarDB:
     SUMMARY        = '要約'
     LINK           = 'リンク'
     SEQ_NO         = '通し番号'
+    SOURCE         = '情報源'
     RIKU_VERIFIED  = 'リク検証'
     KANATA_VERDICT = 'カナタ判定'
     KANATA_REASON  = 'カナタ判定理由'
     RECOMMEND      = 'おすすめ度'
+    STATUS         = '実施可否'
 
 
 # ============================================================

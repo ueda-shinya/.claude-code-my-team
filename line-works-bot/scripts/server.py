@@ -30,6 +30,15 @@ import anthropic
 import jwt as pyjwt
 from apscheduler.schedulers.background import BackgroundScheduler
 
+# ── notion_schema インポート ───────────────────────────────
+# server.py は line-works-bot/scripts/ 配下にあるため、
+# ~/.claude/scripts/ をパスに追加して notion_schema を参照する
+import pathlib as _pathlib
+_CLAUDE_SCRIPTS = str(_pathlib.Path(__file__).resolve().parent.parent.parent / 'scripts')
+if _CLAUDE_SCRIPTS not in sys.path:
+    sys.path.insert(0, _CLAUDE_SCRIPTS)
+from notion_schema import TasksDB, MinutesDB
+
 # ── 環境変数読み込み ───────────────────────────────────────
 load_dotenv(os.path.expanduser('~/.claude/.env'))
 
@@ -621,12 +630,12 @@ def cmd_tasks() -> str:
         # Notion API: 完了以外のタスクを開始日昇順で取得
         filter_body = {
             'filter': {
-                'property': 'ステータス',
+                'property': TasksDB.STATUS,
                 'select': {
                     'does_not_equal': '完了'
                 }
             },
-            'sorts': [{'property': '開始日', 'direction': 'ascending'}]
+            'sorts': [{'property': TasksDB.START_DATE, 'direction': 'ascending'}]
         }
         ctx = ssl.create_default_context()
         req = urllib.request.Request(
@@ -651,12 +660,12 @@ def cmd_tasks() -> str:
             props = page.get('properties', {})
 
             # タスク名（title プロパティ）— 現行DBは「タイトル」、他DB互換のため「タスク名」「名前」もフォールバック
-            title_prop = props.get('タイトル') or props.get('タスク名') or props.get('名前') or {}
+            title_prop = props.get(TasksDB.TITLE) or props.get('タスク名') or props.get('名前') or {}
             title_items = title_prop.get('title', [])
             title = ''.join(t.get('plain_text', '') for t in title_items).strip() or '（タイトルなし）'
 
             # ステータス（select プロパティ）
-            status_prop = props.get('ステータス', {})
+            status_prop = props.get(TasksDB.STATUS, {})
             status_val = (status_prop.get('select') or {}).get('name', '')
 
             # ステータスラベル
@@ -826,8 +835,8 @@ def cmd_notion_add(title: str) -> str:
         data = {
             'parent': {'database_id': minutes_db_id},
             'properties': {
-                'タイトル': {'title': [{'text': {'content': title}}]},
-                '日付': {'date': {'start': today}},
+                MinutesDB.TITLE: {'title': [{'text': {'content': title}}]},
+                MinutesDB.DATE:  {'date': {'start': today}},
             }
         }
         ctx = ssl.create_default_context()
