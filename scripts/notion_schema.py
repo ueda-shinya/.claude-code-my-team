@@ -138,13 +138,14 @@ class ProjectsDB:
 
     ENV_KEY = 'NOTION_PROJECTS_DB_ID'
 
-    TITLE     = 'プロジェクト名'
-    STATUS    = 'ステータス'
-    PHASE     = 'フェーズ'
-    GOAL_DATE = '目標完了日'
-    KPI       = 'KPI'
-    ASSIGNEE  = '担当'
-    MEMO      = 'メモ'
+    TITLE      = 'プロジェクト名'
+    STATUS     = 'ステータス'
+    PHASE      = 'フェーズ'
+    START_DATE = '開始日'
+    GOAL_DATE  = '目標完了日'
+    KPI        = 'KPI'
+    ASSIGNEE   = '担当'
+    MEMO       = 'メモ'
 
 
 # ============================================================

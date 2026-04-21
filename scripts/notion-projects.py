@@ -38,6 +38,10 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timezone, timedelta
 
+# スクリプトと同ディレクトリの notion_schema をインポート
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from notion_schema import ProjectsDB
+
 # Windows環境での文字化け対策
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -232,20 +236,20 @@ def page_to_item(page):
   p = page['properties']
   return {
     'id': page['id'],
-    'プロジェクト名': get_text(p, 'プロジェクト名'),
-    'ステータス': get_select(p, 'ステータス'),
-    'フェーズ': get_text(p, 'フェーズ'),
-    '開始日': get_date(p, '開始日'),
-    '目標完了日': get_date(p, '目標完了日'),
-    'KPI': get_text(p, 'KPI'),
-    '担当': get_text(p, '担当'),
-    'メモ': get_text(p, 'メモ'),
+    ProjectsDB.TITLE:      get_text(p, ProjectsDB.TITLE),
+    ProjectsDB.STATUS:     get_select(p, ProjectsDB.STATUS),
+    ProjectsDB.PHASE:      get_text(p, ProjectsDB.PHASE),
+    ProjectsDB.START_DATE: get_date(p, ProjectsDB.START_DATE),
+    ProjectsDB.GOAL_DATE:  get_date(p, ProjectsDB.GOAL_DATE),
+    ProjectsDB.KPI:        get_text(p, ProjectsDB.KPI),
+    ProjectsDB.ASSIGNEE:   get_text(p, ProjectsDB.ASSIGNEE),
+    ProjectsDB.MEMO:       get_text(p, ProjectsDB.MEMO),
   }
 
 
 def status_sort_key(item):
   """ステータスを定義順でソートするためのキー関数"""
-  s = item['ステータス']
+  s = item[ProjectsDB.STATUS]
   try:
     return STATUS_ORDER.index(s)
   except ValueError:
@@ -255,7 +259,7 @@ def status_sort_key(item):
 def find_page_by_partial_name(partial_name, token, db_id):
   """部分名称で Notion DB を検索し、マッチしたページ一覧を返す"""
   result = notion_request('POST', f'/databases/{db_id}/query', {
-    'filter': {'property': 'プロジェクト名', 'title': {'contains': partial_name}}
+    'filter': {'property': ProjectsDB.TITLE, 'title': {'contains': partial_name}}
   }, token=token)
   return result.get('results', [])
 
@@ -278,7 +282,7 @@ def resolve_single_page(partial_name, token, db_id):
   print(f'\n{len(pages)} 件見つかりました:')
   for i, p in enumerate(pages, 1):
     item = page_to_item(p)
-    print(f'  {i}. {item["プロジェクト名"]} [{item["ステータス"]}]')
+    print(f'  {i}. {item[ProjectsDB.TITLE]} [{item[ProjectsDB.STATUS]}]')
   try:
     idx = int(input('  番号を選択: ').strip()) - 1
     if 0 <= idx < len(pages):
@@ -329,8 +333,8 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
     'parent': {'page_id': parent_page_id},
     'title': [{'type': 'text', 'text': {'content': 'プロジェクト管理'}}],
     'properties': {
-      'プロジェクト名': {'title': {}},
-      'ステータス': {
+      ProjectsDB.TITLE: {'title': {}},
+      ProjectsDB.STATUS: {
         'select': {
           'options': [
             {'name': '準備中', 'color': 'yellow'},
@@ -340,12 +344,12 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
           ]
         }
       },
-      'フェーズ': {'rich_text': {}},
-      '開始日': {'date': {}},
-      '目標完了日': {'date': {}},
-      'KPI': {'rich_text': {}},
-      '担当': {'rich_text': {}},
-      'メモ': {'rich_text': {}},
+      ProjectsDB.PHASE:      {'rich_text': {}},
+      ProjectsDB.START_DATE: {'date': {}},
+      ProjectsDB.GOAL_DATE:  {'date': {}},
+      ProjectsDB.KPI:        {'rich_text': {}},
+      ProjectsDB.ASSIGNEE:   {'rich_text': {}},
+      ProjectsDB.MEMO:       {'rich_text': {}},
     },
   }
 
@@ -369,7 +373,7 @@ def cmd_list(token, db_id, filter_status=None):
   filter_body = {}
   if filter_status:
     filter_body['filter'] = {
-      'property': 'ステータス',
+      'property': ProjectsDB.STATUS,
       'select': {'equals': filter_status}
     }
 
@@ -387,11 +391,11 @@ def cmd_list(token, db_id, filter_status=None):
   print('-' * 84)
   for item in items:
     print(
-      f'{item["プロジェクト名"][:24]:24} '
-      f'{item["ステータス"]:8} '
-      f'{item["フェーズ"][:20]:20} '
-      f'{item["担当"][:16]:16} '
-      f'{item["開始日"]:12}'
+      f'{item[ProjectsDB.TITLE][:24]:24} '
+      f'{item[ProjectsDB.STATUS]:8} '
+      f'{item[ProjectsDB.PHASE][:20]:20} '
+      f'{item[ProjectsDB.ASSIGNEE][:16]:16} '
+      f'{item[ProjectsDB.START_DATE]:12}'
     )
   print(f'\n合計 {len(items)} 件')
 
@@ -406,24 +410,24 @@ def cmd_add(args, token, db_id):
     sys.exit(1)
 
   props = {
-    'プロジェクト名': {'title': [{'text': {'content': name}}]},
+    ProjectsDB.TITLE: {'title': [{'text': {'content': name}}]},
   }
 
   status = args.status or STATUS_DEFAULT
-  props['ステータス'] = {'select': {'name': status}}
+  props[ProjectsDB.STATUS] = {'select': {'name': status}}
 
   if args.phase:
-    props['フェーズ'] = rich_text_prop(args.phase)
+    props[ProjectsDB.PHASE] = rich_text_prop(args.phase)
   if args.assignee:
-    props['担当'] = rich_text_prop(args.assignee)
+    props[ProjectsDB.ASSIGNEE] = rich_text_prop(args.assignee)
   if args.memo:
-    props['メモ'] = rich_text_prop(args.memo)
+    props[ProjectsDB.MEMO] = rich_text_prop(args.memo)
   if args.kpi:
-    props['KPI'] = rich_text_prop(args.kpi)
+    props[ProjectsDB.KPI] = rich_text_prop(args.kpi)
   if args.start_date:
-    props['開始日'] = {'date': {'start': args.start_date}}
+    props[ProjectsDB.START_DATE] = {'date': {'start': args.start_date}}
   if args.goal_date:
-    props['目標完了日'] = {'date': {'start': args.goal_date}}
+    props[ProjectsDB.GOAL_DATE] = {'date': {'start': args.goal_date}}
 
   notion_request('POST', '/pages', {
     'parent': {'database_id': db_id},
@@ -442,26 +446,26 @@ def cmd_update(args, token, db_id):
 
   props = {}
   if args.status:
-    props['ステータス'] = {'select': {'name': args.status}}
+    props[ProjectsDB.STATUS] = {'select': {'name': args.status}}
   if args.phase:
-    props['フェーズ'] = rich_text_prop(args.phase)
+    props[ProjectsDB.PHASE] = rich_text_prop(args.phase)
   if args.assignee:
-    props['担当'] = rich_text_prop(args.assignee)
+    props[ProjectsDB.ASSIGNEE] = rich_text_prop(args.assignee)
   if args.memo:
-    props['メモ'] = rich_text_prop(args.memo)
+    props[ProjectsDB.MEMO] = rich_text_prop(args.memo)
   if args.kpi:
-    props['KPI'] = rich_text_prop(args.kpi)
+    props[ProjectsDB.KPI] = rich_text_prop(args.kpi)
   if args.start_date:
-    props['開始日'] = {'date': {'start': args.start_date}}
+    props[ProjectsDB.START_DATE] = {'date': {'start': args.start_date}}
   if args.goal_date:
-    props['目標完了日'] = {'date': {'start': args.goal_date}}
+    props[ProjectsDB.GOAL_DATE] = {'date': {'start': args.goal_date}}
 
   if not props:
     print('[ERROR] 更新するプロパティを1つ以上指定してください。')
     sys.exit(1)
 
   notion_request('PATCH', f'/pages/{page_id}', {'properties': props}, token=token)
-  print(f'更新しました: {current["プロジェクト名"]}')
+  print(f'更新しました: {current[ProjectsDB.TITLE]}')
 
 
 # ---- --show ----
@@ -471,14 +475,14 @@ def cmd_show(partial_name, token, db_id):
   page = resolve_single_page(partial_name, token, db_id)
   item = page_to_item(page)
 
-  print(f'\n=== {item["プロジェクト名"]} ===')
-  print(f'ステータス  : {item["ステータス"]}')
-  print(f'フェーズ    : {item["フェーズ"]}')
-  print(f'開始日      : {item["開始日"]}')
-  print(f'目標完了日  : {item["目標完了日"]}')
-  print(f'KPI         : {item["KPI"]}')
-  print(f'担当        : {item["担当"]}')
-  print(f'メモ        : {item["メモ"]}')
+  print(f'\n=== {item[ProjectsDB.TITLE]} ===')
+  print(f'ステータス  : {item[ProjectsDB.STATUS]}')
+  print(f'フェーズ    : {item[ProjectsDB.PHASE]}')
+  print(f'開始日      : {item[ProjectsDB.START_DATE]}')
+  print(f'目標完了日  : {item[ProjectsDB.GOAL_DATE]}')
+  print(f'KPI         : {item[ProjectsDB.KPI]}')
+  print(f'担当        : {item[ProjectsDB.ASSIGNEE]}')
+  print(f'メモ        : {item[ProjectsDB.MEMO]}')
 
   # ページ本文（作業履歴）を取得
   blocks_result = notion_request('GET', f'/blocks/{page["id"]}/children', token=token)
@@ -525,7 +529,7 @@ def cmd_add_block(partial_name, text, token, db_id):
   ]
 
   notion_request('PATCH', f'/blocks/{page_id}/children', {'children': children}, token=token)
-  print(f'追記しました: {item["プロジェクト名"]}')
+  print(f'追記しました: {item[ProjectsDB.TITLE]}')
   print(f'  内容: {full_text[:80]}{"..." if len(full_text) > 80 else ""}')
 
 

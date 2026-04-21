@@ -114,13 +114,14 @@ DB_DEFINITIONS = [
     {
         'cls': ProjectsDB,
         'expected_types': {
-            ProjectsDB.TITLE:     'title',
-            ProjectsDB.STATUS:    'select',
-            ProjectsDB.PHASE:     'rich_text',
-            ProjectsDB.GOAL_DATE: 'date',
-            ProjectsDB.KPI:       'rich_text',
-            ProjectsDB.ASSIGNEE:  'rich_text',
-            ProjectsDB.MEMO:      'rich_text',
+            ProjectsDB.TITLE:      'title',
+            ProjectsDB.STATUS:     'select',
+            ProjectsDB.PHASE:      'rich_text',
+            ProjectsDB.START_DATE: 'date',
+            ProjectsDB.GOAL_DATE:  'date',
+            ProjectsDB.KPI:        'rich_text',
+            ProjectsDB.ASSIGNEE:   'rich_text',
+            ProjectsDB.MEMO:       'rich_text',
         },
     },
     {
