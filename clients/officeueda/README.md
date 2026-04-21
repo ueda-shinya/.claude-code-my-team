@@ -20,6 +20,8 @@
 ## 共通資料
 
 - [単価マスター](price-master.md) — 全サービスの価格・内容・ID。見積り作成時はここを参照
+- [サービス設計](services/README.md) — **ITまるごとサポートv4（メインサービス）の正本位置・監視トリガー・関連ファイル**
+- [GBP整備ドキュメント](gbp/setup-v4.md) — **Stage2：Googleビジネスプロフィール整備仕様書**（v4整合・カテゴリ・説明文・サービス登録・Q&A・投稿テンプレ・運用ルール）
 
 ## 事業一覧
 
@@ -27,3 +29,5 @@
 |---|---|
 | [biz-web/](biz-web/) | Web制作事業 |
 | [biz-ai/](biz-ai/) | AI事業 |
+
+※ メインサービス「ITまるごとサポート」は [services/README.md](services/README.md) を参照
