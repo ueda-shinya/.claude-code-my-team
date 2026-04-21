@@ -68,6 +68,19 @@ Based on the user interview, fill in these components:
 - **compatibility**: Required tools, dependencies (optional, rarely needed)
 - **the rest of the skill :)**
 
+### 5-State Output Contract (必須チェック / Required for skills matching the failable-operation criteria)
+
+This rule was added on 2026-04-21 after a kaizen session. Per the CLAUDE.md "スキル出力の5状態契約 (No Exceptions)" rule, skills matching any of the three failable-operation criteria (network calls, subprocess/shell execution, external-config dependency) MUST define output behavior for all five states: success-with-data, success-with-no-data, partial-success, failure, and skipped/unexecuted. Use this checklist before finalizing the skill.
+
+- [ ] Output spec defines all 5 states (success-with-data・no-data・partial-success・failure・skipped)
+- [ ] The skill's output structure does NOT allow "section-wide invisibility" on failure — a failed section must remain visible with a `[FAIL]` marker and a pointer to the log
+- [ ] Each failable step writes an explicit marker in ASCII tags (not localized): `[OK:0件]` / `[PARTIAL:N成功/M失敗]` / `[FAIL]` / `[SKIP]` as appropriate (success-with-data has no marker)
+- [ ] No `try/except: pass` style silent skipping; success is determined by explicit checks (HTTP status / exception / return value inspection), not by truthy-test shortcuts
+- [ ] If the skill must continue after a failure, the downstream step MUST NOT treat the failure as success — mark the step explicitly with `[FAIL]` (for the failed step) and `[SKIP]` (for dependent downstream steps) and carry the marker forward
+- [ ] Markers appear in the **final user-visible output** — writing errors only to a side log while the main output stays silent is prohibited
+
+Why this matters: Sections that disappear on failure get interpreted as "not applicable" — leading to silent bugs that persist undetected (the 2026-04-21 incident was undetected for 24-26 days because a failed Notion DB query caused the entire section to vanish from morning briefings). Explicit ASCII markers restore visibility and enable correct follow-up decisions.
+
 ### Skill Writing Guide
 
 #### Anatomy of a Skill
