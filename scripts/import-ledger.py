@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""見積・請求台帳 Excel → Notion インポートスクリプト"""
+"""見積・請求台帳 Excel → Notion インポートスクリプト
+
+【注意】このスクリプトは 2026-03-26 の初回一括インポート用ワンショットスクリプトです。
+再実行する場合は、Notion DB 上の既存レコードとの重複チェックを必ず事前に行ってください。
+（重複チェックなしで実行すると全件が二重登録されます）
+"""
 
 import openpyxl
 import json
@@ -110,7 +115,7 @@ def build_props(bangou, shubetsu, hakkouhi, kokyaku_id, kingaku, memo, nōhinbi,
     props = {}
 
     if bangou:
-        props['番号'] = {'title': [{'text': {'content': bangou}}]}
+        props['管理番号'] = {'title': [{'text': {'content': bangou}}]}
 
     if shubetsu:
         props['種別'] = {'select': {'name': shubetsu}}

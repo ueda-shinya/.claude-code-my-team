@@ -282,14 +282,14 @@ def get_date(props, key):
     return d['start'] if d else ''
 
 
-def get_last_edited_time(props, key='最終編集日時'):
-    """last_edited_time プロパティの値を取得"""
-    return props.get(key, {}).get('last_edited_time', '')
+def get_last_edited_time(page):
+    """Notion ページのトップレベル last_edited_time を取得（システムプロパティ）"""
+    return page.get('last_edited_time', '')
 
 
-def get_created_time(props, key='作成日時'):
-    """created_time プロパティの値を取得"""
-    return props.get(key, {}).get('created_time', '')
+def get_created_time(page):
+    """Notion ページのトップレベル created_time を取得（システムプロパティ）"""
+    return page.get('created_time', '')
 
 
 def page_to_item(page):
@@ -308,8 +308,8 @@ def page_to_item(page):
         'ブロッカー': get_text(p, 'ブロッカー'),
         'メモ': get_text(p, 'メモ'),
         '開始日': get_date(p, '開始日'),
-        '最終編集日時': get_last_edited_time(p),
-        '作成日時': get_created_time(p),
+        '最終編集日時': get_last_edited_time(page),
+        '作成日時': get_created_time(page),
     }
 
 

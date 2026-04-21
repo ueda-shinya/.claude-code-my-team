@@ -247,9 +247,9 @@ def get_date(props, key):
     return d['start'] if d else ''
 
 
-def get_created_time(props, key='作成日時'):
-    """created_time プロパティの値を取得"""
-    return props.get(key, {}).get('created_time', '')
+def get_created_time(page):
+    """Notion ページのトップレベル created_time を取得（システムプロパティ）"""
+    return page.get('created_time', '')
 
 
 def page_to_item(page):
@@ -266,7 +266,7 @@ def page_to_item(page):
         '真因（要約）': get_text(p, '真因（要約）'),
         'ステータス': get_select(p, 'ステータス'),
         '関連ファイル': get_text(p, '関連ファイル'),
-        '作成日時': get_created_time(p),
+        '作成日時': get_created_time(page),
         # 追加プロパティ（なぜなぜ分析の過程）
         'なぜ(1回目)': get_text(p, 'なぜ(1回目)'),
         'なぜ(2回目)': get_text(p, 'なぜ(2回目)'),
