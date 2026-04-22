@@ -1,0 +1,19 @@
+# LINE WORKS Bot — 除外ファイル
+
+# 秘密鍵・認証情報
+*.pem
+*.key
+
+# ログファイル
+logs/
+*.log
+
+# Python キャッシュ
+__pycache__/
+*.pyc
+
+# LINE WORKS Bot — claude セッション状態ファイル（認証情報含む可能性があるため除外）
+claude-session.json
+
+# バックアップファイル
+*.bak.*
