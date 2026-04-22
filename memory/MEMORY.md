@@ -24,6 +24,7 @@
 - [feedback-dev-workflow.md](feedback-dev-workflow.md) — アスカのコーディング禁止ルール違反履歴（.env以外のコード・スクリプト・設定ファイルは必ずシュウに委任）
 - [feedback-asuka-interpretation.md](feedback-asuka-interpretation.md) — シンヤさんの指示の対象範囲・前提を勝手に広げない（拡大解釈禁止）
 - [feedback-rina-risk-threshold.md](feedback-rina-risk-threshold.md) — リナ検証はリスク1-5併記で、リスク3以上対処・2以下許容の閾値運用（無限ループ防止）
+- [feedback_researcher_llmo_jsonld.md](feedback_researcher_llmo_jsonld.md) — ミオがllmo-audit実行時、WebFetchでJSON-LD未検出でも即NG禁止。JS注入可能性が残る限り判定不能扱い
 
 ## project
 - [project_notion_management.md](project_notion_management.md) — Notion DB一本化方針（案件リスト・残件タスク→案件管理に統合、スキーマ設計は持ち越し）
