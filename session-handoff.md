@@ -1,5 +1,76 @@
 # セッション引き継ぎ
 
+## 🟠 最優先再開ポイント（2026-04-22）: オフィスウエダ事業戦略ゼロベース再設計
+
+**v4（ITまるごとサポート月額サブスク）を棚上げ。Web制作・保守を主力とする業種特化型モデルに方針転換。ターゲット業種は未定。**
+
+### 本日の流れ（2026-04-22）
+1. v4確定 → Stage1ブランディング確定 → Stage2 GBP整備完了
+2. **シンヤさん指摘「競合いない＝ブルーオーシャンで浮かれるのをやめる」** → ミオ調査＋リク検証で「需要は実在（A+D共存）」と判定
+3. CLAUDE.md新ルール「Competitive Absence Audit Rule」＋新スキル「competitive-absence-audit」作成
+4. v4サービス内容ブラッシュアップ議論 → 迷走 → **シンヤさん判断「Web制作・保守で原点回帰」**
+5. 業種特化型を選ぶも、最初は「工務店・リフォーム（接点ゼロ・直感）」で稲田案件の轍に戻りかけ → 軌道修正
+6. **「今から変化が大きい業種」をファクトで選ぶ方針** → ミオに業種変化調査を依頼（バックグラウンド）
+7. ミオ WebSearch permission denied で停止 → 次セッションでフォアグラウンド再実行
+
+### 棚上げ資産（参考として保存）
+- `memory/project-service-design.md` — v4（ITまるごとサポート月額サブスク）：archived-2026-04-22
+- `memory/project-branding.md` — Stage1ブランディング（もうひとりのIT担当）：archived-2026-04-22
+- `memory/project-business-strategy-2026.md` — 部分棚上げ（Web直受け化・AI事業は維持／月額サブスクは棚上げ）
+- `clients/officeueda/services/README.md` — v4インデックス：archived
+- `clients/officeueda/gbp/setup-v4.md` — v4GBP整備ドキュメント：archived
+- `clients/officeueda/reports/20260422_it-support-market-research.md` — 需要検証レポート（参考）
+- `clients/officeueda/reports/20260422_v4-service-scope-research.md` — サービス範囲レポート（参考）
+
+### 新規資産（継続使用）
+- **CLAUDE.md「Competitive Absence Audit Rule」** — 競合不在の楽観主張を6仮説で強制検証するルール
+- **`skills/competitive-absence-audit/SKILL.md`** — 上記ルールに連動するスキル
+
+### 次セッションの再開手順
+
+1. **最初のアクション：ミオに業種変化調査をフォアグラウンド再実行**
+   - 依頼内容：2026-2030年に変化が大きい／Web・デジタル需要が急増する業種の特定
+   - 調査観点（6軸）：規制変化・人口動態・技術変化・経営者世代交代・広島県地域特性・既存Web化率
+   - 成果物：ロングリスト10-15業種→ショート3-5業種→推奨2-3業種の詳細分析
+   - 保存先：`~/.claude/clients/officeueda/reports/20260422_industry-selection-research.md`
+   - **WebSearch必須・フォアグラウンド実行**（前回bg実行でpermission denied発生）
+
+2. **リク（fact-checker）で検証**（CLAUDE.md Deliverable Quality Gate準拠）
+
+3. **ターゲット業種選定ラウンドテーブル**（ナギ・タク・レン・リナ）
+   - ミオ推奨2-3業種のうちどれを第1優先にするか
+   - 広島圏の事業所数・LTV・競合・シンヤさん適性で総合判断
+   - **新ルール「Competitive Absence Audit Rule」適用必須**
+
+4. **業種確定後：サービス設計ラウンドテーブル**
+   - Web制作の価格帯・保守の価格帯・付帯サービス
+   - 業種特化型の差別化要素（施工事例／予約導線／業界用語等）
+
+5. **新ブランディング設計**（業種確定後）
+   - Stage1ブランディング（IT軸）はアーカイブ
+   - 新業種に最適化したキャッチ・肩書き・名刺・FVを再設計
+
+### シンヤさんの強み（前提として活用）
+- Web制作4年目・30サイト以上実績
+- 対応エリア：広島県東広島市・広島市・呉市
+- 交流会・商工会の営業チャネルあり
+- 1人運用・月80h想定（外注化は並行設計中）
+
+### 避けるべき判断パターン（本日の教訓）
+- **直感で業種選択** → Competitive Absence Audit Rule違反リスク
+- **需要検証なしで「ブルーオーシャン」認定** → 禁止
+- **月額サブスクで欲張る設計** → 稲田案件と同じ地雷
+- **接点ゼロの業種を選ぶ** → 稲田案件再現リスク
+
+### 関連ファイル
+- v4参考：`memory/project-service-design.md`（archived）
+- 市場調査：`clients/officeueda/reports/20260422_it-support-market-research.md`
+- サービス範囲調査：`clients/officeueda/reports/20260422_v4-service-scope-research.md`
+- 新ルール：`CLAUDE.md` L301-360付近「Competitive Absence Audit Rule」
+- 新スキル：`skills/competitive-absence-audit/SKILL.md`
+
+---
+
 ## 🔷 次セッション再開ポイント（2026-04-21 kaizen Phase 1 完了）
 
 **kaizen Phase 1 完了コミット: `0dc13c0` および Phase 0 コミット `c219940` push済み。Phase 1-A 第2弾（既存コード書き換え）or Phase 2 着手から再開。**

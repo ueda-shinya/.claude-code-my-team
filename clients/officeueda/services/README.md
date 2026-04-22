@@ -1,8 +1,11 @@
 # オフィスウエダ サービス設計インデックス
 
-## メインサービス：ITまるごとサポート v4
+> **⚠️ v4（ITまるごとサポート）は棚上げ（2026-04-22）**
+> Web制作・保守を主力とする新戦略に方針転換。v4関連ファイルは参考資料として保存。新戦略ファイルが完成次第、本インデックスを更新予定。
 
-**正本**: `~/.claude/projects/-Users-uedashinya/memory/project-service-design.md`
+## 【棚上げ】旧メインサービス：ITまるごとサポート v4
+
+**正本**: `~/.claude/projects/-Users-uedashinya/memory/project-service-design.md`（ステータス：archived-2026-04-22）
 
 ※ 正本はmemory配下で管理（全セッション横断で参照されるため）
 ※ 内容・価格・監視トリガー等は全て正本を参照。このREADMEは入口のみ
