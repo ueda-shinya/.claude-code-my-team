@@ -51,6 +51,8 @@ After creating, modifying, or appending to CLAUDE.md, memory files (`memory/` an
 
 Do not report the change as "complete" to Shinya until Rina's check is done.
 
+**限定例外 (Added 2026-04-23):** `memory/feedback-*.md` の既存ファイルへの事実・経過の記録追記（違反履歴、Shinyaフィードバックの事実記録、セッション経過の記録等で、新規ルール文言の追加を含まないもの）については、「.claude 配下ファイル操作の自律実行ルール」の規定に従い、事後検証方式を適用する（同セッション内で後追いリナ検証を必ず行う）。詳細は当該セクション参照。
+
 **When unsure how to handle Rina's feedback:** Asuka does not escalate to Shinya directly — first discuss with Rina to reach a conclusion. Report the agreed conclusion to Shinya. If no agreement is reached, present the diff to Shinya for a decision.
 
 **No exceptions:** Even if a rule is revised in response to Rina's feedback, call Rina again for the revision. Do not skip even minor changes or single-line additions.
@@ -207,6 +209,65 @@ Details → `memory/feedback-dev-workflow.md`
 - **記録先**: `memory/skill-audit-log.md`（監査日・対象スキル名・判定結果・改修タスクID を記録）
 
 **なぜ必要か**: ユーザーもClaudeも「スキル出力に何が表示されているか」で次の判断を行う。セクションが消えている＝「不要／対象外」と解釈される。`[FAIL]` や `[OK:0件]` マーカーがあれば「試みた結果これだった」と解釈され、正しい追随判断（再実行・原因調査・仕様変更）に繋がる。
+
+## .claude 配下ファイル操作の自律実行ルール (Added 2026-04-23)
+
+**背景**: 自動化を進めている中で、ファイル操作のたびに承認確認で止まっていては時間が無駄になる。`.claude` 配下は GitHub にバックアップされており、問題があれば `git revert` で戻せるため、確認なしで進めてよい範囲を明確化する。
+
+### 承認なしで自律実行してよい操作
+
+- `.claude` 配下（`~/.claude/` ディレクトリ以下）で、かつ **`.gitignore` パターンにマッチしないパス** のファイルに対する以下の操作：
+  - 読み取り（Read / Grep / Glob）
+  - 編集（Edit）
+  - 新規作成（Write）
+  - 削除（Bash `rm` / `git rm`）
+- Notion への登録・更新（**登録先DBの外部共有状態が OFF のもののみ自律実行可**。外部共有 ON のDBへの登録は「外部送信」扱いで承認必要）
+- 外部API **読み取り系** の呼び出し（MCP `search-analytics` / `ga4-*` / `hourei` / Notion 読み取り等、情報取得のみで外部に情報が漏れない操作）
+- `git pull` / `git push`（通常の同期）
+- `session-handoff.md` への追記（他PC同期目的の正規用途）
+
+※ 「git 追跡状態」ではなく「パスが `.gitignore` にマッチするか」で判定する。新規作成ファイルでもパスが `.gitignore` パターンに該当すれば自律実行対象外。
+
+### 実行時の必須プロトコル
+
+1. 実行前に「`[自律実行] これから〇〇します`」の定型フォーマットで **1行宣言**（承認は待たない。事後監査用に grep 可能にする）
+2. 実行
+3. **実行後に何をしたかを必ず報告**（取り消しやすくするため）
+4. 意図しない影響が出たら即時 `git log` で該当コミット特定 → revert で復旧
+5. **削除時の復旧性担保手順**:
+   - 削除対象がコミット済み → `git rm` で削除し、直後に commit（revert 可能状態）
+   - 削除対象が未コミット → **削除前に** `git add + commit` を先に実行してから `git rm` で削除＋再 commit（`rm` 先行は禁止。作業ツリーから消えたファイルは add 対象にならず復旧不可）
+   - 新規未追跡ファイルの削除は原則禁止（必要な場合はシンヤさん承認）
+
+### 承認が必要なまま残す操作（例外リスト）
+
+以下はバックアップが効かない／影響が重大なため、本ルール適用外で従来通り確認する：
+
+- **git 無視ファイル**（`.env`、`tmp/` 配下、`*.bak.*` 等）の編集・削除 → 既存「Safe Editing Rule for Git-Ignored Files」を維持
+- **破壊的 git 操作**：履歴・作業ツリーを不可逆に改変する git 操作全般。列挙例（限定ではない）：`git reset --hard` / `git push --force` / `git rebase -i` / `git branch -D` / `git clean -fd` / `git checkout <file>`（作業中変更破棄） / `git stash drop` / `git filter-branch` / `git reflog expire`
+- **CLAUDE.md / MEMORY.md / memory/ / knowledge/ / skills/ / agents/ への新規追加・変更・追記（内容の種類問わず）**
+  → 既存「Rina Auto-Invocation Rule」に従いリナ検証が必須のため、結果的に確認フェーズが残る（ただしアスカ独断での追加は引き続き禁止）
+  - **限定例外**: `memory/feedback-*.md` の**既存ファイルへの事実・経過の記録追記**（違反履歴、Shinyaフィードバックの事実記録、セッション経過の記録等、**新規ルール文言の追加を含まないもの**）は、既存「Immediate Recording Rule」の即時性を優先してリナ検証不要。ただし当該セッション内で後追いでリナに差分共有し、事後検証は必ず行う（即時性と検証性の両立）
+  - **この例外に該当しないもの**（リナ検証必須）: 「これから〇〇を禁止する」「今後は〇〇する」等の新規ルール文言追加、新規 feedback ファイル作成、既存 feedback ファイルへのルール条項追記
+- **`clients/` 配下のクライアント成果物**（`clients/<name>/proposals/` / `contracts/` / `deliverables/` 等、顧客に渡す原本）→ 既存「Deliverable Quality Gate」を経由。承認なし編集禁止
+- **外部送信・投稿・外部共有状態の変更**：**第三者の目に触れる可能性がある情報の書き込み・配信**を指す。Gmail / LINE WORKS / X / Chatwork 等への送信・下書き作成・予約投稿設定、Notion の外部共有設定 ON 変更、外部共有 ON のDBへの書き込み、公開 Web ページへの反映等を含む
+- **API コスト発生を伴うスクリプト実行**：`~/.claude/scripts/` 配下のスクリプト実行時は、`--test-mode` フラグの有無を問わず事前にソースコードを確認し、Claude API / 有料 MCP 呼び出しの有無を判定。該当する場合は承認必要
+- **コード編集**：既存「Asuka Never Codes Directly」に従いシュウに委任
+  - **SKILL.md / agents/\*.md など `.md` 拡張子ファイルでも、内部の ` ```python ` / ` ```bash ` / ` ```sh ` / ` ```javascript ` 等のコードブロックを含む編集はシュウ委任**（テキスト部分のみの編集は自律可、ただしコードブロックを1行でも触る場合はシュウへ）
+
+### 違反時の扱い
+
+- 例外リストに該当する操作を承認なしで実行した場合 → 即時シンヤさんに報告＋`memory/feedback-dev-workflow.md` に違反履歴追記
+- 誤って承認なしで実行してしまった無害な操作でも、事後報告は必須
+- 自己検知できない違反リスクがあるため、**物理ガード（PreToolUse hook）の追加検討を kaizen で別途実施**（外部送信系 MCP・API コスト発生スクリプトの事前ブロック）
+
+### なぜ必要か
+
+「承認待ちでセッションが止まる」ことのコストは、アスカ稼働時間の逸失として無視できない。GitHub バックアップという安全網が機能している前提で、可逆的な操作は先に実行し、事後報告で品質を担保する方が合理的。破壊的・不可逆・外部影響を伴う操作のみ承認を残すことで、安全性と速度を両立する。
+
+### 運用後の再評価
+
+本ルール施行後、実質的に自律化される操作の範囲と「承認ロス削減効果」を定量評価する。例外リストが広すぎて効果が薄い場合は、リスクと効果を天秤にかけて例外縮小を検討する（次回 `/rule-review` または kaizen で実施）。
 
 ## Safe Editing Rule for Git-Ignored Files (No Exceptions)
 
