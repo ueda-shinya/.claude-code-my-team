@@ -582,6 +582,14 @@ When Asuka conveys a test execution command to Shinya or executes it herself, **
 
 ### 導入見送り（記録）
 - `copywriting` / `copy-editing` (coreyhaines31): 英語圏の型であり、コト（copywriter）・`/humanizer` と二重発動リスクが高いため 2026-04-18 シンヤさん判断で見送り
+- **`ai-seo` (coreyhaines31, 2026-04-23 監査・導入見送り)**:
+  - 実体確認済・セキュリティリスクなし・MIT ライセンス確認済（コードブロック0件、tools要求なし、外部fetchなし）
+  - **見送り理由**: description トリガー語が既存 `llmo-audit` と5語以上一致（`AEO` / `GEO` / `LLMO` / `AI Overviews` / `ChatGPT/Perplexity最適化`）。さらに `llmo-audit` が「英語で ai-seo audit と呼ばれても本スキル起動」と自己宣言済みのため、スキル同居させるとトリガールーティングが自己矛盾。ai-seo 本体も "AI Visibility Audit" セクションで監査機能を内包しており llmo-audit と重複。
+  - **代替運用**: `references/` 2ファイル（`content-patterns.md` / `platform-ranking-factors.md`）を `~/.claude/knowledge/ai-seo-reference/` に資料として退避。`SKILL.md` は置かず `README.md` でインデックス化して **スキル発動を物理的に防止**。MIT ライセンス遵守のため LICENSE 同梱。
+  - **用途**: `llmo-audit` の改善提案作成時・ハル（writer）の `/blog-post` 執筆時・`llmo-compliant-coding` の遵守ルール設計時の参照資料
+  - **再評価条件**: 原典の description から `AEO/GEO/LLMO/AI Overview` トリガー語が外れる、監査機能削除で戦略立案専用になる、日本語版公式追加のいずれか
+  - **再評価起点**: 次回 `/skill-finder` 発動時、または年次レビュー時にアスカが原典リポジトリ（`coreyhaines31/marketingskills`）の最新 description と CHANGELOG をチェックする
+- **`seo-geo-claude-skills` (aaron-he-zhu, 2026-04-23 判断・導入見送り)**: Apache 2.0・日本語対応あり・20スキル統合パックだが、既存の `seo-audit` + `llmo-audit` + `llmo-compliant-coding` + `blog-post` 4点セットでほぼカバー済。特に `core-eeat`（80項目）を入れると `llmo-audit` の14項目体系と点検軸がブレるためサクラ見送り推奨。個別抽出導入も衝突回避コストが高く現状資産で十分と判断。
 
 ### 今後のインストール運用
 - 外部スキル追加は必ず `-a claude-code` フラグで Claude Code 限定に絞る（他AIエージェント用ディレクトリ `~/.agents/` を作らせない）
