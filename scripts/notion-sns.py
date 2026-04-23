@@ -40,6 +40,8 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timezone, timedelta
 
+from notion_schema import SnsDB
+
 # Windows環境での文字化け対策
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -249,25 +251,25 @@ def page_to_item(page):
   p = page['properties']
   return {
     'id': page['id'],
-    '投稿タイトル': get_text(p, '投稿タイトル'),
-    '投稿予定日': get_date(p, '投稿予定日'),
-    'プラットフォーム': get_select(p, 'プラットフォーム'),
-    'カテゴリ': get_select(p, 'カテゴリ'),
-    '型': get_select(p, '型'),
-    'ステータス': get_select(p, 'ステータス'),
-    '投稿内容案': get_text(p, '投稿内容案'),
-    '投稿内容': get_text(p, '投稿内容'),
-    'いいね数': get_number(p, 'いいね数'),
-    'インプレッション数': get_number(p, 'インプレッション数'),
-    'RT数': get_number(p, 'RT数'),
-    'ER': get_number(p, 'ER'),
-    'メモ': get_text(p, 'メモ'),
+    SnsDB.TITLE:           get_text(p, SnsDB.TITLE),
+    SnsDB.SCHEDULED_DATE:  get_date(p, SnsDB.SCHEDULED_DATE),
+    SnsDB.PLATFORM:        get_select(p, SnsDB.PLATFORM),
+    SnsDB.CATEGORY:        get_select(p, SnsDB.CATEGORY),
+    SnsDB.TYPE:            get_select(p, SnsDB.TYPE),
+    SnsDB.STATUS:          get_select(p, SnsDB.STATUS),
+    SnsDB.DRAFT_CONTENT:   get_text(p, SnsDB.DRAFT_CONTENT),
+    SnsDB.CONTENT:         get_text(p, SnsDB.CONTENT),
+    SnsDB.LIKES:           get_number(p, SnsDB.LIKES),
+    SnsDB.IMPRESSIONS:     get_number(p, SnsDB.IMPRESSIONS),
+    SnsDB.RETWEETS:        get_number(p, SnsDB.RETWEETS),
+    SnsDB.ENGAGEMENT_RATE: get_number(p, SnsDB.ENGAGEMENT_RATE),
+    SnsDB.MEMO:            get_text(p, SnsDB.MEMO),
   }
 
 
 def status_sort_key(item):
   """ステータスを定義順でソートするためのキー関数"""
-  s = item['ステータス']
+  s = item[SnsDB.STATUS]
   try:
     return STATUS_ORDER.index(s)
   except ValueError:
@@ -277,7 +279,7 @@ def status_sort_key(item):
 def find_page_by_partial_title(partial_name, token, db_id):
   """部分名称で Notion DB を検索し、マッチしたページ一覧を返す"""
   result = notion_request('POST', f'/databases/{db_id}/query', {
-    'filter': {'property': '投稿タイトル', 'title': {'contains': partial_name}}
+    'filter': {'property': SnsDB.TITLE, 'title': {'contains': partial_name}}
   }, token=token)
   return result.get('results', [])
 
@@ -300,7 +302,7 @@ def resolve_single_page(partial_name, token, db_id):
   print(f'\n{len(pages)} 件見つかりました:')
   for i, p in enumerate(pages, 1):
     item = page_to_item(p)
-    print(f'  {i}. {item["投稿タイトル"]} [{item["ステータス"]}] {item["投稿予定日"]}')
+    print(f'  {i}. {item[SnsDB.TITLE]} [{item[SnsDB.STATUS]}] {item[SnsDB.SCHEDULED_DATE]}')
   try:
     idx = int(input('  番号を選択: ').strip()) - 1
     if 0 <= idx < len(pages):
@@ -347,9 +349,9 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
     'parent': {'page_id': parent_page_id},
     'title': [{'type': 'text', 'text': {'content': 'SNS投稿管理'}}],
     'properties': {
-      '投稿タイトル': {'title': {}},
-      '投稿予定日': {'date': {}},
-      'プラットフォーム': {
+      SnsDB.TITLE: {'title': {}},
+      SnsDB.SCHEDULED_DATE: {'date': {}},
+      SnsDB.PLATFORM: {
         'select': {
           'options': [
             {'name': 'X', 'color': 'blue'},
@@ -357,7 +359,7 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
           ]
         }
       },
-      'カテゴリ': {
+      SnsDB.CATEGORY: {
         'select': {
           'options': [
             {'name': 'Tips', 'color': 'green'},
@@ -370,7 +372,7 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
           ]
         }
       },
-      '型': {
+      SnsDB.TYPE: {
         'select': {
           'options': [
             {'name': 'Before/After型', 'color': 'green'},
@@ -384,7 +386,7 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
           ]
         }
       },
-      'ステータス': {
+      SnsDB.STATUS: {
         'select': {
           'options': [
             {'name': '下書き', 'color': 'gray'},
@@ -394,13 +396,13 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
           ]
         }
       },
-      '投稿内容案': {'rich_text': {}},
-      '投稿内容': {'rich_text': {}},
-      'いいね数': {'number': {}},
-      'インプレッション数': {'number': {}},
-      'RT数': {'number': {}},
-      'ER': {'number': {}},
-      'メモ': {'rich_text': {}},
+      SnsDB.DRAFT_CONTENT: {'rich_text': {}},
+      SnsDB.CONTENT: {'rich_text': {}},
+      SnsDB.LIKES: {'number': {}},
+      SnsDB.IMPRESSIONS: {'number': {}},
+      SnsDB.RETWEETS: {'number': {}},
+      SnsDB.ENGAGEMENT_RATE: {'number': {}},
+      SnsDB.MEMO: {'rich_text': {}},
     },
   }
 
@@ -424,11 +426,11 @@ def cmd_list(token, db_id, filter_status=None, filter_platform=None, filter_date
   filters = []
 
   if filter_status:
-    filters.append({'property': 'ステータス', 'select': {'equals': filter_status}})
+    filters.append({'property': SnsDB.STATUS, 'select': {'equals': filter_status}})
   if filter_platform:
-    filters.append({'property': 'プラットフォーム', 'select': {'equals': filter_platform}})
+    filters.append({'property': SnsDB.PLATFORM, 'select': {'equals': filter_platform}})
   if filter_date:
-    filters.append({'property': '投稿予定日', 'date': {'equals': filter_date}})
+    filters.append({'property': SnsDB.SCHEDULED_DATE, 'date': {'equals': filter_date}})
 
   filter_body = {}
   if len(filters) == 1:
@@ -443,18 +445,18 @@ def cmd_list(token, db_id, filter_status=None, filter_platform=None, filter_date
     return
 
   items = [page_to_item(p) for p in pages]
-  items.sort(key=lambda x: (x['投稿予定日'] or '', status_sort_key(x)))
+  items.sort(key=lambda x: (x[SnsDB.SCHEDULED_DATE] or '', status_sort_key(x)))
 
   # ヘッダー
   print(f'\n{"投稿タイトル":20} {"日付":12} {"PF":8} {"カテゴリ":12} {"ステータス":10}')
   print('-' * 66)
   for item in items:
     print(
-      f'{item["投稿タイトル"][:20]:20} '
-      f'{item["投稿予定日"]:12} '
-      f'{item["プラットフォーム"]:8} '
-      f'{item["カテゴリ"][:12]:12} '
-      f'{item["ステータス"]:10}'
+      f'{item[SnsDB.TITLE][:20]:20} '
+      f'{item[SnsDB.SCHEDULED_DATE]:12} '
+      f'{item[SnsDB.PLATFORM]:8} '
+      f'{item[SnsDB.CATEGORY][:12]:12} '
+      f'{item[SnsDB.STATUS]:10}'
     )
   print(f'\n合計 {len(items)} 件')
 
@@ -469,25 +471,25 @@ def cmd_add(args, token, db_id):
     sys.exit(1)
 
   props = {
-    '投稿タイトル': {'title': [{'text': {'content': title}}]},
-    'ステータス': {'select': {'name': STATUS_DEFAULT}},
+    SnsDB.TITLE: {'title': [{'text': {'content': title}}]},
+    SnsDB.STATUS: {'select': {'name': STATUS_DEFAULT}},
   }
 
   if args.date:
-    props['投稿予定日'] = {'date': {'start': args.date}}
+    props[SnsDB.SCHEDULED_DATE] = {'date': {'start': args.date}}
   if args.platform:
     if args.platform not in PLATFORM_OPTIONS:
       print(f'[ERROR] プラットフォームは {" / ".join(PLATFORM_OPTIONS)} のいずれかを指定してください。')
       sys.exit(1)
-    props['プラットフォーム'] = {'select': {'name': args.platform}}
+    props[SnsDB.PLATFORM] = {'select': {'name': args.platform}}
   if args.category:
-    props['カテゴリ'] = {'select': {'name': args.category}}
+    props[SnsDB.CATEGORY] = {'select': {'name': args.category}}
   if args.type:
-    props['型'] = {'select': {'name': args.type}}
+    props[SnsDB.TYPE] = {'select': {'name': args.type}}
   if args.draft:
-    props['投稿内容案'] = rich_text_prop(args.draft)
+    props[SnsDB.DRAFT_CONTENT] = rich_text_prop(args.draft)
   if args.memo:
-    props['メモ'] = rich_text_prop(args.memo)
+    props[SnsDB.MEMO] = rich_text_prop(args.memo)
 
   notion_request('POST', '/pages', {
     'parent': {'database_id': db_id},
@@ -509,28 +511,28 @@ def cmd_update(args, token, db_id):
     if args.status not in STATUS_OPTIONS:
       print(f'[ERROR] ステータスは {" / ".join(STATUS_OPTIONS)} のいずれかを指定してください。')
       sys.exit(1)
-    props['ステータス'] = {'select': {'name': args.status}}
+    props[SnsDB.STATUS] = {'select': {'name': args.status}}
   if args.likes is not None:
-    props['いいね数'] = {'number': args.likes}
+    props[SnsDB.LIKES] = {'number': args.likes}
   if args.impressions is not None:
-    props['インプレッション数'] = {'number': args.impressions}
+    props[SnsDB.IMPRESSIONS] = {'number': args.impressions}
   if args.rts is not None:
-    props['RT数'] = {'number': args.rts}
+    props[SnsDB.RETWEETS] = {'number': args.rts}
   if args.er is not None:
-    props['ER'] = {'number': args.er}
+    props[SnsDB.ENGAGEMENT_RATE] = {'number': args.er}
   if args.content:
-    props['投稿内容'] = rich_text_prop(args.content)
+    props[SnsDB.CONTENT] = rich_text_prop(args.content)
   if args.memo:
-    props['メモ'] = rich_text_prop(args.memo)
+    props[SnsDB.MEMO] = rich_text_prop(args.memo)
   if args.date:
-    props['投稿予定日'] = {'date': {'start': args.date}}
+    props[SnsDB.SCHEDULED_DATE] = {'date': {'start': args.date}}
 
   if not props:
     print('[ERROR] 更新するプロパティを1つ以上指定してください。')
     sys.exit(1)
 
   notion_request('PATCH', f'/pages/{page_id}', {'properties': props}, token=token)
-  print(f'更新しました: {current["投稿タイトル"]}')
+  print(f'更新しました: {current[SnsDB.TITLE]}')
 
 
 # ---- --show ----
@@ -544,22 +546,22 @@ def cmd_show(partial_name, token, db_id):
   def fmt_num(val):
     return str(val) if val is not None else '-'
 
-  print(f'\n=== {item["投稿タイトル"]} ===')
-  print(f'投稿予定日      : {item["投稿予定日"] or "-"}')
-  print(f'プラットフォーム: {item["プラットフォーム"] or "-"}')
-  print(f'カテゴリ        : {item["カテゴリ"] or "-"}')
-  print(f'型              : {item["型"] or "-"}')
-  print(f'ステータス      : {item["ステータス"] or "-"}')
-  print(f'いいね数        : {fmt_num(item["いいね数"])}')
-  print(f'インプレッション: {fmt_num(item["インプレッション数"])}')
-  print(f'RT数            : {fmt_num(item["RT数"])}')
-  print(f'ER              : {fmt_num(item["ER"])}%' if item["ER"] is not None else f'ER              : -')
+  print(f'\n=== {item[SnsDB.TITLE]} ===')
+  print(f'投稿予定日      : {item[SnsDB.SCHEDULED_DATE] or "-"}')
+  print(f'プラットフォーム: {item[SnsDB.PLATFORM] or "-"}')
+  print(f'カテゴリ        : {item[SnsDB.CATEGORY] or "-"}')
+  print(f'型              : {item[SnsDB.TYPE] or "-"}')
+  print(f'ステータス      : {item[SnsDB.STATUS] or "-"}')
+  print(f'いいね数        : {fmt_num(item[SnsDB.LIKES])}')
+  print(f'インプレッション: {fmt_num(item[SnsDB.IMPRESSIONS])}')
+  print(f'RT数            : {fmt_num(item[SnsDB.RETWEETS])}')
+  print(f'ER              : {fmt_num(item[SnsDB.ENGAGEMENT_RATE])}%' if item[SnsDB.ENGAGEMENT_RATE] is not None else f'ER              : -')
   print(f'\n--- 投稿内容案 ---')
-  print(item['投稿内容案'] or '（未記入）')
+  print(item[SnsDB.DRAFT_CONTENT] or '（未記入）')
   print(f'\n--- 投稿内容（実績） ---')
-  print(item['投稿内容'] or '（未記入）')
+  print(item[SnsDB.CONTENT] or '（未記入）')
   print(f'\n--- メモ ---')
-  print(item['メモ'] or '（なし）')
+  print(item[SnsDB.MEMO] or '（なし）')
 
 
 # ---- --weekly-summary ----
@@ -584,8 +586,8 @@ def cmd_weekly_summary(token, db_id):
   filter_body = {
     'filter': {
       'and': [
-        {'property': '投稿予定日', 'date': {'on_or_after': start_date.isoformat()}},
-        {'property': '投稿予定日', 'date': {'on_or_before': end_date.isoformat()}},
+        {'property': SnsDB.SCHEDULED_DATE, 'date': {'on_or_after': start_date.isoformat()}},
+        {'property': SnsDB.SCHEDULED_DATE, 'date': {'on_or_before': end_date.isoformat()}},
       ]
     }
   }
@@ -601,23 +603,23 @@ def cmd_weekly_summary(token, db_id):
   # プラットフォーム別カウント
   platform_counts = {}
   for item in items:
-    pf = item['プラットフォーム'] or '不明'
+    pf = item[SnsDB.PLATFORM] or '不明'
     platform_counts[pf] = platform_counts.get(pf, 0) + 1
 
   platform_str = ' / '.join(f'{pf} {cnt}本' for pf, cnt in sorted(platform_counts.items()))
 
   # インプレッション・ER集計（投稿済みで数値ありのもの）
-  posted = [i for i in items if i['ステータス'] == '投稿済み']
-  imp_list = [i['インプレッション数'] for i in posted if i['インプレッション数'] is not None]
-  er_list = [i['ER'] for i in posted if i['ER'] is not None]
+  posted = [i for i in items if i[SnsDB.STATUS] == '投稿済み']
+  imp_list = [i[SnsDB.IMPRESSIONS] for i in posted if i[SnsDB.IMPRESSIONS] is not None]
+  er_list = [i[SnsDB.ENGAGEMENT_RATE] for i in posted if i[SnsDB.ENGAGEMENT_RATE] is not None]
 
   avg_imp = sum(imp_list) / len(imp_list) if imp_list else None
   avg_er = sum(er_list) / len(er_list) if er_list else None
 
   # ベスト・ワースト（いいね数基準）
-  liked = [i for i in posted if i['いいね数'] is not None]
-  best = max(liked, key=lambda x: x['いいね数']) if liked else None
-  worst = min(liked, key=lambda x: x['いいね数']) if liked else None
+  liked = [i for i in posted if i[SnsDB.LIKES] is not None]
+  best = max(liked, key=lambda x: x[SnsDB.LIKES]) if liked else None
+  worst = min(liked, key=lambda x: x[SnsDB.LIKES]) if liked else None
 
   print(f'【週次サマリー {start_label}〜{end_label}】')
   print(f'投稿数: {platform_str}（合計 {len(items)} 件）')
@@ -633,19 +635,19 @@ def cmd_weekly_summary(token, db_id):
     print('平均ER: データなし')
 
   if best:
-    likes_str = f'いいね{best["いいね数"]}'
-    imp_str = f', インプ{best["インプレッション数"]}' if best['インプレッション数'] is not None else ''
-    print(f'ベスト投稿: {best["投稿タイトル"]}（{likes_str}{imp_str}）')
+    likes_str = f'いいね{best[SnsDB.LIKES]}'
+    imp_str = f', インプ{best[SnsDB.IMPRESSIONS]}' if best[SnsDB.IMPRESSIONS] is not None else ''
+    print(f'ベスト投稿: {best[SnsDB.TITLE]}（{likes_str}{imp_str}）')
 
   if worst and (best is None or worst['id'] != best['id']):
-    likes_str = f'いいね{worst["いいね数"]}'
-    imp_str = f', インプ{worst["インプレッション数"]}' if worst['インプレッション数'] is not None else ''
-    print(f'ワースト投稿: {worst["投稿タイトル"]}（{likes_str}{imp_str}）')
+    likes_str = f'いいね{worst[SnsDB.LIKES]}'
+    imp_str = f', インプ{worst[SnsDB.IMPRESSIONS]}' if worst[SnsDB.IMPRESSIONS] is not None else ''
+    print(f'ワースト投稿: {worst[SnsDB.TITLE]}（{likes_str}{imp_str}）')
 
   # ステータス内訳
   status_counts = {}
   for item in items:
-    s = item['ステータス'] or '不明'
+    s = item[SnsDB.STATUS] or '不明'
     status_counts[s] = status_counts.get(s, 0) + 1
   status_str = ' / '.join(f'{s}:{cnt}' for s, cnt in sorted(status_counts.items()))
   print(f'ステータス内訳: {status_str}')

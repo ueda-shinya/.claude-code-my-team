@@ -182,6 +182,8 @@ class SnsDB:
     TITLE           = '投稿タイトル'
     SCHEDULED_DATE  = '投稿予定日'
     PLATFORM        = 'プラットフォーム'
+    CATEGORY        = 'カテゴリ'
+    TYPE            = '型'
     STATUS          = 'ステータス'
     DRAFT_CONTENT   = '投稿内容案'
     CONTENT         = '投稿内容'
@@ -189,6 +191,7 @@ class SnsDB:
     IMPRESSIONS     = 'インプレッション数'
     RETWEETS        = 'RT数'
     ENGAGEMENT_RATE = 'ER'
+    MEMO            = 'メモ'
 
 
 # ============================================================

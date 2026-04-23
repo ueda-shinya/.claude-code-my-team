@@ -148,6 +148,8 @@ DB_DEFINITIONS = [
             SnsDB.TITLE:           'title',
             SnsDB.SCHEDULED_DATE:  'date',
             SnsDB.PLATFORM:        'select',
+            SnsDB.CATEGORY:        'select',
+            SnsDB.TYPE:            'select',
             SnsDB.STATUS:          'select',
             SnsDB.DRAFT_CONTENT:   'rich_text',
             SnsDB.CONTENT:         'rich_text',
@@ -155,6 +157,7 @@ DB_DEFINITIONS = [
             SnsDB.IMPRESSIONS:     'number',
             SnsDB.RETWEETS:        'number',
             SnsDB.ENGAGEMENT_RATE: 'number',
+            SnsDB.MEMO:            'rich_text',
         },
     },
 ]
