@@ -586,19 +586,26 @@ def cmd_show(partial_title, token, db_id):
     item = page_to_item(page)
 
     print(f'== {item[KaizenDB.TITLE]} ==')
-    print(f'  対応レベル        : {item[KaizenDB.LEVEL] if item[KaizenDB.LEVEL] else "-"}')
-    print(f'  日付              : {item[KaizenDB.DATE] if item[KaizenDB.DATE] else "-"}')
-    print(f'  領域              : {item[KaizenDB.AREA] if item[KaizenDB.AREA] else "-"}')
-    print(f'  真因カテゴリ      : {item[KaizenDB.ROOT_CATEGORY] if item[KaizenDB.ROOT_CATEGORY] else "-"}')
-    print(f'  真因（要約）      : {item[KaizenDB.ROOT_SUMMARY] if item[KaizenDB.ROOT_SUMMARY] else "-"}')
-    print(f'  ステータス        : {item[KaizenDB.STATUS] if item[KaizenDB.STATUS] else "-"}')
-    print(f'  関連ファイル      : {item[KaizenDB.RELATED_FILES] if item[KaizenDB.RELATED_FILES] else "-"}')
-    print(f'  作成日時          : {item["作成日時"]}')
+    for key, label in [
+        (KaizenDB.LEVEL,               '対応レベル'),
+        (KaizenDB.DATE,                '日付'),
+        (KaizenDB.AREA,                '領域'),
+        (KaizenDB.ROOT_CATEGORY,       '真因カテゴリ'),
+        (KaizenDB.ROOT_SUMMARY,        '真因（要約）'),
+        (KaizenDB.STATUS,              'ステータス'),
+        (KaizenDB.RELATED_FILES,       '関連ファイル'),
+    ]:
+        print(f'  {label:12}: {item[key] if item[key] else "-"}')
+    # 内部dictキー（定数化対象外）
+    print(f'  {"作成日時":12}: {item["作成日時"]}')
     # なぜなぜ分析の過程
-    print(f'  なぜ(1回目)       : {item[KaizenDB.WHY_1] if item[KaizenDB.WHY_1] else "-"}')
-    print(f'  なぜ(2回目)       : {item[KaizenDB.WHY_2] if item[KaizenDB.WHY_2] else "-"}')
-    print(f'  なぜ(3回目)       : {item[KaizenDB.WHY_3] if item[KaizenDB.WHY_3] else "-"}')
-    print(f'  真の原因に対する対策: {item[KaizenDB.COUNTERMEASURE] if item[KaizenDB.COUNTERMEASURE] else "-"}')
+    for key, label in [
+        (KaizenDB.WHY_1,          'なぜ(1回目)'),
+        (KaizenDB.WHY_2,          'なぜ(2回目)'),
+        (KaizenDB.WHY_3,          'なぜ(3回目)'),
+        (KaizenDB.COUNTERMEASURE, '対策'),
+    ]:
+        print(f'  {label:12}: {item[key] if item[key] else "-"}')
 
     # ページ本文を取得（ページネーション対応）
     blocks = []

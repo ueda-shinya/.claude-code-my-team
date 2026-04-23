@@ -476,13 +476,16 @@ def cmd_show(partial_name, token, db_id):
   item = page_to_item(page)
 
   print(f'\n=== {item[ProjectsDB.TITLE]} ===')
-  print(f'ステータス  : {item[ProjectsDB.STATUS]}')
-  print(f'フェーズ    : {item[ProjectsDB.PHASE]}')
-  print(f'開始日      : {item[ProjectsDB.START_DATE]}')
-  print(f'目標完了日  : {item[ProjectsDB.GOAL_DATE]}')
-  print(f'KPI         : {item[ProjectsDB.KPI]}')
-  print(f'担当        : {item[ProjectsDB.ASSIGNEE]}')
-  print(f'メモ        : {item[ProjectsDB.MEMO]}')
+  for key, label in [
+      (ProjectsDB.STATUS,     'ステータス'),
+      (ProjectsDB.PHASE,      'フェーズ'),
+      (ProjectsDB.START_DATE, '開始日'),
+      (ProjectsDB.GOAL_DATE,  '目標完了日'),
+      (ProjectsDB.KPI,        'KPI'),
+      (ProjectsDB.ASSIGNEE,   '担当'),
+      (ProjectsDB.MEMO,       'メモ'),
+  ]:
+      print(f'  {label:12}: {item[key]}')
 
   # ページ本文（作業履歴）を取得
   blocks_result = notion_request('GET', f'/blocks/{page["id"]}/children', token=token)

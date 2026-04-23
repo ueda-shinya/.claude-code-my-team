@@ -647,17 +647,22 @@ def cmd_show(partial_title, token, db_id):
     item = page_to_item(page)
 
     print(f'== {item[TasksDB.TITLE]} ==')
-    print(f'  種別      : {item[TasksDB.TYPE]}')
-    print(f'  ステータス: {item[TasksDB.STATUS]}')
-    print(f'  優先度    : {item[TasksDB.PRIORITY]}')
-    print(f'  カテゴリ  : {item[TasksDB.CATEGORY]}')
-    print(f'  対象環境  : {", ".join(item[TasksDB.ENV]) if item[TasksDB.ENV] else "-"}')
-    print(f'  クライアント: {item[TasksDB.CLIENT] if item[TasksDB.CLIENT] else "-"}')
-    print(f'  担当      : {item[TasksDB.ASSIGNEE]}')
-    print(f'  ブロッカー: {item[TasksDB.BLOCKER] if item[TasksDB.BLOCKER] else "-"}')
-    print(f'  開始日    : {item[TasksDB.START_DATE] if item[TasksDB.START_DATE] else "-"}')
-    print(f'  最終編集  : {item["最終編集日時"]}')
-    print(f'  作成日時  : {item["作成日時"]}')
+    for key, label in [
+        (TasksDB.TYPE,     '種別'),
+        (TasksDB.STATUS,   'ステータス'),
+        (TasksDB.PRIORITY, '優先度'),
+        (TasksDB.CATEGORY, 'カテゴリ'),
+        (TasksDB.ASSIGNEE, '担当'),
+        (TasksDB.BLOCKER,  'ブロッカー'),
+        (TasksDB.START_DATE, '開始日'),
+    ]:
+        print(f'  {label:12}: {item[key] if item[key] else "-"}')
+    # 対象環境はリスト結合の個別処理
+    print(f'  {"対象環境":12}: {", ".join(item[TasksDB.ENV]) if item[TasksDB.ENV] else "-"}')
+    print(f'  {"クライアント":12}: {item[TasksDB.CLIENT] if item[TasksDB.CLIENT] else "-"}')
+    # 内部dictキー（定数化対象外）
+    print(f'  {"最終編集":12}: {item["最終編集日時"]}')
+    print(f'  {"作成日時":12}: {item["作成日時"]}')
     if item[TasksDB.MEMO]:
         print(f'\n[メモ]')
         print(item[TasksDB.MEMO])

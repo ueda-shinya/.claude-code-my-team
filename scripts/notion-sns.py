@@ -547,15 +547,22 @@ def cmd_show(partial_name, token, db_id):
     return str(val) if val is not None else '-'
 
   print(f'\n=== {item[SnsDB.TITLE]} ===')
-  print(f'投稿予定日      : {item[SnsDB.SCHEDULED_DATE] or "-"}')
-  print(f'プラットフォーム: {item[SnsDB.PLATFORM] or "-"}')
-  print(f'カテゴリ        : {item[SnsDB.CATEGORY] or "-"}')
-  print(f'型              : {item[SnsDB.TYPE] or "-"}')
-  print(f'ステータス      : {item[SnsDB.STATUS] or "-"}')
-  print(f'いいね数        : {fmt_num(item[SnsDB.LIKES])}')
-  print(f'インプレッション: {fmt_num(item[SnsDB.IMPRESSIONS])}')
-  print(f'RT数            : {fmt_num(item[SnsDB.RETWEETS])}')
-  print(f'ER              : {fmt_num(item[SnsDB.ENGAGEMENT_RATE])}%' if item[SnsDB.ENGAGEMENT_RATE] is not None else f'ER              : -')
+  for key, label in [
+      (SnsDB.SCHEDULED_DATE, '投稿予定日'),
+      (SnsDB.PLATFORM,       'プラットフォーム'),
+      (SnsDB.CATEGORY,       'カテゴリ'),
+      (SnsDB.TYPE,           '型'),
+      (SnsDB.STATUS,         'ステータス'),
+  ]:
+      print(f'  {label:12}: {item[key] or "-"}')
+  # 数値フィールド（fmt_num / ER計算は個別対応）
+  print(f'  {"いいね数":12}: {fmt_num(item[SnsDB.LIKES])}')
+  print(f'  {"インプレ":12}: {fmt_num(item[SnsDB.IMPRESSIONS])}')
+  print(f'  {"RT数":12}: {fmt_num(item[SnsDB.RETWEETS])}')
+  if item[SnsDB.ENGAGEMENT_RATE] is not None:
+      print(f'  {"ER":12}: {fmt_num(item[SnsDB.ENGAGEMENT_RATE])}%')
+  else:
+      print(f'  {"ER":12}: -')
   print(f'\n--- 投稿内容案 ---')
   print(item[SnsDB.DRAFT_CONTENT] or '（未記入）')
   print(f'\n--- 投稿内容（実績） ---')

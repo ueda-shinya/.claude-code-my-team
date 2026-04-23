@@ -365,10 +365,22 @@ def cmd_show(page_id, token, db_id):
     page = notion_request("GET", f"/pages/{page_id}", token=token)
     row = page_to_row(page)
     print("\n--- 顧客詳細 ---")
-    for k, v in row.items():
-        if k == "id":
-            continue
-        print(f"  {k:20}: {v}")
+    print(f"  {'会社名':12}: {row[CrmDB.COMPANY_NAME]}")
+    for key, label in [
+        (CrmDB.CONTACT_NAME,      '担当者名'),
+        (CrmDB.PHONE,             '電話番号'),
+        (CrmDB.EMAIL,             'メールアドレス'),
+        (CrmDB.STATUS,            'ステータス'),
+        (CrmDB.BUSINESS_TYPE,     '事業種別'),
+        (CrmDB.ASSIGNEE,          '担当'),
+        (CrmDB.LAST_CONTACT_DATE, '最終連絡日'),
+        (CrmDB.SOURCE,            '流入元'),
+        (CrmDB.IDENTIFIER,        '識別記号'),
+        (CrmDB.DISCOUNT_RATE,     '協力値引率'),
+        (CrmDB.MEMO,              'メモ'),
+    ]:
+        print(f"  {label:12}: {row[key]}")
+    print(f"\n  ページID: {row['id']}")
 
 
 def cmd_update(page_id, token, db_id):
