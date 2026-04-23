@@ -678,16 +678,6 @@ def cmd_tasks() -> str:
 
             lines.append(f'[{label}] {title}')
 
-            # 作業履歴（rich_text プロパティ）— 最後の1行のみ表示
-            history_prop = props.get('作業履歴', {})
-            history_items = history_prop.get('rich_text', [])
-            history_text = ''.join(t.get('plain_text', '') for t in history_items).strip()
-            if history_text and label == '進行中':
-                # 改行で分割して最後の空でない行を取得
-                history_lines = [l.strip() for l in history_text.splitlines() if l.strip()]
-                if history_lines:
-                    lines.append(f'  └ 最新履歴: {history_lines[-1]}')
-
         lines.append('')
         lines.append('Notion で管理中 🔗')
         return '\n'.join(lines)
