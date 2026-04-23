@@ -49,6 +49,9 @@ from datetime import datetime, timezone, timedelta
 # Windows環境での文字化け対策
 sys.stdout.reconfigure(encoding='utf-8')
 
+# Notion DBプロパティ名定数
+from notion_schema import TasksDB
+
 # ---- 定数 ----
 
 ENV_PATH = os.path.expanduser('~/.claude/.env')
@@ -297,17 +300,17 @@ def page_to_item(page):
     p = page['properties']
     return {
         'id': page['id'],
-        'タイトル': get_text(p, 'タイトル'),
-        '種別': get_select(p, '種別'),
-        'ステータス': get_select(p, 'ステータス'),
-        '優先度': get_select(p, '優先度'),
-        'カテゴリ': get_select(p, 'カテゴリ'),
-        '対象環境': get_multi_select(p, '対象環境'),
-        'クライアント': get_select(p, 'クライアント'),
-        '担当': get_select(p, '担当'),
-        'ブロッカー': get_text(p, 'ブロッカー'),
-        'メモ': get_text(p, 'メモ'),
-        '開始日': get_date(p, '開始日'),
+        TasksDB.TITLE:      get_text(p, TasksDB.TITLE),
+        TasksDB.TYPE:       get_select(p, TasksDB.TYPE),
+        TasksDB.STATUS:     get_select(p, TasksDB.STATUS),
+        TasksDB.PRIORITY:   get_select(p, TasksDB.PRIORITY),
+        TasksDB.CATEGORY:   get_select(p, TasksDB.CATEGORY),
+        TasksDB.ENV:        get_multi_select(p, TasksDB.ENV),
+        TasksDB.CLIENT:     get_select(p, TasksDB.CLIENT),
+        TasksDB.ASSIGNEE:   get_select(p, TasksDB.ASSIGNEE),
+        TasksDB.BLOCKER:    get_text(p, TasksDB.BLOCKER),
+        TasksDB.MEMO:       get_text(p, TasksDB.MEMO),
+        TasksDB.START_DATE: get_date(p, TasksDB.START_DATE),
         '最終編集日時': get_last_edited_time(page),
         '作成日時': get_created_time(page),
     }
@@ -315,7 +318,7 @@ def page_to_item(page):
 
 def status_sort_key(item):
     """ステータスを定義順でソートするためのキー関数"""
-    s = item['ステータス']
+    s = item[TasksDB.STATUS]
     try:
         return STATUS_ORDER.index(s)
     except ValueError:
@@ -334,7 +337,7 @@ def find_page_by_partial_title(partial_title, token, db_id):
     部分タイトルで Notion DB を検索し、マッチしたページ一覧を返す。
     """
     result = notion_request('POST', f'/databases/{db_id}/query', {
-        'filter': {'property': 'タイトル', 'title': {'contains': partial_title}}
+        'filter': {'property': TasksDB.TITLE, 'title': {'contains': partial_title}}
     }, token=token)
     return result.get('results', [])
 
@@ -354,7 +357,7 @@ def resolve_single_page(partial_title, token, db_id):
         print(f'[ERROR] {len(pages)} 件一致しました。タイトルをより具体的に指定してください。')
         for p in pages:
             t = page_to_item(p)
-            print(f'  - {t["タイトル"]} [{t["ステータス"]}]')
+            print(f'  - {t[TasksDB.TITLE]} [{t[TasksDB.STATUS]}]')
         sys.exit(1)
 
     return pages[0]
@@ -398,8 +401,8 @@ def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
         'parent': {'page_id': parent_page_id},
         'title': [{'type': 'text', 'text': {'content': '案件管理'}}],
         'properties': {
-            'タイトル': {'title': {}},
-            '種別': {
+            TasksDB.TITLE: {'title': {}},
+            TasksDB.TYPE: {
                 'select': {
                     'options': [
                         {'name': '実装', 'color': 'blue'},
@@ -411,7 +414,7 @@ def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
                     ]
                 }
             },
-            'ステータス': {
+            TasksDB.STATUS: {
                 'select': {
                     'options': [
                         {'name': '未着手', 'color': 'gray'},
@@ -425,7 +428,7 @@ def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
                     ]
                 }
             },
-            '優先度': {
+            TasksDB.PRIORITY: {
                 'select': {
                     'options': [
                         {'name': 'P1-即時', 'color': 'red'},
@@ -436,7 +439,7 @@ def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
                     ]
                 }
             },
-            'カテゴリ': {
+            TasksDB.CATEGORY: {
                 'select': {
                     'options': [
                         {'name': 'LP制作', 'color': 'purple'},
@@ -450,7 +453,7 @@ def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
                     ]
                 }
             },
-            '対象環境': {
+            TasksDB.ENV: {
                 'multi_select': {
                     'options': [
                         {'name': 'Windows', 'color': 'blue'},
@@ -460,7 +463,7 @@ def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
                     ]
                 }
             },
-            'クライアント': {
+            TasksDB.CLIENT: {
                 'select': {
                     'options': [
                         {'name': 'officeueda', 'color': 'blue'},
@@ -470,7 +473,7 @@ def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
                     ]
                 }
             },
-            '担当': {
+            TasksDB.ASSIGNEE: {
                 'select': {
                     'options': [
                         {'name': 'Asuka', 'color': 'pink'},
@@ -481,9 +484,9 @@ def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
                     ]
                 }
             },
-            'ブロッカー': {'rich_text': {}},
-            'メモ': {'rich_text': {}},
-            '開始日': {'date': {}},
+            TasksDB.BLOCKER:    {'rich_text': {}},
+            TasksDB.MEMO:       {'rich_text': {}},
+            TasksDB.START_DATE: {'date': {}},
             # last_edited_time / created_time は Notion 組み込みのため指定不要
         },
     }
@@ -517,15 +520,15 @@ def cmd_list(token, db_id, filter_status=None, filter_type=None,
     # フィルター条件を構築
     filters = []
     if filter_status:
-        filters.append({'property': 'ステータス', 'select': {'equals': filter_status}})
+        filters.append({'property': TasksDB.STATUS, 'select': {'equals': filter_status}})
     if filter_type:
-        filters.append({'property': '種別', 'select': {'equals': filter_type}})
+        filters.append({'property': TasksDB.TYPE, 'select': {'equals': filter_type}})
     if filter_client:
-        filters.append({'property': 'クライアント', 'select': {'equals': filter_client}})
+        filters.append({'property': TasksDB.CLIENT, 'select': {'equals': filter_client}})
     if filter_priority:
-        filters.append({'property': '優先度', 'select': {'equals': filter_priority}})
+        filters.append({'property': TasksDB.PRIORITY, 'select': {'equals': filter_priority}})
     if filter_env:
-        filters.append({'property': '対象環境', 'multi_select': {'contains': filter_env}})
+        filters.append({'property': TasksDB.ENV, 'multi_select': {'contains': filter_env}})
 
     body = {}
     if len(filters) == 1:
@@ -543,15 +546,15 @@ def cmd_list(token, db_id, filter_status=None, filter_type=None,
     items.sort(key=status_sort_key)
 
     for item in items:
-        priority_str = item['優先度'] if item['優先度'] else '-'
-        env_str = ','.join(item['対象環境']) if item['対象環境'] else '-'
-        client_str = f'  [{item["クライアント"]}]' if item['クライアント'] else ''
-        assignee_str = f'  担当:{item["担当"]}' if item['担当'] else ''
-        type_str = f'({item["種別"]})' if item['種別'] else ''
-        memo_str = f'\n      メモ: {item["メモ"]}' if item['メモ'] else ''
-        blocker_str = f'\n      ブロッカー: {item["ブロッカー"]}' if item['ブロッカー'] else ''
+        priority_str = item[TasksDB.PRIORITY] if item[TasksDB.PRIORITY] else '-'
+        env_str = ','.join(item[TasksDB.ENV]) if item[TasksDB.ENV] else '-'
+        client_str = f'  [{item[TasksDB.CLIENT]}]' if item[TasksDB.CLIENT] else ''
+        assignee_str = f'  担当:{item[TasksDB.ASSIGNEE]}' if item[TasksDB.ASSIGNEE] else ''
+        type_str = f'({item[TasksDB.TYPE]})' if item[TasksDB.TYPE] else ''
+        memo_str = f'\n      メモ: {item[TasksDB.MEMO]}' if item[TasksDB.MEMO] else ''
+        blocker_str = f'\n      ブロッカー: {item[TasksDB.BLOCKER]}' if item[TasksDB.BLOCKER] else ''
         print(
-            f'[{item["ステータス"]}] {item["タイトル"]}  '
+            f'[{item[TasksDB.STATUS]}] {item[TasksDB.TITLE]}  '
             f'{type_str} {priority_str} / {env_str}'
             f'{client_str}{assignee_str}'
             f'{memo_str}{blocker_str}'
@@ -569,27 +572,27 @@ def cmd_add(title, item_type, priority, status, category, env_list,
         start_date = datetime.now(JST).date().isoformat()
 
     props = {
-        'タイトル': {'title': [{'text': {'content': title}}]},
-        '種別': {'select': {'name': item_type}},
-        'ステータス': {'select': {'name': status}},
-        '優先度': {'select': {'name': priority}},
-        'カテゴリ': {'select': {'name': category}},
-        '開始日': {'date': {'start': start_date}},
+        TasksDB.TITLE:      {'title': [{'text': {'content': title}}]},
+        TasksDB.TYPE:       {'select': {'name': item_type}},
+        TasksDB.STATUS:     {'select': {'name': status}},
+        TasksDB.PRIORITY:   {'select': {'name': priority}},
+        TasksDB.CATEGORY:   {'select': {'name': category}},
+        TasksDB.START_DATE: {'date': {'start': start_date}},
     }
 
     if env_list:
-        props['対象環境'] = {
+        props[TasksDB.ENV] = {
             'multi_select': [{'name': e} for e in env_list]
         }
 
     if client:
-        props['クライアント'] = {'select': {'name': client}}
+        props[TasksDB.CLIENT] = {'select': {'name': client}}
 
     if assignee:
-        props['担当'] = {'select': {'name': assignee}}
+        props[TasksDB.ASSIGNEE] = {'select': {'name': assignee}}
 
     if memo:
-        props['メモ'] = rich_text_prop(memo)
+        props[TasksDB.MEMO] = rich_text_prop(memo)
 
     notion_request('POST', '/pages', {
         'parent': {'database_id': db_id},
@@ -611,19 +614,19 @@ def cmd_update(partial_title, new_status, new_priority, new_assignee, new_blocke
     changes = []
 
     if new_status:
-        props['ステータス'] = {'select': {'name': new_status}}
-        changes.append(f'ステータス: [{item["ステータス"]}] → [{new_status}]')
+        props[TasksDB.STATUS] = {'select': {'name': new_status}}
+        changes.append(f'ステータス: [{item[TasksDB.STATUS]}] → [{new_status}]')
 
     if new_priority:
-        props['優先度'] = {'select': {'name': new_priority}}
-        changes.append(f'優先度: [{item["優先度"]}] → [{new_priority}]')
+        props[TasksDB.PRIORITY] = {'select': {'name': new_priority}}
+        changes.append(f'優先度: [{item[TasksDB.PRIORITY]}] → [{new_priority}]')
 
     if new_assignee:
-        props['担当'] = {'select': {'name': new_assignee}}
-        changes.append(f'担当: [{item["担当"]}] → [{new_assignee}]')
+        props[TasksDB.ASSIGNEE] = {'select': {'name': new_assignee}}
+        changes.append(f'担当: [{item[TasksDB.ASSIGNEE]}] → [{new_assignee}]')
 
     if new_blocker is not None:
-        props['ブロッカー'] = rich_text_prop(new_blocker)
+        props[TasksDB.BLOCKER] = rich_text_prop(new_blocker)
         changes.append(f'ブロッカー: 更新')
 
     if not props:
@@ -631,7 +634,7 @@ def cmd_update(partial_title, new_status, new_priority, new_assignee, new_blocke
         sys.exit(1)
 
     notion_request('PATCH', f'/pages/{page["id"]}', {'properties': props}, token=token)
-    print(f'更新しました: {item["タイトル"]}')
+    print(f'更新しました: {item[TasksDB.TITLE]}')
     for c in changes:
         print(f'  {c}')
 
@@ -643,21 +646,21 @@ def cmd_show(partial_title, token, db_id):
     page = resolve_single_page(partial_title, token, db_id)
     item = page_to_item(page)
 
-    print(f'== {item["タイトル"]} ==')
-    print(f'  種別      : {item["種別"]}')
-    print(f'  ステータス: {item["ステータス"]}')
-    print(f'  優先度    : {item["優先度"]}')
-    print(f'  カテゴリ  : {item["カテゴリ"]}')
-    print(f'  対象環境  : {", ".join(item["対象環境"]) if item["対象環境"] else "-"}')
-    print(f'  クライアント: {item["クライアント"] if item["クライアント"] else "-"}')
-    print(f'  担当      : {item["担当"]}')
-    print(f'  ブロッカー: {item["ブロッカー"] if item["ブロッカー"] else "-"}')
-    print(f'  開始日    : {item["開始日"] if item["開始日"] else "-"}')
+    print(f'== {item[TasksDB.TITLE]} ==')
+    print(f'  種別      : {item[TasksDB.TYPE]}')
+    print(f'  ステータス: {item[TasksDB.STATUS]}')
+    print(f'  優先度    : {item[TasksDB.PRIORITY]}')
+    print(f'  カテゴリ  : {item[TasksDB.CATEGORY]}')
+    print(f'  対象環境  : {", ".join(item[TasksDB.ENV]) if item[TasksDB.ENV] else "-"}')
+    print(f'  クライアント: {item[TasksDB.CLIENT] if item[TasksDB.CLIENT] else "-"}')
+    print(f'  担当      : {item[TasksDB.ASSIGNEE]}')
+    print(f'  ブロッカー: {item[TasksDB.BLOCKER] if item[TasksDB.BLOCKER] else "-"}')
+    print(f'  開始日    : {item[TasksDB.START_DATE] if item[TasksDB.START_DATE] else "-"}')
     print(f'  最終編集  : {item["最終編集日時"]}')
     print(f'  作成日時  : {item["作成日時"]}')
-    if item['メモ']:
+    if item[TasksDB.MEMO]:
         print(f'\n[メモ]')
-        print(item['メモ'])
+        print(item[TasksDB.MEMO])
 
     # ページ本文（作業履歴ブロック）を取得（ページネーション対応）
     blocks = []
@@ -734,7 +737,7 @@ def cmd_add_block(partial_title, text, env_label, assignee, token, db_id):
     ]
 
     notion_request('PATCH', f'/blocks/{page["id"]}/children', {'children': blocks}, token=token)
-    print(f'ブロックを追記しました: {item["タイトル"]}')
+    print(f'ブロックを追記しました: {item[TasksDB.TITLE]}')
     print(f'  [{today}] {env_label} / {assignee}')
     print(f'  - {text}')
 
@@ -751,10 +754,10 @@ def cmd_alerts(token, db_id):
         item = page_to_item(page)
 
         # 除外ステータスをスキップ
-        if item['ステータス'] in STATUS_ALERT_EXCLUDE:
+        if item[TasksDB.STATUS] in STATUS_ALERT_EXCLUDE:
             continue
 
-        priority = item['優先度']
+        priority = item[TasksDB.PRIORITY]
         if priority not in PRIORITY_ALERT_DAYS:
             continue  # P5-アイデア などはスキップ
 
@@ -775,7 +778,7 @@ def cmd_alerts(token, db_id):
         elapsed_days = (now_jst.date() - last_edited_jst.date()).days
 
         if elapsed_days >= threshold_days:
-            alerts.append((priority, elapsed_days, item['タイトル'], item['ステータス']))
+            alerts.append((priority, elapsed_days, item[TasksDB.TITLE], item[TasksDB.STATUS]))
 
     if not alerts:
         print('アラート対象の案件はありません。')
@@ -814,13 +817,17 @@ def cmd_migrate(token, db_id, old_db_id):
     for page in pages:
         p = page['properties']
 
-        # 旧プロパティを取得
+        # 旧プロパティを取得（旧DBのプロパティ名は定数化しない）
+        # 理由: このブロックは --migrate コマンド限定の旧DB互換コード。新DB（NOTION_TASKS_DB_ID）に
+        # 全データ移行完了後は cmd_migrate 関数ごと削除予定のため、notion_schema.py への統合は行わない。
         old_title = get_text(p, 'タイトル')
         old_status = get_select(p, 'ステータス')
         old_priority = get_select(p, '優先度')
         old_category = get_select(p, 'カテゴリ')
         old_memo = get_text(p, 'メモ')
+        # '作業履歴' は旧DB固有のプロパティ（現行TasksDBにはなく、ページ本文として移行済み）
         old_history = get_text(p, '作業履歴')
+        # '作成日' は旧DB固有のプロパティ（現行TasksDBは Notion 組み込みの created_time を使用）
         old_created = get_date(p, '作成日')
 
         if not old_title:
@@ -835,18 +842,18 @@ def cmd_migrate(token, db_id, old_db_id):
         start_date = old_created if old_created else today_iso
 
         props = {
-            'タイトル': {'title': [{'text': {'content': old_title}}]},
-            '種別': {'select': {'name': TYPE_DEFAULT}},
-            'ステータス': {'select': {'name': new_status}},
-            '優先度': {'select': {'name': new_priority}},
-            'カテゴリ': {'select': {'name': new_category}},
-            '対象環境': {'multi_select': [{'name': ENV_DEFAULT}]},
-            '担当': {'select': {'name': ASSIGNEE_DEFAULT}},
-            '開始日': {'date': {'start': start_date}},
+            TasksDB.TITLE:      {'title': [{'text': {'content': old_title}}]},
+            TasksDB.TYPE:       {'select': {'name': TYPE_DEFAULT}},
+            TasksDB.STATUS:     {'select': {'name': new_status}},
+            TasksDB.PRIORITY:   {'select': {'name': new_priority}},
+            TasksDB.CATEGORY:   {'select': {'name': new_category}},
+            TasksDB.ENV:        {'multi_select': [{'name': ENV_DEFAULT}]},
+            TasksDB.ASSIGNEE:   {'select': {'name': ASSIGNEE_DEFAULT}},
+            TasksDB.START_DATE: {'date': {'start': start_date}},
         }
 
         if old_memo:
-            props['メモ'] = rich_text_prop(old_memo)
+            props[TasksDB.MEMO] = rich_text_prop(old_memo)
 
         # 新DBにページを作成
         result = notion_request('POST', '/pages', {
