@@ -1,0 +1,160 @@
+/* -----------------------------------------------------------------------
+   form.css — お問い合わせフォーム ベーススタイル
+   使い回し先でこのファイルを上書き or @import して使う想定。
+   レイアウトとアクセシビリティを担保する最小限のみ定義する。
+----------------------------------------------------------------------- */
+
+/* ハニーポット非表示 */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-wrap {
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: sans-serif;
+}
+
+.form-group {
+  margin-bottom: 1.4rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: .3rem;
+  font-weight: bold;
+  font-size: .95rem;
+}
+
+.form-group--check label {
+  display: inline;
+  font-weight: normal;
+}
+
+.required {
+  display: inline-block;
+  margin-left: .3rem;
+  padding: .1em .4em;
+  border-radius: 3px;
+  background: #d9534f;
+  color: #fff;
+  font-size: .7rem;
+  vertical-align: middle;
+}
+
+input[type='text'],
+input[type='tel'],
+input[type='email'] {
+  width: 100%;
+  padding: .5rem .6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color .15s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, .25);
+}
+
+input[aria-invalid='true'] {
+  border-color: #d9534f;
+}
+
+/* 郵便番号行 */
+.zip-row {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
+.zip-row input {
+  flex: 1;
+}
+
+/* フィールドエラー */
+.field-error {
+  display: block;
+  margin-top: .25rem;
+  color: #d9534f;
+  font-size: .85rem;
+  min-height: 1.2em;
+}
+
+/* ヒントテキスト */
+.field-hint {
+  display: block;
+  margin-top: .2rem;
+  color: #555;
+  font-size: .8rem;
+}
+
+/* 送信ボタン */
+.form-actions {
+  margin-top: 1.6rem;
+  text-align: center;
+}
+
+button[type='submit'] {
+  padding: .7rem 3rem;
+  background: #0066cc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+button[type='submit']:hover:not(:disabled) {
+  background: #0052a3;
+}
+
+button[type='submit']:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+/* セカンダリボタン（郵便番号検索） */
+.btn-secondary {
+  padding: .5rem .8rem;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: .9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s;
+}
+
+.btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+/* フォーム全体メッセージ */
+.form-message {
+  padding: .8rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: .95rem;
+}
+
+.form-message--success {
+  background: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+}
+
+.form-message--error {
+  background: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+}

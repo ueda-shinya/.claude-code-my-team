@@ -462,6 +462,207 @@ Always delegate the English translation (.md update) to Kanata (agent-builder). 
 - Select type based on page type: LocalBusiness / WebPage / FAQPage / Product / Service, etc.
 - One JSON-LD block can cover SEO, GMC, and rich results
 
+### CSS Coding Rule (Added 2026-04-23)
+
+**CSS クラス命名は FLOCSS（Foundation / Layout / Object）に従うこと。全エージェント共通ルール。**
+
+#### 3レイヤー構成
+
+| レイヤー | 役割 | 例 |
+|---|---|---|
+| **Foundation** | リセット・変数・ベース要素（`body`, `h1` 等）のスタイル | `destyle.css`, `:root { --primary: ... }` 等 |
+| **Layout** | ページ全体の大きな骨格（ヘッダー・フッター・メイン領域等） | `l-header`, `l-footer`, `l-main`, `l-container` |
+| **Object** | 再利用可能なパーツ。さらに3種に分かれる（下記） | `c-button`, `p-hero`, `u-mb-10` |
+
+#### Object 内の3プレフィックス
+
+| プレフィックス | 意味 | 用途 |
+|---|---|---|
+| `c-` | **Component**（小さな再利用可能パーツ） | ボタン、フォーム要素、カード等プロジェクト横断で使える汎用的なもの |
+| `p-` | **Project**（特定案件・ページ固有のパーツ） | `p-hero`, `p-pricing-table`, `p-faq-accordion` 等 |
+| `u-` | **Utility**（単一プロパティを当てる補助クラス） | `u-mb-10`（margin-bottom: 10px）、`u-text-center` 等 |
+
+#### 必須事項
+
+1. **クラス名にプレフィックスを必ず付ける**（Foundationで当てる要素セレクタは除く）
+   ```css
+   /* OK */
+   .l-header { ... }
+   .c-button { ... }
+   .p-hero__title { ... }
+   .u-text-center { text-align: center; }
+
+   /* NG（プレフィックスなし、何レイヤーか不明） */
+   .header { ... }
+   .button { ... }
+   .hero-title { ... }
+   ```
+
+2. **命名は BEM**（`block__element--modifier`）を併用:
+   ```css
+   .c-button           /* Block */
+   .c-button__icon     /* Element */
+   .c-button--primary  /* Modifier */
+   ```
+
+3. **Utility は原則単一プロパティ単位**（複合スタイルは `c-` / `p-` で定義する）
+   - **例外**: `.u-sr-only`（スクリーンリーダー専用）、`.u-clearfix` 等、単一機能を表現するために複数プロパティが不可分な確立されたユーティリティは例外として許可
+
+4. **詳細度の方向性を守る**: セレクタの詳細度は Foundation < Layout < Object の順で上がる設計にする
+   - OK: Object から Layout クラスを margin 調整等で上書きする（`.c-button { margin-top: 20px; }` で Layout の余白を調整）
+   - NG: Foundation の要素セレクタを Object で直接拡張する（`.c-button h1 { ... }` など、レイヤーを跨いで要素セレクタを巻き込む）
+   - NG: Layout クラスが Object クラスを前提とする（`.l-header .c-button` で Layout が Object に依存）
+
+5. **外部ライブラリとのプレフィックス衝突時**は、プロジェクト側でネームスペースを付与（例: `.site-l-header`）するか、該当ライブラリを例外化して混在させない
+
+#### 適用範囲
+
+- **サイト / LP / Web アプリ等、サーバーサイド実行を伴う新規プロジェクトで CSS を書く全ケース**
+- コーダーはユイ（frontend-engineer）に限らず、シュウ（backend-engineer）が PHP テンプレート内に CSS を書く場合も含めて本ルールに従う
+- **適用対象外（例外）**:
+  - **メール HTML**: Gmail/Outlook 等の MUA がクラスベースCSSをサポートしないため、インラインスタイル強制（CSSインライナーで展開前提）。ただしコンパイル前のソースCSSに FLOCSS 命名を使うのは推奨
+  - **CSS-in-JS（styled-components / emotion 等）**: フレームワークがクラス名を自動生成するためプレフィックス概念が不成立。フレームワーク仕様に従う
+  - **外部 CSS フレームワーク（Tailwind CSS / Bootstrap 等）採用プロジェクト**: そのフレームワークの命名規約を優先。プロジェクト内で FLOCSS との混在禁止（どちらかに統一）
+  - **公式でCSS命名・構造が規定されているフレームワーク（WordPress / Laravel / Next.js 等）**: フレームワーク規約のクラス（`.wp-*` `.has-*` `.is-*` 等）は本ルール適用外。ただしプロジェクト独自に追加する CSS には本ルール適用
+  - **`workspaces/` 配下の素振り・検証用コード**: 本ルール適用対象外（本運用昇格時＝`clients/` 移行時に準拠化）
+  - **2026-04-23 より前に作成された既存コード**: 遡及改修不要（改修時の準拠化判断はシュウがアスカ経由でシンヤさんに上申）
+
+#### 参考リンク
+
+- FLOCSS 公式: https://github.com/hiloki/flocss
+- 実装参考: FLOCSS 公式ドキュメントを参照（ローカルの `workspaces/` 配下には現時点で準拠実装なし）
+
+### Web Project Directory Structure Rule (Added 2026-04-23)
+
+**対象となる新規 Web プロジェクト作成時は、以下の「公開/非公開を分離する一般流儀」のディレクトリ構成に従うこと。**
+
+#### 適用対象（リナ検証反映・2026-04-23）
+
+**対象**: サーバーサイド実行を伴う Web プロジェクト（PHP / Node / Python 等、`require`/`include` 構造や機密設定ファイル、ログ書き込みを持つもの）
+
+**対象外**:
+- 静的 HTML/CSS/JS のみで完結する LP（`includes/` `templates/` `logs/` が存在しない構成）
+- `frontend-design` スキルが出力する単一HTML成果物（そのまま使う場合）
+- 1ファイルで完結する単発スクリプト（Cron呼び出し等）
+- `workspaces/` 配下の素振り・検証用コード（本運用昇格時＝`clients/` への移行時に準拠化）
+- WordPress / Laravel / Next.js / Symfony / Rails / Django 等、**公式ドキュメントでディレクトリ構成が規定されているフレームワーク**を利用する場合（規約優先）
+
+**フレームワーク例外の判定基準（離散）**:
+1. 公式ドキュメントでディレクトリ構成が規定されている → 例外（規約優先）
+2. パッケージマネージャのみ導入で構成は自由 → 本ルール適用
+3. 判定に迷う場合はシンヤさんに確認、判定結果は `memory/` に追記
+
+#### 配置判定表
+
+| 種別 | 配置先 | 公開/非公開 |
+|---|---|---|
+| URLで直接叩くPHP（`index.php` / `submit.php` 等ページとして機能するもの） | プロジェクトルート | 公開 |
+| HTML（静的ページ） | プロジェクトルート | 公開 |
+| CSS | `assets/css/` | 公開 |
+| JavaScript | `assets/js/` | 公開 |
+| 画像 | `assets/images/` | 公開 |
+| include専用PHP（`config.php` / `session-init.php` / 関数ライブラリ等、`require`/`include` されるのみでURL直叩きしないもの） | `includes/` | 非公開 |
+| メール本文・ビュー等のテンプレートファイル | `templates/` | 非公開 |
+| ログ | `logs/` | 非公開 |
+
+**判定基準**: 「ブラウザから URL で直接叩くか？」で振り分ける。
+- 叩く → 公開側（ルート or `assets/`）
+- 叩かない（PHPから読み込まれるだけ） → 非公開側（`includes/` / `templates/` / `logs/`）
+
+#### 標準構成図
+
+```
+<project-root>/
+├── index.php, submit.php 等    ← ページ（公開）
+├── README.md
+├── .gitignore
+├── assets/                       ← 静的アセット（公開前提）
+│   ├── css/
+│   ├── js/
+│   └── images/
+├── includes/                     ← 非公開PHP（require専用）
+│   └── .htaccess                 ← deny all 同梱必須
+├── templates/                    ← 非公開データ
+│   └── .htaccess                 ← deny all 同梱必須
+└── logs/                         ← ログ
+    └── .htaccess                 ← deny all 同梱必須
+```
+
+#### 必須事項
+
+1. **非公開ディレクトリ（`includes/` / `templates/` / `logs/`）には `.htaccess` を必ず同梱**（Apache 2.4 / 2.2 両対応 + ディレクトリリスティング防止）:
+   ```apache
+   Options -Indexes
+   <IfModule mod_authz_core.c>
+     Require all denied
+   </IfModule>
+   <IfModule !mod_authz_core.c>
+     Order deny,allow
+     Deny from all
+   </IfModule>
+   ```
+
+2. **ユーザーアップロード先ディレクトリには PHP 実行拒否の `.htaccess` を同梱**。アップロード先は**用途で分離**する：
+
+   **(a) Web 表示する画像・ファイル（公開）** → プロジェクトルート直下の `uploads/`（`assets/images/` とは別ディレクトリ）。PHP 実行拒否は必須:
+   ```apache
+   <FilesMatch "\.(php|phtml|phar|pl|py|cgi)$">
+     Require all denied
+   </FilesMatch>
+   php_flag engine off
+   Options -Indexes
+   ```
+
+   **(b) 表示しない添付ファイル・一時受け取り・検証前ファイル等（非公開）** → 非公開側（例: `storage/uploads/` や `includes/uploads/`）。`.htaccess` は非公開ディレクトリ用の deny all テンプレートを使用（PHP経由でのみ配信）。
+
+   **判定基準**: 「アップロードされたファイルを `<img src>` / `<a href>` 等で直接ブラウザから参照させるか？」
+   - させる → (a) 公開側 + PHP 実行拒否
+   - させない（管理画面専用・DL API経由） → (b) 非公開側
+
+3. **環境設定ファイル（`.env`）の扱い**:
+   - プロジェクトルートに配置する場合、`.htaccess` で明示的に拒否:
+     ```apache
+     <Files ".env">
+       Require all denied
+     </Files>
+     ```
+   - または `includes/.env` に置き、PHP から `require`/読み込み（`includes/` は deny all 済み）
+   - `.gitignore` で `.env` / `.env.*` を除外（既存の全体ルールに従う）
+
+4. **PHP の `require` / `include` は `__DIR__` 基準の絶対パスで書く**（CWD依存の相対パスは禁止）
+   ```php
+   // OK
+   require_once __DIR__ . '/includes/config.php';
+   // NG
+   require_once 'includes/config.php';
+   ```
+
+5. **Nginx 環境向けの設定例を README に記載**:
+   ```nginx
+   location ~ /(includes|templates|logs)/ { deny all; }
+   ```
+
+6. **ディレクトリ分離 + `.htaccess` の二重防御**で、サーバー設定ミス（`AllowOverride None` 等）でも非公開ファイル漏洩を防ぐ
+
+7. **アスカがシュウに新規 Web プロジェクト実装を委任する際、依頼文中で本ルール（CLAUDE.md 該当セクション）を参照指示する**こと（シュウが CLAUDE.md を都度参照しない可能性に備える）
+
+#### 適用範囲
+
+- **2026-04-23 以降の新規 Web プロジェクト**に適用（上記「適用対象」の定義に該当するもの）
+- 既存プロジェクトの遡及改修は原則不要。**既存プロジェクトに改修が入る場合、シュウが「ディレクトリ再編を同時に行うか」を判定し、提案をアスカ経由でシンヤさんに上申する**経路で個別判断する
+- **例外**: WordPress テーマ / Laravel / Next.js 等、公式ドキュメントでディレクトリ構成が規定されているフレームワークを使う場合はそのフレームワークの規約を優先する（上記「フレームワーク例外の判定基準」参照）
+
+#### 実装済みリファレンス
+
+- `~/.claude/workspaces/sendmail-form-base/` — 本ルールに沿って構築された PHP お問い合わせフォームのベース版（使い回し用）
+- 他の既存 `workspaces/` 配下プロジェクトはディレクトリ配置の参考にしないこと（本ルール適用対象外のため非準拠の可能性あり）
+
+#### 背景
+
+- 「ブラウザから直接アクセスされる/されない」を構成で明確化し、セキュリティ事故（`config.php` などの非公開ファイルが URL 直叩きで漏洩）を防ぐ
+- 「どこに何を置くか」で毎回迷わず、使い回し時の移植性も上がる
+- シュウ（backend-engineer）へのコーディング委任時、本ルールに沿った配置を前提として依頼する
+
 ## API Cost Management Policy (Agreed 2026-03-28)
 
 Scripts and features using the Claude API (Anthropic) must include the following cost management.

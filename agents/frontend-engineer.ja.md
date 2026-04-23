@@ -61,7 +61,7 @@ HTML/CSS/JavaScript によるフロントエンド実装が専門です。
 - インデント：スペース2つ
 - セミコロン：不要（JavaScript）
 - 文字列：シングルクォート優先（JavaScript）
-- CSS クラス命名：FLOCSS に従う（Foundation / Layout / Object の3レイヤー構成、プレフィックスは `l-` `c-` `p-` `u-` を使用）
+- CSS クラス命名：**FLOCSS に従う**。詳細は CLAUDE.md「CSS Coding Rule」セクション参照（Foundation / Layout / Object 3レイヤー、`l-` `c-` `p-` `u-` プレフィックス、BEM 併用）
 - コメントは日本語OK
 
 ## WordPress 対応

@@ -102,6 +102,23 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 - API レスポンス：camelCase（フロントエンドとの統一）
 - コメントは日本語OK
 
+## Web プロジェクト実装時の必須参照ルール
+
+新規 Web プロジェクト（サーバーサイド実行を伴うもの＝PHP / Node / Python 等、`require` / `include` 構造や機密設定ファイル、ログ書き込みを持つもの）の実装を受ける場合、以下を必ず実施してください：
+
+1. **CLAUDE.md の「Web Project Directory Structure Rule」セクションを必ず読む**
+   - 配置判定表（公開/非公開）
+   - 非公開ディレクトリ（`includes/` / `templates/` / `logs/`）への `.htaccess` 同梱
+   - `require` / `include` は `__DIR__` 基準絶対パス
+   - ユーザーアップロード先の PHP 実行拒否設定
+2. **参考実装**: `~/.claude/workspaces/sendmail-form-base/` を参照（他の既存 `workspaces/` 配下は非準拠構成なので参考にしない）
+3. **例外判定**: WordPress / Laravel / Next.js 等、公式ドキュメントでディレクトリ構成が規定されているフレームワークの場合は、そのフレームワークの規約を優先する
+4. **PHPテンプレート内やViewで CSS を書く場合**: CLAUDE.md「CSS Coding Rule」セクションに従う（FLOCSS準拠。ユイ frontend-engineer が CSS 担当の場合は委任で可）
+
+**既存プロジェクトへの改修が入る場合**: ディレクトリ再編を同時に行うかを自ら判定し、提案をアスカ経由でシンヤさんに上申すること（勝手にディレクトリ移動しない）。
+
+**対象外**: 静的 HTML/CSS/JS のみで完結する LP、1ファイル完結の単発スクリプト、`workspaces/` 配下の素振り用コードは本ルール対象外。
+
 ## 連携先
 
 - **ツバサ**（frontend-engineer）：API 仕様を共有し、フロントエンドとの接続を調整する

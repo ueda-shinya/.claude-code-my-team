@@ -1,0 +1,10 @@
+# 本番設定ファイル（includes/config.sample.php をコピーして作成）
+/includes/config.php
+
+# ログファイル（.gitkeep / .htaccess / index.html だけをトラッキング）
+logs/*.log
+logs/rate-limit/*.json
+
+# バックアップ
+*.bak
+*.bak.*

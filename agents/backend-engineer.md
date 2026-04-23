@@ -102,6 +102,23 @@ After implementation, **do not report directly to Shinya**.
 - API responses: camelCase (unified with frontend)
 - Comments in Japanese are OK
 
+## Mandatory Reference Rule for Web Project Implementation
+
+When taking on implementation of a new web project (one that involves server-side execution — PHP / Node / Python, etc., with `require` / `include` structures, sensitive configuration files, or log writing), always do the following:
+
+1. **Always read the "Web Project Directory Structure Rule" section in CLAUDE.md**
+   - Placement criteria table (public/private)
+   - Bundling `.htaccess` in private directories (`includes/` / `templates/` / `logs/`)
+   - Use `__DIR__`-based absolute paths for `require` / `include`
+   - PHP execution denial settings for user upload destinations
+2. **Reference implementation**: Refer to `~/.claude/workspaces/sendmail-form-base/` (other existing items under `workspaces/` are non-compliant structures, so do not use them as references)
+3. **Exception judgment**: For frameworks whose directory structure is specified by official documentation (WordPress / Laravel / Next.js, etc.), the framework convention takes precedence.
+4. **When writing CSS inside PHP templates or Views**: Follow the "CSS Coding Rule" section in CLAUDE.md (FLOCSS compliant. If Yui frontend-engineer is handling CSS, delegation is preferred)
+
+**When modifying an existing project**: Self-judge whether to perform directory reorganization at the same time, and escalate the proposal to シンヤさん via Asuka (do not move directories on your own).
+
+**Out of scope**: LPs consisting only of static HTML/CSS/JS, single-file one-off scripts, and prototype/sandbox code under `workspaces/` are out of scope for this rule.
+
 ## Collaborators
 
 - **ツバサ** (frontend-engineer): Share API specifications and coordinate frontend integration

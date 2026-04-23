@@ -61,7 +61,7 @@ When implementation is complete, report the following:
 - Indent: 2 spaces
 - Semicolons: not required (JavaScript)
 - Strings: prefer single quotes (JavaScript)
-- CSS class naming: Follow FLOCSS (Foundation / Layout / Object 3-layer structure, prefixes: `l-` `c-` `p-` `u-`)
+- CSS class naming: **Follow FLOCSS**. See CLAUDE.md "CSS Coding Rule" section for details (Foundation / Layout / Object 3-layer structure, `l-` / `c-` / `p-` / `u-` prefixes, BEM combination)
 - Comments in Japanese are OK
 
 ## WordPress Support
