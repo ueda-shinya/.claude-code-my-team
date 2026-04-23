@@ -17,6 +17,12 @@ type: project
 - 必須フィールド: name / image / description / sku / offers（price・priceCurrency・availability・url）
 - 今回（2026-03-19 officeueda LP）はGMC対象外のため非対応
 
+## LPデプロイ運用（2026-04-23〜）
+
+- 当面は **シンヤさんが手動でFTPアップロード** して本番反映する
+- 将来的にはFTPデプロイの自動化をアスカ側で担うことを希望（シュウに実装委任予定）
+- 自動化着手時は FTP/SFTP 情報を `~/.claude/.env` に保管（既存「Safe Editing Rule for Git-Ignored Files」遵守）、SFTP（22番）を優先
+
 ## GA4 計測・レポート運用（lp-260319）
 
 - CTAテスト期間：3/19〜3/20。`LP_CTA_START_DATE = '2026-03-21'` でスクリプト側から除外済み
