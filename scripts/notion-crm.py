@@ -35,6 +35,12 @@ STATUS_OPTIONS = ["見込み", "商談中", "成約", "失注", "既存"]
 BIZTYPE_OPTIONS = ["Web制作", "AI", "その他"]
 SOURCE_OPTIONS = ["Instagram", "紹介", "HP問い合わせ", "その他"]
 
+# ---- CRM DBスキーマ定数 ----
+SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
+if SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, SCRIPTS_DIR)
+from notion_schema import CrmDB
+
 
 def load_env():
     env = {}
@@ -55,7 +61,7 @@ def next_management_no(token, db_id):
     pages = result.get("results", [])
     existing = set()
     for page in pages:
-        items = page["properties"].get("識別記号", {}).get("rich_text", [])
+        items = page["properties"].get(CrmDB.IDENTIFIER, {}).get("rich_text", [])
         code = "".join(i.get("plain_text", "") for i in items).strip()
         if code:
             existing.add(code)
@@ -155,47 +161,47 @@ def extract_email(prop):
 def page_to_row(page):
     p = page.get("properties", {})
     return {
-        "id": page["id"],
-        "会社名": extract_text(p.get("会社名 / 屋号")),
-        "担当者名": extract_text(p.get("担当者名")),
-        "電話番号": extract_phone(p.get("電話番号")),
-        "メールアドレス": extract_email(p.get("メールアドレス")),
-        "ステータス": extract_select(p.get("ステータス")),
-        "事業種別": extract_select(p.get("事業種別")),
-        "担当": extract_text(p.get("担当")),
-        "最終連絡日": extract_date(p.get("最終連絡日")),
-        "流入元": extract_select(p.get("流入元")),
-        "協力値引率": extract_text(p.get("協力値引率")),
-        "識別記号": extract_text(p.get("識別記号")),
-        "メモ": extract_text(p.get("メモ")),
+        "id":                    page["id"],
+        CrmDB.COMPANY_NAME:      extract_text(p.get(CrmDB.COMPANY_NAME)),
+        CrmDB.CONTACT_NAME:      extract_text(p.get(CrmDB.CONTACT_NAME)),
+        CrmDB.PHONE:             extract_phone(p.get(CrmDB.PHONE)),
+        CrmDB.EMAIL:             extract_email(p.get(CrmDB.EMAIL)),
+        CrmDB.STATUS:            extract_select(p.get(CrmDB.STATUS)),
+        CrmDB.BUSINESS_TYPE:     extract_select(p.get(CrmDB.BUSINESS_TYPE)),
+        CrmDB.ASSIGNEE:          extract_text(p.get(CrmDB.ASSIGNEE)),
+        CrmDB.LAST_CONTACT_DATE: extract_date(p.get(CrmDB.LAST_CONTACT_DATE)),
+        CrmDB.SOURCE:            extract_select(p.get(CrmDB.SOURCE)),
+        CrmDB.DISCOUNT_RATE:     extract_text(p.get(CrmDB.DISCOUNT_RATE)),
+        CrmDB.IDENTIFIER:        extract_text(p.get(CrmDB.IDENTIFIER)),
+        CrmDB.MEMO:              extract_text(p.get(CrmDB.MEMO)),
     }
 
 def build_properties(data):
     props = {}
-    if data.get("会社名"):
-        props["会社名 / 屋号"] = {"title": [{"text": {"content": data["会社名"]}}]}
-    if data.get("担当者名"):
-        props["担当者名"] = {"rich_text": [{"text": {"content": data["担当者名"]}}]}
-    if data.get("電話番号"):
-        props["電話番号"] = {"phone_number": data["電話番号"]}
-    if data.get("メールアドレス"):
-        props["メールアドレス"] = {"email": data["メールアドレス"]}
-    if data.get("ステータス"):
-        props["ステータス"] = {"select": {"name": data["ステータス"]}}
-    if data.get("事業種別"):
-        props["事業種別"] = {"select": {"name": data["事業種別"]}}
-    if data.get("担当"):
-        props["担当"] = {"rich_text": [{"text": {"content": data["担当"]}}]}
-    if data.get("最終連絡日"):
-        props["最終連絡日"] = {"date": {"start": data["最終連絡日"]}}
-    if data.get("流入元"):
-        props["流入元"] = {"select": {"name": data["流入元"]}}
-    if data.get("メモ"):
-        props["メモ"] = {"rich_text": [{"text": {"content": data["メモ"]}}]}
-    if data.get("識別記号"):
-        props["識別記号"] = {"rich_text": [{"text": {"content": data["識別記号"]}}]}
-    if data.get("協力値引率"):
-        props["協力値引率"] = {"rich_text": [{"text": {"content": data["協力値引率"]}}]}
+    if data.get(CrmDB.COMPANY_NAME):
+        props[CrmDB.COMPANY_NAME] = {"title": [{"text": {"content": data[CrmDB.COMPANY_NAME]}}]}
+    if data.get(CrmDB.CONTACT_NAME):
+        props[CrmDB.CONTACT_NAME] = {"rich_text": [{"text": {"content": data[CrmDB.CONTACT_NAME]}}]}
+    if data.get(CrmDB.PHONE):
+        props[CrmDB.PHONE] = {"phone_number": data[CrmDB.PHONE]}
+    if data.get(CrmDB.EMAIL):
+        props[CrmDB.EMAIL] = {"email": data[CrmDB.EMAIL]}
+    if data.get(CrmDB.STATUS):
+        props[CrmDB.STATUS] = {"select": {"name": data[CrmDB.STATUS]}}
+    if data.get(CrmDB.BUSINESS_TYPE):
+        props[CrmDB.BUSINESS_TYPE] = {"select": {"name": data[CrmDB.BUSINESS_TYPE]}}
+    if data.get(CrmDB.ASSIGNEE):
+        props[CrmDB.ASSIGNEE] = {"rich_text": [{"text": {"content": data[CrmDB.ASSIGNEE]}}]}
+    if data.get(CrmDB.LAST_CONTACT_DATE):
+        props[CrmDB.LAST_CONTACT_DATE] = {"date": {"start": data[CrmDB.LAST_CONTACT_DATE]}}
+    if data.get(CrmDB.SOURCE):
+        props[CrmDB.SOURCE] = {"select": {"name": data[CrmDB.SOURCE]}}
+    if data.get(CrmDB.MEMO):
+        props[CrmDB.MEMO] = {"rich_text": [{"text": {"content": data[CrmDB.MEMO]}}]}
+    if data.get(CrmDB.IDENTIFIER):
+        props[CrmDB.IDENTIFIER] = {"rich_text": [{"text": {"content": data[CrmDB.IDENTIFIER]}}]}
+    if data.get(CrmDB.DISCOUNT_RATE):
+        props[CrmDB.DISCOUNT_RATE] = {"rich_text": [{"text": {"content": data[CrmDB.DISCOUNT_RATE]}}]}
     return props
 
 
@@ -238,7 +244,7 @@ def prompt_choice(label, options, default=""):
 
 def cmd_list(token, db_id):
     result = notion_request("POST", f"/databases/{db_id}/query", {
-        "sorts": [{"property": "最終連絡日", "direction": "descending"}]
+        "sorts": [{"property": CrmDB.LAST_CONTACT_DATE, "direction": "descending"}]
     }, token=token, db_id=db_id)
     pages = result.get("results", [])
     if not pages:
@@ -248,7 +254,7 @@ def cmd_list(token, db_id):
     print("-" * 62)
     for page in pages:
         row = page_to_row(page)
-        print(f"{row['識別記号']:6} {row['会社名'][:22]:22} {row['ステータス']:8} {row['事業種別']:8} {row['最終連絡日']:12}")
+        print(f"{row[CrmDB.IDENTIFIER]:6} {row[CrmDB.COMPANY_NAME][:22]:22} {row[CrmDB.STATUS]:8} {row[CrmDB.BUSINESS_TYPE]:8} {row[CrmDB.LAST_CONTACT_DATE]:12}")
     print(f"\n合計 {len(pages)} 件")
 
 
@@ -256,19 +262,19 @@ def cmd_add(token, db_id):
     print("\n--- 顧客追加 ---")
     print("  ※ 識別記号は見積書・請求書・領収書の発行時に発行します（ここでは不要）\n")
     data = {
-        "会社名": prompt("会社名 / 屋号（必須）"),
-        "担当者名": prompt("担当者名"),
-        "電話番号": prompt("電話番号"),
-        "メールアドレス": prompt("メールアドレス"),
-        "ステータス": prompt_choice("ステータス", STATUS_OPTIONS),
-        "事業種別": prompt_choice("事業種別", BIZTYPE_OPTIONS),
-        "担当": prompt("担当"),
-        "最終連絡日": prompt_date("最終連絡日（YYYY-MM-DD）", datetime.today().strftime("%Y-%m-%d")),
-        "流入元": prompt_choice("流入元", SOURCE_OPTIONS),
-        "協力値引率": prompt("協力値引率（例: 10%）"),
-        "メモ": prompt("メモ"),
+        CrmDB.COMPANY_NAME:      prompt("会社名 / 屋号（必須）"),
+        CrmDB.CONTACT_NAME:      prompt("担当者名"),
+        CrmDB.PHONE:             prompt("電話番号"),
+        CrmDB.EMAIL:             prompt("メールアドレス"),
+        CrmDB.STATUS:            prompt_choice("ステータス", STATUS_OPTIONS),
+        CrmDB.BUSINESS_TYPE:     prompt_choice("事業種別", BIZTYPE_OPTIONS),
+        CrmDB.ASSIGNEE:          prompt("担当"),
+        CrmDB.LAST_CONTACT_DATE: prompt_date("最終連絡日（YYYY-MM-DD）", datetime.today().strftime("%Y-%m-%d")),
+        CrmDB.SOURCE:            prompt_choice("流入元", SOURCE_OPTIONS),
+        CrmDB.DISCOUNT_RATE:     prompt("協力値引率（例: 10%）"),
+        CrmDB.MEMO:              prompt("メモ"),
     }
-    if not data["会社名"]:
+    if not data[CrmDB.COMPANY_NAME]:
         print("[ERROR] 会社名は必須です。")
         return
     props = build_properties(data)
@@ -276,7 +282,7 @@ def cmd_add(token, db_id):
         "parent": {"database_id": db_id},
         "properties": props,
     }, token=token)
-    print(f"\n追加しました: {data['会社名']}")
+    print(f"\n追加しました: {data[CrmDB.COMPANY_NAME]}")
 
 
 def cmd_issue_no(token, db_id):
@@ -288,7 +294,7 @@ def cmd_issue_no(token, db_id):
         return
 
     result = notion_request("POST", f"/databases/{db_id}/query", {
-        "filter": {"property": "会社名 / 屋号", "rich_text": {"contains": keyword}}
+        "filter": {"property": CrmDB.COMPANY_NAME, "rich_text": {"contains": keyword}}
     }, token=token)
     pages = result.get("results", [])
     if not pages:
@@ -306,8 +312,8 @@ def cmd_issue_no(token, db_id):
     else:
         print(f"\n{len(candidates)} 件見つかりました：")
         for i, row in enumerate(candidates, 1):
-            no = row["識別記号"] or "（未発行）"
-            print(f"  {i}. [{no}] {row['会社名']}")
+            no = row[CrmDB.IDENTIFIER] or "（未発行）"
+            print(f"  {i}. [{no}] {row[CrmDB.COMPANY_NAME]}")
         idx = input("  番号を選択: ").strip()
         try:
             row = candidates[int(idx) - 1]
@@ -315,29 +321,29 @@ def cmd_issue_no(token, db_id):
             print("[ERROR] 不正な番号です。")
             return
 
-    if row["識別記号"]:
-        print(f"\nこの顧客の識別記号は既に発行済みです: {row['識別記号']}")
+    if row[CrmDB.IDENTIFIER]:
+        print(f"\nこの顧客の識別記号は既に発行済みです: {row[CrmDB.IDENTIFIER]}")
         return
 
     new_no = next_management_no(token, db_id)
-    confirm = input(f"\n  識別記号 [{new_no}] を {row['会社名']} に発行しますか？ [y/N]: ").strip().lower()
+    confirm = input(f"\n  識別記号 [{new_no}] を {row[CrmDB.COMPANY_NAME]} に発行しますか？ [y/N]: ").strip().lower()
     if confirm != "y":
         print("キャンセルしました。")
         return
 
     notion_request("PATCH", f"/pages/{row['id']}", {
-        "properties": {"識別記号": {"rich_text": [{"text": {"content": new_no}}]}}
+        "properties": {CrmDB.IDENTIFIER: {"rich_text": [{"text": {"content": new_no}}]}}
     }, token=token)
-    print(f"\n発行しました: [{new_no}] {row['会社名']}")
+    print(f"\n発行しました: [{new_no}] {row[CrmDB.COMPANY_NAME]}")
 
 
 def cmd_search(keyword, token, db_id):
     result = notion_request("POST", f"/databases/{db_id}/query", {
         "filter": {
             "or": [
-                {"property": "会社名 / 屋号", "rich_text": {"contains": keyword}},
-                {"property": "担当者名", "rich_text": {"contains": keyword}},
-                {"property": "メモ", "rich_text": {"contains": keyword}},
+                {"property": CrmDB.COMPANY_NAME, "rich_text": {"contains": keyword}},
+                {"property": CrmDB.CONTACT_NAME, "rich_text": {"contains": keyword}},
+                {"property": CrmDB.MEMO,         "rich_text": {"contains": keyword}},
             ]
         }
     }, token=token)
@@ -351,7 +357,7 @@ def cmd_search(keyword, token, db_id):
     for page in pages:
         row = page_to_row(page)
         short_id = row["id"].replace("-", "")[:8]
-        print(f"{short_id:10} {row['会社名'][:20]:20} {row['ステータス']:8} {row['最終連絡日']:12}")
+        print(f"{short_id:10} {row[CrmDB.COMPANY_NAME][:20]:20} {row[CrmDB.STATUS]:8} {row[CrmDB.LAST_CONTACT_DATE]:12}")
 
 
 def cmd_show(page_id, token, db_id):
@@ -362,30 +368,30 @@ def cmd_show(page_id, token, db_id):
     for k, v in row.items():
         if k == "id":
             continue
-        print(f"  {k:12}: {v}")
+        print(f"  {k:20}: {v}")
 
 
 def cmd_update(page_id, token, db_id):
     page_id = resolve_id(page_id, token, db_id)
     page = notion_request("GET", f"/pages/{page_id}", token=token)
     current = page_to_row(page)
-    no_display = f"  識別記号: {current['識別記号']}（発行済み・変更不可）\n" if current["識別記号"] else ""
-    print(f"\n--- 更新: {current['会社名']} ---")
+    no_display = f"  識別記号: {current[CrmDB.IDENTIFIER]}（発行済み・変更不可）\n" if current[CrmDB.IDENTIFIER] else ""
+    print(f"\n--- 更新: {current[CrmDB.COMPANY_NAME]} ---")
     if no_display:
         print(no_display, end="")
     print("  変更する項目のみ入力してください（Enterでスキップ）\n")
     data = {
-        "会社名": prompt("会社名 / 屋号", current["会社名"]),
-        "担当者名": prompt("担当者名", current["担当者名"]),
-        "電話番号": prompt("電話番号", current["電話番号"]),
-        "メールアドレス": prompt("メールアドレス", current["メールアドレス"]),
-        "ステータス": prompt_choice("ステータス", STATUS_OPTIONS, current["ステータス"]),
-        "事業種別": prompt_choice("事業種別", BIZTYPE_OPTIONS, current["事業種別"]),
-        "担当": prompt("担当", current["担当"]),
-        "最終連絡日": prompt_date("最終連絡日（YYYY-MM-DD）", current["最終連絡日"]),
-        "流入元": prompt_choice("流入元", SOURCE_OPTIONS, current["流入元"]),
-        "協力値引率": prompt("協力値引率", current["協力値引率"]),
-        "メモ": prompt("メモ", current["メモ"]),
+        CrmDB.COMPANY_NAME:      prompt("会社名 / 屋号", current[CrmDB.COMPANY_NAME]),
+        CrmDB.CONTACT_NAME:      prompt("担当者名", current[CrmDB.CONTACT_NAME]),
+        CrmDB.PHONE:             prompt("電話番号", current[CrmDB.PHONE]),
+        CrmDB.EMAIL:             prompt("メールアドレス", current[CrmDB.EMAIL]),
+        CrmDB.STATUS:            prompt_choice("ステータス", STATUS_OPTIONS, current[CrmDB.STATUS]),
+        CrmDB.BUSINESS_TYPE:     prompt_choice("事業種別", BIZTYPE_OPTIONS, current[CrmDB.BUSINESS_TYPE]),
+        CrmDB.ASSIGNEE:          prompt("担当", current[CrmDB.ASSIGNEE]),
+        CrmDB.LAST_CONTACT_DATE: prompt_date("最終連絡日（YYYY-MM-DD）", current[CrmDB.LAST_CONTACT_DATE]),
+        CrmDB.SOURCE:            prompt_choice("流入元", SOURCE_OPTIONS, current[CrmDB.SOURCE]),
+        CrmDB.DISCOUNT_RATE:     prompt("協力値引率", current[CrmDB.DISCOUNT_RATE]),
+        CrmDB.MEMO:              prompt("メモ", current[CrmDB.MEMO]),
         # 管理No.は更新対象に含めない（一度発行したら変更不可）
     }
     props = build_properties(data)
@@ -422,10 +428,10 @@ def main():
 
     env = load_env()
     token = env.get("NOTION_API_TOKEN", "")
-    db_id = env.get("NOTION_CRM_DB_ID", "")
+    db_id = env.get(CrmDB.ENV_KEY, "")
 
     if not token or not db_id:
-        print("[ERROR] .env に NOTION_API_TOKEN / NOTION_CRM_DB_ID が設定されていません。")
+        print(f"[ERROR] .env に NOTION_API_TOKEN / {CrmDB.ENV_KEY} が設定されていません。")
         sys.exit(1)
 
     args = sys.argv[1:]
