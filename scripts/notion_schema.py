@@ -53,18 +53,19 @@ class KaizenDB:
 
     ENV_KEY = 'NOTION_KAIZEN_DB_ID'
 
-    TITLE          = 'タイトル'
-    LEVEL          = '対応レベル'
-    DATE           = '日付'
-    AREA           = '領域'
-    ROOT_CATEGORY  = '真因カテゴリ'
-    ROOT_SUMMARY   = '真因（要約）'
-    STATUS         = 'ステータス'
-    RELATED_FILES  = '関連ファイル'
-    WHY_1          = 'なぜ(1回目)'
-    WHY_2          = 'なぜ(2回目)'
-    WHY_3          = 'なぜ(3回目)'
-    COUNTERMEASURE = '真の原因に対する対策'
+    TITLE               = 'タイトル'
+    LEVEL               = '対応レベル'
+    DATE                = '日付'
+    IMPLEMENTATION_DATE = '対策実施日'
+    AREA                = '領域'
+    ROOT_CATEGORY       = '真因カテゴリ'
+    ROOT_SUMMARY        = '真因（要約）'
+    STATUS              = 'ステータス'
+    RELATED_FILES       = '関連ファイル'
+    WHY_1               = 'なぜ(1回目)'
+    WHY_2               = 'なぜ(2回目)'
+    WHY_3               = 'なぜ(3回目)'
+    COUNTERMEASURE      = '真の原因に対する対策'
 
 
 # ============================================================

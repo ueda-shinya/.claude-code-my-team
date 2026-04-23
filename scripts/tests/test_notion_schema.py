@@ -49,18 +49,25 @@ DB_DEFINITIONS = [
     {
         'cls': KaizenDB,
         'expected_types': {
-            KaizenDB.TITLE:          'title',
-            KaizenDB.LEVEL:          'select',
-            KaizenDB.DATE:           'date',
-            KaizenDB.AREA:           'select',
-            KaizenDB.ROOT_CATEGORY:  'select',
-            KaizenDB.ROOT_SUMMARY:   'rich_text',
-            KaizenDB.STATUS:         'select',
-            KaizenDB.RELATED_FILES:  'rich_text',
-            KaizenDB.WHY_1:          'rich_text',
-            KaizenDB.WHY_2:          'rich_text',
-            KaizenDB.WHY_3:          'rich_text',
-            KaizenDB.COUNTERMEASURE: 'rich_text',
+            KaizenDB.TITLE:               'title',
+            KaizenDB.LEVEL:               'select',
+            KaizenDB.DATE:                'date',
+            KaizenDB.IMPLEMENTATION_DATE: 'date',
+            KaizenDB.AREA:                'select',
+            KaizenDB.ROOT_CATEGORY:       'select',
+            KaizenDB.ROOT_SUMMARY:        'rich_text',
+            KaizenDB.STATUS:              'select',
+            KaizenDB.RELATED_FILES:       'rich_text',
+            KaizenDB.WHY_1:               'rich_text',
+            KaizenDB.WHY_2:               'rich_text',
+            KaizenDB.WHY_3:               'rich_text',
+            KaizenDB.COUNTERMEASURE:      'rich_text',
+        },
+        # IMPLEMENTATION_DATE（対策実施日）は --create-db 時に作成されるが、
+        # 既存DBへの追加は手動マイグレーションが必要なため optional 扱いとする。
+        # 実DBに追加されると自動的にテスト対象に含まれる。
+        'optional_props': {
+            'IMPLEMENTATION_DATE': KaizenDB.IMPLEMENTATION_DATE,
         },
     },
     {
@@ -235,6 +242,10 @@ def _make_test_method(db_def: dict):
     cls_obj = db_def['cls']
     expected_types = db_def['expected_types']
     cls_name = cls_obj.__name__
+    # optional_props: クラス定数として存在するが既存DBに追加されていない可能性がある
+    # プロパティ名のセット。missing チェックおよび型チェックから除外される。
+    # --create-db または --migrate-add-columns で追加されるプロパティをここに列挙する。
+    optional_props = set(db_def.get('optional_props', {}).values())
 
     def test_method(self):
         db_id = self.env.get(cls_obj.ENV_KEY, '')
@@ -249,7 +260,9 @@ def _make_test_method(db_def: dict):
             return
 
         prop_names = get_class_prop_names(cls_obj)
-        missing = [name for name in prop_names if name not in actual]
+        # optional_props は missing チェックから除外する
+        missing = [name for name in prop_names
+                   if name not in actual and name not in optional_props]
         self.assertEqual(
             missing, [],
             msg=(
@@ -260,6 +273,7 @@ def _make_test_method(db_def: dict):
         )
 
         # expected_types 網羅性の自己検証（M-2対応・prop_names を再利用）
+        # optional_props は expected_types に登録済みのため untyped から除外しない
         class_props = set(prop_names)
         expected_props = set(expected_types.keys())
         untyped = class_props - expected_props
@@ -270,6 +284,9 @@ def _make_test_method(db_def: dict):
 
         type_errors = []
         for prop_name, expected_type in expected_types.items():
+            # optional_props かつ実DBに存在しない場合はスキップ
+            if prop_name in optional_props and prop_name not in actual:
+                continue
             actual_type = actual.get(prop_name, '')
             if actual_type != expected_type:
                 type_errors.append(

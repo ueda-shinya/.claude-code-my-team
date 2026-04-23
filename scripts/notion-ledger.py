@@ -24,6 +24,12 @@ import urllib.request
 import urllib.error
 from datetime import datetime
 
+# スクリプトディレクトリを sys.path に追加して notion_schema をインポート
+_SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+from notion_schema import LedgerDB, CrmDB
+
 # ---- 設定 ----
 ENV_PATH = os.path.expanduser("~/.claude/.env")
 UUID_RE = re.compile(r"^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$", re.I)
@@ -103,26 +109,26 @@ def fetch_customer_name(token, page_id):
     """CRMページIDから顧客名を取得する（show コマンド用）"""
     try:
         page = notion_request("GET", f"/pages/{page_id}", token=token)
-        return get_text(page.get("properties", {}), "会社名 / 屋号")
+        return get_text(page.get("properties", {}), CrmDB.COMPANY_NAME)
     except Exception:
         return ""
 
 def page_to_row(page):
     p = page.get("properties", {})
-    amount = get_number(p, "金額（税込）")
+    amount = get_number(p, LedgerDB.AMOUNT)
     return {
         "id": page["id"],
-        "管理番号": get_text(p, "管理番号"),
-        "種別": get_select(p, "種別"),
-        "発行日": get_date(p, "発行日"),
-        "金額（税込）": f"¥{int(amount):,}" if amount is not None else "",
-        "件名": get_text(p, "件名"),
-        "納品日": get_date(p, "納品日"),
-        "入金状況": get_select(p, "入金状況"),
-        "入金日": get_date(p, "入金日"),
-        "ステータス": get_select(p, "ステータス"),
-        "メモ": get_text(p, "メモ"),
-        "_customer_ids": get_relation_ids(p, "顧客"),
+        LedgerDB.MANAGEMENT_NO:  get_text(p, LedgerDB.MANAGEMENT_NO),
+        LedgerDB.TYPE:           get_select(p, LedgerDB.TYPE),
+        LedgerDB.ISSUE_DATE:     get_date(p, LedgerDB.ISSUE_DATE),
+        LedgerDB.AMOUNT:         f"¥{int(amount):,}" if amount is not None else "",
+        LedgerDB.SUBJECT:        get_text(p, LedgerDB.SUBJECT),
+        LedgerDB.DELIVERY_DATE:  get_date(p, LedgerDB.DELIVERY_DATE),
+        LedgerDB.PAYMENT_STATUS: get_select(p, LedgerDB.PAYMENT_STATUS),
+        LedgerDB.PAYMENT_DATE:   get_date(p, LedgerDB.PAYMENT_DATE),
+        LedgerDB.STATUS:         get_select(p, LedgerDB.STATUS),
+        LedgerDB.MEMO:           get_text(p, LedgerDB.MEMO),
+        "_customer_ids":         get_relation_ids(p, LedgerDB.CUSTOMER),
     }
 
 
@@ -142,7 +148,7 @@ def generate_management_no(token, ledger_db_id, customer_code, issue_date):
     # 既存レコードから同じプレフィックスの件数をカウント
     result = notion_request("POST", f"/databases/{ledger_db_id}/query", {
         "filter": {
-            "property": "管理番号",
+            "property": LedgerDB.MANAGEMENT_NO,
             "title": {"starts_with": prefix}
         }
     }, token=token)
@@ -155,7 +161,7 @@ def generate_management_no(token, ledger_db_id, customer_code, issue_date):
 
 def search_customer(keyword, token, crm_db_id):
     result = notion_request("POST", f"/databases/{crm_db_id}/query", {
-        "filter": {"property": "会社名 / 屋号", "rich_text": {"contains": keyword}}
+        "filter": {"property": CrmDB.COMPANY_NAME, "rich_text": {"contains": keyword}}
     }, token=token)
     pages = result.get("results", [])
     if not pages:
@@ -163,8 +169,8 @@ def search_customer(keyword, token, crm_db_id):
 
     def extract_customer(p):
         props = p["properties"]
-        name = "".join(i.get("plain_text", "") for i in props.get("会社名 / 屋号", {}).get("title", []))
-        code_items = props.get("識別記号", {}).get("rich_text", [])
+        name = "".join(i.get("plain_text", "") for i in props.get(CrmDB.COMPANY_NAME, {}).get("title", []))
+        code_items = props.get(CrmDB.IDENTIFIER, {}).get("rich_text", [])
         code = "".join(i.get("plain_text", "") for i in code_items)
         return p["id"], name, code
 
@@ -232,7 +238,7 @@ def prompt_amount(label, default=""):
 
 def cmd_list(token, ledger_db_id):
     result = notion_request("POST", f"/databases/{ledger_db_id}/query", {
-        "sorts": [{"property": "発行日", "direction": "descending"}]
+        "sorts": [{"property": LedgerDB.ISSUE_DATE, "direction": "descending"}]
     }, token=token)
     pages = result.get("results", [])
     if not pages:
@@ -243,11 +249,11 @@ def cmd_list(token, ledger_db_id):
     for page in pages:
         row = page_to_row(page)
         print(
-            f"{row['管理番号']:14} "
-            f"{row['種別']:6} "
-            f"{row['発行日']:12} "
-            f"{row['金額（税込）']:14} "
-            f"{row['ステータス']:8}"
+            f"{row[LedgerDB.MANAGEMENT_NO]:14} "
+            f"{row[LedgerDB.TYPE]:6} "
+            f"{row[LedgerDB.ISSUE_DATE]:12} "
+            f"{row[LedgerDB.AMOUNT]:14} "
+            f"{row[LedgerDB.STATUS]:8}"
         )
     print(f"\n合計 {len(pages)} 件")
 
@@ -297,27 +303,27 @@ def cmd_add(token, ledger_db_id, crm_db_id):
         return
 
     props = {
-        "管理番号": {"title": [{"text": {"content": management_no}}]},
-        "顧客": {"relation": [{"id": customer_page_id}]},
+        LedgerDB.MANAGEMENT_NO: {"title": [{"text": {"content": management_no}}]},
+        LedgerDB.CUSTOMER: {"relation": [{"id": customer_page_id}]},
     }
     if data["種別"]:
-        props["種別"] = {"select": {"name": data["種別"]}}
+        props[LedgerDB.TYPE] = {"select": {"name": data["種別"]}}
     if data["発行日"]:
-        props["発行日"] = {"date": {"start": data["発行日"]}}
+        props[LedgerDB.ISSUE_DATE] = {"date": {"start": data["発行日"]}}
     if data["件名"]:
-        props["件名"] = {"rich_text": [{"text": {"content": data["件名"]}}]}
+        props[LedgerDB.SUBJECT] = {"rich_text": [{"text": {"content": data["件名"]}}]}
     if data["ステータス"]:
-        props["ステータス"] = {"select": {"name": data["ステータス"]}}
+        props[LedgerDB.STATUS] = {"select": {"name": data["ステータス"]}}
     if data["納品日"]:
-        props["納品日"] = {"date": {"start": data["納品日"]}}
+        props[LedgerDB.DELIVERY_DATE] = {"date": {"start": data["納品日"]}}
     if data["入金状況"]:
-        props["入金状況"] = {"select": {"name": data["入金状況"]}}
+        props[LedgerDB.PAYMENT_STATUS] = {"select": {"name": data["入金状況"]}}
     if data["入金日"]:
-        props["入金日"] = {"date": {"start": data["入金日"]}}
+        props[LedgerDB.PAYMENT_DATE] = {"date": {"start": data["入金日"]}}
     if data["金額"] is not None:
-        props["金額（税込）"] = {"number": data["金額"]}
+        props[LedgerDB.AMOUNT] = {"number": data["金額"]}
     if data["メモ"]:
-        props["メモ"] = {"rich_text": [{"text": {"content": data["メモ"]}}]}
+        props[LedgerDB.MEMO] = {"rich_text": [{"text": {"content": data["メモ"]}}]}
 
     notion_request("POST", "/pages", {
         "parent": {"database_id": ledger_db_id},
@@ -330,9 +336,9 @@ def cmd_search(keyword, token, ledger_db_id):
     result = notion_request("POST", f"/databases/{ledger_db_id}/query", {
         "filter": {
             "or": [
-                {"property": "管理番号", "title": {"contains": keyword}},
-                {"property": "件名", "rich_text": {"contains": keyword}},
-                {"property": "メモ", "rich_text": {"contains": keyword}},
+                {"property": LedgerDB.MANAGEMENT_NO, "title": {"contains": keyword}},
+                {"property": LedgerDB.SUBJECT, "rich_text": {"contains": keyword}},
+                {"property": LedgerDB.MEMO, "rich_text": {"contains": keyword}},
             ]
         }
     }, token=token)
@@ -346,11 +352,11 @@ def cmd_search(keyword, token, ledger_db_id):
     for page in pages:
         row = page_to_row(page)
         print(
-            f"{row['管理番号']:14} "
-            f"{row['種別']:6} "
-            f"{row['発行日']:12} "
-            f"{row['金額（税込）']:14} "
-            f"{row['ステータス']:8}"
+            f"{row[LedgerDB.MANAGEMENT_NO]:14} "
+            f"{row[LedgerDB.TYPE]:6} "
+            f"{row[LedgerDB.ISSUE_DATE]:12} "
+            f"{row[LedgerDB.AMOUNT]:14} "
+            f"{row[LedgerDB.STATUS]:8}"
         )
 
 
@@ -364,10 +370,20 @@ def cmd_show(keyword_or_id, token, ledger_db_id):
     if row["_customer_ids"]:
         customer_name = fetch_customer_name(token, row["_customer_ids"][0])
     print("\n--- 台帳詳細 ---")
-    print(f"  {'管理番号':12}: {row['管理番号']}")
+    print(f"  {'管理番号':12}: {row[LedgerDB.MANAGEMENT_NO]}")
     print(f"  {'顧客名':12}: {customer_name}")
-    for k in ["種別", "発行日", "金額（税込）", "件名", "納品日", "入金状況", "入金日", "ステータス", "メモ"]:
-        print(f"  {k:12}: {row[k]}")
+    for key, label in [
+        (LedgerDB.TYPE,           '種別'),
+        (LedgerDB.ISSUE_DATE,     '発行日'),
+        (LedgerDB.AMOUNT,         '金額（税込）'),
+        (LedgerDB.SUBJECT,        '件名'),
+        (LedgerDB.DELIVERY_DATE,  '納品日'),
+        (LedgerDB.PAYMENT_STATUS, '入金状況'),
+        (LedgerDB.PAYMENT_DATE,   '入金日'),
+        (LedgerDB.STATUS,         'ステータス'),
+        (LedgerDB.MEMO,           'メモ'),
+    ]:
+        print(f"  {label:12}: {row[key]}")
     print(f"\n  ページID: {row['id']}")
 
 
@@ -377,46 +393,46 @@ def cmd_update(keyword, token, ledger_db_id):
         return
     current = page_to_row(page)
 
-    print(f"\n--- 更新: {current['管理番号']} ---")
-    print(f"  管理番号: {current['管理番号']}（変更不可）")
+    print(f"\n--- 更新: {current[LedgerDB.MANAGEMENT_NO]} ---")
+    print(f"  管理番号: {current[LedgerDB.MANAGEMENT_NO]}（変更不可）")
     print("  変更する項目のみ入力してください（Enterでスキップ）\n")
 
-    new_status = prompt_choice("ステータス", STATUS_OPTIONS, current["ステータス"])
-    new_type = prompt_choice("種別", TYPE_OPTIONS, current["種別"])
-    new_subject = prompt("件名", current["件名"])
-    new_amount_str = prompt("金額（税込）（数値のみ）", current["金額（税込）"].replace("¥", "").replace(",", "") if current["金額（税込）"] else "")
-    new_delivery = prompt_date("納品日（YYYY-MM-DD）", current["納品日"])
-    new_payment_status = prompt_choice("入金状況", PAYMENT_OPTIONS, current["入金状況"])
-    new_payment_date = prompt_date("入金日（YYYY-MM-DD）", current["入金日"])
-    new_memo = prompt("メモ", current["メモ"])
+    new_status = prompt_choice("ステータス", STATUS_OPTIONS, current[LedgerDB.STATUS])
+    new_type = prompt_choice("種別", TYPE_OPTIONS, current[LedgerDB.TYPE])
+    new_subject = prompt("件名", current[LedgerDB.SUBJECT])
+    new_amount_str = prompt("金額（税込）（数値のみ）", current[LedgerDB.AMOUNT].replace("¥", "").replace(",", "") if current[LedgerDB.AMOUNT] else "")
+    new_delivery = prompt_date("納品日（YYYY-MM-DD）", current[LedgerDB.DELIVERY_DATE])
+    new_payment_status = prompt_choice("入金状況", PAYMENT_OPTIONS, current[LedgerDB.PAYMENT_STATUS])
+    new_payment_date = prompt_date("入金日（YYYY-MM-DD）", current[LedgerDB.PAYMENT_DATE])
+    new_memo = prompt("メモ", current[LedgerDB.MEMO])
 
     props = {}
     if new_status:
-        props["ステータス"] = {"select": {"name": new_status}}
+        props[LedgerDB.STATUS] = {"select": {"name": new_status}}
     if new_type:
-        props["種別"] = {"select": {"name": new_type}}
+        props[LedgerDB.TYPE] = {"select": {"name": new_type}}
     if new_subject:
-        props["件名"] = {"rich_text": [{"text": {"content": new_subject}}]}
+        props[LedgerDB.SUBJECT] = {"rich_text": [{"text": {"content": new_subject}}]}
     if new_amount_str:
         try:
-            props["金額（税込）"] = {"number": int(new_amount_str.replace(",", ""))}
+            props[LedgerDB.AMOUNT] = {"number": int(new_amount_str.replace(",", ""))}
         except ValueError:
             print("  [WARN] 金額の形式が不正なためスキップしました。")
     if new_delivery:
-        props["納品日"] = {"date": {"start": new_delivery}}
+        props[LedgerDB.DELIVERY_DATE] = {"date": {"start": new_delivery}}
     if new_payment_status:
-        props["入金状況"] = {"select": {"name": new_payment_status}}
+        props[LedgerDB.PAYMENT_STATUS] = {"select": {"name": new_payment_status}}
     if new_payment_date:
-        props["入金日"] = {"date": {"start": new_payment_date}}
+        props[LedgerDB.PAYMENT_DATE] = {"date": {"start": new_payment_date}}
     if new_memo:
-        props["メモ"] = {"rich_text": [{"text": {"content": new_memo}}]}
+        props[LedgerDB.MEMO] = {"rich_text": [{"text": {"content": new_memo}}]}
 
     if not props:
         print("\n変更なし。")
         return
 
     notion_request("PATCH", f"/pages/{page['id']}", {"properties": props}, token=token)
-    print(f"\n更新しました: {current['管理番号']}")
+    print(f"\n更新しました: {current[LedgerDB.MANAGEMENT_NO]}")
 
 
 def resolve_page(keyword_or_id, token, ledger_db_id):
@@ -428,12 +444,12 @@ def resolve_page(keyword_or_id, token, ledger_db_id):
     result = notion_request("POST", f"/databases/{ledger_db_id}/query", {
         "filter": {
             "or": [
-                {"property": "管理番号", "title": {"contains": keyword_or_id}},
-                {"property": "件名", "rich_text": {"contains": keyword_or_id}},
-                {"property": "メモ", "rich_text": {"contains": keyword_or_id}},
+                {"property": LedgerDB.MANAGEMENT_NO, "title": {"contains": keyword_or_id}},
+                {"property": LedgerDB.SUBJECT, "rich_text": {"contains": keyword_or_id}},
+                {"property": LedgerDB.MEMO, "rich_text": {"contains": keyword_or_id}},
             ]
         },
-        "sorts": [{"property": "発行日", "direction": "descending"}]
+        "sorts": [{"property": LedgerDB.ISSUE_DATE, "direction": "descending"}]
     }, token=token)
     pages = result.get("results", [])
     if not pages:
@@ -445,7 +461,7 @@ def resolve_page(keyword_or_id, token, ledger_db_id):
     print(f"\n{len(pages)} 件見つかりました：")
     for i, p in enumerate(pages, 1):
         row = page_to_row(p)
-        print(f"  {i}. {row['管理番号']:14} {row['発行日']:12} {row['ステータス']}")
+        print(f"  {i}. {row[LedgerDB.MANAGEMENT_NO]:14} {row[LedgerDB.ISSUE_DATE]:12} {row[LedgerDB.STATUS]}")
     idx = input("  番号を選択: ").strip()
     try:
         return pages[int(idx) - 1]

@@ -30,7 +30,7 @@ Notion なぜなぜ分析 報告書管理スクリプト
       30日検証期限のチェック（対策実施済み→30日超、30日検証中 を表示）
 
   notion-kaizen.py --migrate-add-columns
-      既存DBに「なぜ(1回目)」「なぜ(2回目)」「なぜ(3回目)」「真の原因に対する対策」プロパティを追加する
+      既存DBに「なぜ(1回目)」「なぜ(2回目)」「なぜ(3回目)」「真の原因に対する対策」「対策実施日」プロパティを追加する
       ※一度だけ実行すればOK。既にプロパティが存在する場合はスキップ。
 """
 
@@ -43,6 +43,12 @@ import tempfile
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone, timedelta
+
+# スクリプトディレクトリを sys.path に追加して notion_schema をインポート
+_SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+from notion_schema import KaizenDB, CrmDB
 
 # Windows環境での文字化け対策
 sys.stdout.reconfigure(encoding='utf-8')
@@ -257,27 +263,27 @@ def page_to_item(page):
     p = page['properties']
     return {
         'id': page['id'],
-        'タイトル': get_text(p, 'タイトル'),
-        '対応レベル': get_select(p, '対応レベル'),
-        '日付': get_date(p, '日付'),
-        '対策実施日': get_date(p, '対策実施日'),
-        '領域': get_select(p, '領域'),
-        '真因カテゴリ': get_select(p, '真因カテゴリ'),
-        '真因（要約）': get_text(p, '真因（要約）'),
-        'ステータス': get_select(p, 'ステータス'),
-        '関連ファイル': get_text(p, '関連ファイル'),
-        '作成日時': get_created_time(page),
+        KaizenDB.TITLE:               get_text(p, KaizenDB.TITLE),
+        KaizenDB.LEVEL:               get_select(p, KaizenDB.LEVEL),
+        KaizenDB.DATE:                get_date(p, KaizenDB.DATE),
+        KaizenDB.IMPLEMENTATION_DATE: get_date(p, KaizenDB.IMPLEMENTATION_DATE),
+        KaizenDB.AREA:                get_select(p, KaizenDB.AREA),
+        KaizenDB.ROOT_CATEGORY:       get_select(p, KaizenDB.ROOT_CATEGORY),
+        KaizenDB.ROOT_SUMMARY:        get_text(p, KaizenDB.ROOT_SUMMARY),
+        KaizenDB.STATUS:              get_select(p, KaizenDB.STATUS),
+        KaizenDB.RELATED_FILES:       get_text(p, KaizenDB.RELATED_FILES),
+        '作成日時':                    get_created_time(page),
         # 追加プロパティ（なぜなぜ分析の過程）
-        'なぜ(1回目)': get_text(p, 'なぜ(1回目)'),
-        'なぜ(2回目)': get_text(p, 'なぜ(2回目)'),
-        'なぜ(3回目)': get_text(p, 'なぜ(3回目)'),
-        '真の原因に対する対策': get_text(p, '真の原因に対する対策'),
+        KaizenDB.WHY_1:               get_text(p, KaizenDB.WHY_1),
+        KaizenDB.WHY_2:               get_text(p, KaizenDB.WHY_2),
+        KaizenDB.WHY_3:               get_text(p, KaizenDB.WHY_3),
+        KaizenDB.COUNTERMEASURE:      get_text(p, KaizenDB.COUNTERMEASURE),
     }
 
 
 def status_sort_key(item):
     """ステータスを定義順でソートするためのキー関数"""
-    s = item['ステータス']
+    s = item[KaizenDB.STATUS]
     try:
         return STATUS_ORDER.index(s)
     except ValueError:
@@ -293,7 +299,7 @@ def rich_text_prop(text):
 def find_page_by_partial_title(partial_title, token, db_id):
     """部分タイトルで Notion DB を検索し、マッチしたページ一覧を返す"""
     result = notion_request('POST', f'/databases/{db_id}/query', {
-        'filter': {'property': 'タイトル', 'title': {'contains': partial_title}}
+        'filter': {'property': KaizenDB.TITLE, 'title': {'contains': partial_title}}
     }, token=token)
     return result.get('results', [])
 
@@ -313,7 +319,7 @@ def resolve_single_page(partial_title, token, db_id):
         print(f'[ERROR] {len(pages)} 件一致しました。タイトルをより具体的に指定してください。')
         for p in pages:
             t = page_to_item(p)
-            print(f'  - {t["タイトル"]} [{t["ステータス"]}]')
+            print(f'  - {t[KaizenDB.TITLE]} [{t[KaizenDB.STATUS]}]')
         sys.exit(1)
 
     return pages[0]
@@ -358,8 +364,8 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
         'parent': {'page_id': parent_page_id},
         'title': [{'type': 'text', 'text': {'content': 'なぜなぜ分析'}}],
         'properties': {
-            'タイトル': {'title': {}},
-            '対応レベル': {
+            KaizenDB.TITLE: {'title': {}},
+            KaizenDB.LEVEL: {
                 'select': {
                     'options': [
                         {'name': '🔴HIGH', 'color': 'red'},
@@ -367,9 +373,9 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
                     ]
                 }
             },
-            '日付': {'date': {}},
-            '対策実施日': {'date': {}},
-            '領域': {
+            KaizenDB.DATE: {'date': {}},
+            KaizenDB.IMPLEMENTATION_DATE: {'date': {}},
+            KaizenDB.AREA: {
                 'select': {
                     'options': [
                         {'name': 'コーディング', 'color': 'blue'},
@@ -381,7 +387,7 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
                     ]
                 }
             },
-            '真因カテゴリ': {
+            KaizenDB.ROOT_CATEGORY: {
                 'select': {
                     'options': [
                         {'name': 'Design Gap', 'color': 'purple'},
@@ -395,8 +401,8 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
                     ]
                 }
             },
-            '真因（要約）': {'rich_text': {}},
-            'ステータス': {
+            KaizenDB.ROOT_SUMMARY: {'rich_text': {}},
+            KaizenDB.STATUS: {
                 'select': {
                     'options': [
                         {'name': '未実施', 'color': 'gray'},
@@ -406,12 +412,12 @@ def cmd_create_db(parent_page_id, token, force=False, reuse=False):
                     ]
                 }
             },
-            '関連ファイル': {'rich_text': {}},
+            KaizenDB.RELATED_FILES: {'rich_text': {}},
             # なぜなぜ分析の過程を記録するプロパティ
-            'なぜ(1回目)': {'rich_text': {}},
-            'なぜ(2回目)': {'rich_text': {}},
-            'なぜ(3回目)': {'rich_text': {}},
-            '真の原因に対する対策': {'rich_text': {}},
+            KaizenDB.WHY_1: {'rich_text': {}},
+            KaizenDB.WHY_2: {'rich_text': {}},
+            KaizenDB.WHY_3: {'rich_text': {}},
+            KaizenDB.COUNTERMEASURE: {'rich_text': {}},
         },
     }
 
@@ -444,15 +450,15 @@ def cmd_list(token, db_id):
     items.sort(key=status_sort_key)
 
     for item in items:
-        level_str = item['対応レベル'] if item['対応レベル'] else '-'
-        area_str = item['領域'] if item['領域'] else '-'
-        date_str = item['日付'] if item['日付'] else '-'
-        root_str = item['真因カテゴリ'] if item['真因カテゴリ'] else '-'
-        summary_str = f'\n      真因: {item["真因（要約）"]}' if item['真因（要約）'] else ''
+        level_str = item[KaizenDB.LEVEL] if item[KaizenDB.LEVEL] else '-'
+        area_str = item[KaizenDB.AREA] if item[KaizenDB.AREA] else '-'
+        date_str = item[KaizenDB.DATE] if item[KaizenDB.DATE] else '-'
+        root_str = item[KaizenDB.ROOT_CATEGORY] if item[KaizenDB.ROOT_CATEGORY] else '-'
+        summary_str = f'\n      真因: {item[KaizenDB.ROOT_SUMMARY]}' if item[KaizenDB.ROOT_SUMMARY] else ''
         # 「真の原因に対する対策」の有無を表示（詳細は --show で確認）
-        countermeasure_str = '✓対策あり' if item['真の原因に対する対策'] else '対策なし'
+        countermeasure_str = '✓対策あり' if item[KaizenDB.COUNTERMEASURE] else '対策なし'
         print(
-            f'[{item["ステータス"]}] {item["タイトル"]}'
+            f'[{item[KaizenDB.STATUS]}] {item[KaizenDB.TITLE]}'
             f'  {level_str} / {area_str} / {root_str}  ({date_str})  [{countermeasure_str}]'
             f'{summary_str}'
         )
@@ -469,36 +475,36 @@ def cmd_add(title, level, area, root_category, root_summary, status, related, da
         date_str = datetime.now(JST).date().isoformat()
 
     props = {
-        'タイトル': {'title': [{'text': {'content': title}}]},
-        '対応レベル': {'select': {'name': level}},
-        '日付': {'date': {'start': date_str}},
-        'ステータス': {'select': {'name': status}},
+        KaizenDB.TITLE: {'title': [{'text': {'content': title}}]},
+        KaizenDB.LEVEL: {'select': {'name': level}},
+        KaizenDB.DATE: {'date': {'start': date_str}},
+        KaizenDB.STATUS: {'select': {'name': status}},
     }
 
     if area:
-        props['領域'] = {'select': {'name': area}}
+        props[KaizenDB.AREA] = {'select': {'name': area}}
 
     if root_category:
-        props['真因カテゴリ'] = {'select': {'name': root_category}}
+        props[KaizenDB.ROOT_CATEGORY] = {'select': {'name': root_category}}
 
     if root_summary:
-        props['真因（要約）'] = rich_text_prop(root_summary)
+        props[KaizenDB.ROOT_SUMMARY] = rich_text_prop(root_summary)
 
     if related:
-        props['関連ファイル'] = rich_text_prop(related)
+        props[KaizenDB.RELATED_FILES] = rich_text_prop(related)
 
     # なぜなぜ分析の過程プロパティ（任意）
     if why1:
-        props['なぜ(1回目)'] = rich_text_prop(why1)
+        props[KaizenDB.WHY_1] = rich_text_prop(why1)
 
     if why2:
-        props['なぜ(2回目)'] = rich_text_prop(why2)
+        props[KaizenDB.WHY_2] = rich_text_prop(why2)
 
     if why3:
-        props['なぜ(3回目)'] = rich_text_prop(why3)
+        props[KaizenDB.WHY_3] = rich_text_prop(why3)
 
     if countermeasure:
-        props['真の原因に対する対策'] = rich_text_prop(countermeasure)
+        props[KaizenDB.COUNTERMEASURE] = rich_text_prop(countermeasure)
 
     notion_request('POST', '/pages', {
         'parent': {'database_id': db_id},
@@ -529,45 +535,45 @@ def cmd_update(partial_title, new_status, new_level, new_area,
     changes = []
 
     if new_status:
-        props['ステータス'] = {'select': {'name': new_status}}
-        changes.append(f'ステータス: [{item["ステータス"]}] → [{new_status}]')
+        props[KaizenDB.STATUS] = {'select': {'name': new_status}}
+        changes.append(f'ステータス: [{item[KaizenDB.STATUS]}] → [{new_status}]')
         # 「対策実施済み」に変更する際は対策実施日を当日日付で自動設定する
         if new_status == '対策実施済み':
             today_str = datetime.now(JST).date().isoformat()
-            props['対策実施日'] = {'date': {'start': today_str}}
+            props[KaizenDB.IMPLEMENTATION_DATE] = {'date': {'start': today_str}}
             changes.append(f'対策実施日: {today_str} (自動設定)')
 
     if new_level:
-        props['対応レベル'] = {'select': {'name': new_level}}
-        changes.append(f'対応レベル: [{item["対応レベル"]}] → [{new_level}]')
+        props[KaizenDB.LEVEL] = {'select': {'name': new_level}}
+        changes.append(f'対応レベル: [{item[KaizenDB.LEVEL]}] → [{new_level}]')
 
     if new_area:
-        props['領域'] = {'select': {'name': new_area}}
-        changes.append(f'領域: [{item["領域"]}] → [{new_area}]')
+        props[KaizenDB.AREA] = {'select': {'name': new_area}}
+        changes.append(f'領域: [{item[KaizenDB.AREA]}] → [{new_area}]')
 
     # なぜなぜ分析プロパティ（空文字指定でクリアも可能）
     if why1 is not None:
-        props['なぜ(1回目)'] = rich_text_prop(why1)
-        changes.append(f'なぜ(1回目): [{item["なぜ(1回目)"]}] → [{why1}]')
+        props[KaizenDB.WHY_1] = rich_text_prop(why1)
+        changes.append(f'なぜ(1回目): [{item[KaizenDB.WHY_1]}] → [{why1}]')
 
     if why2 is not None:
-        props['なぜ(2回目)'] = rich_text_prop(why2)
-        changes.append(f'なぜ(2回目): [{item["なぜ(2回目)"]}] → [{why2}]')
+        props[KaizenDB.WHY_2] = rich_text_prop(why2)
+        changes.append(f'なぜ(2回目): [{item[KaizenDB.WHY_2]}] → [{why2}]')
 
     if why3 is not None:
-        props['なぜ(3回目)'] = rich_text_prop(why3)
-        changes.append(f'なぜ(3回目): [{item["なぜ(3回目)"]}] → [{why3}]')
+        props[KaizenDB.WHY_3] = rich_text_prop(why3)
+        changes.append(f'なぜ(3回目): [{item[KaizenDB.WHY_3]}] → [{why3}]')
 
     if countermeasure is not None:
-        props['真の原因に対する対策'] = rich_text_prop(countermeasure)
-        changes.append(f'真の原因に対する対策: [{item["真の原因に対する対策"]}] → [{countermeasure}]')
+        props[KaizenDB.COUNTERMEASURE] = rich_text_prop(countermeasure)
+        changes.append(f'真の原因に対する対策: [{item[KaizenDB.COUNTERMEASURE]}] → [{countermeasure}]')
 
     if not props:
         print('[ERROR] 更新するプロパティを --status / --level / --area / --why1 / --why2 / --why3 / --countermeasure で指定してください。')
         sys.exit(1)
 
     notion_request('PATCH', f'/pages/{page["id"]}', {'properties': props}, token=token)
-    print(f'更新しました: {item["タイトル"]}')
+    print(f'更新しました: {item[KaizenDB.TITLE]}')
     for c in changes:
         print(f'  {c}')
 
@@ -579,20 +585,20 @@ def cmd_show(partial_title, token, db_id):
     page = resolve_single_page(partial_title, token, db_id)
     item = page_to_item(page)
 
-    print(f'== {item["タイトル"]} ==')
-    print(f'  対応レベル        : {item["対応レベル"] if item["対応レベル"] else "-"}')
-    print(f'  日付              : {item["日付"] if item["日付"] else "-"}')
-    print(f'  領域              : {item["領域"] if item["領域"] else "-"}')
-    print(f'  真因カテゴリ      : {item["真因カテゴリ"] if item["真因カテゴリ"] else "-"}')
-    print(f'  真因（要約）      : {item["真因（要約）"] if item["真因（要約）"] else "-"}')
-    print(f'  ステータス        : {item["ステータス"] if item["ステータス"] else "-"}')
-    print(f'  関連ファイル      : {item["関連ファイル"] if item["関連ファイル"] else "-"}')
+    print(f'== {item[KaizenDB.TITLE]} ==')
+    print(f'  対応レベル        : {item[KaizenDB.LEVEL] if item[KaizenDB.LEVEL] else "-"}')
+    print(f'  日付              : {item[KaizenDB.DATE] if item[KaizenDB.DATE] else "-"}')
+    print(f'  領域              : {item[KaizenDB.AREA] if item[KaizenDB.AREA] else "-"}')
+    print(f'  真因カテゴリ      : {item[KaizenDB.ROOT_CATEGORY] if item[KaizenDB.ROOT_CATEGORY] else "-"}')
+    print(f'  真因（要約）      : {item[KaizenDB.ROOT_SUMMARY] if item[KaizenDB.ROOT_SUMMARY] else "-"}')
+    print(f'  ステータス        : {item[KaizenDB.STATUS] if item[KaizenDB.STATUS] else "-"}')
+    print(f'  関連ファイル      : {item[KaizenDB.RELATED_FILES] if item[KaizenDB.RELATED_FILES] else "-"}')
     print(f'  作成日時          : {item["作成日時"]}')
     # なぜなぜ分析の過程
-    print(f'  なぜ(1回目)       : {item["なぜ(1回目)"] if item["なぜ(1回目)"] else "-"}')
-    print(f'  なぜ(2回目)       : {item["なぜ(2回目)"] if item["なぜ(2回目)"] else "-"}')
-    print(f'  なぜ(3回目)       : {item["なぜ(3回目)"] if item["なぜ(3回目)"] else "-"}')
-    print(f'  真の原因に対する対策: {item["真の原因に対する対策"] if item["真の原因に対する対策"] else "-"}')
+    print(f'  なぜ(1回目)       : {item[KaizenDB.WHY_1] if item[KaizenDB.WHY_1] else "-"}')
+    print(f'  なぜ(2回目)       : {item[KaizenDB.WHY_2] if item[KaizenDB.WHY_2] else "-"}')
+    print(f'  なぜ(3回目)       : {item[KaizenDB.WHY_3] if item[KaizenDB.WHY_3] else "-"}')
+    print(f'  真の原因に対する対策: {item[KaizenDB.COUNTERMEASURE] if item[KaizenDB.COUNTERMEASURE] else "-"}')
 
     # ページ本文を取得（ページネーション対応）
     blocks = []
@@ -677,7 +683,7 @@ def cmd_add_block(partial_title, text, token, db_id):
         })
 
     notion_request('PATCH', f'/blocks/{page["id"]}/children', {'children': blocks}, token=token)
-    print(f'ブロックを追記しました: {item["タイトル"]}')
+    print(f'ブロックを追記しました: {item[KaizenDB.TITLE]}')
     print(f'  [{today}] {text[:80]}{"..." if len(text) > 80 else ""}')
 
 
@@ -685,44 +691,52 @@ def cmd_add_block(partial_title, text, token, db_id):
 
 def cmd_migrate_add_columns(token, db_id):
     """
-    既存DBに分析過程プロパティ4つを追加する。
+    既存DBに分析過程プロパティ4つ + 対策実施日（date型）を追加する。
     既にプロパティが存在する場合はスキップ。
+
+    追加対象プロパティ（タプル: (プロパティ名, Notion型)）:
+      - なぜ(1回目)           : rich_text
+      - なぜ(2回目)           : rich_text
+      - なぜ(3回目)           : rich_text
+      - 真の原因に対する対策   : rich_text
+      - 対策実施日             : date
     """
     # 現在のDBスキーマを取得して既存プロパティを確認
     db_info = notion_request('GET', f'/databases/{db_id}', token=token)
     existing_props = set(db_info.get('properties', {}).keys())
 
-    # 追加対象プロパティ（rich_text型）
-    new_props = [
-        'なぜ(1回目)',
-        'なぜ(2回目)',
-        'なぜ(3回目)',
-        '真の原因に対する対策',
+    # 追加対象プロパティ（プロパティ名, Notion型）のタプルリスト
+    new_props_with_type = [
+        (KaizenDB.WHY_1,               'rich_text'),
+        (KaizenDB.WHY_2,               'rich_text'),
+        (KaizenDB.WHY_3,               'rich_text'),
+        (KaizenDB.COUNTERMEASURE,      'rich_text'),
+        (KaizenDB.IMPLEMENTATION_DATE, 'date'),
     ]
 
-    # 追加が必要なプロパティだけ抽出
-    to_add = [p for p in new_props if p not in existing_props]
+    # 追加が必要なプロパティだけ抽出（既存は除外）
+    to_add = [(p, t) for p, t in new_props_with_type if p not in existing_props]
 
     if not to_add:
         print('[INFO] 対象プロパティはすべて既に存在します。マイグレーション不要です。')
-        for p in new_props:
+        for p, _ in new_props_with_type:
             print(f'  ✓ {p}')
         return
 
-    # PATCH /databases/{id} でプロパティを追加
-    props_body = {p: {'rich_text': {}} for p in to_add}
+    # 型情報から動的に PATCH body を組み立てる
+    props_body = {p: {t: {}} for p, t in to_add}
     notion_request('PATCH', f'/databases/{db_id}', {'properties': props_body}, token=token)
 
     print(f'プロパティを追加しました ({len(to_add)}件):')
-    for p in to_add:
-        print(f'  + {p}')
+    for p, t in to_add:
+        print(f'  + {p} ({t})')
 
     # スキップしたプロパティを表示
-    skipped = [p for p in new_props if p in existing_props]
+    skipped = [(p, t) for p, t in new_props_with_type if p in existing_props]
     if skipped:
-        print(f'スキップ（既存）:')
-        for p in skipped:
-            print(f'  = {p}')
+        print('スキップ（既存）:')
+        for p, t in skipped:
+            print(f'  = {p} ({t})')
 
 
 # ---- --alerts ----
@@ -738,12 +752,12 @@ def cmd_alerts(token, db_id):
 
     for page in pages:
         item = page_to_item(page)
-        status = item['ステータス']
+        status = item[KaizenDB.STATUS]
 
         # 対策実施済み → 「対策実施日」から30日経過でアラート
         # 「対策実施日」が未設定の場合は「日付」にフォールバック
         if status == '対策実施済み':
-            date_str = item['対策実施日'] or item['日付']
+            date_str = item[KaizenDB.IMPLEMENTATION_DATE] or item[KaizenDB.DATE]
             if not date_str:
                 continue
             try:
@@ -752,11 +766,11 @@ def cmd_alerts(token, db_id):
                 continue
             elapsed_days = (today - impl_date).days
             if elapsed_days >= 30:
-                verification_due.append((elapsed_days, item['タイトル'], item['対応レベル'], date_str))
+                verification_due.append((elapsed_days, item[KaizenDB.TITLE], item[KaizenDB.LEVEL], date_str))
 
         # 30日検証中 → 一覧表示
         elif status == '30日検証中':
-            in_verification.append((item['タイトル'], item['対応レベル'], item['日付']))
+            in_verification.append((item[KaizenDB.TITLE], item[KaizenDB.LEVEL], item[KaizenDB.DATE]))
 
     has_alert = bool(verification_due or in_verification)
 
@@ -811,7 +825,7 @@ def main():
     parser.add_argument('--alerts', action='store_true',
                         help='30日検証期限のチェック')
     parser.add_argument('--migrate-add-columns', action='store_true',
-                        help='既存DBに分析過程プロパティ4つを追加する（一度だけ実行）')
+                        help='既存DBに分析過程プロパティ4つ + 対策実施日（date型）を追加する（一度だけ実行）')
 
     # --- --add 用オプション ---
     parser.add_argument('--level', default=None,
