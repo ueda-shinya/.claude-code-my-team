@@ -45,6 +45,9 @@
 ## アナリティクス
 - [knowledge/analytics/ga4-bounce-exit-analysis.md](../knowledge/analytics/ga4-bounce-exit-analysis.md) — GA4 バウンス率・離脱数の公式定義・解釈レベル・4ステップ分析・原因仮説マトリクス・報告テンプレート
 
+## Notionスクリプト
+- [knowledge/notion-scripts/batch-refactor-checklist.md](../knowledge/notion-scripts/batch-refactor-checklist.md) — Notion スクリプト一括改修（定数化・流儀統一等）の依頼文テンプレート・成功要素6つ・禁忌アンチパターン
+
 ## エージェント運用
 - [knowledge/agent-ops/background-agent-permissions.md](../knowledge/agent-ops/background-agent-permissions.md) — バックグラウンドエージェントはファイル書き込み権限プロンプトに応答できない。書き込みタスクはフォアグラウンドで実行する
 - [knowledge/claude-code-cli/session-continuation.md](../knowledge/claude-code-cli/session-continuation.md) — claude -p --resume の動作仕様・cwd依存・コスト・セッションファイル形式（2026-04-18 実機検証）
