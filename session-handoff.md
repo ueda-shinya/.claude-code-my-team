@@ -71,77 +71,77 @@
 
 ---
 
-## 🔷 次セッション再開ポイント（2026-04-21 kaizen Phase 1 完了）
+## ✅ kaizen Phase 1-A 完了（2026-04-22）
 
-**kaizen Phase 1 完了コミット: `0dc13c0` および Phase 0 コミット `c219940` push済み。Phase 1-A 第2弾（既存コード書き換え）or Phase 2 着手から再開。**
+**Phase 1-A は全バッチ完走・push済み。後続は P3/P4 タスクで個別実施。**
 
-### 本日の kaizen 進行状況
-1. **朝のブリーフィング**で議事録DBプロパティ名不整合（日時→日付）発覚 → 3ファイル修正（948830c）
-2. **kaizen 実施**（なぜなぜ分析→5名チーム協議→Notion案件化）
-   - 真因: 問題顕在化駆動の運用思想（予防欠落＋検知欠落）
-   - 採用5対策（S1 / SO2 / T1 / T3 / K1）＋Phase 0 掃除
-3. **Phase 0 完了** (`c219940`): audit-notion-props.py 監査スクリプト＋R3 でバグ3件発見・修正
-4. **Phase 1 完了** (`0dc13c0`):
-   - Phase 1-A（土台のみ）: notion_schema.py + test_notion_schema.py 新設・8DB対応
-   - Phase 1-B: CLAUDE.md「スキル出力の5状態契約」＋2スキルにチェックリスト追加
+### 完了コミット
+- 土台: `c219940` (Phase 0) / `0dc13c0` (Phase 1 土台)
+- バッチ1: `542be6f` (notion-radar + server.py)
+- バッチ2: `3a733de` (notion-projects)
+- バッチ3: `1139513` (notion-tasks)
+- バッチ4: `449978c` + `b82fcc0` (notion-ledger + notion-kaizen + optional_props削除)
+- バッチ5a: `7234706` (notion-crm)
+- バッチ5b: `5742908` (notion-sns) ← Phase 1-A 完了
 
-### 次セッションで着手する選択肢（いずれか）
+### 成果
+- 8 DB × 全スクリプトの Notion プロパティ名ハードコード → `notion_schema.py` 単一ソース集約
+- 約480件の日本語ハードコード文字列を定数参照化
+- `test_notion_schema.py`: 7 ok + 1 skip (SnsDB)
+- Notion案件「kaizen Phase 1-A」はステータス「完了」に更新済
 
-#### 選択肢A: Phase 1-A 第2弾（既存コード書き換え、P2）
-**目的**: notion_schema.py 土台を既存6ファイルから参照する形に置き換え、ハードコード分散を解消。
-
-**対象ファイル（Phase 0 監査で特定済）**:
-- `scripts/notion-tasks.py`（77件）
-- `scripts/notion-kaizen.py`（91件）
-- `scripts/notion-ledger.py`（94件）
-- `scripts/notion-crm.py`（72件）
-- `scripts/notion-projects.py`（49件）
-- `scripts/notion-sns.py`（81件）
-- `scripts/notion-radar.py`（36件）
-- `line-works-bot/scripts/server.py`（12件）
-
-**作業手順**:
-1. シュウに依頼: 1ファイルずつ `from notion_schema import XxxDB` で import → 定数参照に置換
-2. サクラレビュー → リナ検証（各ファイルごと、または束ねて）
-3. `python scripts/tests/test_notion_schema.py` で回帰確認
-4. コミット
-
-**注意**: ProjectsDB/SnsDB の .env 設定未実施。事前に `NOTION_PROJECTS_DB_ID` と `NOTION_SNS_DB_ID` を `.env` に追加推奨（シンヤさん作業）
-
-#### 選択肢B: Phase 2 着手（ガバナンス反転・可視化、P3）
-**目的**: 予防的ガバナンスと依存可視化の仕組み追加。Phase 1 が土台、Phase 2 で運用ルール反転。
-
-**Phase 2-A（T1）**: リナ事前レビュー関門の新設
-- CLAUDE.md に新セクション「Rina 事前レビュー」を追加（スキル/エージェント新規作成時の前段関門）
-- agents/logic-verifier.ja.md / .md に事前レビュー役割を追記（カナタ経由で英訳同期）
-- スコープ境界: 新規スキル/エージェント作成時のみ、CLAUDE.md改訂は既存ルール維持
-
-**Phase 2-B（K1）**: frontmatter `external_dependencies` 必須化
-- skill-creator / knowledge-to-skill テンプレートに外部依存宣言フィールド追加
-- Phase 1-A 完了後に着手推奨（schema_source が参照する notion_schema.py が必要）
-
-#### 選択肢C: 追加登録済み別タスク
-- **[kaizen Phase 3 発火ロジック]** morning-briefing-weekly への Phase 2-B 完了チェック組込（P3）
-- **session-handoff L387 既知バグ**: notion-tasks.py --add で種別・開始日・担当が見つからない問題（スキーマ不整合ではなくAPI構築ロジック側）
-
-### 推奨順序
-**A（Phase 1-A 第2弾）→ B（Phase 2）** が依存的に自然。Phase 1-A 第2弾は8ファイルあるのでセッション分割推奨（1〜2ファイルずつ）。
-
-### 関連ドキュメント
-- CLAUDE.md 138行目〜「スキル出力の5状態契約」（本日追加）
-- `reports/notion-props-audit-20260421.md`（Phase 0 監査レポート）
-- kaizen Notion案件: `[kaizen Phase 0/1-A/1-B/2-A/2-B/3]` + 追加「Phase 3 発火ロジック」
-
-### Notion案件ステータス一覧（kaizen関連）
+### Notion案件ステータス（kaizen関連・2026-04-22 時点）
 ```
 Phase 0        : 完了 (c219940)
-Phase 1-A      : 進行中（土台のみ完了・第2弾残）
+Phase 1-A      : 完了（全8ファイル完了・2026-04-22）
 Phase 1-B      : 完了 (0dc13c0)
 Phase 2-A      : 未着手 (P3)
 Phase 2-B      : 未着手 (P3)
 Phase 3        : 未着手 (P3)
 Phase 3 発火   : 未着手 (P3)
 ```
+
+---
+
+## 🟡 Phase 1-A 後続タスク（2026-04-22 新規登録・次セッション以降で消化）
+
+### P3-今月中
+1. **notion-* cmd_show 流儀統一（(key, label) タプル分離 + :12 揃え）**
+   - notion-crm.py は `row.items()` + :20、notion-ledger.py は (key, label) + :12 で不統一
+   - ledger 流儀に統一すれば5ファイル横展開で視覚一貫性向上
+2. **Notion置換バッチ標準チェックリスト恒久化**
+   - 本セッションで使った依頼文チェックリスト（High 予防実績あり）を memory/ or skills/ へ
+3. **server.py:682 デッドコード削除**（`'作業履歴'` プロパティ参照）
+   - 現行 TasksDB に該当プロパティなし・常に空返却のデッドコード
+4. **Phase 2-A** (リナ事前レビュー関門)、**Phase 2-B** (frontmatter external_dependencies)、**Phase 3**、**Phase 3 発火ロジック**
+5. **gsc-ga4-analyzer ステップ5 rev.8 着手**（別セッションで中断中、後述）
+6. **LINE WORKS Bot v3.4 再開**（別セッションで中断中、後述）
+
+### P4-いつかやる
+1. **Phase 1-B候補: Select オプション値ハードコード定数化**
+   - STATUS_OPTIONS / PRIORITY_OPTIONS 等、プロパティ名とは別軸で残存中
+2. **test_notion_schema.py SnsDB 未アクティブ注記コメント追加**（サクラ Medium 指摘）
+3. **内部dictキー定数化**（'最終編集日時' / '作成日時'）
+4. **既知バグ調査**（`notion-tasks.py --add` で 種別/開始日/担当、現在再現せず降格済）
+5. **SnsDB アクティブ化**（`.env` に NOTION_SNS_DB_ID 追加 → `--create-db` → test 8 ok/0 skip 到達）
+
+### 次セッション推奨着手順
+1. P3-1（cmd_show 流儀統一）: 5ファイル横展開、機械的作業で効率的
+2. P3-2（チェックリスト恒久化）: 今の記憶があるうちに memory/ へ残す
+3. P3-3（server.py:682 削除）: 小規模・独立・リスク低
+
+---
+
+## 📌 引き継ぎ時の重要な判断記録（2026-04-22）
+
+- **バッチ4で High 発生→再修正で承認**: 初回は page_to_item 戻り値 dict キーの流儀がバッチ2-3と不整合。再修正で解消。**バッチ5a/5b では依頼文チェックリスト明記で一発承認**できた
+- **SnsDB は未アクティブのまま Phase 1-A 完了宣言**: リナ判定「代替として import 成功 + test 整合で担保可」。アクティブ化は独立タスク
+- **各バッチで追加した定数**（notion_schema.py）:
+  - RadarDB.SOURCE, STATUS
+  - ProjectsDB.START_DATE
+  - KaizenDB.IMPLEMENTATION_DATE（マイグレ済）
+  - SnsDB.CATEGORY, TYPE, MEMO（未アクティブ状態で追加）
+- **シンヤさん手動実行済み**: `python scripts/notion-kaizen.py --migrate-add-columns`（2026-04-22）で KaizenDB に `対策実施日` を追加
 
 ---
 
