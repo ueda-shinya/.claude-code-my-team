@@ -145,42 +145,6 @@ Phase 3 発火   : 未着手 (P3)
 
 ---
 
-## 🔄 再起動後の動作確認（2026-04-19 search-analytics サブドメイン追加）
-
-**Claude Code 再起動で新 `.env` を MCP に読み込ませてから動作確認してください。**
-
-### 今回の変更
-- `.env` に officeueda_lp / officeueda_lpwp の2サイトを追加（GA4プロパティID・GSC URL・`ANALYTICS_SITES` 更新）
-- `.env` の GA4 MCP セクションを整理（セクションヘッダー・サイト別ブロック化）
-- `unified_analytics_server.py` を動的サイト化リファクタ済み（サクラ最終承認）
-- バックアップ: `.env.bak.20260420-234905`
-
-### 確認コマンド（再起動後）
-Claude Code 再起動後、以下を実行して4サイトすべてから応答が返るか確認:
-```
-gsc_top_queries で site="officeueda_lp" と site="officeueda_lpwp" を日付指定して呼び出す
-ga4_traffic_overview で同様に呼び出す
-```
-※ サブドメイン作成直後なのでデータは空でもOK。エラーにならず結果返却されればゼロの値で正常。
-
-### 未完了タスク（再起動後に実施）
-1. **code-edit-guard フックの現状調査**
-   - session-handoff.md L447-450 に「2026-04-18 warn-only に変更済み」と記載されているが、今セッション（2026-04-19）でシュウの `.py` 編集が Edit ブロックされた事象あり。warn-only化が本当に効いているか／別経路で止まっているか要確認
-2. **test_credentials.py の変数名統一**（フック対応後）
-   - L20-21 の `GSC_SITE_URL` / `GA4_PROPERTY_ID` を `OFFICEUEDA_*` フォールバック形式に変更
-   - シュウに差分確定済み（hook さえ通れば1分作業）
-3. **.env の officeueda / ussaijo を統一命名にリネーム**（上記②完了後）
-   - `GSC_SITE_URL` → `OFFICEUEDA_GSC_URL`
-   - `GA4_PROPERTY_ID` → `OFFICEUEDA_GA4_PROPERTY_ID`
-   - `MEBELCENTER_GSC_URL` → `USSAIJO_GSC_URL`
-   - `MEBELCENTER_GA4_PROPERTY_ID` → `USSAIJO_GA4_PROPERTY_ID`
-   - `.env` 冒頭コメントの TODO 注記も削除
-
-### 関連 Notion 案件
-「officeueda LP/LPWP サブドメインを解析ツールに登録」（P3-今月中）
-
----
-
 
 
 ## 🚨 最優先（2026-04-18 アスカのルール違反）: 未承認変更の差し戻し（C3 保留中）
