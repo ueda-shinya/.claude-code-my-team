@@ -12,6 +12,7 @@
 
 | ディレクトリ | クライアント | ステータス | 進行中の案件 |
 |---|---|---|---|
+| [compass/](compass/) | コンパス（わたなべ様） | 進捗中 | 明浄・奈良トランスポート・観光協会の複数案件 |
 | [lando-planning/](lando-planning/) | ランドプランニング | 進捗中 | LP制作・ホームコンシェルジュ事業構築 |
 | [officeueda/](officeueda/) | オフィスウエダ（自社） | 進捗中 | LP・GMC連携・AI事業 |
 | [us-saijo/](us-saijo/) | 株式会社US-SAIJO | 進捗中 | ECサイト立ち上げ |
@@ -23,6 +24,14 @@
 ---
 
 ## クライアント別 案件詳細
+
+### コンパス（わたなべ様）
+
+| 事業 | ディレクトリ | 案件 | 状況 |
+|---|---|---|---|
+| 明浄（or.jpサイト） | [biz-meijo/](compass/biz-meijo/) | サーバー・ドメイン移行 | 🔥 P1-即時（4月中） |
+| 奈良トランスポート | [biz-nara-transport/](compass/biz-nara-transport/) | `/hello-india` PDF配布 | 🔥 P1-即時（4/26本番） |
+| 観光協会 | [biz-kanko-kyokai/](compass/biz-kanko-kyokai/) | カテゴリ修正／ニュース一覧／ソーシャルウォール | 進行中 |
 
 ### ランドプランニング
 
