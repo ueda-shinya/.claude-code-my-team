@@ -1,6 +1,7 @@
-# コンパス
+# 株式会社COMPASS
 
 ## 概要
+- **会社名（正式）**: 株式会社COMPASS（CRM登録名と一致）
 - **窓口**: わたなべ様（指示者 / プロジェクトリーダー）
 - **関係**: エンドクライアントを束ねるプロジェクト管理元。シンヤは開発・制作担当として受注
 - **初回議事録**: 2026-04-24（[reports/20260424_compass-watanabe-meeting.md](../../reports/20260424_compass-watanabe-meeting.md) / [Notion](https://www.notion.so/34cb7112f5f881f88f2ce9d8e5643e13)）
@@ -20,4 +21,4 @@
 ## 運用ルール
 - 案件ごとに `biz-<name>/` 配下で管理
 - 議事録は `~/.claude/reports/YYYYMMDD_compass-*.md` に保存 → Notion議事録DBに登録
-- Notion案件管理DBでは `--client "コンパス"` で統一
+- Notion案件管理DBでは `--client "株式会社COMPASS"` で統一（CRMと同名寄せ）
