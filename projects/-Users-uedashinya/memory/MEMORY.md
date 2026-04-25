@@ -13,3 +13,5 @@
 - [営業資料はストーリー先行](feedback-sales-material-flow.md) — タクでストーリー設計→ソラでスライド化の順。デザインから入らない
 - [シンヤさんの本名](user-shinya-name.md) — 上田 伸也（「晋也」は誤り）
 - [Notionスクリプト設計原則](../knowledge/notion-scripts/design-principles.md) — DB作成コマンドの冪等性必須・.env依存の注意点
+- [セッション一覧は生出力を貼り直す](feedback-session-list-format.md) — 折りたたみ対策で本文に全件テキスト貼り直し（3行/件の生形式維持）
+- [セッション一覧は1行形式](feedback-session-list-format.md) — session-browser.pyの結果は1エントリ1行に圧縮して表示する

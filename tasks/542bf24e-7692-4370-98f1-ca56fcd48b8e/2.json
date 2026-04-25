@@ -1,0 +1,13 @@
+{
+  "id": "2",
+  "subject": "リクによる業種調査ファクトチェック",
+  "description": "ミオの業種変化調査結果の数値・出典検証。Deliverable Quality Gate準拠。",
+  "activeForm": "リクファクトチェック中",
+  "status": "completed",
+  "blocks": [
+    "3"
+  ],
+  "blockedBy": [
+    "1"
+  ]
+}

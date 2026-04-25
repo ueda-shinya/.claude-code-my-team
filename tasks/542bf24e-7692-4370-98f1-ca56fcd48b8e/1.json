@@ -1,0 +1,11 @@
+{
+  "id": "1",
+  "subject": "ミオ業種変化調査フォアグラウンド実行",
+  "description": "2026-2030年に変化が大きい／Web・デジタル需要が急増する業種の特定。6軸観点でロングリスト10-15→ショート3-5→推奨2-3業種の詳細分析。保存先：~/.claude/clients/officeueda/reports/20260422_industry-selection-research.md",
+  "activeForm": "ミオ業種変化調査中",
+  "status": "completed",
+  "blocks": [
+    "2"
+  ],
+  "blockedBy": []
+}

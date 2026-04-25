@@ -1,0 +1,13 @@
+{
+  "id": "5",
+  "subject": "Competitive Absence Audit 発動（建設業・歯科医院）",
+  "description": "建設業・歯科医院の2業種それぞれに6仮説マトリクス検証を実施。仮説B（需要なし）の検証が「×」になるまで戦略確定しない。",
+  "activeForm": "競合不在監査実施中",
+  "status": "in_progress",
+  "blocks": [
+    "3"
+  ],
+  "blockedBy": [
+    "4"
+  ]
+}
