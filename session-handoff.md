@@ -105,17 +105,15 @@ Phase 3 発火   : 未着手 (P3)
 
 ## 🟡 Phase 1-A 後続タスク（2026-04-22 新規登録・次セッション以降で消化）
 
-### P3-今月中
-1. **notion-* cmd_show 流儀統一（(key, label) タプル分離 + :12 揃え）**
-   - notion-crm.py は `row.items()` + :20、notion-ledger.py は (key, label) + :12 で不統一
-   - ledger 流儀に統一すれば5ファイル横展開で視覚一貫性向上
-2. **Notion置換バッチ標準チェックリスト恒久化**
-   - 本セッションで使った依頼文チェックリスト（High 予防実績あり）を memory/ or skills/ へ
-3. **server.py:682 デッドコード削除**（`'作業履歴'` プロパティ参照）
-   - 現行 TasksDB に該当プロパティなし・常に空返却のデッドコード
-4. **Phase 2-A** (リナ事前レビュー関門)、**Phase 2-B** (frontmatter external_dependencies)、**Phase 3**、**Phase 3 発火ロジック**
-5. **gsc-ga4-analyzer ステップ5 rev.8 着手**（別セッションで中断中、後述）
-6. **LINE WORKS Bot v3.4 再開**（別セッションで中断中、後述）
+### ✅ P3-今月中 完了分（2026-04-25）
+- **P3-1 notion-* cmd_show 流儀統一** → コミット `b237630`（5ファイル、+77/-43行、サクラ承認）
+- **P3-2 Notion置換バッチ標準チェックリスト恒久化** → コミット `ed8f7cd`（`knowledge/notion-scripts/batch-refactor-checklist.md`、リナ承認）
+- **P3-3 server.py:682 デッドコード削除** → コミット `a007a15`（9行削除、サクラ承認）
+
+### P3-今月中 残タスク
+1. **Phase 2-A** (リナ事前レビュー関門)、**Phase 2-B** (frontmatter external_dependencies)、**Phase 3**、**Phase 3 発火ロジック**
+2. **gsc-ga4-analyzer ステップ5 rev.8 着手**（別セッションで中断中、後述）
+3. **LINE WORKS Bot v3.4 再開**（別セッションで中断中、後述）
 
 ### P4-いつかやる
 1. **Phase 1-B候補: Select オプション値ハードコード定数化**
@@ -125,10 +123,10 @@ Phase 3 発火   : 未着手 (P3)
 4. **既知バグ調査**（`notion-tasks.py --add` で 種別/開始日/担当、現在再現せず降格済）
 5. **SnsDB アクティブ化**（`.env` に NOTION_SNS_DB_ID 追加 → `--create-db` → test 8 ok/0 skip 到達）
 
-### 次セッション推奨着手順
-1. P3-1（cmd_show 流儀統一）: 5ファイル横展開、機械的作業で効率的
-2. P3-2（チェックリスト恒久化）: 今の記憶があるうちに memory/ へ残す
-3. P3-3（server.py:682 削除）: 小規模・独立・リスク低
+### 次セッション推奨着手順（残タスクのみ）
+1. Phase 2-A（リナ事前レビュー関門）: kaizen 本流の続き
+2. gsc-ga4-analyzer ステップ5 rev.8: 中断中セッションの再開
+3. LINE WORKS Bot v3.4: 中断中セッションの再開
 
 ---
 
