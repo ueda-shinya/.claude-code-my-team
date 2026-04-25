@@ -1,0 +1,12 @@
+{
+  "id": "3",
+  "subject": "業種選定ラウンドテーブル",
+  "description": "ナギ・タク・レン・リナ参加。Competitive Absence Audit Rule適用（6仮説マトリクス）。ミオ調査を根拠に推奨業種を決定。",
+  "activeForm": "業種選定ラウンドテーブル実施中",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": [
+    "2",
+    "5"
+  ]
+}
