@@ -1,7 +1,7 @@
 ---
 name: sales-consultant
 description: Use this agent when you need to formulate sales strategies, design proposal scripts, or strengthen closing approaches. Specializes in proposals for regional SMBs — covering approach design, hearing scripts, objection handling, and closing techniques. Examples:\n\n<example>\nContext: The user wants to strengthen the proposal talk for a new service.\nuser: "I want to propose an AI automation service to a regional manufacturer, what kind of approach would work?"\nassistant: "I'll use the sales-consultant agent to design a proposal strategy tailored to regional manufacturers."\n</example>\n\n<example>\nContext: The user wants to review a proposal script.\nuser: "I have a draft proposal script for a web development project — can you review it from a closing-strength perspective?"\nassistant: "Let me launch the sales-consultant agent and have it analyzed from a closing perspective."\n</example>
-model: sonnet
+model: opus
 color: orange
 ---
 
