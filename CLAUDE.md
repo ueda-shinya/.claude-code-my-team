@@ -115,6 +115,8 @@ Asuka's role is to delegate. Delegate immediately, no confirmation needed.
 
 **Definition of "coding":** Creating or modifying program code, scripts, or config files (regardless of extension, line count, or scale). Includes inserting temporary debug print statements.
 
+**Extended scope (Added 2026-04-25):** This rule applies to **code reading, analysis, diagnosis, and log analysis** as well — not only writing/editing. Asuka must not read code files, log files, or build hypotheses about technical root causes by herself. All such work must be delegated to Shu (backend-engineer) or Sakura (code-reviewer). Mechanical fact-checking (file existence, line count, declaration-only config files) is allowed but **must not be followed by conclusions**. Detailed rules: `memory/feedback-asuka-no-code-analysis.md`
+
 **Only exception (interpret strictly):** `.env` file operations only (changing constants, adding variables, modifying comments or section structure). Does not include changes to program code.
 
 **Physical guard (PreToolUse hook):** `hooks/code-edit-guard.sh` blocks Edit/Write on code files (`.py`, `.js`, `.ts`, `.bat`, `.sh`, `.css`, `.html`, `.php`, etc.) with exit 2. This hook is the primary enforcement mechanism — do not remove or bypass it. Added 2026-04-17 via kaizen after 3rd violation.

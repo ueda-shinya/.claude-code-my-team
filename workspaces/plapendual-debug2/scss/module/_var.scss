@@ -1,0 +1,64 @@
+@use 'mediaqueries' as *;
+
+:root {
+  --color-white: #fff;
+  --color-gray: #15191f;
+  --color-gray2: #545f68;
+  --color-gray3: #666666;
+  --color-gray4: #dadee9;
+  --color-black: #333;
+  --color-black2: #000;
+  --color-pink: #de008d;
+  --color-green: #00a99d;
+  --color-blue: #3d3d4b;
+  --color-blue2: #6678a7;
+  --color-blue3: #292944;
+  --color-blue4: #15191f;
+  --color-red: #F43500;
+  --color-orange: #f15a24;
+  --color-yellow: #ECF812;
+  --color-bg1: #f5f8f8;
+  --color-bg2: #f6f7fb;
+  --color-bg3: #E5F6FF;
+
+  --shadow-pink: 255 115 162;
+  //#ff73a2;
+  --shadow-blue: 2 94 255;
+  // #035eff
+
+  --font-normal: 300;
+  --font-bold: 600;
+
+  --gradient-start-color: #FE9F01;
+  --gradient-end-color: #FF5401;
+  --bg-gradient: linear-gradient(135deg, var(--gradient-start-color), var(--gradient-end-color));
+  --bg-gradient1: linear-gradient(90deg, rgba(10, 148, 176, 1), rgba(10, 148, 255, 1) 45%, rgba(10, 148, 176, 1) 70% 89%, rgba(255, 86, 182, 1));
+  --bg-gradient-gray: linear-gradient(90deg, var(--color-gray),  var(--color-gray2));
+
+  // responsiv imgC
+  --base-width: 7.5;
+  // --base-width: 3.75;
+
+  img{
+    margin-inline: auto;
+    width: min(var(--width) /var(--base-width)*1vw, calc(var(--width) *1px));
+    // @include mq-o(tab) {
+    //   width: min(var(--width)*2 /var(--base-width)*1vw, calc(var(--width)*2 *1px));
+    // }
+  }
+}
+
+
+
+// rem
+@function rem($px) {
+	@return calc($px / 16) * 1rem;
+}
+// letter-spacing
+@mixin ls($string) {
+	letter-spacing: calc($string / 1000)+em;
+}
+// line-height
+@mixin lh($height , $size) {
+	line-height: calc($height / $size);
+}

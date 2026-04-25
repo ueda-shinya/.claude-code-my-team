@@ -1,0 +1,46 @@
+// メディアクエリ
+$breakpoint: (
+  sp: 375,
+  max-sp: 'max-width: 375px',
+  min-sp: 'min-width: 376px',
+  tab: 750,
+  max-tab: 'max-width: 768px',
+  min-tab: 'min-width: 769px',
+  pc: 1200,
+  max-pc: 'max-width: 1200px',
+  min-pc: 'min-width: 1201px',
+);
+
+@function mq-clamp($min, $max) {
+  $sum : calc(map-get($breakpoint, pc) - map-get($breakpoint, sp));
+  $variablePart: calc($max - $min) / $sum;
+  $constant : ($max - map-get($breakpoint, pc) * $variablePart) / 16 * 1rem;
+  @return clamp($min / 16 * 1rem, $constant + (100 * $variablePart *1vw), $max /16  * 1rem);
+  // @return clamp($min * 1px, calc(100vw - map-get($breakpoint, sp)*1px) * 10 / $sum + $min * 1px, $max * 1px);
+}
+@mixin mq-u($bp) {
+  @media ( width <= #{map-get($breakpoint, $bp)+px}) {
+    @content;
+  }
+}
+@mixin mq-o($bp) {
+  @media ( #{map-get($breakpoint, $bp)+px} < width) {
+    @content;
+  }
+}
+@mixin mq-w($bp-min, $bp-max) {
+  @media ( #{map-get($breakpoint, $bp-min)+px} < width <= #{map-get($breakpoint, $bp-max)+px}) {
+    @content;
+  }
+}
+
+@mixin mq($bp) {
+  @media screen and (#{map-get($breakpoint, $bp)}) {
+    @content;
+  }
+}
+@mixin mq-within($screen-min, $screen-max) {
+  @media screen and (#{map-get($breakpoint, $screen-min)}) and (#{map-get($breakpoint, $screen-max)}) {
+    @content;
+  }
+}

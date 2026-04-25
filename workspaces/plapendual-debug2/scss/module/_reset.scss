@@ -1,0 +1,83 @@
+/* -----------------------------------------------------------------
+
+ #01　リセット
+
+ ------------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+  font-style: normal;
+  text-decoration: none;
+  margin: 0; /* マージンは0に */
+  padding: 0; /* パディングも常に0に */
+  box-sizing: border-box; /* もちろん、より直感的なbox-sizingに設定 */
+}
+
+html {
+  // font-size: 62.5%;
+  // line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: normal;
+}
+
+ol,
+ul,
+dl {
+  list-style: none;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+fieldset {
+  border: 0;
+}
+
+object {
+  border-style: none;
+  outline: medium none;
+}
+
+p {
+  // text-align: left;
+  /* font-size: 1.3em; */
+}
+
+span {
+  font-size: 1em;
+  text-align: left;
+}
+
+//
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+a {
+  img {
+    border-style: none;
+    outline: medium none;
+  }
+}
+
+video {
+  display: block;
+}
+
+img {
+  border: 0;
+  vertical-align: bottom;
+}
+
+video,
+img {
+  width: 100%;
+  height: auto;
+}

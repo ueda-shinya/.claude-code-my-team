@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * セッション初期化モジュール。
  * session_start() より前に必ず require する。
- * index.php / submit.php の両エントリポイントで共通利用する。
+ * contact.php / submit.php の両エントリポイントで共通利用する。
  */
 session_set_cookie_params([
   'lifetime' => 0,

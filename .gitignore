@@ -71,3 +71,7 @@ google-oauth-token*.json
 mcp-google-calendar-token.json
 history.jsonl
 mcp-servers/
+
+# ── GitHub 100MB上限超のファイル ─────────────────────────
+workspaces/plapendual/mov/cont08_06.mp4
+workspaces/plapendual-debug2/mov/cont08_06.mp4

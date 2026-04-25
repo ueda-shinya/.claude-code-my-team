@@ -1,0 +1,173 @@
+/**
+ * clamp関数の文字列を返す
+ *
+ * @param {Number} $size-at-min-width - 最小画面幅での要素のサイズ (px|rem|emなど)
+ * @param {Number} $size-at-max-width - 最大画面幅での要素のサイズ (px|rem|emなど)
+ * @param {Number} $min-width [optional] - 最小画面幅 (デフォルト: $min-width-default)
+ * @param {Number} $max-width [optional] - 最大画面幅 (デフォルト: $max-width-default)
+ * @return {String} CSS clamp関数を含む計算式
+ *
+ * @description
+ * 画面幅に応じて値が滑らかに変化するレスポンシブな値を生成します。
+ * 例えば、フォントサイズやマージン、パディングなどの値を画面幅に応じて
+ * 自動的に調整することができます。
+ *
+ * @example
+ *   // フォントサイズを16pxから24pxまで可変させる
+ *   font-size: clamp-calc(16px, 24px);
+ *
+ *   // マージンを2remから4remまで可変させる（画面幅768px～1200px）
+ *   margin: clamp-calc(2rem, 4rem, 768px, 1200px);
+ *
+ * @note
+ * - 引数の単位は一貫している必要はありません（px, rem等が混在可能）
+ * - 内部で全ての値をpxに変換して計算を行います
+ * - 返り値は入力された$size-at-min-widthと同じ単位で返されます
+ * - 負の値（マイナスマージンなど）にも対応しています
+ *
+ * @implementation
+ * 1. 入力値を全てpxに変換
+ * 2. 線形の傾きを計算
+ * 3. y軸との交点を計算
+ * 4. 必要に応じて最小値と最大値を入れ替え
+ * 5. 元の単位に変換して最終的なclamp関数を構築
+ */
+$base-font-size: 16px !default; // 基準となるフォントサイズ
+$min-width-default: 375px; // デフォルトの最小画面幅
+$max-width-default: 750px; // デフォルトの最大画面幅
+@function clamp-calc(
+  $size-at-min-width,
+  $size-at-max-width,
+  $min-width: $min-width-default,
+  $max-width: $max-width-default
+) {
+  // 基準となる単位を格納 （返り値は、この基準単位で返す）
+  $base-unit: unit($size-at-min-width);
+  // 全値をpxに変換して計算の統一性を確保
+  $size-at-min-width: convert-to-px($size-at-min-width);
+  $size-at-max-width: convert-to-px($size-at-max-width);
+  $min-width: convert-to-px($min-width);
+  $max-width: convert-to-px($max-width);
+
+  // レスポンシブな変化の傾きを計算
+  // (最大サイズ - 最小サイズ) / (最大幅 - 最小幅)
+  $slope: calc(($size-at-max-width - $size-at-min-width) / ($max-width - $min-width));
+
+  // y軸との交点を計算（線形方程式のy切片）
+  // y = mx + b の b を求める
+  $y-axis-intersection: -1 * $min-width * $slope + $size-at-min-width;
+  // 小数点以下3桁で四捨五入
+  $y-axis-intersection: round-decimal($y-axis-intersection, 3);
+  // $slope（傾き）が単位なしの数値なので、単位をvwにする
+  $slope-vw: calc($slope * 100vw);
+  // 小数点以下3桁で四捨五入（必須ではないが、ブラウザの検証ツールで見た時に数値が短く済むように使用）
+  $slope-vw: round-decimal($slope-vw, 3);
+
+  // 傾斜が逆方向になる場合、clamp関数の引数の最小値と最大値を入れ替える
+  // ※例えば、マイナスマージンで画面幅が広い時に絶対値での数値が大きい場合に発生する。
+  // 　入れ替えないと、画面幅に関係なくサイズの最小値が適用されてしまう。
+  @if $size-at-max-width < $size-at-min-width {
+    $temp-max: $size-at-max-width;
+    $temp-min: $size-at-min-width;
+    $size-at-max-width: $temp-min;
+    $size-at-min-width: $temp-max;
+  }
+  // 基準単位がremの場合は、結果をremに変換
+  @if $base-unit == 'rem' {
+    $size-at-min-width: convert-to-rem($size-at-min-width);
+    $size-at-max-width: convert-to-rem($size-at-max-width);
+    $y-axis-intersection: convert-to-rem($y-axis-intersection);
+  }
+  // 最終的なclamp関数を構築して返す
+  @return clamp(#{$size-at-min-width}, #{$y-axis-intersection} + #{$slope-vw}, #{$size-at-max-width});
+}
+
+/**
+ * 与えられた値をピクセル(px)単位に変換する関数
+ *
+ * @param {Number} $value - 変換したい値（rem または px）
+ * @return {Number} 変換後のピクセル値
+ *
+ * @example
+ *   convert-to-px(1.5rem)  // 24px ($base-font-size が 16px の場合)
+ *   convert-to-px(20px)    // 20px (そのまま返される)
+ *   convert-to-px(2em)     // 2em (非対応の単位はそのまま返される)
+ *
+ * @description
+ * - rem単位の場合: $base-font-sizeを基準にしてpxに変換
+ * - px単位の場合: 値をそのまま返す
+ * - その他の単位: 変換せずそのまま返す
+ *
+ * @throws {Error} $base-font-size が定義されていない場合にエラー
+ */
+@function convert-to-px($value) {
+  $unit: unit($value);
+
+  @if $unit == 'rem' {
+    @return calc($value / 1rem * $base-font-size);
+  } @else if $unit == 'px' {
+    @return $value;
+  }
+  @return $value; // その他の単位の場合はそのまま返す
+}
+
+/**
+ * ピクセル(px)単位の値をrem単位に変換する関数
+ *
+ * @param {Number} $px-value - 変換したい値（px または rem）
+ * @return {Number} 変換後のrem値
+ *
+ * @example
+ *   convert-to-rem(16px)   // 1rem ($base-font-size が 16px の場合)
+ *   convert-to-rem(24px)   // 1.5rem ($base-font-size が 16px の場合)
+ *   convert-to-rem(1.5rem) // 1.5rem (そのまま返される)
+ *   convert-to-rem(2em)    // 2em (非対応の単位はそのまま返される)
+ *
+ * @description
+ * - px単位の場合: $base-font-sizeを基準にしてremに変換
+ * - rem単位の場合: 値をそのまま返す
+ * - その他の単位: 変換せずそのまま返す
+ *
+ * @note
+ * - レスポンシブデザインに適したrem単位への変換に使用
+ * - $base-font-size はグローバルで定義されている必要がある
+ *
+ * @throws {Error} $base-font-size が定義されていない場合にエラー
+ */
+@function convert-to-rem($px-value) {
+  @if unit($px-value) == 'px' {
+    $number: calc($px-value / 1px);
+    @return calc($number / ($base-font-size / 1px)) + rem;
+  } @else if unit($px-value) == 'rem' {
+    @return $px-value;
+  }
+  @return $px-value; // その他の単位の場合はそのまま返す
+}
+
+/*
+ * 補助関数：小数点以下の指定した桁数で四捨五入する関数
+ */
+@function round-decimal($value, $decimal-place) {
+  // 四捨五入する値($value)を10の小数点以下桁数累乗倍する
+  $temp-value: calc($value * pow(10, $decimal-place));
+  // 累乗倍した数値で四捨五入(roundは小数点以下の指定ができない)
+  $temp-value: round($temp-value);
+  // 四捨五入した値を再度同じ10の累乗倍の数値で割った数値を返す
+  @return calc($temp-value / pow(10, $decimal-place));
+}
+
+/*
+ * 補助関数：累乗を計算する関数
+ * 引数：$number 底となる数
+ *      $exponent 指数（正の整数のみ対応）
+ */
+@function pow($number, $exponent) {
+  $value: 1;
+
+  @if $exponent > 0 {
+    @for $i from 1 through $exponent {
+      $value: $value * $number;
+    }
+  }
+  @return $value;
+}

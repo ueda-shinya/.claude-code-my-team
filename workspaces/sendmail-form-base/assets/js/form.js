@@ -36,7 +36,6 @@ async function fetchAddress(zip) {
   }
 
   zipHint.textContent = '検索中...'
-  zipHint.className = 'field-hint'
 
   // L16: AbortSignal.timeout でタイムアウト設定
   const signal = typeof AbortSignal !== 'undefined' && AbortSignal.timeout
@@ -89,8 +88,27 @@ const validators = {
     message: 'お名前を入力してください。',
   },
   tel: {
-    validate: (v) => v !== '' && /^[\d\-０-９ー]+$/.test(v),
-    message: '電話番号は数字とハイフンのみ入力してください。',
+    validate: (v) => {
+      if (v === '') return false
+      if (!/^[0-9\-]+$/.test(v)) return false
+      const digits = v.replace(/-/g, '')
+      // 先頭3-4桁で携帯・IP電話・フリーダイヤル(0800)か固定電話かを判定し、桁数を検証する
+      if (/^(090|080|070|050|0800)/.test(digits)) {
+        return /^0\d{10}$/.test(digits) // 携帯・IP電話・フリーダイヤル(0800): 11桁必須
+      }
+      return /^0\d{9}$/.test(digits) // 固定電話: 10桁必須
+    },
+    // 形式エラーと桁数エラーを分けて表示するため、メッセージは getErrorMessage で決定
+    message: null,
+    getErrorMessage: (v) => {
+      if (v === '') return '電話番号を入力してください。'
+      if (!/^[0-9\-]+$/.test(v)) return '電話番号の形式が正しくありません。'
+      const digits = v.replace(/-/g, '')
+      if (/^(090|080|070|050|0800)/.test(digits)) {
+        return '携帯電話・フリーダイヤル(0800)（090, 080, 070, 050, 0800）は11桁で入力してください。'
+      }
+      return '固定電話番号は10桁で入力してください。'
+    },
   },
   email: {
     validate: (v) => v !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
@@ -123,7 +141,11 @@ function validateField(input) {
   const value  = input.type === 'checkbox' ? input.checked : input.value.trim()
   const isValid = rule.validate(value)
 
-  setFieldError(input, isValid ? '' : rule.message)
+  // getErrorMessage が定義されている場合は動的メッセージを使用（tel 等）
+  const message = isValid
+    ? ''
+    : (rule.getErrorMessage ? rule.getErrorMessage(value) : rule.message)
+  setFieldError(input, message)
   return isValid
 }
 
@@ -173,15 +195,15 @@ form.addEventListener('submit', async (e) => {
 
   try {
     const res = await fetch(form.action, {
-      method: 'POST',
-      body:   new FormData(form),
+      method:  'POST',
+      body:    new FormData(form),
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }, // サーバー側 AJAX 判定に使用
     })
     const json = await res.json()
 
     if (json.success) {
-      showFormMessage(json.message, 'success')
-      form.reset()
-      submitBtn.disabled = true
+      window.location.replace('./thanks.html') // ブラウザ履歴を汚さない（戻るボタンで再送信誘発を防止）
+      return
     } else {
       showFormMessage(json.message, 'error')
       submitBtn.disabled = !privacyCb.checked
@@ -196,7 +218,7 @@ form.addEventListener('submit', async (e) => {
 
 function showFormMessage(message, type) {
   formMsg.textContent = message
-  formMsg.className   = `form-message form-message--${type}`
+  formMsg.className   = `c-form-message c-form-message--${type}`
   formMsg.hidden      = false
   formMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
 }
@@ -204,5 +226,5 @@ function showFormMessage(message, type) {
 function hideFormMessage() {
   formMsg.hidden    = true
   formMsg.textContent = ''
-  formMsg.className   = 'form-message'
+  formMsg.className   = 'c-form-message'
 }

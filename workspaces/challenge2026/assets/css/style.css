@@ -1,0 +1,379 @@
+@charset "UTF-8";
+
+/* 変数の定義 */
+:root {
+  --content-width: 750px;
+  --min-content-width: 375px;
+}
+html {
+  scroll-behavior: smooth;
+  /* コンテンツ幅でのフォントサイズ */
+  font-size: clamp(1px, calc(32 / 750 * 100vw), 32px);
+  background-color: white;
+}
+
+body {
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  padding-bottom: clamp(1px, calc(98 / 750 * 100vw), 98px);
+  box-shadow: 0 0 8px rgba(33, 33, 33, 0.5);
+}
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+h1 {
+  display: block;
+}
+h2 {
+  text-align: center;
+  font-size: 1.7rem;
+  margin-bottom: 1em;
+  font-weight: bolder;
+}
+form {
+  padding: clamp(1px, calc(64 / 750 * 100vw), 64px) 8%;
+  line-height: 1.3;
+  font-weight: 700;
+}
+form div {
+  margin-bottom: 0.5em;
+}
+
+fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1em;
+}
+fieldset legend {
+  margin-bottom: 0.5em;
+}
+fieldset label {
+  display: block;
+  margin-right: 1em;
+}
+label {
+  margin-bottom: 0.5em;
+  font-weight: 400;
+}
+div label {
+  font-weight: 700;
+}
+select,
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+textarea {
+  width: 100%;
+  border: solid 1px #b4882a;
+  line-height: 1.5;
+  margin-bottom: 1em;
+  font-weight: 500;
+}
+select:focus-visible,
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+input[type="tel"]:focus-visible,
+textarea:focus-visible {
+  border: solid 1px blue;
+}
+.school {
+  margin-bottom: 1em;
+}
+.school input {
+  margin-bottom: 0.5em;
+}
+.school small {
+  font-weight: 400;
+  line-height: 1.3;
+}
+button {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.5em 3em;
+  font-size: 1.5rem;
+  color: black;
+  font-weight: 500;
+  border-radius: 1em;
+  background-color: orange;
+  filter: drop-shadow(0 0.3em 0.2em rgba(33, 33, 33, 0.5));
+  transition: 0.3s;
+}
+button:hover {
+  opacity: 0.6;
+}
+footer {
+  max-width: var(--content-width);
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  z-index: 999;
+}
+footer a.line {
+  width: 26.7%;
+}
+footer a.apply {
+  width: 46.6%;
+}
+footer a.tel {
+  width: 26.7%;
+}
+footer a {
+  transition: 0.3s;
+}
+footer a:hover {
+  /* opacity: 0.6; */
+}
+.cta-area {
+  position: relative;
+}
+.cta-btns {
+  display: block;
+  width: 100%;
+  position: absolute;
+  z-index: 99;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.cta-btns.lp_02-btns {
+  bottom: clamp(1px, calc(70 / 750 * 100vw), 70px);
+}
+.cta-btns.lp_08-btns {
+  bottom: clamp(1px, calc(120 / 750 * 100vw), 120px);
+}
+.cta-btns.lp_10-btns {
+  bottom: clamp(1px, calc(90 / 750 * 100vw), 90px);
+}
+.cta-btns a {
+  display: block;
+  width: 99%;
+  position: relative;
+  margin-inline: auto;
+}
+.cta-btns.page05-btns .btn-tel_a,
+.cta-btns.page04-btns .btn-tel_a,
+.cta-btns.fv-btns .btn-tel_a {
+  width: 100%;
+  margin-inline: auto;
+}
+.cta-btns.page05-btns .btn-mail_a,
+.cta-btns.page04-btns .btn-mail_a,
+.cta-btns.fv-btns .btn-mail_a {
+  width: 99%;
+  margin-inline: auto;
+}
+.cta-schools {
+  width: 100%;
+  position: absolute;
+  top: clamp(1px, calc(1725 / 750 * 100vw), 1725px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.cta-schools .cta-btns.schools-btns {
+  position: relative;
+  width: 94%;
+  margin-inline: auto;
+  left: unset;
+  transform: unset;
+  justify-content: space-between;
+}
+.cta-btns.schools-btns .btn-school_a {
+  width: calc(177 / 350 * 100vw);
+  max-width: 354px;
+}
+.btn-cta_img {
+  /* width: 91.73%; */
+  width: 100%;
+  /* position: absolute; */
+  /* left: 50%; */
+  /* transform: translateX(-50%); */
+  z-index: 99;
+}
+.cta-fv {
+  bottom: clamp(1px, calc(10 / 375 * 100vw), 20px);
+}
+.cta-page3 {
+  top: clamp(1px, calc(1150 / 375 * 100vw), 2300px);
+}
+a {
+  transition: 0.3s;
+}
+a:hover {
+  /* opacity: 0.6; */
+}
+a img {
+  transition: 0.3s;
+}
+a:hover img {
+  opacity: 0.8;
+  filter: hue-rotate(30deg) /* 位相ずらし */ saturate(0.6) /* 彩度↓ */
+    brightness(1.3) /* 明度↑ */ contrast(0.9);
+}
+/*  */
+
+.footer_a {
+  display: block;
+  position: fixed;
+  width: clamp(1px, calc(727 / 750 * 100vw), 727px);
+  height: auto;
+  bottom: 2px;
+  z-index: 999;
+  margin: 0 auto;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+.footer_a {
+  /* 初期表示状態 */
+  opacity: 1;
+  /* transform: translateY(0); */
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+  will-change: opacity, transform; /* スクロール連動のパフォーマンス補助 */
+}
+
+/* 非表示アニメーション状態 */
+.footer_a.is-hidden {
+  opacity: 0;
+  transform: translate(
+    -50%,
+    clamp(1px, calc(160 / 750 * 100vw), 160px)
+  ); /* 少し沈む感じ。不要なら 0 に */
+  pointer-events: none;
+}
+
+/* アニメーションを好まないユーザー配慮 */
+@media (prefers-reduced-motion: reduce) {
+  .footer_a {
+    transition: none !important;
+  }
+}
+
+/*  */
+.p-thanks {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-top: 32px;
+  padding-inline: 5%;
+  font-size: 1.2rem;
+}
+.p-thanks h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  border-bottom: 3px solid rgb(255, 194, 43);
+  padding-bottom: 0.5em;
+  margin-bottom: 1.5em;
+  text-align: center;
+}
+
+.p-thanks p {
+  margin-bottom: 1.2em;
+  text-align: justify;
+}
+
+.p-thanks .tel {
+}
+.p-thanks .time {
+}
+
+.p-thanks .cta {
+  margin-top: 2.5em;
+  text-align: center;
+}
+
+.p-thanks .cta a {
+  display: inline-block;
+  background-color: rgb(255, 194, 43);
+  color: #000;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 1em 2.5em;
+  border-radius: 9999px;
+  font-size: 24px;
+  transition: all 0.3s ease;
+}
+
+.p-thanks .cta a:hover {
+  opacity: 0.6;
+}
+
+/*  */
+.cta-page1_a {
+  display: block;
+  width: 92%;
+  height: auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  aspect-ratio: 100/38;
+  transition: 0.3s;
+  /* background-color: rgba(255, 0, 0, 0.3); */
+}
+.cta-page1_a.__kirifuda {
+  /* top: 270px; */
+  top: clamp(1px, calc(270 / 750 * 100vw), 270px);
+}
+.cta-page1_a.__kirifuda:hover,
+.cta-page1_a.__dash:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.cta-page1_a.__dash {
+  /* top: 570px; */
+  top: clamp(1px, calc(570 / 750 * 100vw), 570px);
+}
+#kirifuda.__anchor {
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  /* top: 985px; */
+  top: clamp(1px, calc(985 / 750 * 100vw), 985px);
+}
+.p-thanks-text-box-tel_a {
+  display: inline-block;
+  color: darkorange;
+  font-weight: 700;
+  position: relative;
+}
+.p-thanks-text-box-tel_a::before {
+  content: "";
+  display: inline-block;
+  width: 100%;
+  height: 2px;
+  background-color: darkorange;
+  position: absolute;
+  left: 50%;
+  bottom: 0.05em;
+  transform: translateX(-50%);
+}
+
+img[width="1"][height="1"] {
+  width: 1px;
+  height: 1px;
+}
+
+.btn-mail_img {
+  width: clamp(1px, calc(727 / 750 * 100vw), 727px);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.cta-lp_03 .btn-mail_img {
+  bottom: clamp(1px, calc(40 / 750 * 100vw), 40px);
+}
+.cta-lp_09 .btn-mail_img {
+  top: clamp(1px, calc(1800 / 750 * 100vw), 1800px);
+}
+.contact-text_p {
+  padding-bottom: 1.5rem;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+.contact-text_p a {
+  color: blue;
+  text-decoration: underline;
+}

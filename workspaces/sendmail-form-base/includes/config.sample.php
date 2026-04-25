@@ -18,7 +18,7 @@ define('ADMIN_SUBJECT', '【サイト名】お問い合わせが届きました'
 define('SITE_NAME', 'サイト名');
 define('SITE_URL', 'https://example.com');
 
-// プライバシーポリシーURL（index.php から参照）
+// プライバシーポリシーURL（contact.php から参照）
 define('PRIVACY_POLICY_URL', '/privacy');
 
 // レートリミット（同一IPからの送信制限）

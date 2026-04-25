@@ -23,6 +23,7 @@
 - [feedback-agent-skill-gap.md](feedback-agent-skill-gap.md) — エージェントの繰り返し失敗はスキル化で根本対応（指示改善は2回まで、3回目でスキル化）
 - [feedback-dev-workflow.md](feedback-dev-workflow.md) — アスカのコーディング禁止ルール違反履歴（.env以外のコード・スクリプト・設定ファイルは必ずシュウに委任）
 - [feedback-asuka-interpretation.md](feedback-asuka-interpretation.md) — シンヤさんの指示の対象範囲・前提を勝手に広げない（拡大解釈禁止）
+- [feedback-asuka-no-code-analysis.md](feedback-asuka-no-code-analysis.md) — アスカはコード関連の作業（読解・解析・診断・レビュー）を直接やらない。必ずシュウ・サクラに委任する
 - [feedback-rina-risk-threshold.md](feedback-rina-risk-threshold.md) — リナ検証はリスク1-5併記で、リスク3以上対処・2以下許容の閾値運用（無限ループ防止）
 - [feedback_researcher_llmo_jsonld.md](feedback_researcher_llmo_jsonld.md) — ミオがllmo-audit実行時、WebFetchでJSON-LD未検出でも即NG禁止。JS注入可能性が残る限り判定不能扱い
 

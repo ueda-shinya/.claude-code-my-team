@@ -1,0 +1,189 @@
+/* -----------------------------------------------------------------
+
+ #02　基本タグの定義
+
+ ------------------------------------------------------------------ */
+html {
+  // スムーススクロール設定
+  scroll-behavior: smooth;
+  font-size: calc(var(--font-size) / 16 * 100%);
+  // font-size: 12px;
+}
+
+body {
+  font-family: "Noto Sans JP", 'ヒラギノ角ゴ Pro', 'Hiragino Kaku Gothic Pro', "Helvetica Neue",Arial,"Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif;
+  font-optical-sizing: auto;
+  font-feature-settings: 'palt' 1;
+  color: var(--color-black);
+  @include ls(25);
+  max-width: 750px;
+  margin-inline: auto;
+  background: #fff;
+}
+
+.grad {
+  &__bg {
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  &__gray {
+    background-image: var(--bg-gradient-gray);
+  }
+}
+
+a {
+  color: var(--link-color, currentColor);
+  text-decoration: none;
+  outline: none;
+  transition: 0.3s;
+  &:hover {
+    text-decoration: underline;
+    opacity: 0.7;
+  }
+  &:link {
+    outline: medium none;
+  }
+  &:visited {
+    outline: medium none;
+  }
+}
+
+p,li {
+  // line-height: 150%;
+}
+
+.label {
+  --color: revert;
+  margin-inline: .15em;
+  padding-inline: .1em;
+  line-height: 1.1;
+  background: linear-gradient(transparent 65%, var(--color-gray4) 65%);
+}
+strong {
+  --color: var(--color-pink);
+  // color: var(--color);
+  &.dashed {
+    --color: revert;
+    border-bottom: rem(2) dashed;
+  }
+  &.red {
+    --color: var(--color-red);
+  }
+  &.blue {
+    --color: var(--color-blue);
+  }
+}
+
+.sp {
+  @include mq-o(tab) {
+    display: none;
+  }
+}
+.pc {
+  @include mq-u(tab) {
+    display: none;
+  }
+}
+
+// section {
+//   overflow: hidden;
+// }
+
+.inner {
+  position: relative;
+  max-width: rem(750);
+  margin-inline: auto;
+  // padding: 0 60px;
+  @include mq(max-tab) {
+    padding-inline: rem(25);
+  }
+  @include mq(min-tab) {
+  }
+}
+
+
+// アニメーション用クラス
+.slide-item0 {
+  opacity: 0;
+}
+.slide-item0.show {
+  opacity: 1;
+}
+
+.slide-item1 {
+  transform: translate(0, 25px);
+  opacity: 0;
+  transition: opacity 1s, transform 1.2s, filter 1s;
+}
+.slide-item1.show {
+  transform: translate(0);
+  filter: blur(0);
+  opacity: 1;
+}
+
+// HEADER
+header.__fix {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 200;
+  transition: bottom 1s;
+  background: var(--color-white);
+  .inner {
+    display: flex;
+    align-items: center;
+    gap: mq-clamp(5,10);
+    padding: mq-clamp(8,16)  mq-clamp(8,16);
+  }
+  ul {
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    gap: mq-clamp(5,10);
+    li{
+      &:first-child {
+        width: min(calc(150/750*100*1vw),rem(150));
+      }
+      &:last-child {
+        width: min(calc(256/750*100*1vw),rem(256));
+      }
+    }
+  }
+}
+
+.footer_cv.__fix {
+  position: fixed;
+  top: unset;
+  bottom: -450px;
+  left: 0;
+  width: 100%;
+  z-index: 200;
+  transition: bottom 1s;
+  &.on {
+    bottom: 0;
+  }
+  ul {
+    background: rgba(255, 255, 255, 0.7);
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto;
+    padding: min(calc(10/750*100vw),10px);
+    display: flex;
+    justify-content: center;
+    li{
+      --width: 680;
+    }
+  }
+}
+
+footer {
+  padding: mq-clamp(10,20);
+  background: var(--color-bg2);
+  .copyright {
+    text-align: center;
+    font-size: min(calc(25/750*100*1vw),rem(25));
+  }
+}

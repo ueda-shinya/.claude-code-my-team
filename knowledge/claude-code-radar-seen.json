@@ -65,6 +65,54 @@
       "title": "スキルvsMCPガイド",
       "hash": "02d03d4c4a06adc0fa425c390b15b9be297ff8179b835d30531dd933c3911823",
       "first_seen": "2026-04-16T23:37:00.865516+00:00"
+    },
+    {
+      "url": "https://www.anthropic.com/engineering/april-23-postmortem",
+      "title": "Claude Code 品質低下の事後分析",
+      "hash": "85b0ca3c45b5c9931e3c1fa0f15c1eae0b68e3598f6f0758217c167021659e6f",
+      "first_seen": "2026-04-23T23:25:57.100516+00:00"
+    },
+    {
+      "url": "https://claude.com/blog/claude-managed-agents-memory",
+      "title": "Claude Managed Agents メモリ",
+      "hash": "6dda7609288284e566984dac5366349998795514887a8dc409d96ea20f956f48",
+      "first_seen": "2026-04-23T23:25:58.314721+00:00"
+    },
+    {
+      "url": "https://github.com/zilliztech/claude-context",
+      "title": "zilliztech/claude-context",
+      "hash": "0f5187d118d5cccfd8858f8c4dec7c8d0b42c2efb2466401ea1c22191aa8d8df",
+      "first_seen": "2026-04-23T23:25:59.483849+00:00"
+    },
+    {
+      "url": "https://github.com/VILA-Lab/Dive-into-Claude-Code",
+      "title": "Dive into Claude Code",
+      "hash": "0621b2e7101e0014a406a450226e41ebda3a1854de5446b03fa66ced121f1f8e",
+      "first_seen": "2026-04-23T23:26:00.640537+00:00"
+    },
+    {
+      "url": "https://github.com/hesreallyhim/awesome-claude-code",
+      "title": "Awesome Claude Code 最新追加3件",
+      "hash": "7765e623bebd57da6be9c011a18b058b5df9308e4dcf35f0288bd045583a7baa",
+      "first_seen": "2026-04-23T23:26:01.862255+00:00"
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/managed-agents/overview",
+      "title": "Managed Agents 概要",
+      "hash": "e98c272292113a288ee503dd3660b97a78e4fec9e0f0536b413269f102789d3b",
+      "first_seen": "2026-04-23T23:26:03.038313+00:00"
+    },
+    {
+      "url": "https://www.pcworld.com/article/3121542/anthropic-considers-pulling-claude-code-from-its-20-pro-plan.html",
+      "title": "Claude Code Pro除外テスト",
+      "hash": "d7dadef442787a29bab3bb549de1fc3e350b265d54ad35b6dfbbefa40076f006",
+      "first_seen": "2026-04-23T23:26:04.225581+00:00"
+    },
+    {
+      "url": "https://github.com/mcpware/claude-code-organizer",
+      "title": "claude-code-organizer",
+      "hash": "6547dd355278f6cc79775dc849855a1828bce1d184ee49932cc97e13232db37c",
+      "first_seen": "2026-04-23T23:26:05.443187+00:00"
     }
   ]
 }

@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-mb_language('Japanese');
+// mb_language('Japanese') は mb_send_mail の内部変換（ISO-2022-JP 化）を引き起こすため設定しない。
+// mb_send_mail を使う場合、mb_language('Japanese') 設定下では本文が二重変換されて文字化けする。
+// 本文・件名・ヘッダーは自前でエンコードし、mail() で直接送信する。
 mb_internal_encoding('UTF-8');
 
 require_once __DIR__ . '/includes/session-init.php';
@@ -17,6 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   echo json_encode(['success' => false, 'message' => 'Method Not Allowed'], JSON_UNESCAPED_UNICODE);
   exit;
 }
+
+// -----------------------------------------------------------------------
+// AJAX / 通常POSTの判定
+// クライアント側 form.js が X-Requested-With: XMLHttpRequest を付与するため、
+// それを優先検査する。付与されていない場合は Accept ヘッダーで補完判定する。
+// -----------------------------------------------------------------------
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+  || (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false);
 
 // -----------------------------------------------------------------------
 // ユーティリティ
@@ -53,12 +63,19 @@ function sanitizeForMailBody(string $s): string
 
 /**
  * メールヘッダーインジェクション攻撃の試みを検出する。
- * 改行・NULL 文字が含まれる場合は即座に処理を打ち切る。
+ * 生の改行・NULL 文字、および URLエンコード済みの改行（%0A/%0D/%00）が含まれる場合は
+ * 即座に処理を打ち切る。
  */
 function assertNoHeaderInjection(string $value, string $fieldName): void
 {
+  // 生の改行・NULL 文字チェック
   if (preg_match('/[\r\n\0]/', $value)) {
-    error_log("[sendmail-form] ヘッダーインジェクション試行検知 field={$fieldName}");
+    error_log("[sendmail-form] ヘッダーインジェクション試行検知 field={$fieldName} raw");
+    respond(false, '不正なリクエストです。');
+  }
+  // URLエンコード済み改行チェック（%0A / %0D / %00）
+  if (preg_match('/%0[adAD]|%00/', $value)) {
+    error_log("[sendmail-form] ヘッダーインジェクション試行検知 field={$fieldName} url-encoded");
     respond(false, '不正なリクエストです。');
   }
 }
@@ -148,25 +165,40 @@ function validate(array $input): array
     }
   }
 
-  // 改行・NULL 文字チェック（全フィールド）
+  // 改行・NULL 文字チェック（全フィールド）: 生の改行 + URLエンコード済み改行（%0A/%0D/%00）を拒否
+  // フラグを使って複数フィールドで同一メッセージが重複しないようにする
+  $invalidCharFound = false;
   foreach (['name', 'tel', 'email', 'zip', 'address'] as $field) {
-    if (preg_match('/[\r\n\0]/', $input[$field])) {
-      $errors[] = '入力値に無効な文字が含まれています。';
+    if (preg_match('/[\r\n\0]/', $input[$field]) || preg_match('/%0[adAD]|%00/', $input[$field])) {
+      $invalidCharFound = true;
+      break;
     }
+  }
+  if ($invalidCharFound) {
+    $errors[] = '入力値に無効な文字が含まれています。';
   }
 
   if ($input['name'] === '') {
     $errors[] = 'お名前は必須です。';
   }
 
-  // M9: 電話番号バリデーション強化（数字部分を抽出して10〜13桁チェック）
+  // 電話番号バリデーション（先頭3桁で携帯・IP電話か固定電話かを判定して桁数を検証）
   if ($input['tel'] === '') {
     $errors[] = '電話番号は必須です。';
+  } elseif (!preg_match('/^[0-9\-]+$/', $input['tel'])) {
+    $errors[] = '電話番号の形式が正しくありません。';
   } else {
-    $digitsOnly = preg_replace('/[^\d]/', '', mb_convert_kana($input['tel'], 'n', 'UTF-8'));
-    $len = strlen($digitsOnly);
-    if ($len < 10 || $len > 13) {
-      $errors[] = '電話番号は10〜13桁の数字で入力してください。';
+    $telDigits = str_replace('-', '', $input['tel']);
+    if (preg_match('/\A(090|080|070|050|0800)/', $telDigits)) {
+      // 携帯・IP電話・フリーダイヤル(0800): 11桁必須
+      if (!preg_match('/\A0\d{10}\z/', $telDigits)) {
+        $errors[] = '携帯電話・フリーダイヤル(0800)（090, 080, 070, 050, 0800）は11桁で入力してください。';
+      }
+    } else {
+      // 固定電話: 10桁必須
+      if (!preg_match('/\A0\d{9}\z/', $telDigits)) {
+        $errors[] = '固定電話番号は10桁で入力してください。';
+      }
     }
   }
 
@@ -318,9 +350,12 @@ function buildMailFromTemplate(string $templatePath, array $vars, string $defaul
   $subject = $defaultSubject;
   $body    = $raw;
 
-  if (preg_match('/\ASubject:\s*(.+)\r?\n\r?\n(.*)\z/su', $raw, $m)) {
-    $subject = trim($m[1]);
-    $body    = $m[2];
+  // M13: ([^\r\n]+) で改行を含まないよう限定する。
+  // (.+) に s フラグを付けると改行を含んで貪欲マッチし、Subject が本文を吸収してしまうバグを防ぐ。
+  if (preg_match('/\ASubject:\s*([^\r\n]+)\r?\n\r?\n(.*)\z/us', $raw, $m)) {
+    $extracted = trim($m[1]);
+    $subject   = ($extracted !== '') ? $extracted : $defaultSubject;
+    $body      = $m[2];
   }
 
   return ['subject' => $subject, 'body' => $body];
@@ -329,6 +364,12 @@ function buildMailFromTemplate(string $templatePath, array $vars, string $defaul
 /**
  * メールを送信する。
  * $to / $toName にヘッダーインジェクション攻撃が試みられた場合は即時中断する。
+ *
+ * mb_send_mail ではなく mail() を使う理由:
+ * mb_language('Japanese') が設定されている環境で mb_send_mail を呼ぶと、
+ * 本文を ISO-2022-JP に変換しようとして、既に base64 エンコード済みの本文が
+ * 二重変換されて文字化けする。本文・件名・ヘッダーはすべて自前でエンコード済みのため、
+ * mail() で直接送信するのが最も安全。
  *
  * @param string $to      宛先メールアドレス
  * @param string $toName  宛先名
@@ -341,9 +382,15 @@ function sendMail(string $to, string $toName, string $subject, string $body): bo
   assertNoHeaderInjection($to, 'to');
   assertNoHeaderInjection($toName, 'toName');
 
+  // mb_encode_mimeheader() は長い件名・名前を RFC 2047 に従い "\r\n\t" で折り返す（正規の MIME folding）。
+  // 先にエンコード済み変数を生成し、folding 除去後のインジェクション検査に使い回すことで二重呼び出しを防ぐ。
   $encodedSubject  = mb_encode_mimeheader($subject, 'UTF-8', 'B');
   $encodedToName   = mb_encode_mimeheader($toName, 'UTF-8', 'B');
   $encodedFromName = mb_encode_mimeheader(FROM_NAME, 'UTF-8', 'B');
+
+  // folding 部分（"\r\n\t" / "\r\n "）を除去してからインジェクション検査
+  assertNoHeaderInjection(preg_replace('/\r\n[\t ]/', '', $encodedSubject), 'subject-encoded');
+  assertNoHeaderInjection(preg_replace('/\r\n[\t ]/', '', $encodedToName), 'toName-encoded');
 
   $headers  = 'From: ' . $encodedFromName . ' <' . FROM_EMAIL . '>' . "\r\n";
   $headers .= 'Return-Path: ' . FROM_EMAIL . "\r\n";
@@ -352,7 +399,7 @@ function sendMail(string $to, string $toName, string $subject, string $body): bo
 
   $encodedBody = chunk_split(base64_encode($body));
 
-  return mb_send_mail(
+  return mail(
     $encodedToName . ' <' . $to . '>',
     $encodedSubject,
     $encodedBody,
@@ -388,7 +435,13 @@ if (!checkRateLimit($ip)) {
 // サーバーサイドバリデーション
 $errors = validate($input);
 if (!empty($errors)) {
-  respond(false, implode(' ', $errors));
+  if ($isAjax) {
+    respond(false, implode(' ', $errors));
+  } else {
+    // JS無効環境: contact.php に ?error=1 でリダイレクト（バリデーションエラー）
+    header('Location: ./contact.php?error=1', true, 303);
+    exit;
+  }
 }
 
 // C1: メール本文用変数にはサニタイズのみ（htmlspecialchars は適用しない）
@@ -432,19 +485,31 @@ $logEntry = [
 ];
 if (!$adminSent) {
   $logEntry['error']        = '管理者宛メール送信失敗';
-  $logEntry['error_detail'] = 'mb_send_mail returned false';
+  $logEntry['error_detail'] = 'mail() returned false';
 }
 if (!$autoreplySuccess) {
   $logEntry['autoreply_error']        = '自動返信メール送信失敗';
-  $logEntry['autoreply_error_detail'] = 'mb_send_mail returned false';
+  $logEntry['autoreply_error_detail'] = 'mail() returned false';
 }
 writeLog($logEntry);
 
 if (!$adminSent) {
-  respond(false, 'メールの送信に失敗しました。お手数ですが、直接ご連絡ください。');
+  if ($isAjax) {
+    respond(false, 'メールの送信に失敗しました。お手数ですが、直接ご連絡ください。');
+  } else {
+    // JS無効環境: contact.php に ?error=1 でリダイレクト（メール送信失敗）
+    header('Location: ./contact.php?error=1', true, 303);
+    exit;
+  }
 }
 
 // H6: 完全送信成功時のみ CSRF トークンを回転させる
 unset($_SESSION['csrf_token']);
 
-respond(true, 'お問い合わせを受け付けました。確認メールをお送りしましたのでご確認ください。');
+if ($isAjax) {
+  respond(true, 'お問い合わせを受け付けました。確認メールをお送りしましたのでご確認ください。');
+} else {
+  // JS無効環境: 303 See Other で thanks.html へリダイレクト（POST→GET変換）
+  header('Location: ./thanks.html', true, 303);
+  exit;
+}

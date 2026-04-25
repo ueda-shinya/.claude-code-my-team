@@ -7,8 +7,10 @@ PHPお問い合わせフォームのベーステンプレートです。
 
 ```
 sendmail-form-base/
-├── index.php                ← フォーム本体（PHPでCSRFトークンを埋め込む）
+├── index.html               ← トップページ（「お問い合わせはこちらから」ボタン）
+├── contact.php              ← フォーム本体（PHPでCSRFトークンを埋め込む）
 ├── submit.php               ← 送信処理（バリデーション・メール送信・ログ）
+├── thanks.html              ← サンクスページ（送信完了後にリダイレクト）
 ├── assets/                  ← 公開前提（静的配信のみ）
 │   ├── css/
 │   │   └── form.css         ← ベーススタイル（使い回し先で上書き前提）
@@ -34,9 +36,19 @@ sendmail-form-base/
 ## 動作要件
 
 - PHP 7.4 以上
-- `mb_send_mail` / `mb_language` 関数（`php-mbstring` 拡張）
-- `sendmail` または `postfix` が利用可能なサーバー環境
+- `mb_encode_mimeheader` 関数（`php-mbstring` 拡張）
+- `mail()` 関数が使えるサーバー環境（`sendmail` または `postfix` が必要）
 - `logs/` ディレクトリへの書き込み権限
+
+## メール送信方式についての注意
+
+本テンプレートは `mail()` 関数を直接使い、件名・本文・ヘッダーをすべて自前でエンコードしています。
+`mb_send_mail()` は使用していません。理由:
+
+- サーバー側で `mb_language('Japanese')` が設定されている環境（さくらインターネット等の一部レンタルサーバー）で
+  `mb_send_mail()` を呼ぶと、base64 エンコード済みの本文をさらに ISO-2022-JP に変換しようとして
+  二重変換となり、受信側で文字化けします。
+- 「文字化けするから `mb_send_mail` に戻そう」という判断は逆効果です。`mail()` 直叩きのまま使ってください。
 
 ## カスタマイズ手順
 
@@ -111,10 +123,17 @@ chmod 700 logs/
 define('PRIVACY_POLICY_URL', '/privacy');
 ```
 
-### 5. サンクスページを追加する場合（任意）
+### 5. サンクスページ
 
-現在の実装は送信完了メッセージをフォーム上に表示します。
-サンクスページへのリダイレクトに変更する場合は `submit.php` の `respond()` 関数を修正し、`form.js` のリダイレクト処理を追加してください。
+送信完了後に `thanks.html` へリダイレクトします（実装済み）。
+
+- **JavaScript 有効環境**: `form.js` が AJAX で送信し、成功時に `window.location.replace('./thanks.html')` でリダイレクト（ブラウザ履歴を汚さない）
+- **JavaScript 無効環境**: 通常の POST 送信が走り、`submit.php` が成功時に 303 See Other で `thanks.html` へリダイレクト（フォールバック対応済み）。失敗時は `contact.php?error=1` に戻りエラーメッセージを表示する
+- `submit.php` は AJAX か通常 POST かを `X-Requested-With` ヘッダーで判定して応答を分岐する（JSON / リダイレクト）
+- `thanks.html` のページタイトル・文言はプロジェクトに合わせて書き換えてください
+- noindex/nofollow メタタグ設定済みのため、検索エンジンにインデックスされません
+
+リダイレクト先のURLを変更する場合は `form.js` の `window.location.replace('./thanks.html')` を修正してください。
 
 ## スパム対策
 
@@ -122,8 +141,8 @@ define('PRIVACY_POLICY_URL', '/privacy');
 
 | 対策 | 実装箇所 |
 |---|---|
-| CSRFトークン | `index.php`（発行）/ `submit.php`（検証） |
-| ハニーポット（`url_homepage` フィールド: 入力があればボット判定） | `index.php` / `submit.php` |
+| CSRFトークン | `contact.php`（発行）/ `submit.php`（検証） |
+| ハニーポット（`url_homepage` フィールド: 入力があればボット判定） | `contact.php` / `submit.php` |
 | レートリミット（同一IP・10分間に3回まで） | `submit.php` / `logs/rate-limit/` 配下にファイル保存 |
 
 ## ログ
@@ -154,7 +173,7 @@ define('PRIVACY_POLICY_URL', '/privacy');
 | フィールド | 必須 | バリデーション |
 |---|---|---|
 | お名前 | Yes | 空でないこと / 最大100文字 |
-| 電話番号 | Yes | 数字部分が10〜13桁 |
+| 電話番号 | Yes | 半角数字・ハイフンのみ / 数字部分が10〜11桁 |
 | メールアドレス | Yes | メール形式 / 最大254文字 |
 | 郵便番号 | Yes | 7桁（ハイフンありなし両対応）/ 最大8文字 |
 | 住所 | Yes | 空でないこと（郵便番号から自動反映）/ 最大200文字 |
@@ -164,4 +183,10 @@ define('PRIVACY_POLICY_URL', '/privacy');
 
 | バージョン | 日付 | 変更内容 |
 |---|---|---|
+| v1.6.0 | 2026-04-24 | JS無効フォールバック対応・CSS DRY化・ブラウザ履歴汚染防止。(1) `submit.php` に AJAX 判定（`X-Requested-With` / `Accept` ヘッダー）を追加。JS無効の通常POSTは成功時に 303 リダイレクト（`thanks.html`）、失敗時は `contact.php?error=1` にリダイレクト。(2) `contact.php` に `?error=1` 受け取り時のエラーメッセージ表示を追加。(3) `form.js` の fetch に `X-Requested-With: XMLHttpRequest` ヘッダーを付与。リダイレクト箇所を `window.location.href` → `window.location.replace()` に変更（戻るボタン再送信防止）。(4) `site.css` の `p-top-hero` と `p-thanks` の共通スタイルをセレクタグループ化で DRY 化（`@media` も同様に整理）。 |
+| v1.5.0 | 2026-04-24 | サンクスページ追加。`thanks.html` 新規作成（noindex・FLOCSS `p-thanks` 系クラス・レスポンシブ対応）。`form.js` 送信成功時を `showFormMessage` → `window.location.href = './thanks.html'` リダイレクトに変更。`site.css` に `p-thanks` 系スタイルを追加。`submit.php` 変更なし。 |
+| v1.4.0 | 2026-04-25 | 非公開ディレクトリ .htaccess に Options -Indexes を追加（CLAUDE.md「Web Project Directory Structure Rule」準拠）。ディレクトリリスティング防止の二重防御を確立。 |
+| v1.3.0 | 2026-04-24 | `index.php` を `contact.php` にリネーム。トップページ `index.html` を新規追加（「お問い合わせはこちらから」ボタン → `contact.php` 遷移）。動線: `index.html` → `contact.php` → `submit.php` の3ステップに整理。 |
+| v1.2.0 | 2026-04-24 | FLOCSS 準拠化 + コード最適化。(1) `form.css` 全クラスを FLOCSS プレフィックス付きに改名（`l-form-wrap` / `c-form-group` / `c-required-badge` / `c-field-error` / `c-btn--secondary` / `u-hp-field` 等）。(2) `contact.php` のクラス参照を全更新。(3) `form.js` の動的クラス生成（`showFormMessage` / `hideFormMessage`）を更新。(4) `submit.php` の `sendMail()` 内 `mb_encode_mimeheader()` 重複呼び出しを解消（先にエンコード変数を生成してインジェクション検査に使い回す）。(5) `validate()` の無効文字エラーメッセージ重複防止（フラグ方式で全フィールド走査後に1件のみ追加）。(6) README に「メール送信方式についての注意」セクション追加（`mb_send_mail` に戻してはいけない理由を明記）。 |
+| v1.1.0 | 2026-04-24 | plapendual 案件の不具合知見を反映。(1) `mb_language('Japanese')` 削除 + `mb_send_mail()` → `mail()` 直叩きに切替（mb_language 設定下での ISO-2022-JP 二重変換・文字化け防止）。(2) `buildMailFromTemplate()` Subject 抽出の正規表現を `(.+)` から `([^\r\n]+)` に修正（`s` フラグ + 貪欲マッチによる Subject 吸収バグ修正）。(3) `assertNoHeaderInjection()` に URLエンコード済み改行（`%0A/%0D/%00`）チェックを追加。(4) `validate()` の全フィールドチェックにも URLエンコード改行チェックを追加。(5) MIME folding 検査（`\r\n[\t ]` 除去）を `sendMail()` 内の encoded 値の後検査に追加。 |
 | v1.0.0 | 2026-04-23 | 初版リリース。PHP 7.4+ 対応。sendmail / CSRF / ハニーポット / レートリミット（10分3回・flock）/ 郵便番号→住所自動反映（zipcloud、5秒タイムアウト）/ プライバシーポリシー同意チェック / 管理者宛+自動返信2通（テンプレート分離）/ ログ記録（JSON Lines、0700/0600 パーミッション）/ `.htaccess` + OS chmod 二重防御 / CLAUDE.md「Web Project Directory Structure Rule」準拠（公開/非公開ディレクトリ分離）/ サクラレビュー Pass |

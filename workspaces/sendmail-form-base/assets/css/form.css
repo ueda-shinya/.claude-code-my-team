@@ -2,10 +2,11 @@
    form.css — お問い合わせフォーム ベーススタイル
    使い回し先でこのファイルを上書き or @import して使う想定。
    レイアウトとアクセシビリティを担保する最小限のみ定義する。
+   クラス命名は FLOCSS に準拠（l-: Layout / c-: Component / u-: Utility）。
 ----------------------------------------------------------------------- */
 
-/* ハニーポット非表示 */
-.hp-field {
+/* ハニーポット非表示（Utility: 単一機能を表現するために複数プロパティが不可分な確立ユーティリティ） */
+.u-hp-field {
   position: absolute;
   left: -9999px;
   width: 1px;
@@ -13,30 +14,33 @@
   overflow: hidden;
 }
 
-.form-wrap {
+/* Layout: フォームページ全体の外枠骨格 */
+.l-form-wrap {
   max-width: 640px;
   margin: 2rem auto;
   padding: 0 1rem;
   font-family: sans-serif;
 }
 
-.form-group {
+/* Component: フォームグループ（ラベル+入力+エラーのセット） */
+.c-form-group {
   margin-bottom: 1.4rem;
 }
 
-.form-group label {
+.c-form-group label {
   display: block;
   margin-bottom: .3rem;
   font-weight: bold;
   font-size: .95rem;
 }
 
-.form-group--check label {
+.c-form-group--check label {
   display: inline;
   font-weight: normal;
 }
 
-.required {
+/* Component: 必須バッジ */
+.c-required-badge {
   display: inline-block;
   margin-left: .3rem;
   padding: .1em .4em;
@@ -69,19 +73,19 @@ input[aria-invalid='true'] {
   border-color: #d9534f;
 }
 
-/* 郵便番号行 */
-.zip-row {
+/* Component: 郵便番号行 */
+.c-zip-row {
   display: flex;
   gap: .5rem;
   align-items: center;
 }
 
-.zip-row input {
+.c-zip-row input {
   flex: 1;
 }
 
-/* フィールドエラー */
-.field-error {
+/* Component: フィールドエラー */
+.c-field-error {
   display: block;
   margin-top: .25rem;
   color: #d9534f;
@@ -89,16 +93,16 @@ input[aria-invalid='true'] {
   min-height: 1.2em;
 }
 
-/* ヒントテキスト */
-.field-hint {
+/* Component: ヒントテキスト */
+.c-field-hint {
   display: block;
   margin-top: .2rem;
   color: #555;
   font-size: .8rem;
 }
 
-/* 送信ボタン */
-.form-actions {
+/* Component: 送信ボタン配置エリア */
+.c-form-actions {
   margin-top: 1.6rem;
   text-align: center;
 }
@@ -123,8 +127,8 @@ button[type='submit']:disabled {
   cursor: not-allowed;
 }
 
-/* セカンダリボタン（郵便番号検索） */
-.btn-secondary {
+/* Component: セカンダリボタン（郵便番号検索）*/
+.c-btn--secondary {
   padding: .5rem .8rem;
   background: #f5f5f5;
   border: 1px solid #ccc;
@@ -135,25 +139,25 @@ button[type='submit']:disabled {
   transition: background .15s;
 }
 
-.btn-secondary:hover {
+.c-btn--secondary:hover {
   background: #e0e0e0;
 }
 
-/* フォーム全体メッセージ */
-.form-message {
+/* Component: フォーム全体メッセージ */
+.c-form-message {
   padding: .8rem 1rem;
   border-radius: 4px;
   margin-bottom: 1rem;
   font-size: .95rem;
 }
 
-.form-message--success {
+.c-form-message--success {
   background: #dff0d8;
   color: #3c763d;
   border: 1px solid #d6e9c6;
 }
 
-.form-message--error {
+.c-form-message--error {
   background: #f2dede;
   color: #a94442;
   border: 1px solid #ebccd1;

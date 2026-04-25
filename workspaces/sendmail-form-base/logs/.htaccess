@@ -1,5 +1,6 @@
 # ログディレクトリへの外部アクセスを全面拒否する
 # Apache 2.4 対応 + 2.2 フォールバック両対応
+Options -Indexes
 <IfModule mod_authz_core.c>
   Require all denied
 </IfModule>
