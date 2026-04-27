@@ -32,6 +32,23 @@ Claude Code レーダー — Notion DB 管理スクリプト
 
   notion-radar.py --seen-add <url> --title タイトル
       既知URLとして登録（sha256ハッシュ + タイムスタンプ付き）
+
+  notion-radar.py --update-seq N [更新オプション]
+  notion-radar.py --update-title "部分タイトル" [更新オプション]
+      登録済みエントリのプロパティを更新する。
+      --update-seq N: 通し番号で指定（推奨）
+      --update-title: タイトル部分一致で指定（複数ヒット時はエラー）
+      更新オプション:
+        --title TITLE         タイトル
+        --summary SUMMARY     要約
+        --category CATEGORY   カテゴリ
+        --source SOURCE       情報源
+        --url URL             情報元URL
+        --riku-check VALUE    リク検証
+        --kanata-verdict VALUE カナタ判定
+        --kanata-reason REASON カナタ判定理由
+        --recommend N         おすすめ度 1〜5
+        --status VALUE        実施可否（未確認 / 導入 / 却下 / 保留）
 """
 
 import argparse
@@ -124,6 +141,19 @@ def validate_url(url_val):
     if not parsed.netloc:
         return False, f'URL のホスト名が空です: {url_val}'
     return True, ''
+
+
+def positive_int(s):
+    """
+    argparse の type= ヘルパー。1以上の整数以外はエラーにする。
+    """
+    try:
+        v = int(s)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f'整数を指定してください（指定値: {s!r}）')
+    if v < 1:
+        raise argparse.ArgumentTypeError(f'1以上の整数を指定してください（指定値: {v}）')
+    return v
 
 
 def validate_whitelist(value, options, arg_name):
@@ -604,10 +634,6 @@ def get_next_sequence_number(db_id, token):
 
 def cmd_show_seq(token, db_id, n):
     """通し番号 N のエントリを1件取得して詳細表示する"""
-    if n < 1:
-        print('[ERROR] --show-seq には 1 以上の整数を指定してください。')
-        sys.exit(1)
-
     body = {
         'filter': {
             'property': RadarDB.SEQ_NO,
@@ -698,10 +724,6 @@ def cmd_add_sequence_property(token, db_id):
 
 def cmd_list_recent(token, db_id, n):
     """直近N件のエントリを通し番号付きで一覧表示する"""
-    if n <= 0:
-        print('[ERROR] --list-recent には 1 以上の整数を指定してください。')
-        sys.exit(1)
-
     body = {
         'page_size': min(n, 100),
         'sorts': [{'property': RadarDB.SEQ_NO, 'direction': 'descending'}],
@@ -728,6 +750,227 @@ def cmd_list_recent(token, db_id, n):
         print(f'{seq_str} {category_str} {title}')
 
     print(f'合計 {len(pages)} 件表示')
+
+# ---- --update-seq / --update-title ----
+
+def find_radar_page_by_seq(n, token, db_id):
+    """
+    通し番号 N で Notion DB を検索し、ページ一覧を返す。
+    Raises:
+        NotionRadarError: Notion API 失敗時
+    """
+    body = {
+        'filter': {
+            'property': RadarDB.SEQ_NO,
+            'number': {'equals': n}
+        }
+    }
+    result = notion_request_with_retry('POST', f'/databases/{db_id}/query', body, token=token)
+    return result.get('results', [])
+
+
+def find_radar_page_by_title(partial_title, token, db_id):
+    """
+    タイトル部分一致で Notion DB を検索し、ページ一覧を返す。
+    Raises:
+        NotionRadarError: Notion API 失敗時
+    """
+    body = {
+        'filter': {
+            'property': RadarDB.TITLE,
+            'title': {'contains': partial_title}
+        }
+    }
+    result = notion_request_with_retry('POST', f'/databases/{db_id}/query', body, token=token)
+    return result.get('results', [])
+
+
+def resolve_single_radar_page(pages, identifier_desc):
+    """
+    検索結果から1件に絞り込む。
+    0件・複数件はエラーで終了。
+    identifier_desc: エラーメッセージ用の識別子説明文（例: "通し番号 #012"）
+    """
+    if not pages:
+        print(f'[FAIL] {identifier_desc} に一致するエントリは見つかりませんでした。')
+        sys.exit(1)
+
+    if len(pages) > 1:
+        print(f'[ERROR] {identifier_desc} が複数件ヒットしました（{len(pages)} 件）。')
+        print('  以下のいずれかを --show-seq 等で確認してタイトルを絞り込んでください:')
+        for p in pages:
+            props = p['properties']
+            seq_val = props.get(RadarDB.SEQ_NO, {}).get('number')
+            seq_str = f'#{int(seq_val):03d}' if seq_val is not None else '#---'
+            title = get_text(props, RadarDB.TITLE) or '(無題)'
+            print(f'  - {seq_str} {title}')
+        sys.exit(1)
+
+    return pages[0]
+
+
+def cmd_update_radar(args, token, db_id):
+    """
+    --update-seq または --update-title で指定したエントリのプロパティを更新する。
+    指定されたプロパティのみ PATCH する（未指定プロパティは変更しない）。
+    更新後は --show-seq 相当のフォーマットで結果を表示する。
+
+    注意:
+      - PATCH は Notion 側でアトミック適用（部分成功なし）
+      - リトライ中に他プロセスが同じ page_id を更新した場合の競合は検出しない
+        （案件管理レベルでは並行更新は想定しない前提）
+    """
+    # 識別子でページを取得
+    if args.update_seq is not None:
+        pages = find_radar_page_by_seq(args.update_seq, token, db_id)
+        identifier_desc = f'通し番号 #{args.update_seq:03d}'
+    else:
+        # --update-title
+        pages = find_radar_page_by_title(args.update_title, token, db_id)
+        identifier_desc = f'タイトル「{args.update_title}」'
+
+    page = resolve_single_radar_page(pages, identifier_desc)
+    page_id = page['id']
+    old_item = page_to_item(page)
+
+    # 更新プロパティを構築（指定されたものだけ）
+    props = {}
+    changes = []
+
+    if args.title:
+        props[RadarDB.TITLE] = {'title': [{'text': {'content': args.title}}]}
+        changes.append(f'タイトル: 「{old_item[RadarDB.TITLE]}」 → 「{args.title}」')
+
+    if args.summary is not None:
+        props[RadarDB.SUMMARY] = rich_text_prop(args.summary)
+        old_summary = old_item[RadarDB.SUMMARY] or '-'
+        changes.append(f'要約: 更新（旧: {old_summary[:40]}{"..." if len(old_summary) > 40 else ""}）')
+
+    if args.category:
+        err = validate_whitelist(args.category, CATEGORY_OPTIONS, '--category')
+        if err:
+            print(err)
+            sys.exit(1)
+        props[RadarDB.CATEGORY] = {'select': {'name': args.category}}
+        changes.append(f'カテゴリ: 「{old_item[RadarDB.CATEGORY]}」 → 「{args.category}」')
+
+    if args.source:
+        err = validate_whitelist(args.source, SOURCE_OPTIONS, '--source')
+        if err:
+            print(err)
+            sys.exit(1)
+        props[RadarDB.SOURCE] = {'select': {'name': args.source}}
+        changes.append(f'情報源: 「{old_item[RadarDB.SOURCE]}」 → 「{args.source}」')
+
+    if args.url:
+        url_val = args.url.strip()
+        ok, err = validate_url(url_val)
+        if not ok:
+            print(f'[ERROR] {err}')
+            sys.exit(1)
+        props[RadarDB.LINK] = {'url': url_val}
+        changes.append(f'URL: 更新')
+
+    if args.riku_check:
+        err = validate_whitelist(args.riku_check, RIKU_CHECK_OPTIONS, '--riku-check')
+        if err:
+            print(err)
+            sys.exit(1)
+        props[RadarDB.RIKU_VERIFIED] = {'select': {'name': args.riku_check}}
+        changes.append(f'リク検証: 「{old_item[RadarDB.RIKU_VERIFIED]}」 → 「{args.riku_check}」')
+
+    if args.kanata_verdict:
+        err = validate_whitelist(args.kanata_verdict, KANATA_VERDICT_OPTIONS, '--kanata-verdict')
+        if err:
+            print(err)
+            sys.exit(1)
+        props[RadarDB.KANATA_VERDICT] = {'select': {'name': args.kanata_verdict}}
+        changes.append(f'カナタ判定: 「{old_item[RadarDB.KANATA_VERDICT]}」 → 「{args.kanata_verdict}」')
+
+    if args.kanata_reason is not None:
+        props[RadarDB.KANATA_REASON] = rich_text_prop(args.kanata_reason)
+        changes.append(f'カナタ判定理由: 更新')
+
+    if args.recommend:
+        try:
+            rec_num = int(args.recommend)
+            if not 1 <= rec_num <= 5:
+                raise ValueError()
+        except ValueError:
+            print('[ERROR] --recommend は 1〜5 の整数で指定してください。')
+            sys.exit(1)
+        rec_str = recommend_num_to_str(rec_num)
+        props[RadarDB.RECOMMEND] = {'select': {'name': rec_str}}
+        changes.append(f'おすすめ度: 「{old_item[RadarDB.RECOMMEND]}」 → 「{rec_str}」')
+
+    if args.status:
+        err = validate_whitelist(args.status, STATUS_OPTIONS, '--status')
+        if err:
+            print(err)
+            sys.exit(1)
+        props[RadarDB.STATUS] = {'select': {'name': args.status}}
+        changes.append(f'実施可否: 「{old_item[RadarDB.STATUS]}」 → 「{args.status}」')
+
+    if not props:
+        print('[ERROR] 更新するプロパティを指定してください。')
+        print('  使用可能: --title / --summary / --category / --source / --url /')
+        print('            --riku-check / --kanata-verdict / --kanata-reason / --recommend / --status')
+        sys.exit(1)
+
+    # Notion API PATCH
+    try:
+        notion_request_with_retry(
+            'PATCH', f'/pages/{page_id}', {'properties': props}, token=token
+        )
+    except NotionRadarError as e:
+        print(f'[FAIL] Notion API エラー: {e}')
+        sys.exit(1)
+
+    # 変更サマリー表示
+    seq_val = page['properties'].get(RadarDB.SEQ_NO, {}).get('number')
+    seq_str = f'#{int(seq_val):03d}' if seq_val is not None else '#---'
+    print(f'[OK] 更新完了: {seq_str} {old_item[RadarDB.TITLE]}')
+    for c in changes:
+        print(f'  {c}')
+    print()
+
+    # 更新後の状態を --show-seq 相当フォーマットで表示するため再取得
+    if args.update_seq is not None:
+        cmd_show_seq(token, db_id, args.update_seq)
+    else:
+        # タイトル指定の場合、page_id で直接再取得
+        updated_page = notion_request_with_retry(
+            'GET', f'/pages/{page_id}', token=token
+        )
+        props_updated = updated_page['properties']
+        seq_val2 = props_updated.get(RadarDB.SEQ_NO, {}).get('number')
+        seq_str2 = f'#{int(seq_val2):03d}' if seq_val2 is not None else '#---'
+
+        title     = get_text(props_updated, RadarDB.TITLE) or '(無題)'
+        category  = get_select(props_updated, RadarDB.CATEGORY) or '-'
+        source    = get_select(props_updated, RadarDB.SOURCE) or '-'
+        url       = props_updated.get(RadarDB.LINK, {}).get('url') or '-'
+        date      = get_date(props_updated, RadarDB.POST_DATE) or '-'
+        summary   = get_text(props_updated, RadarDB.SUMMARY) or '-'
+        riku      = get_select(props_updated, RadarDB.RIKU_VERIFIED) or '-'
+        verdict   = get_select(props_updated, RadarDB.KANATA_VERDICT) or '-'
+        reason    = get_text(props_updated, RadarDB.KANATA_REASON) or '-'
+        recommend = get_select(props_updated, RadarDB.RECOMMEND) or '-'
+
+        print(f'=== Claude Code レーダー {seq_str2} ===')
+        print(f'タイトル: {title}')
+        print(f'カテゴリ: {category}')
+        print(f'情報源: {source}')
+        print(f'URL: {url}')
+        print(f'登録日: {date}')
+        print(f'要約: {summary}')
+        print()
+        print('[評価]')
+        print(f'  信頼性: {riku}')
+        print(f'  判定: {verdict}')
+        print(f'  理由: {reason}')
+        print(f'  おすすめ度: {recommend}')
+
 
 # ---- --add ----
 
@@ -1036,12 +1279,20 @@ def main():
         help='Notion DB に「通し番号」プロパティ（number型）を追加する（冪等）'
     )
     group.add_argument(
-        '--list-recent', metavar='N', type=int,
-        help='直近N件のエントリを通し番号付きで一覧表示'
+        '--list-recent', metavar='N', type=positive_int,
+        help='直近N件のエントリを通し番号付きで一覧表示（1以上の整数）'
     )
     group.add_argument(
-        '--show-seq', metavar='N', type=int, dest='show_seq',
-        help='指定した通し番号のエントリを詳細表示'
+        '--show-seq', metavar='N', type=positive_int, dest='show_seq',
+        help='指定した通し番号のエントリを詳細表示（1以上の整数）'
+    )
+    group.add_argument(
+        '--update-seq', metavar='N', type=positive_int, dest='update_seq',
+        help='通し番号で指定してエントリを更新（1以上の整数。--title / --summary 等と組み合わせて使用）'
+    )
+    group.add_argument(
+        '--update-title', metavar='部分タイトル', dest='update_title',
+        help='タイトル部分一致で指定してエントリを更新（複数ヒット時はエラー）'
     )
 
     # --add オプション
@@ -1067,9 +1318,13 @@ def main():
     parser.add_argument('--kanata-reason',  dest='kanata_reason', help='カナタ判定理由')
     parser.add_argument('--recommend',      help='おすすめ度 1〜5')
 
+    # --update-seq / --update-title 用オプション（--add とも共通利用）
+    parser.add_argument('--status',
+                        help=f'実施可否を更新（--update-seq / --update-title 用）: {", ".join(STATUS_OPTIONS)}')
+
     # --list オプション
     parser.add_argument('--filter-status',  dest='filter_status',
-                        help=f'実施可否フィルタ: {", ".join(STATUS_OPTIONS)}')
+                        help=f'実施可否フィルタ（--list 用）: {", ".join(STATUS_OPTIONS)}')
 
     # --seen-add オプション
     parser.add_argument('--title-seen',     dest='title_seen',
@@ -1113,10 +1368,12 @@ def main():
             cmd_list_recent(token, db_id, args.list_recent)
         elif args.show_seq is not None:
             cmd_show_seq(token, db_id, args.show_seq)
+        elif args.update_seq is not None or args.update_title:
+            cmd_update_radar(args, token, db_id)
         elif args.add:
             cmd_add(args, token, db_id)
     except NotionRadarError as e:
-        print(f'[ERROR] {e}')
+        print(f'[FAIL] Notion API エラー: {e}')
         sys.exit(1)
 
 
