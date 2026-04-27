@@ -1,5 +1,88 @@
 # セッション引き継ぎ
 
+## 🟢 再開ポイント（2026-04-27）: LINE WORKS Bot 代替方式検証完了 → v3.5 設計判断待ち
+
+**Claude Code レーダー #012（Managed Agents メモリ）の検証から派生。LINE WORKS Bot v3.4（claude.exe + subprocess + --resume方式）の代替として Claude Agent SDK 方式が有力と判明。シンヤさんの設計切り替え判断待ち。**
+
+### 本日の完了事項（2026-04-27）
+
+1. **#012 Managed Agents 検証 → 不適と判明**
+   - Anthropic 側ホスト固定（BYO/セルフホスト不可）でローカル `~/.claude/` アクセス不可
+   - 公式が「セルフホスト希望なら Claude Agent SDK を使え」と誘導
+   - ミオ調査 → リク検証通過 → Notion #012 を「却下」「非推奨」「⭐1」に更新済み
+
+2. **Claude Agent SDK 検証 → v3.4 代替として「有力」**
+   - Python (`pip install claude-agent-sdk`) / TypeScript (`@anthropic-ai/claude-agent-sdk`)。Claude Code SDK から改名
+   - PyPI で Windows x86-64 wheel 提供、claude CLI バイナリ自動バンドル（claude.exe 別途インストール不要）
+   - ローカル `~/.claude/` 全配下にアクセス可能（**ただし `setting_sources=["user", "project"]` の明示指定が必須**）
+   - セッション継続：`ClaudeAgentOptions(resume=session_id)` + `ResultMessage.session_id`
+   - 課金：トークン課金のみ。Managed Agents の $0.08/h 追加課金なし。SDK は MIT で無料
+   - **v3.4 の複雑な state管理・stale検知・subprocess/PID制御・stdout JSONパースが SDK 側に吸収可能**
+   - ミオ調査 → リク検証通過
+
+3. **notion-radar.py に `--update-seq` / `--update-title` コマンド追加**
+   - シュウ実装 → サクラ Approved（Medium#1, #2, #4 修正反映後の再レビュー通過）
+   - 副次 Low 指摘（#5空文字クリア / #6表示重複 / #7API2回 / #8`--add`時`--status`無視 / page_size=100超過 / 不要f-string）は kaizen 案件として登録済み
+
+### リクが検出した重大な実装注記（v3.5 着手時に必須認識）
+
+ミオ初稿の「`setting_sources=["user", "project"]` がデフォルト値」は**誤り**。
+- 正しい仕様：**SDK は デフォルトでフィルシステム設定を一切読み込まない**（`setting_sources` 省略時 = 無効）
+- これは Claude Code SDK → Claude Agent SDK 改名時の主要仕様変更点
+- 公式表記：「The SDK no longer reads from filesystem settings (CLAUDE.md, settings.json, slash commands, etc.) by default」
+- **実装時は `setting_sources=["user", "project"]` を明示指定する必要あり**（指定しないと `~/.claude/skills/` も `CLAUDE.md` も読み込まれない）
+
+### 次セッションの再開手順
+
+#### Step A: シンヤさんに方針確認
+
+未回答の判断ポイント：
+- **(1) v3.4 → v3.5（SDK 方式）への切り替えを進めるか？**
+  - A: 進める → シュウに v3.5 設計書作成委任
+  - B: 進めない（v3.4 のまま動作確認再開）
+  - C: 検証だけ別セッション・別ブランチで先行（小規模 PoC）
+- **(2) v3.4 の中断中ステップ8（動作確認）はどうするか**
+  - 現状 server.py は v3.4 前（1157行）に復元、claude-session.json 削除済み（[再開ポイント L371-447] 参照）
+  - SDK 方式に切り替えるなら v3.4 動作確認は不要になる可能性
+
+#### Step B: v3.5 設計書作成（Step A で「進める」を選んだ場合）
+
+シュウに以下を委任：
+- 設計書ファイル名候補：`~/.claude/plans/line-works-bot-claude-code-design-v3.5.md`
+- v3.4 の subprocess 部分を Claude Agent SDK の `query()` / `ClaudeAgentOptions` 呼び出しに置き換え
+- **`setting_sources=["user", "project"]` を明示指定する仕様を最初から組み込む**（必須）
+- セッション継続は `ClaudeAgentOptions(resume=session_id)` + `ResultMessage.session_id` で実装
+- v3.4 の KYT 11件対処・Phase 1 縮小・セッション明示トリガー制（in_session フラグ）は引き継ぐ
+- Webhook 2秒タイムアウト対策は asyncio で素直に書き直し可能（threading.Thread + subprocess.communicate よりシンプル）
+- 取り除けるもの：claude-session.json の自前state管理（SDK が内蔵）、stale 検知 2 段ロジック、PID 管理、stdout JSON パース、`subprocess.Popen` / `proc.kill()` / `TimeoutExpired` 処理
+- 実装着手前に PyPI で `claude-agent-sdk` の最新バージョンを再確認（リク検証で「v0.1.68 は要確認、v0.1.66 が確実」と指摘あり）
+
+#### Step C: KYT → リナ統合検証 → 実装 → サクラレビュー → 動作確認
+
+`/feature-flow` の標準フローに乗せる。
+
+### 関連リンク・出典
+
+- Notion 案件管理 DB に登録済み案件（次セッションで `notion-tasks.py --list --filter-status 未着手 --filter-env Windows` で拾える）：
+  - 「LINE WORKS Bot v3.5 設計検討（Claude Agent SDK方式）」（P3-今月中、2026-04-27 登録予定）
+  - 「notion-radar.py kaizen：Low指摘リファクタ」（P3-今月中、2026-04-27 登録済み）
+- Claude Agent SDK 公式：
+  - https://platform.claude.com/docs/en/agent-sdk/overview
+  - https://platform.claude.com/docs/en/agent-sdk/migration-guide（Claude Code SDK → Agent SDK 改名）
+  - https://platform.claude.com/docs/en/agent-sdk/skills（`setting_sources` 仕様）
+  - https://platform.claude.com/docs/en/agent-sdk/sessions
+  - https://platform.claude.com/docs/en/agent-sdk/hosting
+- v3.4 設計書（参照用）：`~/.claude/plans/line-works-bot-claude-code-design-v3.4.md`
+- v3.4 中断中ステータス：本ファイル下方の「🔴 再開ポイント（2026-04-21）: LINE WORKS Bot Claude Code セッション継続機能」セクション
+
+### 注意事項
+
+- v3.5 設計に進む場合、v3.4 の中断中ステップ8（動作確認）は無効化される
+- v3.4 の `claude-session.json` state ファイル形式は v3.5 では SDK 内部のセッションストレージ（`~/.claude/projects/<encoded-cwd>/*.jsonl`）に置き換わるため、移行設計が必要
+- v3.5 では **Webhook ハンドラを async 化する設計変更**が入るため、既存の Flask 同期ハンドラ + threading.Thread 構成からの書き換え範囲が広い
+
+---
+
 ## 🟠 最優先再開ポイント（2026-04-27 更新）: オフィスウエダ業種特化戦略 - 建設業 Competitive Absence Audit 検証中
 
 **v4棚上げ → Web制作・保守主力 → 業種選定データドリブン化 → 建設業を第1推奨候補に → 6仮説監査の検証フェーズで停止中**
@@ -369,6 +452,8 @@ git push origin main
 ---
 
 ## 🔴 再開ポイント（2026-04-21 更新）: LINE WORKS Bot Claude Code セッション継続機能
+
+**⚠️ 2026-04-27 追記：Claude Agent SDK が v3.4 代替として有力と判明。v3.5 設計に切り替えるかシンヤさん判断待ち（本ファイル冒頭の「🟢 再開ポイント（2026-04-27）」参照）。v3.4 のまま継続する場合のみ以下の手順が有効。**
 
 **ステップ7（サクラレビュー）完了・ステップ8（動作確認）で問題発見 → server.py を v3.4 前（1157行）に一旦復元。再開時は v3.4.3 以降の修正 + 動作確認ブロッカー解消から。**
 
