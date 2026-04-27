@@ -54,6 +54,7 @@
 - [knowledge/claude-code-cli/session-continuation.md](../knowledge/claude-code-cli/session-continuation.md) — claude -p --resume の動作仕様・cwd依存・コスト・セッションファイル形式（2026-04-18 実機検証）
 - [knowledge/claude-code-cli/session-resume-troubleshooting.md](../knowledge/claude-code-cli/session-resume-troubleshooting.md) — VSCode Claude で覚えのないセッション再開が起きた時の切り分け手順（jsonl初回メッセージ・permissionMode・USD budgetの3点診断）
 - [knowledge/claude-code-cli/plugins-vs-skills.md](../knowledge/claude-code-cli/plugins-vs-skills.md) — Plugin/Skill/Marketplaceの階層関係、導入ルート3種、公式マーケ、名前空間、シンヤさん環境での選択基準
+- [knowledge/claude-code-cli/agent-sdk.md](../knowledge/claude-code-cli/agent-sdk.md) — Claude Agent SDK の主要仕様（旧Claude Code SDK・Windows wheel・setting_sources明示必須・セッション継続・Managed Agentsとの比較）
 
 ## PM
 - [knowledge/pm/wbs-scope-management.md](../knowledge/pm/wbs-scope-management.md) — WBS・スコープ管理・MoSCoW・依存関係4タイプ・変更管理プロセス（マルチエージェント運用向けPM実務）
