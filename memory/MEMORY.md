@@ -23,9 +23,11 @@
 - [feedback-agent-skill-gap.md](feedback-agent-skill-gap.md) — エージェントの繰り返し失敗はスキル化で根本対応（指示改善は2回まで、3回目でスキル化）
 - [feedback-dev-workflow.md](feedback-dev-workflow.md) — アスカのコーディング禁止ルール違反履歴（.env以外のコード・スクリプト・設定ファイルは必ずシュウに委任）
 - [feedback-asuka-interpretation.md](feedback-asuka-interpretation.md) — シンヤさんの指示の対象範囲・前提を勝手に広げない（拡大解釈禁止）
+- [feedback-asuka-vague-language.md](feedback-asuka-vague-language.md) — 「軽量」「簡易」「ざっくり」など解釈が分かれる曖昧表現を委任・指示で使わない（具体的に言語化）
 - [feedback-asuka-no-code-analysis.md](feedback-asuka-no-code-analysis.md) — アスカはコード関連の作業（読解・解析・診断・レビュー）を直接やらない。必ずシュウ・サクラに委任する
 - [feedback-rina-risk-threshold.md](feedback-rina-risk-threshold.md) — リナ検証はリスク1-5併記で、リスク3以上対処・2以下許容の閾値運用（無限ループ防止）
 - [feedback_researcher_llmo_jsonld.md](feedback_researcher_llmo_jsonld.md) — ミオがllmo-audit実行時、WebFetchでJSON-LD未検出でも即NG禁止。JS注入可能性が残る限り判定不能扱い
+- [feedback-agent-fact-fabrication.md](feedback-agent-fact-fabrication.md) — エージェントによるシンヤさん経歴・発言・実績の捏造を絶対禁止。【要事実確認】マーカー必須・出典セクション必須・リナ全件抽出検証手順固定（2026-04-28 レン捏造事故から起票）
 
 ## project
 - [project_notion_management.md](project_notion_management.md) — Notion DB一本化方針（案件リスト・残件タスク→案件管理に統合、スキーマ設計は持ち越し）

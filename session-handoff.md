@@ -1,5 +1,62 @@
 # セッション引き継ぎ
 
+## 🟢 最優先再開ポイント（2026-04-29）: linnoa BORN STEM フォーム — 吉澤さん本番チェック待ち＋不具合即応待機
+
+**linnoa（バクチスコーポレーション株式会社）の BORN STEM 購入お問い合わせフォーム実装完了。シンヤさん動作OK判定後、吉澤さんへ本番チェック依頼中。本セッションは一旦クローズ、不具合発生時は即対応する待機状態。**
+
+### 公開URL（本番想定）
+`https://company.bakuchis.com/bornstem_contact`
+
+### 案件ファイルパス
+`~/.claude/clients/linnoa/company.bakuchis.com/bornstem_contact/`
+（2026-04-29 シンヤさん手動でディレクトリ移動。同ディレクトリに `plapendual` も格納）
+
+### Notion 案件
+- 「BORN STEM 購入お問い合わせフォーム本番投入＆動作チェック」（P1-即時、シンヤ確認待ち、Shinya担当）
+- ID は `notion-tasks.py --show "BORN STEM"` で取得可能。memo にディレクトリ移動の追記済
+
+### 完了事項（本セッション）
+- 本実装（4回のレビューサイクルで Critical/High すべて解消、サクラ通過）
+- YubinBango.js 不具合修正（`value="ja"` → `"Japan"`、`change` → `keyup` イベント）
+- バリデーションエラー時の自動スクロール機能（`#form-message` へ・4経路発火・`prefers-reduced-motion` 対応）
+- 全項目 placeholder 統一（女性向けサンプル：山田/花子・鈴木/美咲）
+- 全静的アセットにキャッシュバスター付与（`?v=20260429`）
+- ディレクトリ構成変更（シンヤさん手動）→ CLAUDE.md ルール拡張で正式化
+- テンプレ（sendmail-form-base v1.6.2）に汎用化可能な改善 4 件をバックポート完了
+
+### このセッションでの主要ルール変更
+- **CLAUDE.md「Client Directory Structure Rules」を 2 パターン → 4 パターンに拡張**（A:フラット / B:ドメイン階層 / C:`biz-` プレフィックス / D:`biz-`+ドメイン2層）
+- 事業数 × ドメイン数で機械的判定（Web/非Web 軸を削除）
+- 画像保存先・`reports/` 配置の 4 パターン分も明文化
+- linnoa = パターンB / officeueda = パターンC の実装例として明記
+- **`memory/feedback-asuka-vague-language.md` 新設**：「軽量レビュー」等の曖昧表現禁止ルール（リナ検証通過）
+
+### 不具合発生時の対応フロー
+
+1. **吉澤さんから不具合報告** → シンヤさん経由でセッション再開
+2. 関連ファイル: `clients/linnoa/company.bakuchis.com/bornstem_contact/`
+3. 主要技術構成:
+   - PHP: `index.php` / `submit.php` / `includes/*.php` / `templates/*.txt`
+   - JS: `assets/js/form.js` / `assets/js/vendor/yubinbango.js`（MIT 同梱）
+   - CSS: FLOCSS 命名、レスポンシブ対応
+   - セキュリティ: CSRF / ハニーポット / レートリミット / メールヘッダーインジェクション多層防御
+4. **委任先**: 本セッションは保留中の「シュウ・ツバサ役割分担」適用前のため、引き続きシュウ単独委任で対応可能
+5. **レビュー基準**: サクラ（コードレビュー＋セキュリティレビュー）、品質基準は通常通り。**「軽量レビュー」等の曖昧表現は使用禁止**（feedback-asuka-vague-language.md 適用）
+
+### 吉澤さん確認待ち事項（不具合と別軸）
+- `FROM_EMAIL` の希望値（仮置き `noreply@bakuchis.com`）
+- 所在地郵便番号 `〒050-6018` の整合性（恵比寿なら `150-6018` の可能性）
+
+### 残件（別セッションで対応）
+- Notion: 「シュウ・ツバサ役割分担ルール策定」（P3-今月中、Asuka担当）
+- Notion: 「kaizen: ライブラリ統合時のレビュー観点拡張」（P3-今月中、Sakura担当）
+
+### 完了確認時のアクション
+- 吉澤さん OK 判定後、Notion 案件のステータスを「完了」に更新
+- session-handoff.md の本セクションを削除
+
+---
+
 ## 🟢 再開ポイント（2026-04-27）: LINE WORKS Bot 代替方式検証完了 → v3.5 設計判断待ち
 
 **Claude Code レーダー #012（Managed Agents メモリ）の検証から派生。LINE WORKS Bot v3.4（claude.exe + subprocess + --resume方式）の代替として Claude Agent SDK 方式が有力と判明。シンヤさんの設計切り替え判断待ち。**

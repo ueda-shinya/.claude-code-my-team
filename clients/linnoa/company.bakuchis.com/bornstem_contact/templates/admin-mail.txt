@@ -1,0 +1,39 @@
+Subject: 【BAKUCHIS Corporation】BORN STEMのお問い合わせがありました
+
+BORN STEM 購入お問い合わせフォームから新規お問い合わせがありました。
+
+────────────────────────────────────
+
+■　フォーム入力内容
+
+────────────────────────────────────
+
+会社名・サロン名: {{company}}
+会社名・サロン名カナ: {{company_kana}}
+
+代表者: {{rep_lastname}} {{rep_firstname}}
+代表者カナ: {{rep_lastname_kana}} {{rep_firstname_kana}}
+
+担当者: {{staff_lastname}} {{staff_firstname}}
+担当者カナ: {{staff_lastname_kana}} {{staff_firstname_kana}}
+
+住所:
+  〒{{zipcode}}
+  {{prefecture}} {{city}}
+  {{street}}
+  {{building}}
+
+メールアドレス: {{email}}
+電話番号: {{tel}}
+携帯番号: {{mobile}}
+
+業態 / 業種: {{industry}}
+ホームページURL: {{website}}
+
+────────────────────────────────────
+
+■　送信メタ情報
+
+受信日時: {{timestamp}}
+IPアドレス: {{ip}}
+User-Agent: {{user_agent}}

@@ -467,8 +467,10 @@ Session Browser Trigger（「3を再開」「1と5を再開」）も番号を使
 ### 画像の保存先ルール
 - `~/Pictures/` は macOS のシステム保護で書き込み不可になる場合があるため**使用禁止**
 - 一般用途（デフォルト）：`~/.claude/images/<ファイル名>.webp`
-- クライアント案件（共通）：`~/.claude/clients/<クライアント名>/images/<ファイル名>.webp`
-- クライアント案件（事業別）：`~/.claude/clients/<クライアント名>/biz-<事業名>/images/<ファイル名>.webp`（例：`officeueda/biz-ai/images/`・`officeueda/biz-web/images/`）
+- クライアント案件（共通・全パターン共通画像）：`~/.claude/clients/<クライアント名>/images/<ファイル名>.webp`
+- クライアント案件（パターンC：事業別）：`~/.claude/clients/<クライアント名>/biz-<事業名>/images/<ファイル名>.webp`（例：`officeueda/biz-ai/images/`・`officeueda/biz-web/images/`）
+- クライアント案件（パターンB：ドメイン別）：`~/.claude/clients/<クライアント名>/<domain>/images/<ファイル名>.webp`（例：`linnoa/company.bakuchis.com/images/`）
+- クライアント案件（パターンD：事業×ドメイン）：`~/.claude/clients/<クライアント名>/biz-<事業名>/<domain>/images/<ファイル名>.webp`
 - ローカル保存を明示指定されたとき：`~/Documents/claude-images/<ファイル名>.webp`
 - 拡張子は `.webp` に統一（gemini 出力が JPEG でもファイル名は `.webp` で統一）
 - ルナへの依頼時も上記パスで savePath を指定すること
@@ -553,24 +555,62 @@ Session Browser Trigger（「3を再開」「1と5を再開」）も番号を使
 
 ## クライアントディレクトリの構成ルール
 
-- **事業が1つの場合**：従来通りフラット構造
-  ```
-  clients/<クライアント名>/
-  ├── README.md
-  └── images/
-  ```
-- **事業が複数の場合**：事業別サブディレクトリ構成に移行
-  ```
-  clients/<クライアント名>/
-  ├── README.md        ← 会社共通情報
-  ├── images/          ← 会社共通画像
-  └── biz-<事業名>/    ← 事業ディレクトリは biz- プレフィックスで統一
-      ├── README.md
-      └── images/
-  ```
-- 事業が増えたタイミングで上記の複数構成に移行する
-- 事業ディレクトリは `biz-` プレフィックスで統一（例：`biz-web`・`biz-ai`）することで、他ディレクトリと見た目で判別できるようにする
+案件特性に応じて以下4パターンから選択する。**事業数とドメイン数で機械的に判定する**（Webか非Webかは判定軸に含めない）。
+
+| クライアント特性 | 構成 |
+|---|---|
+| 事業1つ・ドメイン1つ | A. フラット構造 |
+| 事業1つ・複数ドメイン または 同一ドメイン下に複数プロジェクト | B. ドメイン階層構造 |
+| 複数事業（各事業がドメイン1つ以下） | C. `biz-` プレフィックス構造 |
+| 複数事業 × 複数ドメイン | D. `biz-` + ドメインの2層構造 |
+
+### A. フラット構造（事業1つ・ドメイン1つ）
+```
+clients/<クライアント名>/
+├── README.md
+└── images/
+```
+
+### B. ドメイン階層構造（事業1つ・複数ドメイン or 同一ドメイン下に複数プロジェクト・実装例：linnoa）
+```
+clients/<クライアント名>/
+├── README.md            ← クライアント共通情報
+├── images/              ← クライアント共通画像
+└── <domain>/            ← ドメイン名そのまま使用（例：company.bakuchis.com）
+    ├── <project1>/
+    └── <project2>/
+```
+
+### C. `biz-` プレフィックス構造（複数事業・各事業がドメイン1つ以下・実装例：officeueda）
+```
+clients/<クライアント名>/
+├── README.md        ← 会社共通情報
+├── images/          ← 会社共通画像
+└── biz-<事業名>/    ← 事業ディレクトリは biz- プレフィックスで統一
+    ├── README.md
+    └── images/
+```
+
+### D. `biz-` + ドメインの2層構造（複数事業 × 複数ドメイン）
+```
+clients/<クライアント名>/
+├── README.md
+├── images/
+└── biz-<事業名>/
+    └── <domain>/
+        └── <project>/
+```
+
+### 移行ルール
+- 事業またはドメインが増えたタイミングで該当構成に移行する
+- 既存クライアントの強制移行はしない（次の機能追加時に同時実施）
+- 事業ディレクトリは `biz-` プレフィックスで統一（例：`biz-web`・`biz-ai`）して他ディレクトリと判別可能にする
+- ドメイン階層はそのままドメイン名（ドット含む実ドメイン名・例：`company.bakuchis.com`）を使用する。`company-bakuchis-com` のようなハイフン化や省略形は使わない
 
 ## ファイル出力ルール
-- 「報告して」→ クライアント案件は `~/.claude/clients/<名前>/reports/`、一般は `~/.claude/reports/`（Git管理・別PCから参照可）
+- 「報告して」→ クライアント案件は該当階層直下の `reports/`、一般は `~/.claude/reports/`（Git管理・別PCから参照可）
+  - パターンA：`~/.claude/clients/<クライアント名>/reports/`
+  - パターンB（ドメイン別）：共通レポートは `~/.claude/clients/<クライアント名>/reports/`、ドメイン固有は `~/.claude/clients/<クライアント名>/<domain>/reports/`
+  - パターンC（事業別）：共通レポートは `~/.claude/clients/<クライアント名>/reports/`、事業固有は `~/.claude/clients/<クライアント名>/biz-<事業名>/reports/`
+  - パターンD（事業×ドメイン）：共通は `~/.claude/clients/<クライアント名>/reports/`、事業固有は `~/.claude/clients/<クライアント名>/biz-<事業名>/reports/`、ドメイン固有は `~/.claude/clients/<クライアント名>/biz-<事業名>/<domain>/reports/`
 - 「出力して」→ `~/Documents/claude-reports/`（ローカル保存）

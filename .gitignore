@@ -75,3 +75,7 @@ mcp-servers/
 # ── GitHub 100MB上限超のファイル ─────────────────────────
 workspaces/plapendual/mov/cont08_06.mp4
 workspaces/plapendual-debug2/mov/cont08_06.mp4
+
+# ── plapendual の動画ファイル（GitHub 100MB上限超・OneDrive等で別途同期）─
+clients/**/plapendual/mov/
+clients/**/plapendual-debug*/mov/

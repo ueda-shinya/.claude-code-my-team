@@ -1,0 +1,10 @@
+# 本番設定ファイル（本番値を直接記載するため git 追跡から除外）
+/includes/config.php
+
+# ログファイル（.gitkeep / .htaccess だけをトラッキング）
+logs/*.log
+logs/rate-limit/*.json
+
+# バックアップ
+*.bak
+*.bak.*

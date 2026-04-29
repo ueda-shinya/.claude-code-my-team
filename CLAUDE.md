@@ -1025,8 +1025,10 @@ Required 5 items for `--memo`:
 ### Image Save Location Rules
 - `~/Pictures/` may be write-protected by macOS system protection — **do not use**
 - General use (default): `~/.claude/images/<filename>.webp`
-- Client projects (shared): `~/.claude/clients/<client>/images/<filename>.webp`
-- Client projects (per business): `~/.claude/clients/<client>/biz-<business>/images/<filename>.webp` (e.g., `officeueda/biz-ai/images/`, `officeueda/biz-web/images/`)
+- Client projects (shared across all patterns): `~/.claude/clients/<client>/images/<filename>.webp`
+- Client projects (Pattern C: per business): `~/.claude/clients/<client>/biz-<business>/images/<filename>.webp` (e.g., `officeueda/biz-ai/images/`, `officeueda/biz-web/images/`)
+- Client projects (Pattern B: per domain): `~/.claude/clients/<client>/<domain>/images/<filename>.webp` (e.g., `linnoa/company.bakuchis.com/images/`)
+- Client projects (Pattern D: per business × domain): `~/.claude/clients/<client>/biz-<business>/<domain>/images/<filename>.webp`
 - When local save is explicitly specified: `~/Documents/claude-images/<filename>.webp`
 - Extension unified as `.webp` (even if Gemini output is JPEG, filename uses `.webp`)
 - When making requests to Luna, specify savePath using the paths above
@@ -1111,24 +1113,62 @@ Tsumigi decides what to write where, updates the files, and reports back to Asuk
 
 ## Client Directory Structure Rules
 
-- **Single business**: flat structure as before
-  ```
-  clients/<client>/
-  ├── README.md
-  └── images/
-  ```
-- **Multiple businesses**: migrate to per-business subdirectory structure
-  ```
-  clients/<client>/
-  ├── README.md        ← company-wide info
-  ├── images/          ← company-wide images
-  └── biz-<business>/  ← business directories use biz- prefix
-      ├── README.md
-      └── images/
-  ```
-- Migrate to the multi-business structure when a new business is added
+Choose one of the following 4 patterns based on the client's characteristics. **Decide mechanically based on the number of businesses and domains** (Web vs non-Web is not a deciding factor).
+
+| Client characteristics | Structure |
+|---|---|
+| 1 business, 1 domain | A. Flat structure |
+| 1 business, multiple domains, or multiple projects under one domain | B. Domain-hierarchy structure |
+| Multiple businesses (each with at most 1 domain) | C. `biz-` prefix structure |
+| Multiple businesses × multiple domains | D. `biz-` + domain 2-layer structure |
+
+### A. Flat structure (1 business, 1 domain)
+```
+clients/<client>/
+├── README.md
+└── images/
+```
+
+### B. Domain-hierarchy structure (1 business, multiple domains or multiple projects under one domain — example: linnoa)
+```
+clients/<client>/
+├── README.md            ← client-wide info
+├── images/              ← client-wide images
+└── <domain>/            ← use the domain name directly (e.g., company.bakuchis.com)
+    ├── <project1>/
+    └── <project2>/
+```
+
+### C. `biz-` prefix structure (multiple businesses, each with at most 1 domain — example: officeueda)
+```
+clients/<client>/
+├── README.md        ← company-wide info
+├── images/          ← company-wide images
+└── biz-<business>/  ← business directories use biz- prefix
+    ├── README.md
+    └── images/
+```
+
+### D. `biz-` + domain 2-layer structure (multiple businesses × multiple domains)
+```
+clients/<client>/
+├── README.md
+├── images/
+└── biz-<business>/
+    └── <domain>/
+        └── <project>/
+```
+
+### Migration rules
+- Migrate to the appropriate structure when a business or domain is added
+- Existing clients are not forcibly migrated (apply when adding the next feature)
 - Business directories use the `biz-` prefix (e.g., `biz-web`, `biz-ai`) to visually distinguish from other directories
+- Domain hierarchies use the domain name directly (with dots, the actual domain — e.g., `company.bakuchis.com`). Do not use hyphenated or abbreviated forms like `company-bakuchis-com`
 
 ## File Output Rules
-- "Report it" → client projects: `~/.claude/clients/<name>/reports/`, general: `~/.claude/reports/` (Git-managed, accessible from other PCs)
+- "Report it" → client projects: place `reports/` directly under the relevant level; general: `~/.claude/reports/` (Git-managed, accessible from other PCs)
+  - Pattern A: `~/.claude/clients/<name>/reports/`
+  - Pattern B (per domain): shared reports at `~/.claude/clients/<name>/reports/`, domain-specific at `~/.claude/clients/<name>/<domain>/reports/`
+  - Pattern C (per business): shared reports at `~/.claude/clients/<name>/reports/`, business-specific at `~/.claude/clients/<name>/biz-<business>/reports/`
+  - Pattern D (per business × domain): shared at `~/.claude/clients/<name>/reports/`, business-specific at `~/.claude/clients/<name>/biz-<business>/reports/`, domain-specific at `~/.claude/clients/<name>/biz-<business>/<domain>/reports/`
 - "Output it" → `~/Documents/claude-reports/` (local save)

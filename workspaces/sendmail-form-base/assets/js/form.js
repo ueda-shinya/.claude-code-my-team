@@ -3,6 +3,15 @@
 // -----------------------------------------------------------------------
 // 設定
 // -----------------------------------------------------------------------
+// JS無効フォールバック: ?error=1 でリダイレクトされてきた場合に #form-message までスクロール
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search)
+  if (params.get('error') === '1') {
+    scrollToFormMessage()
+  }
+})
+
+// -----------------------------------------------------------------------
 const ZIPCLOUD_ENDPOINT = 'https://zipcloud.ibsnet.co.jp/api/search'
 const ZIP_FETCH_TIMEOUT_MS = 5000 // L16: タイムアウト5秒
 
@@ -186,6 +195,7 @@ form.addEventListener('submit', async (e) => {
 
   if (!isAllValid) {
     showFormMessage('入力内容に誤りがあります。各項目を確認してください。', 'error')
+    scrollToFormMessage()
     return
   }
 
@@ -206,10 +216,12 @@ form.addEventListener('submit', async (e) => {
       return
     } else {
       showFormMessage(json.message, 'error')
+      scrollToFormMessage()
       submitBtn.disabled = !privacyCb.checked
     }
   } catch (e) {
     showFormMessage('通信エラーが発生しました。しばらく時間をおいて再度お試しください。', 'error')
+    scrollToFormMessage()
     submitBtn.disabled = !privacyCb.checked
   }
 
@@ -220,11 +232,22 @@ function showFormMessage(message, type) {
   formMsg.textContent = message
   formMsg.className   = `c-form-message c-form-message--${type}`
   formMsg.hidden      = false
-  formMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  // スクロールは呼び出し元の scrollToFormMessage() が担う（責任分離）
 }
 
 function hideFormMessage() {
-  formMsg.hidden    = true
+  formMsg.hidden      = true
   formMsg.textContent = ''
   formMsg.className   = 'c-form-message'
+}
+
+// #form-message 要素へスムーズスクロール
+// prefers-reduced-motion に対応し、モーション低減設定の場合は即時スクロール
+function scrollToFormMessage() {
+  const formMessage = document.getElementById('form-message')
+  if (!formMessage) return
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  requestAnimationFrame(() => {
+    formMessage.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' })
+  })
 }

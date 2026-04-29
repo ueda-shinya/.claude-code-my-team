@@ -1,0 +1,332 @@
+/* -----------------------------------------------------------------------
+   form.css — BORN STEM 購入お問い合わせフォーム専用スタイル
+   クラス命名は FLOCSS に準拠（l-: Layout / c-: Component / p-: Project / u-: Utility）
+   BEM（block__element--modifier）を併用
+----------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------
+   Utility: ハニーポット非表示
+   単一機能を表現するために複数プロパティが不可分な確立ユーティリティ
+----------------------------------------------------------------------- */
+.u-hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* -----------------------------------------------------------------------
+   Layout: フォームページ外枠
+----------------------------------------------------------------------- */
+.l-form-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* -----------------------------------------------------------------------
+   Project: お問い合わせページ固有
+----------------------------------------------------------------------- */
+
+/* h1 にダッシュ装飾を付与（テキスト本体にはダッシュを含めない） */
+.p-contact__title {
+  position: relative;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  line-height: 1.4;
+}
+.p-contact__title::before,
+.p-contact__title::after {
+  content: '–';
+  display: inline-block;
+  margin: 0 .6em;
+  color: #888;
+  font-weight: normal;
+}
+
+.p-contact__lead {
+  font-size: .95rem;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* -----------------------------------------------------------------------
+   Project: プライバシーポリシー モーダル
+----------------------------------------------------------------------- */
+.p-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-modal[hidden] {
+  display: none;
+}
+
+.p-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .5);
+}
+
+.p-modal__content {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 6px;
+  padding: 2rem 1.5rem;
+  width: min(90vw, 480px);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.p-modal__title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  letter-spacing: .05em;
+}
+
+.p-modal__body {
+  font-size: .9rem;
+  color: #444;
+  line-height: 1.8;
+}
+
+.p-modal__close {
+  position: absolute;
+  top: .6rem;
+  right: .8rem;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+  padding: .2rem .4rem;
+}
+
+.p-modal__close:hover {
+  color: #333;
+}
+
+/* -----------------------------------------------------------------------
+   Component: フォームグループ（ラベル + 入力 + エラーのセット）
+----------------------------------------------------------------------- */
+.c-form-group {
+  margin-bottom: 1.4rem;
+}
+
+.c-form-group label {
+  display: block;
+  margin-bottom: .3rem;
+  font-weight: bold;
+  font-size: .95rem;
+}
+
+/* グループのラベルテキスト（label タグではなく span の場合） */
+.c-form-group__label-text {
+  display: block;
+  margin-bottom: .4rem;
+  font-weight: bold;
+  font-size: .95rem;
+}
+
+/* -----------------------------------------------------------------------
+   Component: 必須バッジ
+----------------------------------------------------------------------- */
+.c-required-badge {
+  display: inline-block;
+  margin-left: .3rem;
+  padding: .1em .4em;
+  border-radius: 3px;
+  background: #d9534f;
+  color: #fff;
+  font-size: .7rem;
+  vertical-align: middle;
+}
+
+/* -----------------------------------------------------------------------
+   Component: 姓名横並び2分割
+   モバイル（480px以下）では縦積みに切り替える
+----------------------------------------------------------------------- */
+.c-name-row {
+  display: flex;
+  gap: .8rem;
+}
+
+.c-name-row__field {
+  flex: 1;
+}
+
+.c-name-row__field label {
+  font-weight: normal;
+  font-size: .9rem;
+  color: #555;
+}
+
+@media (max-width: 480px) {
+  .c-name-row {
+    flex-direction: column;
+    gap: .5rem;
+  }
+}
+
+/* -----------------------------------------------------------------------
+   Component: 入力フィールド共通
+----------------------------------------------------------------------- */
+input[type='text'],
+input[type='tel'],
+input[type='email'],
+input[type='url'] {
+  width: 100%;
+  padding: .55rem .7rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color .15s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, .25);
+}
+
+input[aria-invalid='true'] {
+  border-color: #d9534f;
+}
+
+/* -----------------------------------------------------------------------
+   Component: フィールドエラー
+----------------------------------------------------------------------- */
+.c-field-error {
+  display: block;
+  margin-top: .25rem;
+  color: #d9534f;
+  font-size: .85rem;
+  min-height: 1.2em;
+}
+
+/* -----------------------------------------------------------------------
+   Component: ヒントテキスト
+----------------------------------------------------------------------- */
+.c-field-hint {
+  display: block;
+  margin-top: .2rem;
+  color: #555;
+  font-size: .8rem;
+}
+
+/* -----------------------------------------------------------------------
+   Component: プライバシーポリシー行
+----------------------------------------------------------------------- */
+.c-form-group--privacy {
+  margin-top: 1.8rem;
+}
+
+.c-privacy-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .8rem;
+}
+
+.c-privacy-row__label {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-weight: normal;
+}
+
+/* テキストリンク風ボタン */
+.c-btn--link {
+  background: none;
+  border: none;
+  color: #0066cc;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: .9rem;
+  padding: 0;
+}
+
+.c-btn--link:hover {
+  color: #0052a3;
+}
+
+/* -----------------------------------------------------------------------
+   Component: フォーム送信ボタン
+----------------------------------------------------------------------- */
+.c-form-actions {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+button[type='submit'] {
+  padding: .75rem 3.5rem;
+  background: #0066cc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+button[type='submit']:hover:not(:disabled) {
+  background: #0052a3;
+}
+
+button[type='submit']:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+/* -----------------------------------------------------------------------
+   Component: フォーム全体メッセージ
+----------------------------------------------------------------------- */
+.c-form-message {
+  padding: .8rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: .95rem;
+}
+
+.c-form-message--success {
+  background: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+}
+
+.c-form-message--error {
+  background: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+}
+
+/* -----------------------------------------------------------------------
+   レスポンシブ追加
+----------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .l-form-wrap {
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .p-contact__title {
+    font-size: 1.2rem;
+  }
+
+  button[type='submit'] {
+    width: 100%;
+  }
+}

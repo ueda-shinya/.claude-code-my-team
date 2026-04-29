@@ -19,19 +19,19 @@ $noJsError = isset($_GET['error']) && $_GET['error'] === '1';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>お問い合わせ</title>
-  <link rel="stylesheet" href="assets/css/form.css">
+  <link rel="stylesheet" href="assets/css/form.css?v=20260429">
 </head>
 <body>
   <main class="l-form-wrap">
     <h1>お問い合わせ</h1>
 
     <?php if ($noJsError): ?>
-    <div class="c-form-message c-form-message--error" role="alert">
+    <div id="form-message" class="c-form-message c-form-message--error" role="alert" aria-live="polite">
       送信に失敗しました。入力内容をご確認のうえ、再度お試しください。
     </div>
-    <?php endif; ?>
-
+    <?php else: ?>
     <div id="form-message" class="c-form-message" role="alert" aria-live="polite" hidden></div>
+    <?php endif; ?>
 
     <form id="contact-form" action="submit.php" method="post" novalidate>
       <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
@@ -39,7 +39,7 @@ $noJsError = isset($_GET['error']) && $_GET['error'] === '1';
       <!-- ハニーポット（ボット対策: CSSで非表示、人間には見えない） -->
       <div class="u-hp-field" aria-hidden="true" tabindex="-1">
         <label for="url_homepage_field">ウェブサイト（入力しないでください）</label>
-        <input type="text" id="url_homepage_field" name="url_homepage" autocomplete="off" tabindex="-1">
+        <input type="text" id="url_homepage_field" name="url_homepage" autocomplete="off" tabindex="-1" aria-hidden="true">
       </div>
 
       <div class="c-form-group">
@@ -100,6 +100,6 @@ $noJsError = isset($_GET['error']) && $_GET['error'] === '1';
     </form>
   </main>
 
-  <script src="assets/js/form.js"></script>
+  <script src="assets/js/form.js?v=20260429"></script>
 </body>
 </html>

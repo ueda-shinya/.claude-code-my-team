@@ -268,7 +268,7 @@ function checkRateLimit(string $ip): bool
   $fp = @fopen($file, 'c+');
   if ($fp === false) {
     // ファイルを開けない場合は制限なしで通過（サイレント失敗より継続優先）
-    error_log("[sendmail-form] レートリミットファイルのオープン失敗: {$file}");
+    error_log("[sendmail-form][SECURITY-ALERT] レートリミットファイルのオープン失敗（fail-open発生）: {$file}");
     return true;
   }
 
@@ -507,7 +507,11 @@ if (!$adminSent) {
 unset($_SESSION['csrf_token']);
 
 if ($isAjax) {
-  respond(true, 'お問い合わせを受け付けました。確認メールをお送りしましたのでご確認ください。');
+  // 自動返信成功・失敗でユーザー向け文言を分岐（管理者メールは送信済み）
+  $message = $autoreplySuccess
+    ? 'お問い合わせを受け付けました。確認メールをお送りしましたのでご確認ください。'
+    : 'お問い合わせを受け付けました。確認メールが届かない場合はお手数ですが直接お問い合わせください。';
+  respond(true, $message);
 } else {
   // JS無効環境: 303 See Other で thanks.html へリダイレクト（POST→GET変換）
   header('Location: ./thanks.html', true, 303);

@@ -1,0 +1,46 @@
+Subject: 【バクチスコーポレーション株式会社】お問い合わせありがとうございました。
+
+{{rep_lastname}} {{rep_firstname}} 様
+
+BORN STEMについてお問い合わせいただき誠にありがとうございます。
+以下の通り受付けいたしましたので、ご確認ください。
+
+※内容をご確認しまして、担当よりメールにてご連絡差し上げます。
+
+────────────────────────────────────
+
+■　フォーム入力内容
+
+────────────────────────────────────
+
+会社名・サロン名: {{company}}
+会社名・サロン名カナ: {{company_kana}}
+
+代表者: {{rep_lastname}} {{rep_firstname}}
+代表者カナ: {{rep_lastname_kana}} {{rep_firstname_kana}}
+
+担当者: {{staff_lastname}} {{staff_firstname}}
+担当者カナ: {{staff_lastname_kana}} {{staff_firstname_kana}}
+
+住所:
+  〒{{zipcode}}
+  {{prefecture}} {{city}}
+  {{street}}
+  {{building}}
+
+メールアドレス: {{email}}
+電話番号: {{tel}}
+携帯番号: {{mobile}}
+
+業態 / 業種: {{industry}}
+ホームページURL: {{website}}
+
+────────────────────────────────────
+
+BAKUCHIS Corporation
+
+所在地：〒150-6018 東京都渋谷区恵比寿4-20-3
+　　　　恵比寿ガーデンプレイスタワー18階
+電話番号：03-6834-4984
+E-Mail：info@bakuchis.com
+URL：https://company.bakuchis.com/plapendual/

@@ -475,9 +475,11 @@ Based on Kai's design specification document (Section 10: Image Definition List)
 
 **Expected output from Luna:**
 - Generation prompt for each image (number, proposed filename, prompt body, aspect ratio)
-- Asuka saves the output as `image-prompts.md` at the following path (per client directory structure rules):
-  - Multi-business client: `~/.claude/clients/<client-name>/biz-<business-name>/lp-<date>/image-prompts.md`
-  - Single-business client: `~/.claude/clients/<client-name>/lp-<date>/image-prompts.md`
+- Asuka saves the output as `image-prompts.md` at the following path (per CLAUDE.md "Client Directory Structure Rules" 4 patterns):
+  - Pattern A (1 business, 1 domain): `~/.claude/clients/<client-name>/lp-<date>/image-prompts.md`
+  - Pattern B (1 business, multiple domains): `~/.claude/clients/<client-name>/<domain>/lp-<date>/image-prompts.md`
+  - Pattern C (multiple businesses): `~/.claude/clients/<client-name>/biz-<business-name>/lp-<date>/image-prompts.md`
+  - Pattern D (multiple businesses × multiple domains): `~/.claude/clients/<client-name>/biz-<business-name>/<domain>/lp-<date>/image-prompts.md`
 
 **Step completion criteria:** All images requiring new generation have their prompts saved in `image-prompts.md`
 
