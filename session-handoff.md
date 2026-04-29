@@ -57,6 +57,103 @@
 
 ---
 
+## 🟢 再開ポイント（2026-04-29）: chisoku PDF スキル化 - 主要8フレームワーク完了、残処理あり
+
+**`reports/chisoku/` 配下の事業戦略PDFのスキル化プロジェクト。本セッションで主要8フレームワーク（10スキル）+ PDF3由来4スキル = 計14スキル生成完了。リナ検証・カナタ英語版反映・残12PDF処理が次セッション課題。**
+
+### 本セッションの完了事項
+
+#### 生成スキル（14件）
+- `~/.claude/skills/` 配下に新規作成
+- 全てナギ（business-consultant）配下、`.ja.md` にスキル参照追記済み（**英語版 `.md` 未反映**）
+
+**PDF3「目標設計」由来（4スキル）:**
+1. `smart-goal-setting`
+2. `goal-hierarchy-design`
+3. `pdca-cycle`
+4. `goal-execution-system`
+（リナ検証 ✅ 済 / カナタ英語版反映 ✅ 済）
+
+**主要8フレームワーク（10スキル）:**
+5. `swot-analysis`
+6. `3c-analysis`
+7. `pest-analysis`
+8. `five-forces-analysis`
+9. `vrio-analysis`
+10. `stp-analysis`
+11. `value-proposition`
+12. `innovator-theory`
+13. `pmf-journey`
+14. `business-model-canvas`
+（**リナ検証 未実施 / カナタ英語版反映 未実施**）
+
+#### インフラ整備
+- 新規スキル `/chisoku-skillize`（`~/.claude/skills/chisoku-skillize/SKILL.md`）作成済（リナ検証通過）
+- 履歴ファイル `~/.claude/reports/chisoku/_skill-history.md` に22エントリ記録
+- PDF分割スクリプト `~/.claude/scripts/split-pdf-by-chapter.py` 作成済（**サクラ指摘の重大度：高2件未修正のまま**）
+- 分割済みPDF（事業戦略パーフェクトガイド第01〜06章）`reports/chisoku/` 配下に配置済
+- 元PDF `事業戦略パーフェクトガイド.pdf` は `reports/chisoku/_archive/` に退避済
+
+### 次セッションの最優先タスク（順番に実施推奨）
+
+#### Step 1: リナ検証（最優先・必須）
+新規10スキルをリナに一括検証依頼:
+```
+~/.claude/skills/{swot-analysis,3c-analysis,pest-analysis,five-forces-analysis,vrio-analysis,stp-analysis,value-proposition,innovator-theory,pmf-journey,business-model-canvas}/SKILL.md
+```
+重大度：高があれば修正→再検証ループ。CLAUDE.md「Rina Auto-Invocation Rule」に基づき必須。
+
+#### Step 2: カナタに英語版反映委任
+ナギの `~/.claude/agents/business-consultant.md`（英語版）に14スキル参照を追記。
+`.ja.md` 末尾の `## スキル参照` セクション全14件を英訳。
+
+#### Step 3: PDF分割スクリプトの修正
+`~/.claude/scripts/split-pdf-by-chapter.py` のサクラ指摘 重大度：高2件:
+1. `sanitize_filename` のパストラバーサル耐性強化（`..`、Windows予約名、空文字対応）
+2. `--force` フラグ追加 + 上書き保護
+
+**注意**: code-edit-guard.sh フックがサブエージェント経由のシュウ編集も全面ブロックする問題あり。シンヤさんが直接編集するか、フックの kaizen が必要。diff はカナタ提供済（前セッションのシュウ報告参照）。
+
+#### Step 4: 残12PDF処理（時間のあるとき）
+`/chisoku-skillize` で再実行すると以下が未処理として検出される:
+
+**カテゴリA（解説スライド）残り 6件:**
+- 一絲_中長期の事業計画 .pdf
+- 一絲_As-is To-be Gap Solution .pdf
+- 一絲_プロダクトライフサイクル .pdf
+- 一絲_市場調査・競合調査 .pdf
+- 一絲_市場規模予測 .pdf
+- 一絲_マーケティングの変遷・コトラーのマーケティング5.0 .pdf
+
+**カテゴリB（ワークシート）残り 6件:**
+- ダウンロードコンテンツ_中長期ロードマップ.pdf
+- ダウンロードコンテンツ_事業の計画.pdf
+- ダウンロードコンテンツ_As-is To-be Gap Solution.pdf
+- ダウンロードコンテンツ_市場規模予測 .pdf
+- ダウンロードコンテンツ_イノベーター理論 - シート1.pdf（既存スキルに統合済）
+- ※ペアの解説スライドが処理されたら `skipped-permanent` で記録する運用
+
+**カテゴリC（パーフェクトガイド分割）6件:**
+- 事業戦略パーフェクトガイド_第01章_表紙-目次.pdf
+- 〜
+- 事業戦略パーフェクトガイド_第06章_そもそも事業戦略とは-知足スクール詳細.pdf
+
+各PDFを `Read` で読み込み、ペア構造（解説スライド+ワークシート）に基づき統合スキルとして抽出するパターンが確立済（本セッション参照）。
+
+### 関連ファイル参照
+- 履歴: `~/.claude/reports/chisoku/_skill-history.md`
+- スキル本体: `~/.claude/skills/chisoku-skillize/SKILL.md`
+- ナギ: `~/.claude/agents/business-consultant.ja.md`（末尾「## スキル参照」セクション）
+- アーカイブ: `~/.claude/reports/chisoku/_archive/`
+
+### Notion 案件
+本セッション終了時点で以下を登録予定（次セッションで `notion-tasks.py --list` で拾える）:
+- 「chisoku PDFスキル化：リナ検証＋カナタ英語版反映」（P2-今週中、Asuka担当）
+- 「chisoku PDFスキル化：残12PDF処理」（P3-今月中、Asuka担当）
+- 「split-pdf-by-chapter.py：サクラ指摘高2件修正」（P3-今月中、Shinya担当：フックブロック解決必要）
+
+---
+
 ## 🟢 再開ポイント（2026-04-27）: LINE WORKS Bot 代替方式検証完了 → v3.5 設計判断待ち
 
 **Claude Code レーダー #012（Managed Agents メモリ）の検証から派生。LINE WORKS Bot v3.4（claude.exe + subprocess + --resume方式）の代替として Claude Agent SDK 方式が有力と判明。シンヤさんの設計切り替え判断待ち。**
