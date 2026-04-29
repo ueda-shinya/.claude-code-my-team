@@ -1,3 +1,13 @@
+> **⚠️ DEPRECATED — このテンプレートは旧 `lp-create` Step 3.5 の遺物です。**
+>
+> - **使用禁止**: 新規の LP デザイン仕様書作成では本テンプレートを参照しないでください。
+> - **代替**: 現在は `~/.claude/skills/lp-design-system/SKILL.md` が本テンプレートを完全に代替します。`lp-create` の Step 5 から `lp-design-system` 経由で起動してください。
+> - **退避先**: `~/.claude/knowledge/lp-design-legacy/design-spec-template.md`（参照のみ可・編集禁止）
+> - **保存理由**: 旧仕様の参照用および、`lp-design-system` で扱わない補完項目（Section 10 画像定義リスト等）の書式参考用に残置。
+> - **エージェント・スキル側からの参照禁止**: lp-designer エージェントおよび lp-create スキルは本ファイルを Read してはいけない。
+>
+> ---
+>
 # LP デザイン仕様書テンプレート
 
 > **用途：** ステップ⑤でKaiが埋めるデザイン仕様書。承認ゲート②・Shu・コトへの引き継ぎ書として使う。

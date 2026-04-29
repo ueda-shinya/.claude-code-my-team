@@ -69,21 +69,36 @@ Design the LP structure from the following perspectives:
 - Urgency and scarcity approach
 - Form design (number of fields, need for step splitting)
 
-### Step 3.5: Design Specification Document Creation (When Called from /lp-create Skill Step 5)
+### Step 5: Design Specification Document Creation (When Called from lp-create Skill Step 5)
 
-When Asuka requests "please create a design specification document," execute the following:
+When Asuka requests "please create a design specification document," execute it via the `lp-design-system` skill. **Do not use the legacy `design-spec-template.md`** (the legacy template has been moved to `~/.claude/knowledge/lp-design-legacy/design-spec-template.md`).
 
-1. Read `~/.claude/skills/lp-create/design-spec-template.md` using Read
-2. Fill in all template sections (1-9) while referencing the "Design Knowledge Base" in this file
-3. Complete the self-check (Section 9) and clear all items before submitting to Asuka
-4. Always fill in the handoff information for Koto (at the end of the template)
+#### Execution Procedure
+
+1. Read `~/.claude/skills/lp-design-system/SKILL.md`
+2. Execute Steps 0-7 of `lp-design-system` in order:
+   - Step 0: Constraint confirmation (AI image generation / Canva / shooting, etc.)
+   - Step 1: Copy emotional mapping
+   - Step 2: Copy placement design (most critical step)
+   - Step 3: Accent color appearance plan
+   - Step 4: Eye flow design
+   - Step 5: Visual role assignment
+   - Step 6: Next-section connection design (swipe LP only)
+   - Step 7: Integrated design specification output
+3. Generate the integrated design specification document according to the `lp-design-system` output format
+4. **As additional requirements, supplement the following:**
+   - **Section 10 (Image Definition List)**: For each image, define purpose/role, existing/new classification, aspect ratio, subject and composition, color tone, and tentative filename
+   - **Handoff information for Koto**: CTA button label direction and character limit, microcopy placement and character limit, tone
+5. Submit to Asuka
 
 **Principles When Uncertain:**
-- FV pattern: Decide based on traffic source, industry, and BtoB/BtoC (refer to knowledge base)
-- Eye flow: Decide based on information volume, device, and target consideration stage (refer to knowledge base)
+- FV pattern: Decide based on traffic source, industry, and BtoB/BtoC (refer to "Design Knowledge Base" in this file)
+- Eye flow: Decide based on information volume, device, and target consideration stage (same)
 - Trust elements: Vary content across 3 placement points. Do not repeat the same element
 - CTA: Place immediately after benefits. Label text is Koto's responsibility
 - Performance: WebP as default for images, eager for FV, avoid prohibited effects
+
+**Important: Reading the legacy Step 3.5 / `design-spec-template.md` is prohibited** (legacy artifact). When design rationale is needed, refer to the "Design Knowledge Base" in this file.
 
 ### Step 4: Deliverable Output
 
@@ -328,7 +343,7 @@ Each LP section must answer the following "whys":
 
 ## Design Knowledge Base (FV, Eye Flow, Trust Elements, CTA, Performance, Mobile)
 
-Reference criteria for filling in design specification documents (`design-spec-template.md`).
+Reference criteria when uncertain during `lp-design-system` skill execution.
 
 ---
 
@@ -475,4 +490,4 @@ Place trust elements at 3 points with different content at each. Do not repeat t
 
 ## Skill References
 
-- `lp-design-system`: Creates visual design specification documents for LP / swipe LP using a copy-first design approach (`~/.claude/skills/lp-design-system/SKILL.md`)
+- `lp-design-system`: Creates visual design specification documents for LP / swipe LP using a copy-first design approach (`~/.claude/skills/lp-design-system/SKILL.md`). **Current design specification creation is performed via this skill** (legacy `design-spec-template.md` is deprecated and archived).

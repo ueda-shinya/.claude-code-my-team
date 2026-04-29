@@ -711,7 +711,22 @@ When Asuka conveys a test execution command to Shinya or executes it herself, **
 
 ### frontend-design（Anthropic公式, 2026-04-18 導入・A/B評価中）
 
-**運用方針**: LP/UI 生成依頼が来たら、アスカが以下 2 モードをシンヤさんに**毎回確認**し、判断を仰いでから実行する（自動判定しない）。
+**LP案件の起動順序ルール（2026-04-29 追加・必須遵守）**:
+
+LP（ランディングページ）に関する依頼が来た場合、frontend-design は**必ず `lp-create` スキルを経由してから**起動する。`lp-create` を経由せずに frontend-design 単独で LP を生成することは禁止。
+
+理由：
+- LP制作の業界標準は「コピーファースト → デザイン → 実装」のゲート式フロー（Unbounce 36,928件分析でコピーがCV率の65〜70%を支配・出典: ミオリサーチ 2026-04-29）
+- frontend-design は description に "landing pages" を含むため、`lp-create` と同時に起動候補になる。順序を CLAUDE.md で明示的に固定しないと Claude Code 起動判定で `lp-create` が後段に回されるリスクがある
+- `lp-create` 改修により Route F（フル制作）/ Route S（戦略のみ）/ Route C（コピーのみ）/ Route D（デザインのみ）/ Route I（実装のみ）の5ルートで部分依頼にも対応可能（2026-04-29 改修）
+
+**起動順序の物理ルール**:
+1. LP関連キーワード（LP / ランディングページ / スワイプLP / 縦長LP / リードLP / 無料配布LP / LP戦略 / LP訴求 / LP構成 / LPストーリー / LPセクション設計 / LPコピー / LPデザイン / LP実装）が依頼に含まれる場合 → **アスカは必ず `lp-create` を最初に起動**
+2. `lp-create` Step 0（依頼スコープ判定）で Route F〜I を判定
+3. Route D（デザインのみ）/ Route F の Step 5（デザイン仕様）に到達した場合のみ、シンヤさんに**毎回モード(1)/(2)を確認**して frontend-design 起動可否を判断
+4. `lp-create` を経由しない frontend-design 直接起動は、Route X（明示的な例外宣言）でシンヤさんが「lp-create を使わない」と宣言した場合のみ許可（Notion 案件管理に「例外処理」として記録必須）
+
+**運用方針**: LP/UI 生成依頼が来たら、アスカが以下 2 モードをシンヤさんに**毎回確認**し、判断を仰いでから実行する（自動判定しない）。**ただし上記の起動順序ルール（lp-create 経由必須）を最優先で適用する**。
 
 #### モード(1): 従来フロー（デザインとコーディングを分離）
 - Ren（marketing-planner）→ カイ（lp-designer）またはユイ（web-designer）→ ルナ（nano-banana）→ シュウ（backend-engineer）→ サクラ（code-reviewer）

@@ -1,5 +1,70 @@
 # セッション引き継ぎ
 
+## 🟢 再開ポイント（2026-04-29）: スワイプLP無料配布 Step 4 着手待ち（lp-create v2 Route F 動作テスト経由）
+
+**新スキル lp-create v2 動作テストとして Route F フル制作で再実行中。Step 0〜Step 3 + Step 2 評価完了・リナ条件付き採用承認済み。Step 4（カイ・コト委任）から再開可能。**
+
+### 完了ステータス
+- ✅ Step 0: Route 判定（Route F 確定）
+- ✅ Step 1: ヒアリング全Phase（Phase 1-9 完了）
+- ✅ Step 2: ヒアリング内容レビュー（レン・コト評価／シンヤさんQ1-Q5確定）
+- ✅ ミオ競合調査（5主要発見・国内ほぼ空白ポジション確認）
+- ✅ Step 3: メッセージ戦略策定（レン委任）→ `workspaces/swipe-lp-free/strategy-final.md` 出力
+- ✅ リナ論理検証（条件付き採用・必須修正なし・推奨修正3件アスカ反映済み）
+- ✅ STRATEGY-CONFIRMED マーカー付与済み（`<!-- LP-CREATE-GATE: STRATEGY-CONFIRMED 2026-04-29 -->`）
+
+### Step 4 再開時の手順
+
+1. `lp-create` スキルの Step 4（カイ→コト委任）から開始
+2. 入力資料: `workspaces/swipe-lp-free/strategy-final.md`（リナ承認済み）
+3. カイ（lp-designer）に7枚分のワイヤーフレーム委任
+4. コト（copywriter）に7枚分のコピー作成委任（戦略書 §8-2 のコピー方向に従う）
+5. **Approval Gate 1（構成承認）通過時に `copy.md` 強制生成**＋ `<!-- LP-CREATE-GATE: COPY-CONFIRMED YYYY-MM-DD -->` マーカー付与
+6. 以降 Step 5（lp-design-system 経由デザイン仕様）→ Step 5.5（ルナ画像プロンプト）→ Step 6（シュウ実装）→ Step 7（サクラレビュー）→ Step 8（修正）→ Step 9（完了報告）
+
+### 確定事実（Step 4 着手時の必須インプット）
+
+- 配布先: LPコミュニティ
+- ターゲット: コーディング苦手デザイナー（主設計対象 (b)外注前提層 / Slide 5-6 で (c)分業最適化ベテラン層補強）
+- 主CV: Chatworkメッセージ受信（「スワイプLPのテンプレちょうだい!」+自己紹介）
+- Hook 主軸: (a)コーディング苦手主・外注費補（感情先行→理性補強）
+- 課題優先順位: ②外注費 > ③画像差し替え > ①納期 > ④信頼
+- 7枚構成: Hook / Problem / Empathy×Authority / Reveal / How it works / Meta-Proof / CTA
+- お客様の声 1名実体験: 「あるデザイナーさんに渡したら『こんなに簡単に出来るの！』と喜ばれた」
+- Zoom 30 分無料相談: Slide 7 文末で軽く触れる（テンプレ受領者対象・Chatwork経由・枠制限なし）
+- 配布動機: 外注費で利益を減らしているデザイナーへの還元（お礼配布）
+- カラー: コーラルオレンジ系暖色
+- 顔写真: Slide 3 に入れる
+- 設置先URL: lp.officeueda.com/swipe-template/
+- 実装: HTML静的 + Xserver
+- LP管理ルール: CLAUDE.md準拠（4状態管理）
+
+### 重要なルール（Step 4 担当エージェント遵守必須）
+
+- `memory/feedback-agent-fact-fabrication.md` 全ルール準拠
+- v1 捏造表現の再混入絶対禁止（「自分もデザイナーから始めた」「同じ壁にぶつかっていた」等）
+- 出典セクション必須・【要事実確認】マーカー必須
+- 並列実行禁止（カイ→コトの順序を守る）
+
+### 関連ファイル
+- 戦略書（最新・Step 3 出力）: `workspaces/swipe-lp-free/strategy-final.md`
+- 旧戦略書（参考・併存）: `workspaces/swipe-lp-free/strategy-v3.md`
+- 配布物テンプレ本体: `workspaces/swipe-lp-free/index.html`, `images/`, `LICENSE`, `README.md`
+- 出典記録: `clients/officeueda/README.md`（実績・経歴セクション）
+- ルール: `memory/feedback-agent-fact-fabrication.md`
+
+### 本セッションの主要成果（再構築・最適化）
+
+1. **新規ルール起票**: `memory/feedback-agent-fact-fabrication.md`（v1捏造から起票・全エージェント適用）
+2. **clients/officeueda/README.md** に実績・経歴セクション追記（Web制作4年・サイト30以上・コーダー本職）
+3. **lp-create スキル v2 全面改修**: Route F〜X・コピーファースト原則ゲート式・並列実行禁止・確定マーカー機械判定・Route F強制ファイル生成（リナ最終承認済）
+4. **lp-design-system / lp-designer エージェント** lp-create v2 経路に同期改修
+5. **CLAUDE.md「External Skill Guard Rules」** に LP案件 lp-create 必須経由ルール追記
+6. **新スキル動作テスト成功**: Step 0〜Step 3 リナ承認まで一気通貫で動作確認
+7. **Notion P3 案件登録**: lp-create v2 残課題3件（マーカー正規表現・Route S再実行・Route X二重定義）
+
+---
+
 ## 🟢 最優先再開ポイント（2026-04-29）: linnoa BORN STEM フォーム — 吉澤さん本番チェック待ち＋不具合即応待機
 
 **linnoa（バクチスコーポレーション株式会社）の BORN STEM 購入お問い合わせフォーム実装完了。シンヤさん動作OK判定後、吉澤さんへ本番チェック依頼中。本セッションは一旦クローズ、不具合発生時は即対応する待機状態。**
