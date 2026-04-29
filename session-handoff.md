@@ -57,100 +57,103 @@
 
 ---
 
-## 🟢 再開ポイント（2026-04-29）: chisoku PDF スキル化 - 主要8フレームワーク完了、残処理あり
+## 🟢 再開ポイント（2026-04-29 update）: chisoku PDF スキル化 - 24テーマ完了 / 追加約20PDF発見
 
-**`reports/chisoku/` 配下の事業戦略PDFのスキル化プロジェクト。本セッションで主要8フレームワーク（10スキル）+ PDF3由来4スキル = 計14スキル生成完了。リナ検証・カナタ英語版反映・残12PDF処理が次セッション課題。**
+**`reports/chisoku/` 配下の事業戦略PDFのスキル化プロジェクト。当初24テーマ（36PDF）処理完了。新たに約20件の追加PDF（広告/SEO/SNS/LP等のマーケ系）が `reports/chisoku/` 直下に存在することが判明。リナ検証・カナタ英語版反映・追加PDF処理が次セッション課題。**
 
-### 本セッションの完了事項
+### 累計生成スキル数: 32件（前セッション14件 + 本セッション18件）
 
-#### 生成スキル（14件）
-- `~/.claude/skills/` 配下に新規作成
-- 全てナギ（business-consultant）配下、`.ja.md` にスキル参照追記済み（**英語版 `.md` 未反映**）
+### 本セッションの完了事項（2026-04-29 後半）
 
-**PDF3「目標設計」由来（4スキル）:**
-1. `smart-goal-setting`
-2. `goal-hierarchy-design`
-3. `pdca-cycle`
-4. `goal-execution-system`
-（リナ検証 ✅ 済 / カナタ英語版反映 ✅ 済）
+#### 新規生成18スキル（全て completed）
+`~/.claude/skills/` 配下に新規作成。**リナ検証 未実施 / カナタ英語版反映 未実施**。
 
-**主要8フレームワーク（10スキル）:**
-5. `swot-analysis`
-6. `3c-analysis`
-7. `pest-analysis`
-8. `five-forces-analysis`
-9. `vrio-analysis`
-10. `stp-analysis`
-11. `value-proposition`
-12. `innovator-theory`
-13. `pmf-journey`
-14. `business-model-canvas`
-（**リナ検証 未実施 / カナタ英語版反映 未実施**）
+| # | スキル名 | 概要 | 対象 |
+|---|---|---|---|
+| 1 | `medium-term-business-plan` | 中長期事業計画6ステップ＋2フォーマット | ナギ |
+| 2 | `as-is-to-be-gap-solution` | As-Is/To-Be/Gap/Solution 5ステップ | ナギ |
+| 3 | `product-life-cycle` | PLC4段階判定＋戦略導出 | ナギ／レン |
+| 4 | `market-competitor-research` | 市場・競合調査4ステップ＋3手法 | ミオ／レン |
+| 5 | `market-size-tam-sam-som` | TAM/SAM/SOM 3階層市場規模算出 | レン／ナギ |
+| 6 | `marketing-evolution-5-0` | コトラー進化論5世代＋AI時代 | レン |
+| 7 | `persona-design` | BtoB/BtoCペルソナ設計 | レン／タク |
+| 8 | `customer-journey` | カスタマージャーニーマップ5ステップ | レン |
+| 9 | `loss-analysis-kbf-ksf` | 受注失注分析・KBF/KSF抽出 | タク／レン |
+| 10 | `policy-design-prioritization` | 施策優先順位（ICEスコア／4軸★） | レン／ナギ |
+| 11 | `marketing-sales-workflow` | マーケ営業フロー策定 | レン／タク |
+| 12 | `sales-deck-template` | 営業資料24ページテンプレ | タク |
+| 13 | `kgi-kpi-kai-design` | KGI/KPI/KAI 3階層設計 | ナギ／レン |
+| 14 | `pyramid-structure` | ロジックツリー3種＋ピラミッド構造 | アスカ／ナギ |
+| 15 | `decision-making-framework` | 意思決定3手法（5プロセス／4象限／スコアリング） | アスカ |
+| 16 | `project-team-structure` | PM体制管理（組織図／役割分担表） | アスカ／ナギ |
+| 17 | `project-finance-contract` | PJ収支管理＋契約締結 | ナギ／タク／ケン |
+| 18 | `gantt-chart-design` | ガントチャート設計（WBS/時間軸/依存関係） | アスカ／ナギ |
 
-#### インフラ整備
-- 新規スキル `/chisoku-skillize`（`~/.claude/skills/chisoku-skillize/SKILL.md`）作成済（リナ検証通過）
-- 履歴ファイル `~/.claude/reports/chisoku/_skill-history.md` に22エントリ記録
-- PDF分割スクリプト `~/.claude/scripts/split-pdf-by-chapter.py` 作成済（**サクラ指摘の重大度：高2件未修正のまま**）
-- 分割済みPDF（事業戦略パーフェクトガイド第01〜06章）`reports/chisoku/` 配下に配置済
-- 元PDF `事業戦略パーフェクトガイド.pdf` は `reports/chisoku/_archive/` に退避済
+#### 手順化対象外（6件 skipped-permanent）
+- 事業戦略パーフェクトガイド第01〜06章（章1表紙目次/章2論説/章3SECTION01-48総覧/章4まとめ/章5/6スクール紹介）→ `agent-study` 推奨
+
+#### 履歴ファイル更新
+- `~/.claude/reports/chisoku/_skill-history.md` に35+エントリ追記済み（completed 18件 + skipped-permanent 6件 + 既存ペアワークシート分の skipped-permanent 記録）
+
+### 重要な発見事項：追加PDF約20件未処理
+
+調査過程で `reports/chisoku/` 配下に未処理の追加PDFが約20件あることが判明（広告系・SEO系・SNS系・LP/HP制作系等のマーケ実務PDF）：
+
+- AD/SNS広告、ECマーケティング、GA4分析、Googleアドセンス、HP・LP制作
+- KPI設定（リード定義/MQL/SQL）、LPO、SEO記事、被リンク、SNS、WEB UI/UX改善
+- アフィリエイト広告、ウェビナー、ディスプレイ広告、デリバリー構築、ファネル設計
+- マーケティングミックス4P4C、ホワイトペーパー、リスティング広告、リードナーチャリング 等
+
+これらは当初の24テーマ（36PDF）には含まれていなかった。**次セッションで `/chisoku-skillize` を再起動すれば未処理リストとして検出される**。
 
 ### 次セッションの最優先タスク（順番に実施推奨）
 
 #### Step 1: リナ検証（最優先・必須）
-新規10スキルをリナに一括検証依頼:
+**前セッション分10スキル + 本セッション分18スキル = 計28スキル**をリナに検証依頼:
+
+前セッション分（10スキル）:
 ```
 ~/.claude/skills/{swot-analysis,3c-analysis,pest-analysis,five-forces-analysis,vrio-analysis,stp-analysis,value-proposition,innovator-theory,pmf-journey,business-model-canvas}/SKILL.md
 ```
+
+本セッション分（18スキル）:
+```
+~/.claude/skills/{medium-term-business-plan,as-is-to-be-gap-solution,product-life-cycle,market-competitor-research,market-size-tam-sam-som,marketing-evolution-5-0,persona-design,customer-journey,loss-analysis-kbf-ksf,policy-design-prioritization,marketing-sales-workflow,sales-deck-template,kgi-kpi-kai-design,pyramid-structure,decision-making-framework,project-team-structure,project-finance-contract,gantt-chart-design}/SKILL.md
+```
+
 重大度：高があれば修正→再検証ループ。CLAUDE.md「Rina Auto-Invocation Rule」に基づき必須。
+※ 28スキル一括は重いため、テーマ別にバッチ分割（例：戦略系8 / マーケ系7 / 営業系3 / PM系5 / 思考系5）も検討。
 
 #### Step 2: カナタに英語版反映委任
-ナギの `~/.claude/agents/business-consultant.md`（英語版）に14スキル参照を追記。
-`.ja.md` 末尾の `## スキル参照` セクション全14件を英訳。
+- ナギ（business-consultant）の英語版 `.md` に該当スキル参照追記
+- レン（marketing-planner）/ タク（sales-consultant）/ ミオ（researcher）/ ケン（legal-advisor）/ アスカ（chief-of-staff）の各 `.ja.md` および `.md` への参照追記が必要なスキルあり（上記表の「対象」列参照）
+- `.ja.md` 末尾の `## スキル参照` セクションに対象スキルを追記後、カナタが `.md` に英訳反映
 
-#### Step 3: PDF分割スクリプトの修正
+#### Step 3: PDF分割スクリプトの修正（前セッションからの継続）
 `~/.claude/scripts/split-pdf-by-chapter.py` のサクラ指摘 重大度：高2件:
 1. `sanitize_filename` のパストラバーサル耐性強化（`..`、Windows予約名、空文字対応）
 2. `--force` フラグ追加 + 上書き保護
 
-**注意**: code-edit-guard.sh フックがサブエージェント経由のシュウ編集も全面ブロックする問題あり。シンヤさんが直接編集するか、フックの kaizen が必要。diff はカナタ提供済（前セッションのシュウ報告参照）。
+**注意**: code-edit-guard.sh フックがサブエージェント経由のシュウ編集も全面ブロックする問題あり。シンヤさんが直接編集するか、フックの kaizen が必要。
 
-#### Step 4: 残12PDF処理（時間のあるとき）
-`/chisoku-skillize` で再実行すると以下が未処理として検出される:
-
-**カテゴリA（解説スライド）残り 6件:**
-- 一絲_中長期の事業計画 .pdf
-- 一絲_As-is To-be Gap Solution .pdf
-- 一絲_プロダクトライフサイクル .pdf
-- 一絲_市場調査・競合調査 .pdf
-- 一絲_市場規模予測 .pdf
-- 一絲_マーケティングの変遷・コトラーのマーケティング5.0 .pdf
-
-**カテゴリB（ワークシート）残り 6件:**
-- ダウンロードコンテンツ_中長期ロードマップ.pdf
-- ダウンロードコンテンツ_事業の計画.pdf
-- ダウンロードコンテンツ_As-is To-be Gap Solution.pdf
-- ダウンロードコンテンツ_市場規模予測 .pdf
-- ダウンロードコンテンツ_イノベーター理論 - シート1.pdf（既存スキルに統合済）
-- ※ペアの解説スライドが処理されたら `skipped-permanent` で記録する運用
-
-**カテゴリC（パーフェクトガイド分割）6件:**
-- 事業戦略パーフェクトガイド_第01章_表紙-目次.pdf
-- 〜
-- 事業戦略パーフェクトガイド_第06章_そもそも事業戦略とは-知足スクール詳細.pdf
-
-各PDFを `Read` で読み込み、ペア構造（解説スライド+ワークシート）に基づき統合スキルとして抽出するパターンが確立済（本セッション参照）。
+#### Step 4: 追加約20PDF処理（時間のあるとき）
+`/chisoku-skillize` で再実行 → 未処理PDF一覧確認 → 処理対象選択（全部 / 番号指定）。
+PDF→スキル化のパターンは確立済（ペア構造：解説スライド + ワークシート → 統合スキル / 単発PDF → 単独スキル）。
 
 ### 関連ファイル参照
-- 履歴: `~/.claude/reports/chisoku/_skill-history.md`
-- スキル本体: `~/.claude/skills/chisoku-skillize/SKILL.md`
-- ナギ: `~/.claude/agents/business-consultant.ja.md`（末尾「## スキル参照」セクション）
+- 履歴: `~/.claude/reports/chisoku/_skill-history.md`（800+行）
+- 本体オーケストレーター: `~/.claude/skills/chisoku-skillize/SKILL.md`
+- 子スキル: `~/.claude/skills/knowledge-to-skill/SKILL.md`
+- ナギ参照: `~/.claude/agents/business-consultant.ja.md`（末尾「## スキル参照」セクション）
 - アーカイブ: `~/.claude/reports/chisoku/_archive/`
 
-### Notion 案件
-本セッション終了時点で以下を登録予定（次セッションで `notion-tasks.py --list` で拾える）:
-- 「chisoku PDFスキル化：リナ検証＋カナタ英語版反映」（P2-今週中、Asuka担当）
-- 「chisoku PDFスキル化：残12PDF処理」（P3-今月中、Asuka担当）
-- 「split-pdf-by-chapter.py：サクラ指摘高2件修正」（P3-今月中、Shinya担当：フックブロック解決必要）
+### Notion 案件（更新／新規必要）
+- **更新**: 「chisoku PDFスキル化：リナ検証＋カナタ英語版反映」（P2-今週中、Asuka担当）→ 対象スキル数を10→28に更新
+- **更新**: 「chisoku PDFスキル化：残12PDF処理」（P3-今月中、Asuka担当）→ タイトル変更「追加約20PDF処理」、内容を本セクションの Step 4 に差し替え
+- **継続**: 「split-pdf-by-chapter.py：サクラ指摘高2件修正」（P3-今月中、Shinya担当）
+
+### git commit / sync（次セッション開始時の推奨アクション）
+本セッションで生成した18スキルファイル + 履歴更新分は**未コミット**。次セッション冒頭で `/commit` 推奨。
 
 ---
 
