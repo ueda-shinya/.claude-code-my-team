@@ -1,6 +1,61 @@
 # セッション引き継ぎ
 
-## 🔵 再開ポイント（2026-04-30 夜）: chisoku PDF スキル化 - バッチ4完了 / 残り40PDF未処理
+## 🔵 再開ポイント（2026-04-30 深夜）: chisoku PDF スキル化 - バッチ5+6完了 / 残り32PDF未処理
+
+**バッチ5（広告系6PDF→8スキル）＋ バッチ6（PR・ブランド系2PDF→2スキル）完了。次回は別セッションでバッチ7から再開。**
+
+### バッチ5 完了サマリー（2026-04-30 深夜）
+- 作成スキル8本（広告カテゴリ6PDF）:
+  - `ad-mix-design`（#39 広告総論 → 4分類10種類の広告ミックス設計）
+  - `meta-ad-campaign-design`（#11 AD・バナー → Meta広告キャンペーン設計）
+  - `ad-copy-7-angles`（#11 AD・バナー → 広告コピー7切り口／コト用）
+  - `ad-performance-diagnosis`（#11 AD・バナー → CPA分解で広告改善診断）
+  - `adsense-monetization`（#14 Googleアドセンス → パブリッシャー側収益化）
+  - `affiliate-ad-design`（#26 アフィリエイト → 成果報酬型広告出稿側設計）
+  - `display-ad-design`（#33 ディスプレイ広告 → GDN/YouTube/Gmail設計）
+  - `listing-ad-campaign-design`（#37 リスティング広告 → Google検索広告キャンペーン）
+
+### バッチ6 完了サマリー（2026-04-30 深夜）
+- 作成スキル2本（PR・ブランドカテゴリ2PDF）:
+  - `press-release-builder`（#18 PR・プレスリリース → TOPPING+TODAY/YESTERDAY/TOMORROW構造）
+  - `concept-message-tonemanner`（#32 コンセプト設計・メッセージ・トンマナ → ブランド土台一気通貫設計）
+
+### 未実施タスク（次セッション持ち越し・最重要）
+- **リナ（logic-verifier）検証未実施**: バッチ5+6で生成した10スキルすべて
+  - CLAUDE.md「Rina Auto-Invocation Rule」より、`skills/` 配下の新規追加はリナ検証必須
+  - 今セッションで時間優先のため未実施
+- **対象エージェント `.ja.md` 参照追記未実施**:
+  - レン（marketing-planner）: `ad-mix-design` / `meta-ad-campaign-design` / `ad-performance-diagnosis` / `adsense-monetization` / `affiliate-ad-design` / `display-ad-design` / `listing-ad-campaign-design` の7スキル
+  - コト（copywriter）: `ad-copy-7-angles` の1スキル
+  - ハル（writer）: `press-release-builder` の1スキル（ミナトと併用）
+  - ミナト（sns-director）: `press-release-builder` の1スキル
+  - ユイ（web-designer）/ カイ（lp-designer）/ コト（copywriter）: `concept-message-tonemanner` の1スキル
+- **カナタ（agent-builder）への英訳依頼未実施**: 上記 `.ja.md` 更新後に `.md` への英訳同期
+
+### 累計進捗
+- 全PDF: 139件
+- 処理済（completed＋skipped-permanent）: 107件
+- **未処理: 32件**
+
+### 履歴ファイル
+- `~/.claude/reports/chisoku/_skill-history.md` 更新済（バッチ5+6で計8エントリ追記）
+
+### 次回バッチ7の候補テーマ（残り32PDF）
+- **SNS運用系（13件）**: TikTok編×3／YouTube編×3／インスタ編×2／SNS戦略全体／SNS／投稿設計編／分析改善編／DLコンテンツ系
+- **Web系（4件）**: 一絲HP・LP制作／LPO／WEB_UI・UX改善（一絲）／DL_HP・LP制作 / DL_WEB_UI・UX改善
+- **マーケ施策系（4件）**: ECマーケティング／ウェビナー／ホワイトペーパー（一絲＋DL）
+- **分析・SEO系（2件）**: GA4分析／SEO記事・コンテンツ記事・被リンク
+- **営業・CS系（3件）**: インサイドセールス（BDR/SDR）／オンボーディング設計／デリバリー構築
+- **PM系（2件）**: PJマネジメントリスク管理／DL_プロジェクトのレベル定義
+- **組織系（4件）**: MSマトリクス／文化の言語化／目標設定とフィードバック／DL_クレド投票
+- **その他DL系（2件）**: DL_YonY売上シミュレーション／DL_HP・LP制作（重複の場合あり）
+
+### 推奨次バッチ
+- **バッチ7：SNS運用系13件** をまとめて処理するのが量的に最大（Instagram/TikTok/YouTubeの3プラットフォーム×企画/分析/台本の組み合わせ）。コア共通要素抽出で5-7スキルに集約予想。
+
+---
+
+## 🔵 旧記録: chisoku PDF スキル化 - バッチ4完了 / 残り40PDF未処理（2026-04-30 夜）
 
 **バッチ4（財務・経営戦略テーマ）完了。次回は別セッションでバッチ5から再開。**
 
@@ -34,13 +89,41 @@
 
 ---
 
-## 🟢 再開ポイント（2026-04-30）: スワイプLP無料配布 Step 6 着手待ち（lp-create v2 Route F 動作テスト経由）
+## 🎉 完了（2026-04-30）: スワイプLP無料配布 lp-create v2 Route F 全工程完了
 
-**Step 5.5 完了・image-prompts.md 保存済み。Step 6（シュウ実装）から再開可能。ただし画像生成は実装と並行/後追いで進める。**
+**Step 0〜9 全工程通過。IMPLEMENTATION-CONFIRMED 2026-04-30 マーカー付与済み。配布前の運用タスク（画像生成・Chatwork URL設定）のみ残存。**
 
-**重要**: Step 5 はシンヤさんの「スワイプLPに対応した設計になっている?」「6.CTA設計はスワイプLPになってる?」という指摘で、index.html の実装構造を踏まえた**全面再設計**を実施済み。各スライドは画像1枚（4:5アスペクト比）として書き出し・CTAボタンはindex.html下部固定バーが全スライド共通担当。
+### 完成成果物（4ゲートマーカー全付与済み）
 
-**Step 5.5 成果物**: `workspaces/swipe-lp-free/image-prompts.md`（新規3枚 slide-02/05/06.webp の英語プロンプト確定 / 既存4枚の Canva 加工指針付き）
+| ファイル | マーカー |
+|---|---|
+| `workspaces/swipe-lp-free/strategy-final.md` | STRATEGY-CONFIRMED 2026-04-29 |
+| `workspaces/swipe-lp-free/copy.md` | COPY-CONFIRMED 2026-04-30 |
+| `workspaces/swipe-lp-free/design-spec.md` | DESIGN-CONFIRMED 2026-04-30 |
+| `workspaces/swipe-lp-free/IMPLEMENTATION.md` | IMPLEMENTATION-CONFIRMED 2026-04-30 |
+
+### 主要工程
+- ✅ Step 0-3: Route判定・ヒアリング・戦略策定・リナ承認
+- ✅ Step 4: ワイヤー（カイ）+ コピー（コト）・Approval Gate 1通過
+- ✅ Step 5: デザイン仕様書（スワイプLP特化型再設計版）・Approval Gate 2通過
+- ✅ Step 5.5: 画像プロンプト集（ルナ）
+- ✅ Step 6: 実装（シュウ）
+- ✅ Step 7: コードレビュー（サクラ）→ High 2 / Medium 3 / Low 2
+- ✅ Step 8: 修正（シュウ・全件対応）
+- ✅ Step 7再: 再レビュー（サクラ・全PASS）
+- ✅ Step 9: IMPLEMENTATION.md 生成
+
+### 運用タスク（シンヤさん対応）
+
+**公開前必須**:
+1. ⏳ 新規画像3枚生成（slide-02/05/06.webp）→ アスカが Gemini API で生成可能（要承認）
+2. ⏳ 既存画像4枚加工（slide-01/03/04/07.webp）→ Canva 手動加工
+3. ⏳ Chatwork Web URL指定（CTAボタン `href` 設定）
+4. ⏳ `data-cta-unconfigured` 属性削除
+5. ⏳ JSON-LD `datePublished` 公開日更新
+
+**初回デプロイ時**:
+- DevTools Console で SRI 不一致エラーチェック
 
 ### 完了ステータス
 - ✅ Step 0: Route 判定（Route F 確定）
