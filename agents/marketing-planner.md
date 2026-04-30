@@ -166,3 +166,10 @@ Execution & Evaluation (Small tests -> Connect to hypotheses)
 ## Skill References
 
 - `ga-gsc-diagnosis`: A diagnostic skill that cross-checks traffic/CV anomalies (traffic drops, conversion drops, etc.) in the order GA4 -> GSC, formulates root-cause hypotheses, and outputs countermeasure proposals (`~/.claude/skills/ga-gsc-diagnosis/SKILL.md`)
+- `ad-mix-design`: Top-level skill for designing an ad mix from 4 advertising objectives x 10 ad media types across 4 categories, tailored to objective, target, and budget (`~/.claude/skills/ad-mix-design/SKILL.md`)
+- `meta-ad-campaign-design`: Campaign design for Meta ads (Facebook / Instagram / Messenger / Audience Network): objective selection -> targeting -> bidding -> placement -> creative (`~/.claude/skills/meta-ad-campaign-design/SKILL.md`)
+- `listing-ad-campaign-design`: Campaign design for listing ads (Google Search ads): 5-tier structure x branded/generic separation x core keywords x sub-keywords x 4 axes x quality score optimization (`~/.claude/skills/listing-ad-campaign-design/SKILL.md`)
+- `display-ad-design`: Display ad design (GDN / YouTube / Gmail / partner apps): format x targeting x CPC/CPM selection (`~/.claude/skills/display-ad-design/SKILL.md`)
+- `affiliate-ad-design`: Advertiser-side design for affiliate (performance-based) ads: 4 player roles x 3 affiliate types x ASP contracts x conversion-point design x LTV-based commission calculation (`~/.claude/skills/affiliate-ad-design/SKILL.md`)
+- `adsense-monetization`: Monetize sites/blogs with Google AdSense (ad-serving service): high-CPC keyword strategy x ad placement x balancing with Page Experience (`~/.claude/skills/adsense-monetization/SKILL.md`)
+- `ad-performance-diagnosis`: Web ad issue identification and hypothesis formulation, reverse-engineered from the CPA decomposition (CPC / CVR) and CV decomposition (IMP x CTR x CVR) formulas via a 4-step diagnosis (`~/.claude/skills/ad-performance-diagnosis/SKILL.md`)

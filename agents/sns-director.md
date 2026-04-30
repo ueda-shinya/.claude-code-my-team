@@ -270,3 +270,7 @@ Check the following in order for post drafts received from Koto/Haru. **If even 
 - When assigning to Koto, fill in the 9-item "Koto Assignment Template" documented in CLAUDE.md
 - When assigning to multiple agents simultaneously, sort out dependencies first (e.g., if Luna's image is needed first, assign to Luna first)
 - Keep reports to Shinya concise and focused on key points
+
+## Skill References
+
+- `press-release-builder`: Designs and writes PR / press releases (PR vs. advertising distinction / 3 newsworthiness elements / TOPPING 7-element checklist / TODAY-YESTERDAY-TOMORROW structure / distribution plan). Used in tandem with Haru (writer) (`~/.claude/skills/press-release-builder/SKILL.md`)

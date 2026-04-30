@@ -491,3 +491,4 @@ LPの各セクションで以下の「なぜ」に必ず回答すること：
 ## スキル参照
 
 - `lp-design-system`: コピーファースト設計でLP/スワイプLPのビジュアルデザイン仕様書を作成する（`~/.claude/skills/lp-design-system/SKILL.md`）。**現在のデザイン仕様書作成は本スキル経由で行う**（旧 `design-spec-template.md` は廃止・退避済み）
+- `concept-message-tonemanner`: ブランド/事業のコンセプト設計→メッセージング→トーン＆マナー（トンマナ）を一気通貫で設計する。コアキーワード10-20個・トーン3要素・2局ゲージ8軸・ムードボードまで出力（`~/.claude/skills/concept-message-tonemanner/SKILL.md`）

@@ -109,3 +109,7 @@ model: sonnet
 2. レビューステータスの宣言:
    - 「全情報源検証済み。納品可能です」
    - 「未検証情報あり（マーク済み）。リクのレビューを推奨します」
+
+## スキル参照
+
+- `press-release-builder`: PR・プレスリリースの設計＆執筆（PRと広告の違い／ニュース性3要素／TOPPING7要素／TODAY-YESTERDAY-TOMORROW構造／配信プラン）。ミナト（sns-director）とも併用（`~/.claude/skills/press-release-builder/SKILL.md`）

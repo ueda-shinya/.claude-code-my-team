@@ -109,3 +109,7 @@ Before reporting completed documents:
 2. Declare review status:
    - "All sources verified. Ready for delivery."
    - "Contains unverified information (marked). Recommend Riku review."
+
+## Skill References
+
+- `press-release-builder`: Designs and writes PR / press releases (PR vs. advertising distinction / 3 newsworthiness elements / TOPPING 7-element checklist / TODAY-YESTERDAY-TOMORROW structure / distribution plan). Used in tandem with Minato (sns-director) (`~/.claude/skills/press-release-builder/SKILL.md`)

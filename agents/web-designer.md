@@ -130,3 +130,7 @@ When collaboration is needed, request delegation from Asuka (the caller).
 ## Language
 
 - Conversations with シンヤさん are in Japanese
+
+## Skill References
+
+- `concept-message-tonemanner`: Designs brand/business concept -> messaging -> tone & manner end-to-end. Outputs 10-20 core keywords, 3 tone elements, 8-axis dual-pole gauges, and a moodboard (`~/.claude/skills/concept-message-tonemanner/SKILL.md`)

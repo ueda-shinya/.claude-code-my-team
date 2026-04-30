@@ -1,6 +1,80 @@
 # セッション引き継ぎ
 
-## 🔵 再開ポイント（2026-04-30 深夜）: chisoku PDF スキル化 - バッチ5+6完了 / 残り32PDF未処理
+## 🔵 再開ポイント（2026-05-01）: chisoku PDF スキル化 - 持ち越しタスク3件完了 / バッチ7着手前に中断 / 残り34PDF未処理
+
+**前セッション（2026-04-30 深夜）からの持ち越しタスク3件すべて完了。次回はバッチ7（SNS運用系13件）の処理方針確認から再開。**
+
+### 本セッション（2026-05-01）完了サマリー
+
+#### 持ち越し①：リナ検証（バッチ5+6 10スキル）
+- 結果：✅ PASS／重大指摘ゼロ／軽微15件
+- 共通C-1（5状態契約対象外明記）→ 10スキル全件にアスカが反映済
+- 個別軽微指摘15件 → Notion案件登録（P3-今月中・ファクトチェック必要3件含む）
+
+#### 持ち越し②：エージェント .ja.md 参照追記（6エージェント）
+- レン（marketing-planner.ja.md）：7スキル追記（ad-mix-design / meta-ad-campaign-design / listing-ad-campaign-design / display-ad-design / affiliate-ad-design / adsense-monetization / ad-performance-diagnosis）
+- コト（copywriter.ja.md）：2スキル追記（ad-copy-7-angles / concept-message-tonemanner）
+- ハル（writer.ja.md）：1スキル追記（press-release-builder）
+- ミナト（sns-director.ja.md）：1スキル追記（press-release-builder）
+- ユイ（web-designer.ja.md）：1スキル追記（concept-message-tonemanner）
+- カイ（lp-designer.ja.md）：1スキル追記（concept-message-tonemanner）
+
+#### 持ち越し③：カナタ英訳同期（6エージェント .md）
+- 上記6エージェントすべての .md（英語版）に同等の Skill References セクションを追加
+- 追加リナ検証 ✅ PASS／重大指摘ゼロ
+
+#### 別件 kaizen：NFC/NFD 正規化問題
+- 事業戦略パーフェクトガイド第01〜06章の6PDF（NFD分解形保存）が、毎回未処理判定される現象を発覚
+- chisoku-skillize スキル本体に NFC 正規化マッチを追加する改修案件をNotion登録（P3-今月中・シュウ委任）
+- 現状の未処理判定ロジックは表記揺れがあると毎回リストに混入する欠陥あり
+
+### 次回バッチ7の再開ポイント
+
+**残り未処理：34件**（NFC比較）。前回引き継ぎは32件だったが、新規追加2件（クレド投票シート / プロジェクトのレベル定義）で34件に増加。
+
+**シンヤさんに次回確認したい3択（前回未確定）：**
+- A. 13件を一気にバッチ7として処理（共通要素抽出で5-7スキルに集約予想／所要時間長め）
+- B. プラットフォーム単位で分割（7-1:Instagram / 7-2:TikTok / 7-3:YouTube / 7-4:共通4件）← **アスカ推奨**
+- C. SNS総論的なPDFから1-2件試す（投稿設計編／SNS総論）→ 共通スキル設計の肌感を掴んでから残り展開
+
+**推奨B の理由**：プラットフォーム特性が異なる／品質管理しやすい／引き継ぎポイントが明確
+
+### バッチ7候補テーマ（残り34PDF・NFC比較）
+
+- **SNS運用系13件**（推奨次バッチ）:
+  - Instagram系3：SNS総論／インスタ機能・活用／インスタ企画〜実行
+  - TikTok系3：TikTok運用編／TikTok編：企画／TikTok編：分析改善
+  - YouTube系3：YouTube機能・活用／YouTube企画台本／YouTube分析改善
+  - 共通4：SNS総論／SNS／投稿設計編／分析改善編
+- **Web系4件**：HP・LP制作 / LPO / WEB_UI・UX改善
+- **マーケ施策系4件**：ECマーケ / ウェビナー / ホワイトペーパー
+- **分析・SEO系2件**：GA4 / SEO記事
+- **営業・CS系3件**：インサイドセールス / オンボーディング / デリバリー
+- **PM系2件**：PJリスク管理 / プロジェクトレベル定義
+- **組織系3件**：MSマトリクス / 文化の言語化 / 目標設定とFB
+- **DL系3件**：クレド投票 / 各種DL資料
+
+### 関連 Notion 案件（次セッションで参照可）
+
+- 「chisoku-skillize スキルにNFC/NFD正規化マッチを追加」（P3-今月中・シュウ委任予定）
+- 「バッチ5+6スキル10本の個別軽微指摘15件を反映」（P3-今月中・アスカ自律 + ミオファクトチェック3件）
+
+### 履歴ファイル
+
+- `~/.claude/reports/chisoku/_skill-history.md`：本セッションでは追記なし（バッチ7未着手）
+- `~/.claude/tmp/chisoku-unprocessed-nfc.txt`：未処理34件のリスト（NFC比較）
+- `~/.claude/tmp/chisoku-debug.txt` / `~/.claude/tmp/chisoku-nfc-debug.txt`：NFC/NFD調査用ログ
+
+### 次セッションで最初にやること
+
+1. 「chisokuのスキル化、引き続きよろしく」等で再開
+2. アスカが session-handoff.md を読み、本セクションを確認
+3. シンヤさんに「バッチ7はどう進めますか？A/B/C」と確認
+4. 選択された方針でバッチ7を開始
+
+---
+
+## 🔵 旧記録: chisoku PDF スキル化 - バッチ5+6完了 / 残り32PDF未処理（2026-04-30 深夜）
 
 **バッチ5（広告系6PDF→8スキル）＋ バッチ6（PR・ブランド系2PDF→2スキル）完了。次回は別セッションでバッチ7から再開。**
 

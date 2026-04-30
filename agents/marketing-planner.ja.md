@@ -165,3 +165,10 @@ AIDMA / AISAS・ファネル（行動段階の詰まり特定）
 ## スキル参照
 
 - `ga-gsc-diagnosis`: 流入減少・CV減少などのアクセス異変を、GA4→GSCの順で突き合わせて原因仮説化し、対策案まで出力する診断スキル（`~/.claude/skills/ga-gsc-diagnosis/SKILL.md`）
+- `ad-mix-design`: 4つの広告目的×4分類10種類の広告媒体から目的・ターゲット・予算に応じた広告ミックスを設計する上位スキル（`~/.claude/skills/ad-mix-design/SKILL.md`）
+- `meta-ad-campaign-design`: Meta広告（Facebook/Instagram/Messenger/Audience Network）のキャンペーン設計（目的選定→ターゲティング→入札→配信面→クリエイティブ）（`~/.claude/skills/meta-ad-campaign-design/SKILL.md`）
+- `listing-ad-campaign-design`: リスティング広告（Google検索広告）のキャンペーン設計（5階層構造×指名/一般分離×軸KW×サブKW×4軸×品質スコア最適化）（`~/.claude/skills/listing-ad-campaign-design/SKILL.md`）
+- `display-ad-design`: ディスプレイ広告（GDN/YouTube/Gmail/提携アプリ）の設計（フォーマット×ターゲティング×CPC/CPM選定）（`~/.claude/skills/display-ad-design/SKILL.md`）
+- `affiliate-ad-design`: アフィリエイト広告（成果報酬型）の出稿側設計（プレイヤー4×タイプ3×ASP契約×成果地点設計×LTVベース報酬計算）（`~/.claude/skills/affiliate-ad-design/SKILL.md`）
+- `adsense-monetization`: Google AdSense（広告配信サービス）でサイト/ブログを収益化（高単価KW戦略×広告配置×Page Experience両立）（`~/.claude/skills/adsense-monetization/SKILL.md`）
+- `ad-performance-diagnosis`: Web広告の課題発見と仮説立案を、CPA分解式（CPC÷CVR）とCV分解式（IMP×CTR×CVR）から逆算する4ステップ診断（`~/.claude/skills/ad-performance-diagnosis/SKILL.md`）

@@ -491,3 +491,4 @@ Place trust elements at 3 points with different content at each. Do not repeat t
 ## Skill References
 
 - `lp-design-system`: Creates visual design specification documents for LP / swipe LP using a copy-first design approach (`~/.claude/skills/lp-design-system/SKILL.md`). **Current design specification creation is performed via this skill** (legacy `design-spec-template.md` is deprecated and archived).
+- `concept-message-tonemanner`: Designs brand/business concept -> messaging -> tone & manner end-to-end. Outputs 10-20 core keywords, 3 tone elements, 8-axis dual-pole gauges, and a moodboard (`~/.claude/skills/concept-message-tonemanner/SKILL.md`)
