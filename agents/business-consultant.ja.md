@@ -91,3 +91,27 @@ model: opus
 - `innovator-theory`: ロジャースのイノベーター理論5層＋キャズム16%でフェーズ判定し、層別プロモ戦略＋市場シェアKPIを設計（`~/.claude/skills/innovator-theory/SKILL.md`）
 - `pmf-journey`: フィットジャーニー5段階（PSF→Product-Solution→PMF→GTM→Scale）で現フィット段階を数値指標で診断し、次にやるべきアクションを特定（`~/.claude/skills/pmf-journey/SKILL.md`）
 - `business-model-canvas`: ビジネスモデルキャンバス9要素（顧客／課題／UVP／ソリューション／チャネル／収益／KPI／コスト／優位性）で事業全体像を1枚に可視化し、要素間の整合性をチェック（`~/.claude/skills/business-model-canvas/SKILL.md`）
+- `logical-thinking`: ロジカルシンキングの4フレームワーク（MECE／WHY型／ピラミッド構造／SO型）と5実践ステップで複雑な問題を分解し論理的に結論を導く（`~/.claude/skills/logical-thinking/SKILL.md`）
+- `critical-thinking`: クリティカルシンキングの4基本ステップ＋3STEP実践（問いと答えのセット／本当に？だから何？／3視点ずらし）で前提・根拠・結論の妥当性を批判的に検証（`~/.claude/skills/critical-thinking/SKILL.md`）
+- `lateral-thinking`: ラテラルシンキング（水平思考）の3特徴×3基本アプローチ×具体3手法（逆転発想／強制結合法／SCAMPER 7視点）×4実践ステップで革新的アイデアと差別化を生み出す（`~/.claude/skills/lateral-thinking/SKILL.md`）
+- `ooda-loop`: OODAループ（Observe→Orient→Decide→Act）の意思決定プロセス設計＋OODA×PDCA階層運営＋OODA適合性診断で、変化が激しい市場での迅速判断体制を構築（`~/.claude/skills/ooda-loop/SKILL.md`）
+- `mvv-design`: Mission/Vision/Value 3要素を5ステッププロセス（現状分析→ミッション定義→ビジョン策定→バリュー設定→社内外共有）で策定し、組織の方向性を明確化（`~/.claude/skills/mvv-design/SKILL.md`）
+- `branding`: ブランディング体系設計（マーケとの違い9観点／アーカーモデル5要素／ケラーCBBE／4段階メリット／5強化方法／2フレーム＝ブランディング・サーベイ＋ブランド・アイデンティティ・プリズム）（`~/.claude/skills/branding/SKILL.md`）
+- `hearing-questioning-skills`: ヒアリング力・質問力（聞く/聴くの違い／良いヒアリング3要素／質問4種＋フレーミング2型／3つの間／見込顧客10項目＋N=1インタビュー10項目テンプレ）（`~/.claude/skills/hearing-questioning-skills/SKILL.md`）
+- `presentation-skill`: プレゼンテーション能力体系（4要素×3パート構成×PREP法 Point-Reason-Example-Point×能力向上4方法×自己評価5観点）（`~/.claude/skills/presentation-skill/SKILL.md`）
+- `client-expectation-management`: 対クライアント期待値調整（4目的×5プロセス：ニーズ理解→現実的提案→明確な合意形成→定期コミュ→納品後フォロー×必要5スキル×4注意点×3実践手法）（`~/.claude/skills/client-expectation-management/SKILL.md`）
+- `teaching-coaching-leading`: ティーチング・コーチング・リーディングの3つの指導アプローチ使い分け（特徴・必要スキル・適用例の比較＋3パターン答え分け）（`~/.claude/skills/teaching-coaching-leading/SKILL.md`）
+- `katz-three-skill-approach`: カッツモデル（Robert L. Katz提唱）3スキル×3階層で役職別必要スキル比重を診断し、キャリア成長戦略を導出（`~/.claude/skills/katz-three-skill-approach/SKILL.md`）
+- `schedule-management`: スケジュール管理（3目的×5プロセス：目標設定→WBS→Eisenhowerマトリクス→スケジュール作成→進捗管理×3手法：ガント／CPM／アジャイル×4ツール×3課題と解決策）（`~/.claude/skills/schedule-management/SKILL.md`）
+- `organization-planning`: 会社・組織レベルの組織計画（3目的×3利用シーン×3組織構造：階層型／マトリクス型／フラット型×4Q組織ロードマップ×バイネーム組織図×プロジェクト体制図との連携）（`~/.claude/skills/organization-planning/SKILL.md`）
+- `roles-responsibilities`: 組織における役割と責任範囲明確化（3目的×4要素：役割／責任範囲／権限／報告ライン×6ステップ：目標設定→洗い出し→責任定義→権限・報告→文書化→見直し×6列アウトプット表）（`~/.claude/skills/roles-responsibilities/SKILL.md`）
+- `evaluation-system-design`: 評価制度の策定（5目的×7ステップ×5設計ポイント×4よくある課題×3軸グランドデザイン：目標達成評価50%／らしさ評価50%／360評価参考値×100点詳細評価表＋半期評価フロー）（`~/.claude/skills/evaluation-system-design/SKILL.md`）
+- `recruitment-strategy`: 採用戦略・採用ガイドラインの策定（3重要ポイント×4主要素：Goal/Target/Channel/Standard×6媒体別の傾向×4ステップ策定フロー×コンピテンシー7項目×インターン経由採用フロー）（`~/.claude/skills/recruitment-strategy/SKILL.md`）
+- `salary-range-design`: 給与レンジの決定（3目的×3重要理由×3層構成：最高／中央値ミッドポイント／最低×6プロセス：市場調査→職務評価→内部バランス→レンジ幅→予算調整→定期見直し×4課題分析STEP）（`~/.claude/skills/salary-range-design/SKILL.md`）
+- `career-roadmap-development`: キャリアロードマップと育成計画（3役割×3キャリアパス：管理職／専門職／新規事業×5階層ロードマップ×3年間育成計画×アサインメント設計：人のレベル×プロジェクトのレベル5段階）（`~/.claude/skills/career-roadmap-development/SKILL.md`）
+- `financial-statements-fundamentals`: 財務三表（BS/PL/CF）の基本構造×財務諸表の連携×資金繰り8チェックリスト×財務体質改善3要素（売上拡大／限界利益率向上／固定費削減）×労働生産性・労働分配率（`~/.claude/skills/financial-statements-fundamentals/SKILL.md`）
+- `ma-strategy-basics`: M&A戦略基礎（2分類：合併／買収×5目的×4リスク×5手法：水平統合／垂直統合／コングロマリット／MBO／LBO×6プロセス：戦略立案→ターゲット選定→意向表明→DD→契約→PMI×4検討状態×5成功ポイント）（`~/.claude/skills/ma-strategy-basics/SKILL.md`）
+- `financing-strategy`: 資金調達戦略（デットファイナンス3メリット3デメリット×中小企業の銀行交渉順序：政策金融公庫・商工中金・信用金庫→地銀・メガバンク×エクイティ3メリット3デメリット×6比較軸×組み合わせ3活用例×4課題分析STEP）（`~/.claude/skills/financing-strategy/SKILL.md`）
+- `growth-phase-strategy`: 企業成長フェーズ別経営・組織戦略（4フェーズ：初期1億未満／成長1〜10億／拡大10〜50億／成熟50〜100億×経営課題変遷×組織体制進化×権限移譲段階×役職変化×成長フェーズ別6課題×成長フェーズを乗り越える7ポイント）（`~/.claude/skills/growth-phase-strategy/SKILL.md`）
+- `yony-sales-simulation`: YonY（前年同期比）売上シミュレーション（4洞察×5設計ポイント×3要素：固定費／変動費／損益分岐点×6必要要素×3シナリオ：楽観／現実／悲観×Before/After×3STEP実践課題）（`~/.claude/skills/yony-sales-simulation/SKILL.md`）
+- `meeting-cadence-design`: 会議体の定義・設計・運営（4目的×5種類：意思決定型／情報共有型／課題解決型／戦略策定型／アドホック型×設計5要素×運営4ポイント×4運営メリット×9列会議体一覧テンプレ×4課題分析STEP）（`~/.claude/skills/meeting-cadence-design/SKILL.md`）

@@ -1,26 +1,79 @@
 # セッション引き継ぎ
 
-## 🟢 再開ポイント（2026-04-29）: スワイプLP無料配布 Step 4 着手待ち（lp-create v2 Route F 動作テスト経由）
+## 🔵 再開ポイント（2026-04-30 夜）: chisoku PDF スキル化 - バッチ4完了 / 残り40PDF未処理
 
-**新スキル lp-create v2 動作テストとして Route F フル制作で再実行中。Step 0〜Step 3 + Step 2 評価完了・リナ条件付き採用承認済み。Step 4（カイ・コト委任）から再開可能。**
+**バッチ4（財務・経営戦略テーマ）完了。次回は別セッションでバッチ5から再開。**
+
+### バッチ4 完了サマリー（2026-04-30）
+- 作成スキル6本: `financial-statements-fundamentals` / `ma-strategy-basics` / `financing-strategy` / `growth-phase-strategy` / `yony-sales-simulation` / `meeting-cadence-design`
+- skipped-permanent 5件登録（バッチ3スキルのワークシート3件＋末尾スペース違いの重複2件）
+- リナ検証完了・指摘4件すべて修正済（financial-statements_業種別労働分配率／financing_交渉順序＆成長期判断／growth_4フェーズ6区分明示／yony_楽観シナリオ注記）
+- カナタによる business-consultant.md 英語版同期完了
+
+### 累計進捗
+- 全PDF: 139件
+- 処理済（completed＋skipped-permanent）: 99件
+- **未処理: 40件**
+
+### 履歴ファイル
+- `~/.claude/reports/chisoku/_skill-history.md` 更新済（バッチ4 11エントリ追記）
+- `~/.claude/agents/business-consultant.ja.md` 更新済（バッチ4 6スキル参照追記）
+- `~/.claude/agents/business-consultant.md` 更新済（カナタ英訳追記）
+
+### 次回バッチ5の候補テーマ
+未処理40件のうち、以下のテーマでクラスタリング可能：
+- **マーケティング/SNS系（多数）**: TikTok編／YouTube編／インスタ編／SNS戦略全体／SNS／投稿設計編／分析改善編
+- **広告系**: AD（SNS）広告・バナー広告／アフィリエイト広告／ディスプレイ広告／リスティング広告／広告／Googleアドセンス
+- **Web系**: HP・LP制作／LPO／WEB_UI・UX改善／GA4分析／SEO記事・コンテンツ記事・被リンク／ホワイトペーパー
+- **その他**: ECマーケティング／PR・プレスリリース／インサイドセールス（BDR/SDR）／ウェビナー／オンボーディング設計／コンセプト設計・メッセージング／デリバリー構築／PJマネジメントにおけるリスク管理／MSマトリクス／文化の言語化／目標設定とフィードバック
+
+### 推奨次バッチ
+シンヤさんのその時の優先度に応じて選定。例：
+- 広告系6件（広告／リスティング／ディスプレイ／アフィリエイト／AD（SNS）／Googleアドセンス）
+- Web系5件（HP・LP制作／LPO／WEB_UI・UX改善／GA4分析／SEO記事）
+
+---
+
+## 🟢 再開ポイント（2026-04-30）: スワイプLP無料配布 Step 6 着手待ち（lp-create v2 Route F 動作テスト経由）
+
+**Step 5.5 完了・image-prompts.md 保存済み。Step 6（シュウ実装）から再開可能。ただし画像生成は実装と並行/後追いで進める。**
+
+**重要**: Step 5 はシンヤさんの「スワイプLPに対応した設計になっている?」「6.CTA設計はスワイプLPになってる?」という指摘で、index.html の実装構造を踏まえた**全面再設計**を実施済み。各スライドは画像1枚（4:5アスペクト比）として書き出し・CTAボタンはindex.html下部固定バーが全スライド共通担当。
+
+**Step 5.5 成果物**: `workspaces/swipe-lp-free/image-prompts.md`（新規3枚 slide-02/05/06.webp の英語プロンプト確定 / 既存4枚の Canva 加工指針付き）
 
 ### 完了ステータス
 - ✅ Step 0: Route 判定（Route F 確定）
 - ✅ Step 1: ヒアリング全Phase（Phase 1-9 完了）
 - ✅ Step 2: ヒアリング内容レビュー（レン・コト評価／シンヤさんQ1-Q5確定）
 - ✅ ミオ競合調査（5主要発見・国内ほぼ空白ポジション確認）
-- ✅ Step 3: メッセージ戦略策定（レン委任）→ `workspaces/swipe-lp-free/strategy-final.md` 出力
-- ✅ リナ論理検証（条件付き採用・必須修正なし・推奨修正3件アスカ反映済み）
-- ✅ STRATEGY-CONFIRMED マーカー付与済み（`<!-- LP-CREATE-GATE: STRATEGY-CONFIRMED 2026-04-29 -->`）
+- ✅ Step 3: メッセージ戦略策定（レン委任）→ `workspaces/swipe-lp-free/strategy-final.md`
+- ✅ リナ論理検証（条件付き採用・必須修正なし）
+- ✅ STRATEGY-CONFIRMED 2026-04-29 マーカー付与済み
+- ✅ Step 4: カイ ワイヤーフレーム → `workspaces/swipe-lp-free/wireframe-step4.md`
+- ✅ Step 4: コト 7枚分コピー作成完了
+- ✅ Approval Gate 1 通過（シンヤさん 2026-04-30 ok）
+- ✅ COPY-CONFIRMED 2026-04-30 マーカー付与済み（`workspaces/swipe-lp-free/copy.md`）
 
-### Step 4 再開時の手順
+### Step 5 再開時の手順
 
-1. `lp-create` スキルの Step 4（カイ→コト委任）から開始
-2. 入力資料: `workspaces/swipe-lp-free/strategy-final.md`（リナ承認済み）
-3. カイ（lp-designer）に7枚分のワイヤーフレーム委任
-4. コト（copywriter）に7枚分のコピー作成委任（戦略書 §8-2 のコピー方向に従う）
-5. **Approval Gate 1（構成承認）通過時に `copy.md` 強制生成**＋ `<!-- LP-CREATE-GATE: COPY-CONFIRMED YYYY-MM-DD -->` マーカー付与
-6. 以降 Step 5（lp-design-system 経由デザイン仕様）→ Step 5.5（ルナ画像プロンプト）→ Step 6（シュウ実装）→ Step 7（サクラレビュー）→ Step 8（修正）→ Step 9（完了報告）
+1. `lp-create` スキルの Step 5 から開始（lp-design-system スキル経由）
+2. 入力資料:
+   - `workspaces/swipe-lp-free/copy.md`（COPY-CONFIRMED 済み）
+   - `workspaces/swipe-lp-free/wireframe-step4.md`（カイ仕様）
+   - `workspaces/swipe-lp-free/strategy-final.md`（戦略根拠）
+3. カイ（lp-designer）に `lp-design-system` 経由でデザイン仕様詳細化を委任
+4. Section 10（画像定義リスト）を Kai が補完
+5. CTA最終文言・マイクロコピーを コト最終調整
+6. Approval Gate 2（デザイン承認）→ `design-spec.md` 生成＋ `<!-- LP-CREATE-GATE: DESIGN-CONFIRMED YYYY-MM-DD -->` マーカー付与
+7. 以降 Step 5.5（ルナ画像プロンプト）→ Step 6（シュウ実装）→ Step 7（サクラレビュー）→ Step 8（修正）→ Step 9（完了報告）
+
+### Step 5 進行時のシンヤさん追加判断項目（保留中）
+
+1. Slide 6 メタ証明ビジュアル仕掛け（4案: 案1透過表記 / 案2コードビュー / 案3 Canva種明かし / 案4構造解剖図）→ カイ推奨は案2＋案4 ダブル
+2. Slide 4 への CTAボタン追加（カイ推奨 / Reveal直後の感情ピーク反復配置）
+3. Slide 3 顔写真素材の入手タイミング（丸形トリミング前提・正方形〜縦長・明るい背景推奨）
+4. Slide 6 Canva画面スクリーンショット（案3採用時のみ必要）
 
 ### 確定事実（Step 4 着手時の必須インプット）
 
