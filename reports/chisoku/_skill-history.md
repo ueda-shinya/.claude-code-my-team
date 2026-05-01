@@ -1177,3 +1177,151 @@
 - **処理日**: 2026-05-01
 - **生成スキル**: なし（既存スキル吸収済み）
 - **備考**: バッチ7-4の3件目。実態は「Instagram分析改善の方法」で、内容（成果定義の3よくある誤解／5目的別KPI／6伸びない理由×原因×解決策／3施策別分析指標／PDCAサイクル／質的データ分析）は既存`instagram-account-design`のステップ6〜9（KPI設計＋分析改善）と大部分重複。6課題×解決策表は補完情報レベルのため新規スキル化せず、既存スキル吸収済みと判定。必要時は`instagram-account-design`を呼び出す。
+
+## 2026-05-01: バッチ7 リナ重大5件＋軽微3件 修正対応完了
+
+- **対応日**: 2026-05-01
+- **対応スキル**: `sns-strategy-overview` ／ `sns-content-design` ／ `instagram-account-design` ／ `tiktok-account-design` ／ `youtube-account-design`
+- **CLAUDE.md改修**: 「SNS戦略3段階フロー起動順序ルール」セクション新設（External Skill Guard Rules直前）
+- **重大5件解消**:
+  - A: sns-strategy-overview ステップ5の投稿企画立案削除（次段移譲明記）
+  - B: 媒体特化3スキル冒頭に「実行停止プロトコル」追加（前段成果物引き継ぎ確認チェックリスト＋停止プロトコル3ステップ）
+  - C: instagram ストーリーズ配置を「興味」「リピート」主役・行動は補助に修正
+  - D: ジャーニー語彙を5区分（認知／興味／比較検討／行動／リピート）に統一
+  - E: youtube KPI閾値に「ベンチマーク・要補正」注記＋ジャンル差例併記
+- **軽微3件解消**:
+  - ①: TikTok/YT 連携スキル文中の旧語彙「教育→販売」「信頼→販売」を5区分語彙に統一
+  - ②: CLAUDE.md ルール追加＋媒体特化3スキルに実行停止プロトコル明文化
+  - ③: TikTok 出力フォーマット本体・記入例ともに「担当ジャーニー区分」カラム追加
+- **リナ最終判定**: 重大5件＋軽微3件すべて解消、新たな致命的矛盾なし
+- **次セッションへの持ち越し（軽微・運用支障なし）**:
+  - 追加軽微②: CLAUDE.md L719「停止」主体明確化（アスカ／Claude Code／シンヤさん）
+  - 追加軽微③: 例外記録タグの統一（「前段スキップ例外（SNS）」と「例外処理（LP）」の使い分け明文化）
+- **次バッチ8着手予定**: 残り21PDF（Web系4／マーケ施策系4／分析SEO系2／営業CS系3／PM系2／組織系3／DL系2 等）
+
+## 2026-05-01: 一絲_事業戦略スクール「知足」_HP・LP制作 .pdf
+
+- key: 一絲_事業戦略スクール「知足」_HP・LP制作 .pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_HP・LP制作 .pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**:
+  - `hp-lp-distinction-design` — HP/LP使い分け設計（HP3要素/LP2要素×6項目比較表×連携2パターン×GA4クロスドメイン）（対象: カイ/lp-designer、ユイ/web-designer、レン/marketing-planner）
+- **備考**: バッチ8-1（Web/LP系）の1件目。HPとLPの役割の違いを6項目比較表で整理し、連携パターンと計測設定までクライアント提案できるスキル。lp-create前段の「そもそも何を作るか」判断スキルとして機能。
+
+## 2026-05-01: ダウンロードコンテンツ_HP・LP制作 - シート1.pdf
+
+- key: ダウンロードコンテンツ_HP・LP制作 - シート1.pdf
+- status: skipped-permanent
+- **ソースPDF**: `reports/chisoku/ダウンロードコンテンツ_HP・LP制作 - シート1.pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**: なし（手順化対象外・ペアシート）
+- **備考**: バッチ8-1の補助シート。競合LP比較ワークシート（記入欄のみ）で手順化不能。本編`一絲_HP・LP制作.pdf`を `hp-lp-distinction-design` に統合済み。必要時はスキル経由でこのテンプレートを参照。
+
+## 2026-05-01: 一絲_事業戦略スクール「知足」_WEB_UI・UX改善.pdf
+
+- key: 一絲_事業戦略スクール「知足」_WEB_UI・UX改善.pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_WEB_UI・UX改善.pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**:
+  - `ui-ux-improvement-fundamentals` — UI/UX改善基本（ユーザビリティ5原則×CRAP原則×F/Zパターン×ナビ4種×3ステップ改善フロー）（対象: ユイ/web-designer、カイ/lp-designer）
+- **備考**: バッチ8-1の2件目。Jakob Nielsen系の5原則とロビン・ウィリアムズのCRAP原則を組み合わせた基本スキル。既存`web-design-guidelines`（Vercel Labs版・監査用）と補完関係。新規制作・改善の指針として活用。
+
+## 2026-05-01: ダウンロードコンテンツ_WEB_UI・UX改善.pdf
+
+- key: ダウンロードコンテンツ_WEB_UI・UX改善.pdf
+- status: skipped-permanent
+- **ソースPDF**: `reports/chisoku/ダウンロードコンテンツ_WEB_UI・UX改善.pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**: なし（手順化対象外・ペアシート）
+- **備考**: バッチ8-1の補助シート。UI/UX改善シート（記入欄のみ・10観点の良い点/改善点記入表）で手順化不能。本編`一絲_WEB_UI・UX改善.pdf`を `ui-ux-improvement-fundamentals` に統合済み。
+
+## 2026-05-01: 一絲_事業戦略スクール「知足」_LPO.pdf
+
+- key: 一絲_事業戦略スクール「知足」_LPO.pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_LPO.pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**:
+  - `lpo-improvement-design` — LPO改善設計（6ステップ運用×A/B検証2観点×3大改善ポイントFV/CTA/フォーム×LP構成4要素「結果/実証/信頼/安心」）（対象: レン/marketing-planner、カイ/lp-designer）
+- **備考**: バッチ8-1の3件目。LP既存改善のCVR向上スキル。lp-create（新規制作）と補完関係で、CVハードル階段（資料DL→無料トライアル→アポ問合せ）／フォーム項目1個=完了率8%減／FV直下75%離脱の数値根拠を内包。
+
+## 2026-05-01: 一絲_事業戦略スクール「知足」_SEO記事・コンテンツ記事・被リンク.pdf
+
+- key: 一絲_事業戦略スクール「知足」_SEO記事・コンテンツ記事・被リンク.pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_SEO記事・コンテンツ記事・被リンク.pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**:
+  - `seo-content-strategy` — コンテンツSEO戦略（SEO3対策×コンテンツSEO4STEP×検索意図4分類Know/Go/Do/Buy×EEAT原則×内部対策3種×外部対策3種）（対象: レン/marketing-planner、ハル/writer）
+- **備考**: バッチ8-2（集客/コンテンツ系）の1件目。新規メディア立ち上げ・既存メディアリニューアル時のSEO戦略設計スキル。既存`seo-audit`（監査）と`llmo-audit`（AI検索）と補完関係。EEAT＋一次情報重視の方針が中心。
+
+## 2026-05-01: 一絲_事業戦略スクール「知足」_GA4分析.pdf
+
+- key: 一絲_事業戦略スクール「知足」_GA4分析.pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_GA4分析.pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**:
+  - `ga4-analysis-fundamentals` — GA4分析の基本（4構成×6主要用語×5チャネル×初期設定3点×見るポイント4軸×ウェブマーケ大枠＝訪問数×CVR=CV）（対象: レン/marketing-planner）
+- **備考**: バッチ8-2の2件目。GA4の基礎理解と恒常運用設計スキル。既存`ga-gsc-diagnosis`（流入減・CV減1次診断）と補完関係。初期設定（ユーザー属性／SC連携／キーイベント）と4軸の見るポイントを運用ルール化。
+
+## 2026-05-01: 一絲_事業戦略スクール「知足」_ホワイトペーパー .pdf
+
+- key: 一絲_事業戦略スクール「知足」_ホワイトペーパー .pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_ホワイトペーパー .pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**:
+  - `whitepaper-content-design` — ホワイトペーパー/コンテンツ設計（3特徴×3目的×コンテンツ設計2軸ジャーニー×ファネル×8コンテンツタイプ×制作4タイプ）（対象: レン/marketing-planner、ハル/writer）
+- **備考**: バッチ8-2の3件目。BtoBマーケのリード獲得・育成・購買誘導用WP戦略スキル。既存`customer-journey`／`funnel-design`を活用しながら、コンテンツ設計に特化した独自スキル。顕在層から優先制作の基本指針を内包。
+
+## 2026-05-01: ダウンロードコンテンツ_ホワイトペーパー  - 02_構成案_（WPタイトル）.pdf
+
+- key: ダウンロードコンテンツ_ホワイトペーパー  - 02_構成案_（WPタイトル）.pdf
+- status: skipped-permanent
+- **ソースPDF**: `reports/chisoku/ダウンロードコンテンツ_ホワイトペーパー  - 02_構成案_（WPタイトル）.pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**: なし（手順化対象外・ペアシート）
+- **備考**: バッチ8-2の補助シート。WP構成案テンプレート（記入欄のみ・テーマ/タイトル/ユーザーイメージ/構成の記入欄）で手順化不能。本編`一絲_ホワイトペーパー.pdf`を `whitepaper-content-design` に統合済み。スキルのステップ8で本テンプレートをガイドラインとして参照。
+
+## 2026-05-01: 一絲_事業戦略スクール「知足」_ウェビナー .pdf
+
+- key: 一絲_事業戦略スクール「知足」_ウェビナー .pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_ウェビナー .pdf`
+- **処理日**: 2026-05-01
+- **生成スキル**:
+  - `webinar-design` — ウェビナー設計（3階層目的×4パターンカンファ/共催/事例/自社×企画構成6POINT×タイトル6観点×事前集客6手法×KPI逆算）（対象: レン/marketing-planner）
+- **備考**: バッチ8-2の4件目。BtoBマーケのウェビナー戦略スキル。1000リード獲得KPI逆算（2社共催月10回／4社共催月4回／6社共催月3回）など定量根拠を内包。`whitepaper-content-design`／`lead-nurturing`と連携。
+
+## 2026-05-01: バッチ8（Web/LP系5件＋集客/コンテンツ系5件＝10件）処理完了
+
+- **対応日**: 2026-05-01
+- **処理件数**: 10件（completed 7件＋skipped-permanent 3件）
+- **生成スキル**: 7件（hp-lp-distinction-design / ui-ux-improvement-fundamentals / lpo-improvement-design / seo-content-strategy / ga4-analysis-fundamentals / whitepaper-content-design / webinar-design）
+- **次バッチ予定**: バッチ9（EC/マーケ系1＋営業/CS系3＋PM/財務系3＝7件）／バッチ10（組織/人事系4件）
+- **残り未処理PDF**: 11件
+
+## 2026-05-01: バッチ8 リナ重大7件＋軽微3件 修正対応完了
+
+- **対応日**: 2026-05-01
+- **対応スキル**: `hp-lp-distinction-design` ／ `lpo-improvement-design` ／ `seo-content-strategy` ／ `ui-ux-improvement-fundamentals` ／ `whitepaper-content-design` ／ `webinar-design` ／ `ga4-analysis-fundamentals`
+- **重大7件解消**:
+  - 重大1（hp-lp-distinction-design）: ステップ7「制作の流れ7ステップ」を削除→「引継ぎゲート」（LP→`lp-create`／HP→ユイ）に置換、description を「使い分け判断と連携設計のみ」に限定。CLAUDE.md「LP案件の起動順序ルール」との抵触を解消
+  - 重大2（lpo-improvement-design）: description で「現状診断と改善仮説立案までを担当」に責任範囲限定。コピー変更=Route C／デザイン変更=Route D／実装変更=Route I／戦略変更=Route F or S への引継ぎを明示
+  - 重大3（seo-content-strategy）: 英語起動キーワード（SEO audit/technical SEO/why am I not ranking 等）→`seo-audit`優先と「使わない場面」「住み分けセクション」で明示
+  - 重大4（ui-ux-improvement-fundamentals）: 「複数ページ構成のサイト全体・LP単体は対象外」に限定、判定基準「単一ページ完結（LP）か複数ページ構造か」を明記
+  - 重大5（whitepaper-content-design）: 用語定義の事実誤り訂正（ROI=投下資本に対する利益率／ICEスコア=Impact×Confidence×Ease／リードナーチャリング・インバウンドマーケティングの正定義追加）
+  - 重大6（webinar-design）: ステップ8「4要素」表記の数値矛盾を「5要素」に修正
+  - 重大7（webinar-design）: カンファレンスKPI数値の3者不一致を解消。規模別2区分（自社主催800〜1,000+／他社登壇200〜500）に整理しステップ5本文・ステップ6表・判断基準を整合化
+- **軽微3件解消**:
+  - 軽微3（ga4-analysis-fundamentals）: チャネルに「主要なもの」「合計17種類は管理画面で確認」の限定句追加
+  - 軽微4（whitepaper-content-design / webinar-design）: 連携スキルの「並走（資産化の往復）」表記を双方で統一
+  - 軽微5（ui-ux-improvement-fundamentals）: ステップ3にJakob Nielsen 10原則の抽出ロジックを追記、残り5原則は`web-design-guidelines`担当と明示
+- **リナ最終判定**: 重大7件＋軽微3件すべて解消、CLAUDE.md「LP案件の起動順序ルール」抵触解消、新たな致命的矛盾なし、運用可能
+- **次セッション持ち越し（軽微・運用支障なし）**:
+  - 軽微1: `seo-content-strategy` 「上位3位 68.1% クリック獲得」の出典明記
+  - 軽微2: `lpo-improvement-design` 「FV直下75%離脱」「フォーム1個=8%減」の出典明記
+  - 軽微6: 5状態出力契約の文言重複（許容範囲）
