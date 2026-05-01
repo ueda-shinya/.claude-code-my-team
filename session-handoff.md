@@ -1,63 +1,110 @@
 # セッション引き継ぎ
 
-## 🔴 最優先再開ポイント（2026-05-01 夜）: chisoku バッチ7完了→リナ重大指摘5件の修正待ち
+## 🟢 最優先再開ポイント（2026-05-01 深夜・更新）: chisoku バッチ8完了 / リナ重大7件＋軽微3件 全修正済 → 次セッションでバッチ9着手
 
-**バッチ7（SNS運用系13PDF→5スキル）完了。リナ検証で重大指摘5件が出て、シンヤさん判断（A/B/C/D）待ちの状態で中断。次セッション再開時、まずこの判断を仰ぐこと。**
+**バッチ8のWeb/LP系＋集客系10PDF→7スキル生成・リナ重大7件＋軽微3件すべて修正・最終検証完了・git push 済（コミット 53a3e5e）。新たな致命的矛盾なし。次セッション再開時はバッチ9（残り11PDF）に着手すればよい。**
 
-### バッチ7 全体サマリー（生成スキル5本）
-| バッチ | PDF数 | 生成スキル | 対象エージェント |
-|---|---|---|---|
-| 7-1 Instagram系 | 3 | `sns-strategy-overview` ／ `instagram-account-design` | レン／ミナト |
-| 7-2 TikTok系 | 3 | `tiktok-account-design` | ミナト |
-| 7-3 YouTube系 | 4 | `youtube-account-design` | ミナト |
-| 7-4 共通 | 3 | `sns-content-design` ／ 投稿設計編・分析改善編は skipped-permanent | レン／ミナト |
+### バッチ8 完了状態
+| 項目 | 状態 |
+|---|---|
+| バッチ8（Web/LP系5＋集客系5＝10PDF→7スキル）生成 | ✅ 完了 |
+| リナ重大7件（1〜7）修正 | ✅ 全解消 |
+| リナ軽微3件（3,4,5）修正 | ✅ 全解消 |
+| CLAUDE.md「LP案件の起動順序ルール」抵触解消 | ✅ 完了 |
+| リナ最終検証 | ✅ 重大OK／軽微OK／新規重大指摘なし |
+| git commit + push | ✅ 完了（53a3e5e） |
 
-### カナタ英訳同期：完了 ✅
-- `marketing-planner.md` ＋ `sns-director.md` 両方とも `.ja.md` と完全同期済み
+### 生成スキル7件
+| # | スキル名 | 対象 |
+|---|---|---|
+| 1 | `hp-lp-distinction-design` HP/LP使い分け設計 | カイ／ユイ／レン |
+| 2 | `ui-ux-improvement-fundamentals` UI/UX改善基本（CRAP・F/Z・ナビ） | ユイ／カイ |
+| 3 | `lpo-improvement-design` LPO改善設計（6STEP×3大改善） | レン／カイ |
+| 4 | `seo-content-strategy` コンテンツSEO戦略（3対策×4意図×EEAT） | レン／ハル |
+| 5 | `ga4-analysis-fundamentals` GA4分析の基本（4構成×6用語×4視点） | レン |
+| 6 | `whitepaper-content-design` WP/コンテンツ設計（ジャーニー×ファネル） | レン／ハル |
+| 7 | `webinar-design` ウェビナー設計（4パターン×KPI逆算） | レン |
 
-### リナ検証：重大指摘5件・軽微指摘5件（未修正）
+### リナ重大7件 修正実装サマリー
+- **重大1**（hp-lp-distinction-design）: ステップ7「制作の流れ7ステップ」を削除→「引継ぎゲート」（LP→`lp-create`／HP→ユイ）に置換、descriptionを「使い分け判断と連携設計のみ」に限定。CLAUDE.md「LP案件の起動順序ルール」抵触解消
+- **重大2**（lpo-improvement-design）: descriptionで「現状診断と改善仮説立案までを担当」に責任範囲限定。コピー変更=Route C／デザイン変更=Route D／実装変更=Route I／戦略変更=Route F or S への引継ぎを明示
+- **重大3**（seo-content-strategy）: 英語起動キーワード（SEO audit/technical SEO/why am I not ranking 等）→`seo-audit`優先と「使わない場面」「住み分けセクション」で明示
+- **重大4**（ui-ux-improvement-fundamentals）: 「複数ページ構成のサイト全体・LP単体は対象外」に限定、判定基準「単一ページ完結（LP）か複数ページ構造か」を明記
+- **重大5**（whitepaper-content-design）: 用語定義の事実誤り訂正（ROI=投下資本に対する利益率／ICEスコア=Impact×Confidence×Ease／リードナーチャリング・インバウンドマーケティングの正定義追加）
+- **重大6**（webinar-design）: ステップ8「4要素」表記の数値矛盾を「5要素」に修正
+- **重大7**（webinar-design）: カンファレンスKPI数値の3者不一致を解消。規模別2区分（自社主催800〜1,000+／他社登壇200〜500）に整理
 
-#### 重大指摘（修正必須）
-- **A**: `sns-strategy-overview` ステップ5（投稿企画立案）と `sns-content-design` 全体が役割重複
-- **B**: 媒体特化3スキル（IG/TikTok/YT）と `sns-content-design` でターゲット具体化・ポジショニング4象限・コンセプト一言が重複（起動ルート未定義）
-- **C**: `instagram-account-design` ステップ5でストーリーズを「販売」フェーズに割当→機能特性表「既存フォロワー接触頻度UP」と矛盾
-- **D**: 5スキルでジャーニー語彙が不統一（3区分／4区分／5区分が混在）→出力統合不能
-- **E**: `youtube-account-design` のKPI閾値（維持率40%／CTR4-6%／登録率1-3%）が固定値断定でジャンル差を考慮しない
+### リナ軽微3件 修正実装サマリー
+- **軽微3**（ga4-analysis-fundamentals）: チャネルに「主要なもの」「合計17種類は管理画面で確認」の限定句追加
+- **軽微4**（whitepaper-content-design / webinar-design）: 連携スキルの「並走（資産化の往復）」表記を双方で統一
+- **軽微5**（ui-ux-improvement-fundamentals）: ステップ3にJakob Nielsen 10原則の抽出ロジックを追記、残り5原則は`web-design-guidelines`担当と明示
 
-#### 軽微指摘（後追いOK）
-- F: 媒体MAU数値の算出時点未記載／F2: KPI設計のフォロワー固定順／F3: 4媒体以上失敗パターン断定
-- G: ハッシュタグ閾値の仕様変更注記／予算列追加
-- H: 「複数選択不可、副目的までで2つ」表現矛盾／「多い」の定量基準なし／**TikTokにストーリーズ機能ない混入**（重大寄り）
-- I: TTPS初出説明不足／撮影3要素実は5要素の数値ズレ
-- J: 態度変容マトリクス汎用化／4象限例の業種追加
+### リナから次セッション以降への持ち越し（軽微・運用支障なし）
+- **軽微1**: `seo-content-strategy` 「上位3位 68.1% クリック獲得」の出典明記
+- **軽微2**: `lpo-improvement-design` 「FV直下75%離脱」「フォーム1個=8%減」の出典明記
+- **軽微6**: 5状態出力契約の文言重複（許容範囲）
 
-#### 5状態出力契約：判定OK ✅
-- 5スキルすべて適用対象外で正しい（`tools: Read, Write` のみ・外部API/サブプロセス/外部設定依存なし）
+→ 次回 `/rule-review` または kaizen で対応推奨。バッチ9着手をブロックしない。
 
-### リナの修正方針提案（6項目）
-1. **正規ルートを確定**：`sns-strategy-overview` → `sns-content-design` → 媒体特化 の3段階に固定
-2. **媒体特化スキル側から**ポジショニング・ターゲット具体化・コンセプト一言を削除し `sns-content-design` を参照
-3. **ジャーニー語彙を統一**（5区分推奨）
-4. **strategy-overview ステップ5の投稿企画立案を削除**
-5. **IG ステップ5のストーリーズ配置を補助に変更**
-6. **YT KPI閾値に「ベンチマーク・要補正」注記**
+### 次セッション着手予定: バッチ9（残り11PDF）
+- 全PDF: 139件 / 処理済: 128件（バッチ7まで118件＋バッチ8の10件）/ **未処理: 11件**
+- **バッチ9予定（7件）**: EC/マーケ系1＋営業/CS系3＋PM/財務系3
+  - EC/マーケ：一絲_ECマーケティング .pdf
+  - 営業/CS：一絲_インサイドセールス（BDR_SDR） .pdf／一絲_オンボーディングの設計 .pdf／一絲_デリバリー構築.pdf
+  - PM/財務：一絲_プロジェクトマネジメントにおけるリスク管理 .pdf／ダウンロードコンテンツ_プロジェクトのレベルの定義.pdf／ダウンロードコンテンツ_YonY_売上シミュレーション.pdf
+- **バッチ10予定（4件）**: 組織/人事系
+  - 一絲_文化の言語化 .pdf／一絲_目標設定とフィードバック .pdf／ダウンロードコンテンツ_クレド投票シート.pdf／一絲_MSマトリクス_関係の質（成功の循環）.pdf
+- 起動方法: `/chisoku-skillize` でバッチ実行（差分検出から自動）
 
-### 次セッション再開時のシンヤさん判断依頼
-以下から選択：
-- **A.** リナ提案6項目をアスカが一括修正（ドキュメント部分のみ・即時対応）
-- **B.** 重大指摘5件（A〜E）のみ修正、軽微5件は後追い案件としてNotion登録
-- **C.** 重大指摘の修正方針をシンヤさんが事前確認してから着手
-- **D.** Notion案件として全件登録、後日対応
+### 関連ファイル
+- バッチ8 7スキルファイル：`~/.claude/skills/hp-lp-distinction-design/SKILL.md`／`ui-ux-improvement-fundamentals/SKILL.md`／`lpo-improvement-design/SKILL.md`／`seo-content-strategy/SKILL.md`／`ga4-analysis-fundamentals/SKILL.md`／`whitepaper-content-design/SKILL.md`／`webinar-design/SKILL.md`
+- 履歴：`~/.claude/reports/chisoku/_skill-history.md`（バッチ8 10件＋修正対応エントリ追記済）
+- chisoku-skillize スキル本体：`~/.claude/skills/chisoku-skillize/SKILL.md`
+- 最新コミット：`53a3e5e feat(chisoku): バッチ8完了 Web/LP系+集客系10PDF→7スキル生成 / リナ重大7件+軽微3件 全修正完了`
 
-### 累計進捗（chisoku全体）
-- 全PDF: 139件
-- 処理済: 118件
-- **未処理: 21件**（Web系4／マーケ施策系4／分析SEO系2／営業CS系3／PM系2／組織系3／DL系2／※その他）
+---
+
+## 🟢 旧記録（2026-05-01 夜）: chisoku バッチ7 リナ重大5件＋軽微3件 全完了
+
+**バッチ7のSNS5スキルはリナ重大5件＋軽微3件すべて修正・最終検証完了。新たな致命的矛盾なし。次セッション再開時はバッチ8（残り21PDF）に着手すればよい。**
+
+### バッチ7 完了状態
+| 項目 | 状態 |
+|---|---|
+| バッチ7（SNS系13PDF→5スキル）生成 | ✅ 完了 |
+| カナタ英訳同期 | ✅ 完了 |
+| リナ重大5件（A〜E）修正 | ✅ 全解消 |
+| リナ軽微3件（①②③）修正 | ✅ 全解消 |
+| CLAUDE.md「SNS戦略3段階フロー起動順序ルール」追加 | ✅ 完了 |
+| 媒体特化3スキルに「実行停止プロトコル」追加 | ✅ 完了 |
+| リナ最終検証 | ✅ 全クリア判定 |
+
+### 修正実装サマリー
+- **A**: sns-strategy-overview ステップ5「投稿企画立案」削除（次段移譲明記）
+- **B**: 媒体特化3スキル冒頭に「実行停止プロトコル」追加（前段成果物引き継ぎ確認＋停止プロトコル3ステップ）
+- **C**: instagram ステップ5の機能配置でストーリーズを「興味」「リピート」主役に・行動は補助配置
+- **D**: 全5スキルでジャーニー語彙を5区分（認知／興味／比較検討／行動／リピート）に統一
+- **E**: youtube KPI閾値に「ベンチマーク・要補正」注記＋ジャンル差例（教育系45-55%／エンタメ系30-40%等）併記
+- **軽微①**: TikTok/YT 連携スキル文中の旧語彙「教育→販売」「信頼→販売」を5区分語彙に統一
+- **軽微②**: CLAUDE.md L706付近に「SNS戦略3段階フロー起動順序ルール」セクション新設＋媒体特化3スキルに実行停止プロトコル明文化
+- **軽微③**: TikTok 出力フォーマット本体・記入例ともに「担当ジャーニー区分」カラム追加
+
+### リナから次セッション以降への持ち越し（軽微・運用支障なし）
+- **追加軽微②**: CLAUDE.md L719「停止」主体明確化（アスカ／Claude Code／シンヤさんのどれか）
+- **追加軽微③**: 例外記録タグの統一（「前段スキップ例外（SNS）」と「例外処理（LP）」の使い分け明文化）
+
+→ 次回 `/rule-review` または kaizen で対応推奨。バッチ8着手をブロックしない。
+
+### 次セッション着手予定: バッチ8（残り21PDF）
+- 全PDF: 139件 / 処理済: 118件 / **未処理: 21件**
+- 内訳: Web系4／マーケ施策系4／分析SEO系2／営業CS系3／PM系2／組織系3／DL系2／※その他
+- 起動方法: `/chisoku-skillize` でバッチ実行
 
 ### 関連ファイル
 - 5スキルファイル：`~/.claude/skills/sns-strategy-overview/SKILL.md`／`instagram-account-design/SKILL.md`／`tiktok-account-design/SKILL.md`／`youtube-account-design/SKILL.md`／`sns-content-design/SKILL.md`
-- 履歴：`~/.claude/reports/chisoku/_skill-history.md`（バッチ7全13エントリ追記済）
-- エージェント：`marketing-planner.ja.md` ＋ `.md`（レン2スキル参照追加）／`sns-director.ja.md` ＋ `.md`（ミナト5スキル参照追加）
+- CLAUDE.md：`~/.claude/CLAUDE.md`（L706付近に新セクション「SNS戦略3段階フロー起動順序ルール」）
+- 履歴：`~/.claude/reports/chisoku/_skill-history.md`（バッチ7修正対応エントリ追記済）
+- エージェント：`marketing-planner.ja.md` ＋ `.md`（レン2スキル参照追加・既存）／`sns-director.ja.md` ＋ `.md`（ミナト5スキル参照追加・既存）
 
 ---
 
