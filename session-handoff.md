@@ -12,6 +12,45 @@ GSC エラー継続の追加真因。`workshirtsproduct.com` は Search Console 
 
 **Antigravity 完全再起動で反映**。
 
+### ⚠️ Mac側での同等作業が必要（2026-05-02・引き継ぎ）
+
+`~/.claude.json` および `mcp-servers/` 配下は **`.gitignore` 対象で git 同期されない**ため、Mac 側でも同じ修正を手動実施する必要がある。
+
+#### Mac 側で必要な作業
+
+1. **`git pull`** で最新の `.env` / `skills/` / `CLAUDE.md` 等を取り込む
+2. **`~/.claude.json`** の `mcpServers.search-analytics.env` を以下に更新：
+   ```json
+   "MEBELCENTER_GA4_PROPERTY_ID": "532659723",
+   "MEBELCENTER_GSC_URL": "https://workshirtsproduct.com/"
+   ```
+   ※ 旧値は `530385907` / `sc-domain:wsp.us-saijo.com` 等の可能性
+3. **`mcp-servers/mcp-search-analytics/unified_analytics_server.py`** の `load_dotenv()` を以下に変更（Windows側と同じ一元化対応）：
+   ```python
+   load_dotenv(dotenv_path=os.path.expanduser('~/.claude/.env'))
+   ```
+   その近辺の `credentials_path` 取得も Windows 側と揃える（`GA4_CREDENTIALS_PATH` フォールバック追加）。**コード修正なのでシュウ委任**。
+4. **`mcp-servers/mcp-search-analytics/.env`** に旧値ハードコードがあれば該当2行を新値に書き換え（Windows 側と同様）：
+   ```
+   MEBELCENTER_GA4_PROPERTY_ID=532659723
+   MEBELCENTER_GSC_URL=sc-domain:workshirtsproduct.com   # ※ Mac側でもURLプレフィックス形式が正しいなら https://workshirtsproduct.com/
+   ```
+   ※ 一元化後はこの .env は読まれないので必須ではないが、整合性のため
+5. **Antigravity 完全再起動**
+
+#### 参照スキル
+
+Mac 側でトラブルが起きた場合は `/mcp-config-troubleshoot` スキルを発動し、Step 1（`~/.claude.json` の env 確認）→ Step 5（GSC URL 形式）の順で切り分け可能。
+
+#### 検証コマンド（Mac 側で再起動後に実行）
+
+```bash
+# 想定: GA4 が property_id=532659723、GSC が site_url=https://workshirtsproduct.com/ で正常応答
+# Claude Code 上で：
+# mcp__search-analytics__ga4_traffic_overview(site=ussaijo, ...)
+# mcp__search-analytics__gsc_search_analytics(site=ussaijo, ...)
+```
+
 ---
 
 ## 🔄 真因確定・最終再起動（2026-05-01・最終更新2）: ~/.claude.json env ハードコード
