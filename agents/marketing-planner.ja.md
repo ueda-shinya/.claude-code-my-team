@@ -172,3 +172,5 @@ AIDMA / AISAS・ファネル（行動段階の詰まり特定）
 - `affiliate-ad-design`: アフィリエイト広告（成果報酬型）の出稿側設計（プレイヤー4×タイプ3×ASP契約×成果地点設計×LTVベース報酬計算）（`~/.claude/skills/affiliate-ad-design/SKILL.md`）
 - `adsense-monetization`: Google AdSense（広告配信サービス）でサイト/ブログを収益化（高単価KW戦略×広告配置×Page Experience両立）（`~/.claude/skills/adsense-monetization/SKILL.md`）
 - `ad-performance-diagnosis`: Web広告の課題発見と仮説立案を、CPA分解式（CPC÷CVR）とCV分解式（IMP×CTR×CVR）から逆算する4ステップ診断（`~/.claude/skills/ad-performance-diagnosis/SKILL.md`）
+- `sns-strategy-overview`: SNS戦略の全体設計（5媒体特性比較×CJ適性×3アカウントタイプ×KGI/KPI設計×運用準備4ステップ×外注/内製化判定）。SNSを始める/見直すときの上位戦略スキル（`~/.claude/skills/sns-strategy-overview/SKILL.md`）
+- `sns-content-design`: SNSコンテンツ設計（マーケティングファネル位置づけ×4手法×BtoB/BtoC運用目的差分×コンテンツ設計3ステップ×4象限画像イメージ整理）。媒体選定後のコンテンツ中身設計用（`~/.claude/skills/sns-content-design/SKILL.md`）

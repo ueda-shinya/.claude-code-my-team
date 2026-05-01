@@ -1,5 +1,66 @@
 # セッション引き継ぎ
 
+## 🔴 最優先再開ポイント（2026-05-01 夜）: chisoku バッチ7完了→リナ重大指摘5件の修正待ち
+
+**バッチ7（SNS運用系13PDF→5スキル）完了。リナ検証で重大指摘5件が出て、シンヤさん判断（A/B/C/D）待ちの状態で中断。次セッション再開時、まずこの判断を仰ぐこと。**
+
+### バッチ7 全体サマリー（生成スキル5本）
+| バッチ | PDF数 | 生成スキル | 対象エージェント |
+|---|---|---|---|
+| 7-1 Instagram系 | 3 | `sns-strategy-overview` ／ `instagram-account-design` | レン／ミナト |
+| 7-2 TikTok系 | 3 | `tiktok-account-design` | ミナト |
+| 7-3 YouTube系 | 4 | `youtube-account-design` | ミナト |
+| 7-4 共通 | 3 | `sns-content-design` ／ 投稿設計編・分析改善編は skipped-permanent | レン／ミナト |
+
+### カナタ英訳同期：完了 ✅
+- `marketing-planner.md` ＋ `sns-director.md` 両方とも `.ja.md` と完全同期済み
+
+### リナ検証：重大指摘5件・軽微指摘5件（未修正）
+
+#### 重大指摘（修正必須）
+- **A**: `sns-strategy-overview` ステップ5（投稿企画立案）と `sns-content-design` 全体が役割重複
+- **B**: 媒体特化3スキル（IG/TikTok/YT）と `sns-content-design` でターゲット具体化・ポジショニング4象限・コンセプト一言が重複（起動ルート未定義）
+- **C**: `instagram-account-design` ステップ5でストーリーズを「販売」フェーズに割当→機能特性表「既存フォロワー接触頻度UP」と矛盾
+- **D**: 5スキルでジャーニー語彙が不統一（3区分／4区分／5区分が混在）→出力統合不能
+- **E**: `youtube-account-design` のKPI閾値（維持率40%／CTR4-6%／登録率1-3%）が固定値断定でジャンル差を考慮しない
+
+#### 軽微指摘（後追いOK）
+- F: 媒体MAU数値の算出時点未記載／F2: KPI設計のフォロワー固定順／F3: 4媒体以上失敗パターン断定
+- G: ハッシュタグ閾値の仕様変更注記／予算列追加
+- H: 「複数選択不可、副目的までで2つ」表現矛盾／「多い」の定量基準なし／**TikTokにストーリーズ機能ない混入**（重大寄り）
+- I: TTPS初出説明不足／撮影3要素実は5要素の数値ズレ
+- J: 態度変容マトリクス汎用化／4象限例の業種追加
+
+#### 5状態出力契約：判定OK ✅
+- 5スキルすべて適用対象外で正しい（`tools: Read, Write` のみ・外部API/サブプロセス/外部設定依存なし）
+
+### リナの修正方針提案（6項目）
+1. **正規ルートを確定**：`sns-strategy-overview` → `sns-content-design` → 媒体特化 の3段階に固定
+2. **媒体特化スキル側から**ポジショニング・ターゲット具体化・コンセプト一言を削除し `sns-content-design` を参照
+3. **ジャーニー語彙を統一**（5区分推奨）
+4. **strategy-overview ステップ5の投稿企画立案を削除**
+5. **IG ステップ5のストーリーズ配置を補助に変更**
+6. **YT KPI閾値に「ベンチマーク・要補正」注記**
+
+### 次セッション再開時のシンヤさん判断依頼
+以下から選択：
+- **A.** リナ提案6項目をアスカが一括修正（ドキュメント部分のみ・即時対応）
+- **B.** 重大指摘5件（A〜E）のみ修正、軽微5件は後追い案件としてNotion登録
+- **C.** 重大指摘の修正方針をシンヤさんが事前確認してから着手
+- **D.** Notion案件として全件登録、後日対応
+
+### 累計進捗（chisoku全体）
+- 全PDF: 139件
+- 処理済: 118件
+- **未処理: 21件**（Web系4／マーケ施策系4／分析SEO系2／営業CS系3／PM系2／組織系3／DL系2／※その他）
+
+### 関連ファイル
+- 5スキルファイル：`~/.claude/skills/sns-strategy-overview/SKILL.md`／`instagram-account-design/SKILL.md`／`tiktok-account-design/SKILL.md`／`youtube-account-design/SKILL.md`／`sns-content-design/SKILL.md`
+- 履歴：`~/.claude/reports/chisoku/_skill-history.md`（バッチ7全13エントリ追記済）
+- エージェント：`marketing-planner.ja.md` ＋ `.md`（レン2スキル参照追加）／`sns-director.ja.md` ＋ `.md`（ミナト5スキル参照追加）
+
+---
+
 ## 🟢 別セッション依頼（2026-05-01）: スワイプLP公開後 GA4計測結果分析
 
 **シンヤさんが `https://lp.officeueda.com/swipe/template-2026gw/` を公開済み。GA4で「どのスライドが何秒見られたか」等の計測結果を分析するタスクを別セッションに引き継ぎ。**
