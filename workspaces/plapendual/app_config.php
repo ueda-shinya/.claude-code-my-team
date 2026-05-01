@@ -32,9 +32,9 @@ define('GOOGLE_RECAPTCHA_KEY_SECRET', '6LePgHspAAAAAJ02IrIU6AkUOJkRnYTRi7uF2YJB'
 /* email list for forms */
 //contact
 // $aMailtoReserve = array('yamamoto@re-ad.co.jp');
-$aMailtoReserve = array('info@bakuchis.com');
+$aMailtoReserve = array('info@bakuchis.com','bakuchis@officeueda.net');
 // $aBccToContact = array('info@pyonkara.com');
 $aBccToContact = array('sato@re-ad.co.jp');
 $fromName = "BAKUCHIS Corporation株式会社";
-$Reply = "info@company.bakuchis.com";
-$fromReserve = "info@company.bakuchis.com";
+$Reply = "noreply@bakuchis.com";
+$fromReserve = "noreply@bakuchis.com";

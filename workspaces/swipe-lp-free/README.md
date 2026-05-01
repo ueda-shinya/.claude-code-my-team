@@ -91,11 +91,11 @@ npx serve .
 `index.html` の以下の行を探して書き換えてください。
 
 ```html
-<a id="cta-button" href="https://officeueda.com/contact" rel="noopener noreferrer">制作のご相談はこちら</a>
+<a id="cta-button" href="https://www.chatwork.com/#!ridXXXXXX" rel="noopener noreferrer">Chatworkでテンプレを受け取る</a>
 ```
 
 - `href="..."` の部分: リンク先のURLに変更
-- `制作のご相談はこちら` の部分: ボタンに表示したい文言に変更
+- `Chatworkでテンプレを受け取る` の部分: ボタンに表示したい文言に変更
 
 ---
 
@@ -160,8 +160,85 @@ MIT License — 詳細は `LICENSE` ファイルをご覧ください。
 
 無料・商用利用OK。クレジット表記は任意ですが、残していただけると励みになります。
 
+---
+
+## 公開時の設定手順（運用者向け）
+
+### 1. Chatwork URL設定
+
+`index.html` の以下の箇所を編集してください。
+
+```html
+<a id="cta-button" href="ここにChatwork URLを入力" rel="noopener noreferrer">
+```
+
+Chatwork Web URL の形式:
+```
+https://www.chatwork.com/#!rid{あなたのChatwork ID}
+```
+
+**設定例:**
+```html
+<a id="cta-button" href="https://www.chatwork.com/#!rid1234567" rel="noopener noreferrer">Chatworkでテンプレを受け取る</a>
+```
+
+> Chatwork IDは、Chatworkにログイン後、プロフィール画面から確認できます。
+> Web URLはスマートフォンでChatworkアプリが未インストールの場合でも開けるため、ブラウザ版URLの使用を推奨します。
+
+**重要:** URL設定後は、`<a>` タグの `data-cta-unconfigured="true"` 属性を**必ず削除**してください。削除しないとボタンが機能しません。
+
+```html
+<!-- 設定前（この状態では警告アラートが出ます） -->
+<a id="cta-button" href="javascript:void(0)" data-cta-unconfigured="true" rel="noopener noreferrer">
+
+<!-- 設定後（data-cta-unconfigured を削除し、href を実際のURLに変更） -->
+<a id="cta-button" href="https://www.chatwork.com/#!rid1234567" rel="noopener noreferrer">
+```
+
+---
+
+### 2. 画像差し替え
+
+`images/slide-01.webp`〜`slide-07.webp` を任意の4:5画像（推奨1080×1350px）に差し替えてください。
+
+| ファイル名 | 内容 |
+|---|---|
+| `slide-01.webp` | Hook（フック・1枚目） |
+| `slide-02.webp` | Problem（課題提示・2枚目） |
+| `slide-03.webp` | Empathy×Authority（共感・実績・3枚目） |
+| `slide-04.webp` | Reveal（解決策・4枚目） |
+| `slide-05.webp` | How it works（使い方・5枚目） |
+| `slide-06.webp` | Meta-Proof（証拠・6枚目） |
+| `slide-07.webp` | CTA（行動促進・7枚目） |
+
+**画像仕様:**
+- 形式: WebP（推奨） / JPG / PNG
+- アスペクト比: 4:5
+- 推奨サイズ: 1080×1350px
+- 1枚あたりのファイルサイズ: 200KB以内推奨（表示速度のため）
+
+---
+
+### 3. デプロイ
+
+`index.html` と `images/` ディレクトリ一式をXserverまたは任意のWebサーバーへアップロードするだけで動作します。
+
+**Xserverへのアップロード手順:**
+1. XserverのファイルマネージャーまたはFTPソフト（FileZilla等）でサーバーに接続
+2. 公開ディレクトリ（例: `public_html/swipe-template/`）に `index.html` と `images/` フォルダをアップロード
+3. ブラウザで該当URLにアクセスして動作確認
+
+---
+
+### 4. Nginx環境の場合
+
+本テンプレートは静的HTMLのみのため、Nginx特別設定は不要です。`index.html` と `images/` フォルダをアップロードするだけで動作します。
+
+---
+
 ## 改版履歴
 
 | バージョン | 日付 | 変更内容 |
 |---|---|---|
+| v1.1.0 | 2026-04-30 | スワイプLP無料配布版対応。CTAボタンをChatwork受け取り用に変更。コーラルオレンジカラー適用。Swiper speed調整。公開時設定手順をREADMEに追記 |
 | v1.0.0 | 2026-04-16 | 初版作成。無料配布版（MITライセンス）としてリリース。画像を `images/` に置くだけで横スワイプ LP が動作する簡易版 |
