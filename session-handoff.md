@@ -1,8 +1,71 @@
 # セッション引き継ぎ
 
-## 🟢 最優先再開ポイント（2026-05-01 深夜・更新）: chisoku バッチ8完了 / リナ重大7件＋軽微3件 全修正済 → 次セッションでバッチ9着手
+## 🔄 再起動推奨（2026-05-01・新規）: search-analytics MCP の .env キャッシュ更新
 
-**バッチ8のWeb/LP系＋集客系10PDF→7スキル生成・リナ重大7件＋軽微3件すべて修正・最終検証完了・git push 済（コミット 53a3e5e）。新たな致命的矛盾なし。次セッション再開時はバッチ9（残り11PDF）に着手すればよい。**
+シンヤさんが ussaijo の GSC/GA4 設定を `.env` で更新したが、search-analytics MCP は起動時に `.env` を一度だけ読む設計のため、**現プロセスは旧設定（GA4 property_id=530385907 / GSC旧URL）のままキャッシュ**している。
+
+- 新値: `MEBELCENTER_GSC_URL=sc-domain:workshirtsproduct.com` / `MEBELCENTER_GA4_PROPERTY_ID=532659723`
+- 旧値: GA4=530385907 / GSC=sc-domain:wsp.us-saijo.com（旧ドメイン）
+- コード側 `_FALLBACK_ENV` で `MEBELCENTER_*` → `ussaijo` のマッピングは正常実装済（修正不要）
+
+**対応**: Claude Code を再起動すれば MCP プロセスが新 `.env` を読み直す。再起動後の確認事項：
+1. GA4: `mcp__search-analytics__ga4_traffic_overview` の `property_id` が `532659723` になっているか
+2. GSC: `mcp__search-analytics__gsc_search_analytics` がエラーにならず結果を返すか
+3. GSC が依然エラーの場合は Search Console 側でサービスアカウント `ga4-mcp@claude-mcp-integration-490103.iam.gserviceaccount.com` が `workshirtsproduct.com` の所有者として登録されているか確認
+
+将来的な命名統一（`USSAIJO_*` リネーム）は `test_credentials.py` の hook 対応完了後に実施予定（`.env` L117-118 コメント参照）。
+
+---
+
+## 🟢 最優先再開ポイント（2026-05-01・更新）: chisoku バッチ9完了 / リナ重大9件＋軽微3件 全修正済 → 次セッションでバッチ10着手
+
+**バッチ9のEC/マーケ系1＋営業/CS系3＋PM/財務系3＝7PDF→6スキル生成＋1スキップ・リナ重大9件（初回6＋格上げ1＋追加2）＋軽微3件すべて修正・最終再々検証で完全クリア判定・コミット&プッシュ済。新たな致命的矛盾なし。次セッション再開時はバッチ10（残り4PDF：組織/人事系）に着手すればよい。**
+
+### バッチ9 完了状態
+| 項目 | 状態 |
+|---|---|
+| バッチ9（EC/マーケ系1＋営業/CS系3＋PM/財務系3＝7PDF→6スキル生成＋1スキップ） | ✅ 完了 |
+| リナ初回検証 重大6件＋軽微3件を重大格上げ＝7件 修正 | ✅ 全解消 |
+| リナ2回目検証 追加重大2件（A/B）修正 | ✅ 全解消 |
+| 軽微2/5/7 併せて修正 | ✅ 完了 |
+| リナ最終再々検証 | ✅ 完全クリア判定 |
+| git commit + push | ✅ 完了 |
+
+### 生成スキル6件（＋1スキップ）
+| # | スキル名 | 対象 | ソースPDF |
+|---|---|---|---|
+| 1 | `ec-marketing-funnel` ECマーケ売上方程式×4ボトルネック | レン／カイ | 一絲_ECマーケティング |
+| 2 | `inside-sales-sdr-bdr` インサイドセールス SDR/BDR組織設計 | タク／レン | 一絲_インサイドセールス（BDR_SDR） |
+| 3 | `onboarding-design` オンボーディング 3段階×3要素 | 全エージェント | 一絲_オンボーディングの設計 |
+| 4 | `delivery-build` デリバリー構築 5プロセス×CSモニタ×成功5P | アスカ／タク／全 | 一絲_デリバリー構築 |
+| 5 | `pm-risk-management` PMリスク管理 3プロセス×9内的×3外的×4対応 | ソ／アスカ | 一絲_PMリスク管理 |
+| 6 | `project-level-definition` PJレベル5段階×5指標判定 | タク／レン／アスカ | DLコンテンツ_プロジェクトのレベル定義 |
+| - | （skipped-permanent）既存`yony-sales-simulation`完備 | - | DLコンテンツ_YonY売上シミュレーション |
+
+### 次セッション着手予定: バッチ10（残り4PDF・組織/人事系）
+- 全PDF: 139件 / 処理済: 135件（バッチ9まで128件＋7件）/ **未処理: 4件**
+- **バッチ10予定（4件）**: 組織/人事系
+  - 一絲_文化の言語化 .pdf
+  - 一絲_目標設定とフィードバック .pdf
+  - ダウンロードコンテンツ_クレド投票シート - シート1.pdf
+  - 一絲_MSマトリクス _ 関係の質（成功の循環） .pdf
+- 起動方法: `/chisoku-skillize` でバッチ実行（差分検出から自動）
+
+### リナから次セッション以降への持ち越し（軽微・運用支障なし）
+- **軽微1**: `inside-sales-sdr-bdr` 成果数値の出典明記（chisoku PDF）
+- **軽微4**: `delivery-build` 5ステップ vs 3STEP 関係明示の追加文言
+- **軽微6**: `ec-marketing-funnel` description プラットフォーム名の誤起動懸念
+- **軽微8**: 5状態出力契約セクションの共通文言（運用方針次第）
+
+→ 次回 `/rule-review` または kaizen で対応推奨。バッチ10着手をブロックしない。
+
+### 関連ファイル（バッチ9）
+- 6スキル: `~/.claude/skills/ec-marketing-funnel/SKILL.md`／`inside-sales-sdr-bdr/SKILL.md`／`onboarding-design/SKILL.md`／`delivery-build/SKILL.md`／`pm-risk-management/SKILL.md`／`project-level-definition/SKILL.md`
+- 履歴: `~/.claude/reports/chisoku/_skill-history.md`（バッチ9 7件＋修正対応エントリ追記済）
+
+---
+
+## 🟢 旧記録（2026-05-01 深夜）: chisoku バッチ8完了 / リナ重大7件＋軽微3件 全修正済
 
 ### バッチ8 完了状態
 | 項目 | 状態 |
