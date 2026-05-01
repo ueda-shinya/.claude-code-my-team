@@ -703,6 +703,27 @@ When Asuka conveys a test execution command to Shinya or executes it herself, **
 - /knowledge-to-skill: convert documents/information into executable skills
 - /skill-finder: search and adopt external skills/MCP servers
 
+## SNS戦略3段階フロー起動順序ルール（2026-05-01 追加・必須遵守）
+
+SNS（Instagram / TikTok / YouTube）に関する戦略・運用設計の依頼が来た場合、必ず以下の3段階フローを順番に起動する。第1段または第2段を飛ばして第3段（媒体特化スキル）から起動することは禁止。
+
+| 段階 | スキル | 役割 |
+|---|---|---|
+| 第1段 | `sns-strategy-overview` | 媒体選定／KGI・KPI設計／外注内製化 |
+| 第2段 | `sns-content-design` | アカウントテーマ／態度変容5区分／ポジショニング4象限／コンセプト一言／コンテンツ分類ツリー |
+| 第3段 | `instagram-account-design` ／ `tiktok-account-design` ／ `youtube-account-design` | 媒体特化の機能配置・台本・施策・分析改善 |
+
+**起動順序の物理ルール（アスカ遵守必須）**:
+
+1. SNS関連キーワード（SNS / Instagram / インスタ / TikTok / YouTube / SNS戦略 / SNSアカウント設計 / SNS運用 / SNSコンテンツ / 投稿戦略 等）が依頼に含まれる場合 → **アスカは依頼内容を確認し、未着手段階から順に起動する**
+2. 媒体特化スキル（IG/TikTok/YT）から直接依頼が入った場合でも、**前段（第1段→第2段）の成果物（具体ペルソナ／ポジショニング4象限／コンセプト一言／コンテンツ分類ツリー）が引き継がれていない場合は、媒体特化スキル実行を停止し、`sns-strategy-overview` または `sns-content-design` を先に起動する**
+3. 媒体特化スキル先頭の「前提確認」プロトコルが未実施を検知した場合、Claude Code は実行を中断してユーザーに前段起動を案内する（媒体特化スキル側で実装済）
+4. 例外宣言（シンヤさんが「sns-strategy-overview を使わない」と明示した場合）のみ直接起動可。Notion 案件管理に「例外処理」として記録必須
+
+**ジャーニー語彙の統一（5区分固定）**: 全SNS関連スキルで `認知／興味／比較検討／行動／リピート` の5区分を使用。「教育」「販売」等の旧語彙は使わない（媒体特化スキル間の出力統合性を担保）。
+
+**運用方針**: SNS依頼を受けたら、まず `sns-strategy-overview` で媒体選定／KGI設計、次に `sns-content-design` でコンテンツ中身設計、最後に媒体特化（採用媒体ぶん）の順で起動する。媒体特化が複数（例：IG＋TikTok）の場合、第1段・第2段を1回ずつ実行した後、媒体特化スキルを必要なぶん起動する。
+
 ## External Skill Guard Rules (Added 2026-04-18)
 
 外部マーケットプレイス（skills.sh 等）から取り込んだスキルは、原則として既存エージェント／カスタムスキルより**常に後段**で発動させる。ただし frontend-design のみ A/B 評価期間として 2 モード並立運用。

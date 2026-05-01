@@ -1,19 +1,115 @@
 # セッション引き継ぎ
 
-## 🔄 再起動推奨（2026-05-01・新規）: search-analytics MCP の .env キャッシュ更新
+## 🔄 GSC URL形式追加修正（2026-05-02）: URLプレフィックスプロパティ対応
 
-シンヤさんが ussaijo の GSC/GA4 設定を `.env` で更新したが、search-analytics MCP は起動時に `.env` を一度だけ読む設計のため、**現プロセスは旧設定（GA4 property_id=530385907 / GSC旧URL）のままキャッシュ**している。
+GSC エラー継続の追加真因。`workshirtsproduct.com` は Search Console で**URLプレフィックスプロパティ**として登録されており、`sc-domain:` 形式は使えない。シュウが `~/.claude.json` を以下に修正済（バックアップ `.claude.json.bak.20260502-000131`）：
 
-- 新値: `MEBELCENTER_GSC_URL=sc-domain:workshirtsproduct.com` / `MEBELCENTER_GA4_PROPERTY_ID=532659723`
-- 旧値: GA4=530385907 / GSC=sc-domain:wsp.us-saijo.com（旧ドメイン）
-- コード側 `_FALLBACK_ENV` で `MEBELCENTER_*` → `ussaijo` のマッピングは正常実装済（修正不要）
+```
+"MEBELCENTER_GSC_URL": "sc-domain:workshirtsproduct.com"
+   ↓
+"MEBELCENTER_GSC_URL": "https://workshirtsproduct.com/"
+```
 
-**対応**: Claude Code を再起動すれば MCP プロセスが新 `.env` を読み直す。再起動後の確認事項：
+**Antigravity 完全再起動で反映**。
+
+---
+
+## 🔄 真因確定・最終再起動（2026-05-01・最終更新2）: ~/.claude.json env ハードコード
+
+### 真因（シュウ調査・確定）
+
+`~/.claude.json` の `mcpServers.search-analytics.env` セクションに **`MEBELCENTER_GA4_PROPERTY_ID: "530385907"` / `MEBELCENTER_GSC_URL: "sc-domain:wsp.us-saijo.com"`（旧値）がハードコード**されていた。
+
+Claude Code は MCP サーバー起動時にこのファイルを読み、`env` セクションの値を子プロセスに**環境変数として直接注入**する。`load_dotenv(override=False)` では既に注入済みの環境変数を上書きできないため、`.env` を何度直しても効かなかった。
+
+### 修正済（シュウ実装・2026-05-01）
+
+`~/.claude.json` を直接修正：
+- `MEBELCENTER_GA4_PROPERTY_ID`: `530385907` → `532659723`
+- `MEBELCENTER_GSC_URL`: `sc-domain:wsp.us-saijo.com` → `sc-domain:workshirtsproduct.com`
+
+`~/.claude.json` は git 管理外（commit なし）。
+
+### 必要な対応
+
+**Antigravity を完全再起動**するだけで、新 env が MCP プロセスに注入される。
+
+### 重要な運用注意点（要メモリ反映）
+
+**今後 GA4 property_id / GSC URL を変更する場合、`~/.claude/.env` だけでなく `~/.claude.json` の `mcpServers.search-analytics.env` も同時に更新する必要がある**（二重管理）。`load_dotenv(override=False)` の仕様により `~/.claude.json` 側が常に優先される。
+
+### 過去の切り分け失敗（同じ轍を踏まないために）
+
+| 試行 | 結果 |
+|---|---|
+| `~/.claude/.env` 更新 | 効かず |
+| Claude Code 再起動 | 効かず |
+| Antigravity 完全再起動（新規セッション） | 効かず |
+| `mcp-search-analytics/.env` も新値に書換 | 効かず |
+| `unified_analytics_server.py` の `load_dotenv` パス一元化 | 効かず |
+| MCP プロセス kill | 自動復活で再び4プロセスに、効かず |
+| **`~/.claude.json` の env ハードコード修正** | ✅ 真の真因 |
+
+### 一元化実装は維持（前段の作業も無駄ではない）
+
+シュウが実装した `unified_analytics_server.py` の `load_dotenv(dotenv_path='~/.claude/.env')` は維持。`mcp-search-analytics/.env` は rollback 用に残置（先頭警告コメント付き）。サクラレビューOKは有効。
+
+### memory ドラフト
+
+`tmp/feedback-mcp-server-restart-DRAFT.md` に学習内容を草案保存済（プロセス重複ベースの旧仮説で書いたため、真因確定を踏まえてリナ検証時に修正必要）。
+
+---
+
+## 🔄 一元化実装済・最終再起動推奨（2026-05-01・参考）: search-analytics MCP .env 一元化
+
+### 経緯まとめ
+
+1. シンヤさん `~/.claude/.env` の ussaijo GSC/GA4 値を更新
+2. MCP に反映されない → Claude Code 再起動でも変わらず
+3. 真因判明：`load_dotenv()` 引数なしで `mcp-search-analytics/.env`（旧値）を優先読込していた
+4. シンヤさん判断で `~/.claude/.env` への一元化を実施
+
+### 実装完了（シュウ実装・サクラレビューOK）
+
+`unified_analytics_server.py` を以下に変更：
+
+```python
+# 変更1: load_dotenv のパス明示指定
+load_dotenv(dotenv_path=os.path.expanduser('~/.claude/.env'))
+
+# 変更2: credentials_path フォールバック追加
+credentials_path_raw = (
+    os.environ.get('ANALYTICS_CREDENTIALS_PATH')
+    or os.environ.get('GA4_CREDENTIALS_PATH')
+)
+credentials_path = os.path.expanduser(credentials_path_raw) if credentials_path_raw else None
+```
+
+サクラレビュー：**総合判定OK・マージ可**。Nit 3点は任意対応（後追い可）。
+
+### 旧 .env ファイル（残置・先頭にコメント付き）
+
+`~/.claude/mcp-servers/mcp-search-analytics/.env` は rollback 用に残置。先頭に「⚠️ 2026-05-01 一元化により未使用」コメント追記済。次回整理時に削除 or `.env.deprecated` リネーム推奨（Nit 2）。
+
+### 必要な対応（破壊的操作・現セッション切断あり）
+
+1. **Antigravity.exe を完全終了**
+2. Antigravity を再起動
+3. **新規セッション**で開始（`--resume` ではなく新規）
+
+### 再起動後の確認事項
+
 1. GA4: `mcp__search-analytics__ga4_traffic_overview` の `property_id` が `532659723` になっているか
 2. GSC: `mcp__search-analytics__gsc_search_analytics` がエラーにならず結果を返すか
 3. GSC が依然エラーの場合は Search Console 側でサービスアカウント `ga4-mcp@claude-mcp-integration-490103.iam.gserviceaccount.com` が `workshirtsproduct.com` の所有者として登録されているか確認
 
-将来的な命名統一（`USSAIJO_*` リネーム）は `test_credentials.py` の hook 対応完了後に実施予定（`.env` L117-118 コメント参照）。
+### Nit 3点（任意対応・後追い可）
+
+- Nit 1: エラーメッセージ順序を `GA4_CREDENTIALS_PATH (or legacy: ANALYTICS_CREDENTIALS_PATH)` に
+- Nit 2: 旧 `mcp-search-analytics/.env` を削除 or `.env.deprecated` にリネーム
+- Nit 3: `python-dotenv` 未導入時の検知性向上（既存仕様、今回起因でない）
+
+将来的な命名統一（`USSAIJO_*` リネーム）は `test_credentials.py` の hook 対応完了後に実施予定。
 
 ---
 
