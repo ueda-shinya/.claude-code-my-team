@@ -1,5 +1,69 @@
 # セッション引き継ぎ
 
+## 🔴 終了済みセッション一覧（2026-05-02 一本化）
+
+**事業戦略系で停滞していたセッションを整理。以下16本は再開禁止。再開する場合は下記の「再開時の起点」から新セッションで開始すること。**
+
+### chisoku（事業戦略PDFスキル化）系 12本 — 集約方針 A-3
+
+引き継ぎ情報の正は `~/.claude/reports/chisoku/_skill-history.md`（git管理・コミット済み）。各セッションの成果物は既に `skills/` 配下と `_skill-history.md` に反映済み。
+
+| # | 日時 | セッションID | 状態 |
+|---|---|---|---|
+| 1 | 05/02 17:27 | `24e5f70c` | バッチ10持ち越し軽微2件解消・コミット `071f20f` 済み（完結） |
+| 2 | 05/02 16:21 | `bfb473a3` | 別セッションへ引き継ぎ済み |
+| 3 | 05/01 18:32 | `cd3df2bf` | 同上 |
+| 4 | 05/01 17:48 | `f763c548` | 同上 |
+| 5 | 05/01 16:55 | `c68688e9` | 同上 |
+| 6 | 05/01 16:30 | `ced1fd86` | 同上 |
+| 7 | 05/01 06:57 | `e9bf60bf` | 同上 |
+| 8 | 04/30 23:27 | `841ed0fb` | 同上 |
+| 9 | 04/30 18:44 | `aa1a6a47` | 同上 |
+| 10 | 04/30 04:42 | `f01945a6` | 同上 |
+| 11 | 04/29 16:44 | `5e6753d7` | 同上 |
+| 12 | 04/29 15:01 | `ebea302f` | 起源セッション（PDF→スキル化の依頼起点） |
+
+**再開時の起点**: 新セッションで `/chisoku-skillize` を実行 → `_skill-history.md` から自動で続きから再開。
+
+### 事業戦略の周辺 4本 — 個別判定 C-2
+
+| # | 日時 | セッションID | 状態 | 引き継ぎ先 |
+|---|---|---|---|---|
+| 13 | 05/02 21:13 | `c64adb6a` | rubric v1.0 確定。実装フェーズ未着手 | Notion案件「GSC・GA4計測診断＆改善提案ツール」（進行中・継続） |
+| 14 | 05/02 21:10 | `7d4fc236` | ヒカル／ノゾミ実装＋リナ事後レビュー通過済み（**完結**） | 上記 🟢 セクション参照 |
+| 15 | 05/01 10:48 | `bb60a040` | スワイプLP公開済み・コミット `206514b` push 済み（**完結**） | GA4計測分析は別セッションで実施予定 |
+| 16 | 04/30 04:43 | `515762c4` | strategy-final.md 確定。Step 4以降未着手 | Notion案件「スワイプLP無料配布 Step 4-9 着手」（継続） |
+
+**再開時の起点**:
+- #13: `~/.claude/clients/officeueda/services/gsc-ga4-analyzer/rubric.md` ＋ Notion案件
+- #16: `~/.claude/clients/officeueda/biz-web/lp/swipe-lp-free/strategy-final.md` ＋ `/lp-create` Step 4 から再開
+
+### 取り扱いルール
+
+- セッションJSONL（`~/.claude/projects/c--Users-ueda---claude/<UUID>.jsonl`）は **保持**（gitignore対象のため物理削除すると復元不可）
+- `session-browser` で表示されても、上記16本のIDが見えたら **再開しない**
+- 引き継ぎが必要な作業は Notion案件 / `_skill-history.md` / 当ファイル本文 のいずれかで管理されている
+
+---
+
+## 🟢 Claude Code 再起動推奨（2026-05-02）: ヒカル／ノゾミ新規エージェント追加完了
+
+新規エージェント2名（ヒカル＝ad-operator／ノゾミ＝pr-publicist）を追加しました。`Agent` tool が新しい subagent_type を認識するために Claude Code の再起動を推奨します。
+
+### 完了内容
+
+- **新規4本**: `agents/ad-operator.ja.md` / `.md`、`agents/pr-publicist.ja.md` / `.md`
+- **既存更新8本**: `agents/marketing-planner.ja.md` / `.md`、`agents/copywriter.ja.md` / `.md`、`agents/writer.ja.md` / `.md`、`agents/sns-director.ja.md` / `.md`
+- **検証**: リナ事前レビュー2回（v1差戻し→v2条件付き通過）／カナタ実装／リナ事後レビュー通過（重大・中度指摘なし、軽微4件は任意修正レベル）
+- **男女比補正**: 既存21名（女11／男10）→ 新規後23名（女13／男10）
+
+### 主管再編まとめ
+
+- **広告系**: meta-ad / listing-ad / display-ad / affiliate-ad / ad-performance-diagnosis を**ヒカル主管**に移管。ad-mix-design / adsense-monetization はレン主管維持
+- **広報系**: press-release-builder を**ノゾミ主管**に一本化。ハル・ミナトは副次参照に格下げ
+
+---
+
 ## 🔵 最優先再開ポイント（2026-05-02 セッション中断）: kaizen Phase 2-A / 2-B 完了 → 次は Phase 3 系
 
 **本日（2026-05-02）2セッション分の作業完了。シンヤさん指示で中断、いつでも再開可能な状態に整理済み。**
