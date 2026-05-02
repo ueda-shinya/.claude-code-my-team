@@ -1,5 +1,68 @@
 # セッション引き継ぎ
 
+## 🟢 最優先再開ポイント（2026-05-02）: chisoku バッチ10完了 / リナ重大8件修正済 / 持ち越し重大1件＋軽微6件 → 次セッションで対応
+
+### 完了内容（バッチ10：組織/人事系4PDF→4スキル生成）
+
+- **処理PDF**: 4件（completed 3件＋skipped-permanent 1件）
+- **生成スキル**: 4件
+  - `ms-matrix-talent-grid`（Mind × Skill 4象限で人材分類）
+  - `success-cycle-relationship-quality`（ダニエル・キム成功循環モデル＋関係の質13プロパティ）
+  - `credo-language-design`（クレド8ステップ完成フロー＋投票シート活用）
+  - `goal-cascade-kpt-1on1`（トップダウン目標カスケード＋KPT 1on1）
+- **skipped**: クレド投票シート（空テンプレ表のみ。`credo-language-design` 内で言及済み）
+- **残未処理PDF**: 0件（reports/chisoku/ 配下 全件処理完了）
+
+### リナ検証結果（重大9件＋軽微6件）
+
+**修正完了（重大8件）**:
+- 重大2: goal-cascade-kpt-1on1 上期/下期月固定→新期1月目テンプレ化（`evaluation-system-design` との時系列衝突解消）
+- 重大3: goal-cascade-kpt-1on1 1on1機能の役割分離明記（会議体設計→meeting-cadence-design／評価面談→evaluation-system-design）
+- 重大4: ms-matrix-talent-grid ③要注意の段階明示（モチベ源泉探索→改善期間→配置転換→退職勧奨検討）
+- 重大5: success-cycle-relationship-quality 到達レベル判定を数値化（全プロパティ平均4.0以上）
+- 重大6: credo-language-design 項目数を5〜20／デフォルト8／20超禁止に統一
+- 重大7: 4スキル全件 5状態契約を「対象外・運用上の任意推奨」に変更
+- 重大8: goal-cascade-kpt-1on1 整合性チェックを「=」→「≥（バッファ10%許容）」に変更
+- 重大9: 4スキル全件 [SKIP]マーカー定義を「試みなかったケースのみ」に修正
+
+### 次セッション持ち越し（重大1件＋軽微6件）
+
+**重大1（最優先・要対応）**: 既存スキル8件への新規4スキル逆参照追記
+- `evaluation-system-design`: → `ms-matrix-talent-grid` / `goal-cascade-kpt-1on1` / `credo-language-design` / `success-cycle-relationship-quality`
+- `mvv-design`: 適用条件「使わない場面」→「文化の言語化 → `credo-language-design`」に置換
+- `meeting-cadence-design`: → `goal-cascade-kpt-1on1` / `success-cycle-relationship-quality`
+- `recruitment-strategy`: → `ms-matrix-talent-grid`
+- `career-roadmap-development`: → `ms-matrix-talent-grid` / `goal-cascade-kpt-1on1`
+- `organization-planning`: → `ms-matrix-talent-grid`
+- `katz-three-skill-approach`: → `ms-matrix-talent-grid`（双方向化）
+- `onboarding-design`: → `credo-language-design` / `success-cycle-relationship-quality`
+
+※ いずれも Markdown テキスト追記のみでアスカ直接実行可（コードブロックなし）。スキル選定時の発見性向上に寄与。
+
+**軽微6件**:
+1. goal-cascade-kpt-1on1 失敗パターン表のOK欄補完（月次レビュースキップ行）
+2. success-cycle-relationship-quality 連携スキル節の `meeting-cadence-design` 重複削除
+3. credo-language-design 「5特徴」と「5つの定義」の用語統一
+4. ms-matrix-talent-grid 4-3表「②理想型」の論点切り分け
+5. goal-cascade-kpt-1on1 連携スキル節 `meeting-cadence-design` 棲み分け説明追加
+6. credo-language-design ステップ8に `success-cycle-relationship-quality` POINT 03 整合注記追加
+
+### 次セッション着手手順
+
+1. `git pull origin main` で最新化
+2. 重大1の8ファイル逆参照追記をアスカ直接実行（一気にできるが、各ファイルの「## 連携スキル」節末尾を Grep で位置特定 → Edit で追記）
+3. 軽微6件を順次修正
+4. リナに第2回検証依頼（CLAUDE.md「Rina Auto-Invocation Rule」初期+2再チェック上限のうち2回目）
+5. 検証OK後、`/sync` または手動 commit + push
+
+### 関連ファイル
+
+- 履歴: `~/.claude/reports/chisoku/_skill-history.md`（バッチ10エントリ追記済・1437行〜）
+- 新規スキル: `~/.claude/skills/{ms-matrix-talent-grid,success-cycle-relationship-quality,credo-language-design,goal-cascade-kpt-1on1}/SKILL.md`
+- リナ検証ログ: 本セッション会話履歴に重大9件＋軽微6件の詳細指摘あり
+
+---
+
 ## 🔄 GSC URL形式追加修正（2026-05-02）: URLプレフィックスプロパティ対応
 
 GSC エラー継続の追加真因。`workshirtsproduct.com` は Search Console で**URLプレフィックスプロパティ**として登録されており、`sc-domain:` 形式は使えない。シュウが `~/.claude.json` を以下に修正済（バックアップ `.claude.json.bak.20260502-000131`）：

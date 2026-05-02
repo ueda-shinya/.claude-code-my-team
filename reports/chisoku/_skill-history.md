@@ -1428,3 +1428,69 @@
   - 軽微4: `delivery-build` 5ステップ vs 3STEP 関係明示の追加文言
   - 軽微6: `ec-marketing-funnel` description プラットフォーム名の誤起動懸念
   - 軽微8: 5状態出力契約セクションの共通文言（運用方針次第）
+
+## 2026-05-02: ダウンロードコンテンツ_クレド投票シート - シート1.pdf
+
+- key: ダウンロードコンテンツ_クレド投票シート - シート1.pdf
+- status: skipped-permanent
+- **ソースPDF**: `reports/chisoku/ダウンロードコンテンツ_クレド投票シート - シート1.pdf`
+- **処理日**: 2026-05-02
+- **生成スキル**: なし
+- **備考**: バッチ10。空のスコアリング表テンプレートのみで手順・知識を含まない。クレド設計の8ステップフローは別PDF「文化（クレド）の言語化」由来の `credo-language-design` スキル内で「クレド総選挙シート」として参照済みのため、本PDFは独立スキル化対象外。
+
+## 2026-05-02: 一絲_事業戦略スクール「知足」_MSマトリクス _ 関係の質（成功の循環） .pdf
+
+- key: 一絲_事業戦略スクール「知足」_MSマトリクス _ 関係の質（成功の循環） .pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_MSマトリクス _ 関係の質（成功の循環） .pdf`
+- **処理日**: 2026-05-02
+- **生成スキル**:
+  - `ms-matrix-talent-grid` — Mind × Skill Matrix で人材4象限分類（対象: アスカ／組織計画系エージェント）
+  - `success-cycle-relationship-quality` — ダニエル・キム成功循環モデル＋関係の質13プロパティ評価（対象: アスカ／組織計画系エージェント）
+- **備考**: バッチ10。1PDFから2スキル抽出（MSマトリクスと成功循環モデルは独立した知識体系）。出典：吉田行宏『全員経営者マインドセット』／MITダニエル・キム教授／ヒューマンバリュー社。
+
+## 2026-05-02: 一絲_事業戦略スクール「知足」_文化の言語化 .pdf
+
+- key: 一絲_事業戦略スクール「知足」_文化の言語化 .pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_文化の言語化 .pdf`
+- **処理日**: 2026-05-02
+- **生成スキル**:
+  - `credo-language-design` — クレド（文化・約束）の言語化8ステップフロー＋投票シート活用＋3社事例（対象: アスカ／組織計画系エージェント）
+- **備考**: バッチ10。出典：オンリーストーリー代表 平野哲也氏 note。スキル内でクレド投票シートGoogleSheetsリンクと参考事例3社（SHE / オンリーストーリー / ユーザーベース）を含む。
+
+## 2026-05-02: 一絲_事業戦略スクール「知足」_目標設定とフィードバック  .pdf
+
+- key: 一絲_事業戦略スクール「知足」_目標設定とフィードバック  .pdf
+- status: completed
+- **ソースPDF**: `reports/chisoku/一絲_事業戦略スクール「知足」_目標設定とフィードバック  .pdf`
+- **処理日**: 2026-05-02
+- **生成スキル**:
+  - `goal-cascade-kpt-1on1` — 全社→部署→チーム→個人のトップダウン目標カスケード＋年2回上下期＋四半期中間レビュー＋KPT 1on1（対象: アスカ／組織計画系エージェント）
+- **備考**: バッチ10。株式会社koujitsu原典の運用例ベース。既存 `evaluation-system-design` `goal-hierarchy-design` `kgi-kpi-kai-design` `goal-execution-system` と棲み分け明記。
+
+## 2026-05-02: バッチ10（組織/人事系4件）処理完了
+
+- **対応日**: 2026-05-02
+- **処理件数**: 4件（completed 3件＋skipped-permanent 1件）
+- **生成スキル**: 4件（ms-matrix-talent-grid / success-cycle-relationship-quality / credo-language-design / goal-cascade-kpt-1on1）
+- **次バッチ予定**: なし（reports/chisoku/ 配下の未処理PDFは0件、全件処理完了）
+- **残り未処理PDF**: 0件
+
+## 2026-05-02: バッチ10 リナ重大9件＋軽微6件 検証実施
+
+- **対応日**: 2026-05-02
+- **対応スキル**: `ms-matrix-talent-grid` ／ `success-cycle-relationship-quality` ／ `credo-language-design` ／ `goal-cascade-kpt-1on1`
+- **重大8件 解消**:
+  - 重大2（goal-cascade-kpt-1on1）: 上期/下期月固定→「新期1月目／7月目」テンプレ化、入力例も「決算期から逆算」に汎用化、`evaluation-system-design` 併用時の月定義一致を判断基準に追記
+  - 重大3（goal-cascade-kpt-1on1）: 適用条件「使わない場面」に1on1機能の役割分離を明記（会議体設計 → `meeting-cadence-design`／評価面談 → `evaluation-system-design`）、優先順位ルール追加
+  - 重大4（ms-matrix-talent-grid）: ステップ4-1③要注意の役割を「モチベーション源泉探索 → 改善期間設定 → 配置転換 → 退職勧奨検討」段階明示に修正
+  - 重大5（success-cycle-relationship-quality）: ステップ2に「全プロパティ平均4.0以上で到達済み」の判定ルール明示、判断基準にも閾値（4.0未満）を数値化、着手レベル判定を追加
+  - 重大6（credo-language-design）: 入力フォーマット項目数を「5〜20項目／デフォルト8／20超禁止」に統一
+  - 重大7（4スキル全件）: 5状態契約表現を「対象外であるが運用上の任意ベストプラクティスとして推奨」に変更（義務表現を撤回）
+  - 重大8（goal-cascade-kpt-1on1）: 整合性チェックを「= イコール」→「≥（バッファ10%許容）」に変更、`goal-hierarchy-design` の方針と整合
+  - 重大9（4スキル全件）: `[SKIP]` マーカー定義を「試みなかったケースのみ」に修正（CLAUDE.md準拠）
+- **次セッション持ち越し（重大1件＋軽微6件）**:
+  - 重大1（既存スキル8件への逆参照追記未対応）: `evaluation-system-design` `mvv-design` `meeting-cadence-design` `recruitment-strategy` `career-roadmap-development` `organization-planning` `katz-three-skill-approach` `onboarding-design` の連携スキル節への追記。新規4スキル → 既存スキル間の双方向リンク確立がスキル選定時の発見性向上に寄与（運用支障なし、次セッション or 個別案件で対応）
+  - 軽微1〜6: 失敗パターン表のOK欄補完／重複記載削除／用語統一（5特徴）／4-3表の論点切り分け／meeting-cadence-design棲み分け説明／credo×success-cycle連携明記（運用支障なし、次バッチで対応）
+- **リナ再検証**: 未実施（重大1の8ファイル逆参照と軽微6件の修正完了後に第2回検証予定）
