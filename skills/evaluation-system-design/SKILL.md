@@ -381,6 +381,10 @@ description: 評価制度の策定スキル。5目的（モチベーション向
 - `mvv-design`：「らしさ」評価の前提となるバリュー定義
 - `teaching-coaching-leading`：FB時のコーチング技法
 - `hearing-questioning-skills`：1on1FBでのヒアリング技法
+- `ms-matrix-talent-grid`：マインド×スキルの4象限分類を評価軸に組み込む
+- `success-cycle-relationship-quality`：360度フィードバック実装時の関係の質診断
+- `credo-language-design`：クレド体現を評価項目（「らしさ評価」軸）に組み込む
+- `goal-cascade-kpt-1on1`：目標カスケード＋KPT 1on1運用と連動させ、目標達成評価と評価面談の月定義を一致させる
 
 ## 5状態出力契約
 

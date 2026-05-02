@@ -255,6 +255,9 @@ description: 採用戦略・採用ガイドラインの策定スキル。3重要
 - `branding`：採用ブランディング（SNS発信内容と整合）
 - `competitive-absence-audit`：採用市場の競合不在を楽観判断しないための仮説検証
 - `hearing-questioning-skills`：面接時のヒアリング力（コンピテンシー判定に直結）
+- `ms-matrix-talent-grid`：採用ターゲット象限の決定（新卒は①伸びしろ大／中途は②理想型・④専門家を狙う）
+- `credo-language-design`：クレドを採用ブランディング素材として公開する設計
+- `success-cycle-relationship-quality`：採用後のオンボーディング期に関係の質レベル1〜2を構築する前提として連携
 
 ## 5状態出力契約
 

@@ -1494,3 +1494,24 @@
   - 重大1（既存スキル8件への逆参照追記未対応）: `evaluation-system-design` `mvv-design` `meeting-cadence-design` `recruitment-strategy` `career-roadmap-development` `organization-planning` `katz-three-skill-approach` `onboarding-design` の連携スキル節への追記。新規4スキル → 既存スキル間の双方向リンク確立がスキル選定時の発見性向上に寄与（運用支障なし、次セッション or 個別案件で対応）
   - 軽微1〜6: 失敗パターン表のOK欄補完／重複記載削除／用語統一（5特徴）／4-3表の論点切り分け／meeting-cadence-design棲み分け説明／credo×success-cycle連携明記（運用支障なし、次バッチで対応）
 - **リナ再検証**: 未実施（重大1の8ファイル逆参照と軽微6件の修正完了後に第2回検証予定）
+
+## 2026-05-02: バッチ10 持ち越し対応＋リナ第2回検証完了
+
+- **対応日**: 2026-05-02
+- **重大1対応（8既存スキルへの逆参照追記）**: 完了
+  - `evaluation-system-design` / `mvv-design` / `meeting-cadence-design` / `recruitment-strategy` / `career-roadmap-development` / `organization-planning` / `katz-three-skill-approach` / `onboarding-design` の連携スキル節に4新スキル（`ms-matrix-talent-grid` / `success-cycle-relationship-quality` / `credo-language-design` / `goal-cascade-kpt-1on1`）への逆参照を追記
+- **軽微対応**:
+  - 軽微3（用語統一）: `credo-language-design` の見出し「クレドとは何か（5つの定義）」→「クレドの5特徴（5つの定義）」、description との表記統一
+  - 軽微4（4-3表論点切り分け）: `ms-matrix-talent-grid` ステップ4-3で②④混在を解消、4象限独立行＋具体施策化
+  - 軽微5（meeting-cadence-design 棲み分け）: 双方向で責任分界明記（cadence設計 vs 目標進捗＋FB）
+  - 軽微6（credo×success-cycle連携）: 既存相互参照を保持
+- **リナ第2回検証**: 実施完了
+  - 重大1（goal-cascade-kpt-1on1の meeting-cadence-design 連携記述対称化）: 修正完了
+  - 中度1（success-cycle-relationship-quality の meeting-cadence-design 重複行）: 削除完了
+  - 中度2（goal-cascade-kpt-1on1 の月次レビューOK欄空白）: 補完完了
+  - 中度3（meeting-cadence-design コードブロック閉じタグ）: リナ誤検知（141行目開始・170行目閉じで正常）
+  - 軽微3（mvv-design 36行目「別スキル」表記）: `credo-language-design` への明示参照に修正完了
+- **次セッション持ち越し（軽微のみ・運用支障なし）**:
+  - 軽微2（リナ第2回指摘）: `ms-matrix-talent-grid` 4-1表と4-3表の③要注意の処理フロー記述やや重複（4-1=個別判断／4-3=規程化、と書き分け推奨）
+  - 軽微4（リナ第2回指摘）: `evaluation-system-design` 連携スキル節17項目のグルーピング化推奨
+- **総括**: バッチ10（組織/人事系4新スキル＋8既存スキル逆参照）一連の対応が完了。リナ第2回検証で必須修正項目4件はすべて解消。残る軽微2件は運用支障なしのため次バッチまたは別セッションで対応。
