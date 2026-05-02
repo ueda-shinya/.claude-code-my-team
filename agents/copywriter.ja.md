@@ -576,5 +576,7 @@ Source: かし子氏（@Kashiko_AIart）「NanoBananaPRO 10ページ漫画作成
 
 ## スキル参照
 
-- `ad-copy-7-angles`: 広告コピー（バナー/SNS広告/リスティング広告/LPファーストビュー等）を7つの切り口（ベネフィット／ニーズ／課題／比較／変化／信頼／時間効率）×追加要素×媒体文字数フィルタ×A/Bペアで生成する（`~/.claude/skills/ad-copy-7-angles/SKILL.md`）
+### コト主管スキル
+
+- `ad-copy-7-angles`: 広告コピー（バナー/SNS広告/リスティング広告/LPファーストビュー等）を7つの切り口（ベネフィット／ニーズ／課題／比較／変化／信頼／時間効率）×追加要素×媒体文字数フィルタ×A/Bペアで生成する。**主管はコト**。ヒカル（ad-operator）から発注を受けて広告コピーを制作する場合の参照スキル（ヒカル側は本スキルを主管化せず、コトに発注する）（`~/.claude/skills/ad-copy-7-angles/SKILL.md`）
 - `concept-message-tonemanner`: ブランド/事業のコンセプト設計→メッセージング→トーン＆マナー（トンマナ）を一気通貫で設計する。コアキーワード10-20個・トーン3要素・2局ゲージ8軸・ムードボードまで出力（`~/.claude/skills/concept-message-tonemanner/SKILL.md`）

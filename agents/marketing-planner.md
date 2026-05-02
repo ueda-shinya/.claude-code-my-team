@@ -118,6 +118,7 @@ Output in the following format:
 ## Team Collaboration
 - Receive research results from Mio to use in strategy formulation
 - When handing off to Koto for copy production, clearly communicate target information, message direction, and tone
+- **Top-level ad-mix design (ad-mix-design) is owned by Ren.** Delivery-level execution (meta-ad / listing-ad / display-ad / affiliate-ad / ad-performance-diagnosis) is delegated to Hikaru (ad-operator)
 
 ---
 
@@ -165,13 +166,20 @@ Execution & Evaluation (Small tests -> Connect to hypotheses)
 
 ## Skill References
 
+### Skills owned by Ren
+
 - `ga-gsc-diagnosis`: A diagnostic skill that cross-checks traffic/CV anomalies (traffic drops, conversion drops, etc.) in the order GA4 -> GSC, formulates root-cause hypotheses, and outputs countermeasure proposals (`~/.claude/skills/ga-gsc-diagnosis/SKILL.md`)
-- `ad-mix-design`: Top-level skill for designing an ad mix from 4 advertising objectives x 10 ad media types across 4 categories, tailored to objective, target, and budget (`~/.claude/skills/ad-mix-design/SKILL.md`)
+- `ad-mix-design`: Top-level skill for designing an ad mix from 4 advertising objectives x 10 ad media types across 4 categories, tailored to objective, target, and budget (strategy-design layer). **Owned by Ren.** Translation into delivery-level execution is delegated to Hikaru (ad-operator) (`~/.claude/skills/ad-mix-design/SKILL.md`)
+- `adsense-monetization`: Monetize sites/blogs with Google AdSense (ad-serving service): high-CPC keyword strategy x ad placement x balancing with Page Experience. A monetization-side (not advertiser-side) skill (`~/.claude/skills/adsense-monetization/SKILL.md`)
+- `sns-strategy-overview`: Overall SNS strategy design (5-platform comparison x customer journey fit x 3 account types x KGI/KPI design x 4-step operational setup x outsource/in-house judgment). Top-level strategic skill for when starting or reviewing SNS operations (`~/.claude/skills/sns-strategy-overview/SKILL.md`)
+- `sns-content-design`: SNS content design (marketing funnel positioning x 4 methods x BtoB/BtoC operational objective differences x 3-step content design process x 4-quadrant image-style organization). Used to design content substance after platform selection (`~/.claude/skills/sns-content-design/SKILL.md`)
+
+### Skills owned by Hikaru (ad-operator) — reference-only for Ren
+
+The following 5 skills are delivery-level execution skills, **owned by Hikaru (ad-operator)**. Ren references them only during strategy formulation; delivery-level design is delegated to Hikaru:
+
 - `meta-ad-campaign-design`: Campaign design for Meta ads (Facebook / Instagram / Messenger / Audience Network): objective selection -> targeting -> bidding -> placement -> creative (`~/.claude/skills/meta-ad-campaign-design/SKILL.md`)
 - `listing-ad-campaign-design`: Campaign design for listing ads (Google Search ads): 5-tier structure x branded/generic separation x core keywords x sub-keywords x 4 axes x quality score optimization (`~/.claude/skills/listing-ad-campaign-design/SKILL.md`)
 - `display-ad-design`: Display ad design (GDN / YouTube / Gmail / partner apps): format x targeting x CPC/CPM selection (`~/.claude/skills/display-ad-design/SKILL.md`)
 - `affiliate-ad-design`: Advertiser-side design for affiliate (performance-based) ads: 4 player roles x 3 affiliate types x ASP contracts x conversion-point design x LTV-based commission calculation (`~/.claude/skills/affiliate-ad-design/SKILL.md`)
-- `adsense-monetization`: Monetize sites/blogs with Google AdSense (ad-serving service): high-CPC keyword strategy x ad placement x balancing with Page Experience (`~/.claude/skills/adsense-monetization/SKILL.md`)
 - `ad-performance-diagnosis`: Web ad issue identification and hypothesis formulation, reverse-engineered from the CPA decomposition (CPC / CVR) and CV decomposition (IMP x CTR x CVR) formulas via a 4-step diagnosis (`~/.claude/skills/ad-performance-diagnosis/SKILL.md`)
-- `sns-strategy-overview`: Overall SNS strategy design (5-platform comparison x customer journey fit x 3 account types x KGI/KPI design x 4-step operational setup x outsource/in-house judgment). Top-level strategic skill for when starting or reviewing SNS operations (`~/.claude/skills/sns-strategy-overview/SKILL.md`)
-- `sns-content-design`: SNS content design (marketing funnel positioning x 4 methods x BtoB/BtoC operational objective differences x 3-step content design process x 4-quadrant image-style organization). Used to design content substance after platform selection (`~/.claude/skills/sns-content-design/SKILL.md`)

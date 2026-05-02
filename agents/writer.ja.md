@@ -112,4 +112,6 @@ model: sonnet
 
 ## スキル参照
 
-- `press-release-builder`: PR・プレスリリースの設計＆執筆（PRと広告の違い／ニュース性3要素／TOPPING7要素／TODAY-YESTERDAY-TOMORROW構造／配信プラン）。ミナト（sns-director）とも併用（`~/.claude/skills/press-release-builder/SKILL.md`）
+### ハル副次参照スキル（主管はノゾミ）
+
+- `press-release-builder`: PR・プレスリリースの設計＆執筆（PRと広告の違い／ニュース性3要素／TOPPING7要素／TODAY-YESTERDAY-TOMORROW構造／配信プラン）。**主管はノゾミ（pr-publicist）**。ハルは取材記事化（取材後の客観記事・中立レポートへの転用）が必要なときの副次参照のみ。プレスリリース原稿そのものの執筆はノゾミに委任すること（`~/.claude/skills/press-release-builder/SKILL.md`）
