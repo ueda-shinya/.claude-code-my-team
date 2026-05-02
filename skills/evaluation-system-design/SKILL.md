@@ -370,21 +370,32 @@ description: 評価制度の策定スキル。5目的（モチベーション向
 
 ## 連携スキル
 
+評価制度設計に関連するスキル15項目を5カテゴリにグルーピング：
+
+### A. 役割定義系（評価対象の前提となる役割・責任の明確化）
 - `roles-responsibilities`：評価指標の前提となる役職別責任範囲・評価指標を引き継ぐ
-- `salary-range-design`：評価結果を給与レンジに反映（別スキル）
-- `career-roadmap-development`：評価結果からキャリア育成計画へ接続（別スキル）
-- `recruitment-strategy`：評価基準を採用基準にも活用（別スキル）
+
+### B. 給与・キャリア・採用系（評価結果の活用先）
+- `salary-range-design`：評価結果を給与レンジに反映
+- `career-roadmap-development`：評価結果からキャリア育成計画へ接続
+- `recruitment-strategy`：評価基準を採用基準にも活用
+
+### C. 目標管理系（評価対象となる目標と進捗管理）
 - `kgi-kpi-kai-design`：目標達成評価軸の指標を設計
 - `smart-goal-setting`：個人目標のSMART化
 - `goal-execution-system`：モニタリング＋フィードバックループ
 - `goal-hierarchy-design`：組織目標→個人目標への落とし込み
+- `goal-cascade-kpt-1on1`：目標カスケード＋KPT 1on1運用と連動させ、目標達成評価と評価面談の月定義を一致させる
+
+### D. 文化・関係性・人材分類系（評価軸の質を高める要素）
 - `mvv-design`：「らしさ」評価の前提となるバリュー定義
-- `teaching-coaching-leading`：FB時のコーチング技法
-- `hearing-questioning-skills`：1on1FBでのヒアリング技法
+- `credo-language-design`：クレド体現を評価項目（「らしさ評価」軸）に組み込む
 - `ms-matrix-talent-grid`：マインド×スキルの4象限分類を評価軸に組み込む
 - `success-cycle-relationship-quality`：360度フィードバック実装時の関係の質診断
-- `credo-language-design`：クレド体現を評価項目（「らしさ評価」軸）に組み込む
-- `goal-cascade-kpt-1on1`：目標カスケード＋KPT 1on1運用と連動させ、目標達成評価と評価面談の月定義を一致させる
+
+### E. FB技法系（評価面談・1on1でのコミュニケーション技法）
+- `teaching-coaching-leading`：FB時のコーチング技法
+- `hearing-questioning-skills`：1on1FBでのヒアリング技法
 
 ## 5状態出力契約
 
