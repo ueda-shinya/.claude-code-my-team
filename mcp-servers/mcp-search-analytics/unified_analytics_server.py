@@ -686,17 +686,24 @@ async def main():
 
     print('[START] Starting Unified Analytics MCP Server...', file=sys.stderr)
 
-    # Load environment variables from .env file
-    load_dotenv()
+    # Load environment variables from unified .env file (~/.claude/.env)
+    load_dotenv(dotenv_path=os.path.expanduser('~/.claude/.env'))
     print('[SUCCESS] Environment variables loaded', file=sys.stderr)
 
     # Configuration - get from environment variables
-    credentials_path = os.environ.get('ANALYTICS_CREDENTIALS_PATH')
+    # ANALYTICS_CREDENTIALS_PATH を優先し、なければ GA4_CREDENTIALS_PATH にフォールバック
+    # (~/.claude/.env 一元化後は GA4_CREDENTIALS_PATH が主キー)
+    credentials_path_raw = (
+        os.environ.get('ANALYTICS_CREDENTIALS_PATH')
+        or os.environ.get('GA4_CREDENTIALS_PATH')
+    )
+    # ~ を展開してクロスプラットフォーム対応
+    credentials_path = os.path.expanduser(credentials_path_raw) if credentials_path_raw else None
 
     print(f'[INFO] Credentials path: {credentials_path}', file=sys.stderr)
 
     if not credentials_path:
-        print('[ERROR] Error: ANALYTICS_CREDENTIALS_PATH environment variable is required', file=sys.stderr)
+        print('[ERROR] Error: ANALYTICS_CREDENTIALS_PATH (or GA4_CREDENTIALS_PATH) environment variable is required', file=sys.stderr)
         sys.exit(1)
 
     if not os.path.exists(credentials_path):
