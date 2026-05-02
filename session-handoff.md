@@ -1,6 +1,61 @@
 # セッション引き継ぎ
 
-## 🟢 最優先再開ポイント（2026-05-02）: chisoku バッチ10完了 / リナ重大8件修正済 / 持ち越し重大1件＋軽微6件 → 次セッションで対応
+## 🔵 最優先再開ポイント（2026-05-02 セッション中断）: kaizen Phase 2-A / 2-B 完了 → 次は Phase 3 系
+
+**本日（2026-05-02）2セッション分の作業完了。シンヤさん指示で中断、いつでも再開可能な状態に整理済み。**
+
+### 本日の完了内容（2セッション分）
+
+#### Phase 2-A 完了（リナ事前レビュー関門新設）
+- CLAUDE.md L62-137「Rina Pre-Review Gate」新設
+- agents/logic-verifier.ja.md / .md に「事前レビュー時のリナの役割」追記（英訳同期済）
+- memory/prereview-log.md 新規作成（事前レビュー履歴・対象外判定・月次監査ログ）+ MEMORY.md reference セクション登録
+- リナ3回検証通過（重大2＋中3＋軽微2 全件対応）
+
+#### Phase 2-B 完了（external_dependencies 必須化）
+- skills/skill-creator/SKILL.md「External Dependencies Declaration」新セクション追加（約50行）
+- skills/knowledge-to-skill/SKILL.md テンプレート拡張＋生成ルール＋6項目チェックリスト追加
+- memory/prereview-log.md に Phase 2-B 履歴追記
+- **Pre-Review Gate 初適用ケース**（リナ事前2回＋サクラ2回＋リナ事後1回 計5回検証）
+- カナタが物理ガード（code-edit-guard.sh）でブロックされ、CLAUDE.md L1095 規定に従いシュウへ再委任した経緯あり
+
+### 次セッション再開時の選択肢
+
+| 候補 | 内容 | 優先度 | Notion登録 |
+|---|---|---|---|
+| **kaizen Phase 3** | 既存スキル監査（Phase 2-B 完了がトリガー） | P3-今月中 | 既存 |
+| **kaizen Phase 3 発火ロジック** | morning-briefing-weekly 組込 | P3-今月中 | 既存 |
+| backend-engineer/agent-builder にPre-Review Gate受託拒否ロジック反映 | Phase 2-A 軽微残課題 | P3-今月中 | 既存 |
+| skill-creator/knowledge-to-skill 軽微3件改善 | NGワード英語追記・reason言語ポリシー明記等 | P4-いつかやる | 本日登録 |
+| **改善案C（NGワードSSoT化）** | リナ・サクラ・skill-creator・knowledge-to-skill 共通参照化 | P5-アイデア | 本日登録 |
+
+### 次セッション再開手順
+
+1. シンヤさんが「kaizen Phase 3 進めて」「Phase 3 発火ロジック やろう」等と声をかける
+2. アスカが Notion で案件詳細を確認: `python ~/.claude/scripts/notion-tasks.py --show "Phase 3"`
+3. **新規スキル/エージェント作成・大幅改修を伴う場合は Pre-Review Gate（CLAUDE.md L62-137）必須**
+4. アスカ起案 → リナ事前レビュー → 通過後実装委任の標準フローで進行
+5. 実装委任時の依頼文先頭に「**Pre-Review Gate 通過済み（YYYY-MM-DD）**」マーカー必須
+
+### 観察事項（次回 kaizen 候補・優先度高）
+
+リナ事後検証で指摘された改善案C：Pre-Review Gate がサクラ Critical（NGワード "コマンドまたは参照先" 欠落）を事前検知できなかった構造的要因 → NGワードリストSSoT化を提案（P5登録済）。
+
+### 関連ファイル（次回参照用）
+- `~/.claude/CLAUDE.md` L62-137（Rina Pre-Review Gate）
+- `~/.claude/agents/logic-verifier.ja.md` L51-95
+- `~/.claude/agents/logic-verifier.md` L51-95（英訳同期済）
+- `~/.claude/memory/prereview-log.md`（事前レビュー履歴・3ヶ月後 2026-08-02 再評価予定）
+- `~/.claude/skills/skill-creator/SKILL.md`（External Dependencies Declaration 約50行）
+- `~/.claude/skills/knowledge-to-skill/SKILL.md`（external_dependencies 6項目チェックリスト）
+
+### 未コミット状態（次回 sync で push）
+
+本セッションの変更は未コミット。次回 sync 時にまとめて push 予定。`git status` で差分確認可能。
+
+---
+
+## 🟢 持ち越し（2026-05-02）: chisoku バッチ10完了 / リナ重大8件修正済 / 持ち越し重大1件＋軽微6件 → Phase 3 系着手前に消化推奨
 
 ### 完了内容（バッチ10：組織/人事系4PDF→4スキル生成）
 
@@ -1264,10 +1319,11 @@ rm ~/.claude/knowledge/claude-code-cli/plugins-vs-skills.md
 #### ◆ カテゴリ3: Notion 対応
 
 **案件「GSC・GA4計測診断＆改善提案ツール」**
-- 2026-04-18 追記の rev.2 / rev.2.1 ブロック2件を Notion UI で削除
-- rev.1 (2026-04-13) 時点まで戻す
+- ✅ **2026-05-02 完了**：rev.2 / rev.2.1 の4ブロック（heading_3 + bulleted_list_item ペア×2）を Notion API で archived 化（30日以内なら復元可）
+- 同セッションで rev.8（rev.7 + KYT M1/M2 ＋ 補-1〜5 補正）を Notion 本文に追記済み
+- rev.1 (2026-04-13) 時点まで戻すのではなく、rev.7 + rev.8 の正しい設計履歴に整流された
 
-**案件削除（2件、Notion UI で対応）**
+**案件削除（2件、Notion UI で対応）**：未着手
 - 「seo-audit + GSC MCP で officeueda.com 初試験運用」
 - 「Impeccable プラグイン試験導入」
 
@@ -1326,8 +1382,8 @@ git push origin main
 
 ### 完了後の確認
 - `git diff 9738d87 HEAD -- CLAUDE.md skills/skill-finder skills/feature-flow session-handoff.md memory/ knowledge/claude-code-cli/` で、差し戻したはずの変更が全て消えていることを確認
-- Notion 案件「GSC・GA4計測診断＆改善提案ツール」で rev.2 / rev.2.1 が消えていることを確認
-- Notion 案件リストから seo-audit 試験運用・Impeccable 試験導入 が消えていることを確認
+- ✅ **2026-05-02 確認済**: Notion 案件「GSC・GA4計測診断＆改善提案ツール」で rev.2 / rev.2.1 が archived 化＋ rev.8 の正常履歴で整流済
+- Notion 案件リストから seo-audit 試験運用・Impeccable 試験導入 が消えていることを確認（未着手）
 
 ---
 
@@ -1668,7 +1724,7 @@ claude plugin list
 
 ## 中断中の作業：gsc-ga4-analyzer（/feature-flow 初号機）
 
-**2026-04-13 セッションで着手、ステップ5途中で区切り。**
+**2026-04-13 着手 → 2026-05-02 ステップ5 完全完了（rev.8 反映＋rubric v1.0 確定）。次セッションでステップ6（シュウへの実装依頼）に進める状態。**
 
 ### 案件
 Notion案件管理DB「GSC・GA4計測診断＆改善提案ツール」（P2-今週中 / Windows）
@@ -1678,22 +1734,23 @@ Notion案件管理DB「GSC・GA4計測診断＆改善提案ツール」（P2-今
 - **ステップ2 要件定義**：リナ局所検証＋修正＋シンヤさん合意済み（Notion 1. 要件定義 に2ブロック）
 - **ステップ3 設計**：シュウ起案→リナ局所検証 rev.1→rev.7 まで7ラウンド／Notion 2. 設計 に複数ブロック
 - **ステップ4 KYT**：コア5名＋ケン で実施、48件洗い出し→設計バグ4件発見→rev.6/rev.7で反映／Notion 2.5 に記録
-- **ステップ5 リナ統合検証**：**条件付き承認**。残り4点補正で実装着手OK
-  - M1：要件「営業品質＝主観評価」と KYT「rubric事前固定」の矛盾 → 要件完了条件を「rubric全項目パス＋シンヤ最終承認」に更新
-  - M2：KYT「プロンプトファイル化」が設計未反映 → 設計rev.8で `prompts/` ディレクトリ追加
-  - 設計rev.8で：サニタイズ関数配置箇所指定／将来の複数クライアント解除コメント／3分ゲート実装時対処
-  - KYT対処マトリクス1枚（15件を 設計反映済み/実装ガードレール/監視 に分類）
-  - OAuth審査回避禁止をREADME運用セクションに明記
-- **ステップ6 実装**：未着手
+- **ステップ5 リナ統合検証**：rev.8 補正反映＋リナ差分検証通過 ✅ **2026-05-02 完了**
+  - M1（要件 rubric 完了条件）／M2（prompts/ ディレクトリ追加）／補-1〜5（サニタイズ関数配置／複数クライアント解除コメント／3分ゲート audit/timeouts/ 移動方式／KYT全48件マトリクス／OAuth README）
+  - リナ条件付き承認 → 致命2件＋軽微4件すべて反映済み（リナ再検証不要判定）
+  - Notion 案件本文の rev.2 / rev.2.1（2026-04-18 アスカ独断追記）を Notion API で削除完了
+  - rev.8 全5ブロックを Notion 案件本文に追記完了（要件M1／設計主要M2+補-3／設計付随補-1+補-2+補-5／KYT補-4／リナ統合検証結果+移行条件）
+- **ステップ6 実装**：未着手（rubric 完成待ち）
 - **ステップ7 レビュー**：未着手
 - **ステップ8 動作確認＋ふりかえり**：未着手
 
-### 再開手順
-1. Notion案件ページを `python ~/.claude/scripts/notion-tasks.py --show "GSC・GA4計測診断"` で全文確認
-2. 上記M1・M2＋4点補正を rev.8 として実施（アスカが直接またはシュウに依頼）
-3. リナに差分再検証を依頼
-4. 要件「rubric」を作成（シンヤさん＋レン、実装着手前の必須作業）
-5. ステップ6（シュウに実装依頼）へ進む
+### 次セッション再開手順
+1. Notion案件ページを `python ~/.claude/scripts/notion-tasks.py --show "GSC・GA4計測診断"` で全文確認（最新は rev.8＋rubric v1.0 確定まで反映済み）
+2. **ステップ6（実装）をシュウに依頼**
+   - 依頼内容: rev.8 設計＋rubric v1.0 に従って `scripts/gsc-ga4-analyzer/` 配下一式を実装
+   - 参照: `~/.claude/clients/officeueda/services/gsc-ga4-analyzer/rev8-draft.md`（設計）／`rubric.md`（合格基準）
+   - 実装ガードレール11件（KYT）と prompts/ ディレクトリ運用を徹底
+3. 実装完了→ サクラのコードレビュー＋セキュリティレビュー
+4. ステップ8 ドッグフーディング（officeueda 3対象で rubric 評価）
 
 ### 決定事項（リセット不可）
 - **MVP = 手動CLI実行型**、Markdown出力、officeueda 3対象（コーポ/biz-ai LP/biz-web LP）のドッグフーディング
@@ -1702,14 +1759,18 @@ Notion案件管理DB「GSC・GA4計測診断＆改善提案ツール」（P2-今
 - **officeuedaはデータを預からない**（tmp/ 配下で完結、git管理対象外）
 - **法務3地雷は別トラック**（ケン監修済み、契約書・覚書・免責文のひな形整備は弁護士スポット相談で進行）
 - **実装対象ディレクトリ**：`scripts/gsc-ga4-analyzer/`（未作成）
+- **ALLOWED_CLIENTS = ["officeueda"]** ハードコード（環境変数経由解除を防ぐ）
+- **3分ゲート**：SOFT_TIMEOUT_SEC=180／HARD_TIMEOUT_SEC=300／ハード時は audit/&lt;client&gt;/timeouts/ 移動（削除しない）
 
 ### 法務並行タスク
 - 弁護士スポット相談（1〜2時間、5〜10万円）：業務委託契約＋個情法覚書（DPA相当）＋免責条項の監修
 - ケン作成のドキュメント12点リストは `memory/`（未作成）または sync 時に別途記録予定
 
-### 注意
-- 本セッションでリナが7ラウンドも局所検証→統合検証まで回しているため、次回は**差分のみ検証依頼**で良い
-- 残り4点補正はドキュメント中心なのでアスカ直接反映可能（`prompts/` ディレクトリ追加は実質1行）
+### 関連ファイル
+- rev.8 ドラフト原本: `~/.claude/clients/officeueda/services/gsc-ga4-analyzer/rev8-draft.md`
+- rubric v1.0（確定版）: `~/.claude/clients/officeueda/services/gsc-ga4-analyzer/rubric.md`
+- rubric 定期見直しタスク（Notion登録済）: 「gsc-ga4-analyzer rubric 半期レビュー（2026年下期）」P3 / 開始日 2026-10-01
+- rubric 初回見直しタスク（Notion登録済）: 「gsc-ga4-analyzer rubric 初回レビュー（ドッグフーディング完走時）」P4 / ステップ8完了でP3格上げ予定
 
 ---
 

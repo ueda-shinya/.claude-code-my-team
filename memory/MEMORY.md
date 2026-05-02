@@ -29,6 +29,9 @@
 - [feedback_researcher_llmo_jsonld.md](feedback_researcher_llmo_jsonld.md) — ミオがllmo-audit実行時、WebFetchでJSON-LD未検出でも即NG禁止。JS注入可能性が残る限り判定不能扱い
 - [feedback-agent-fact-fabrication.md](feedback-agent-fact-fabrication.md) — エージェントによるシンヤさん経歴・発言・実績の捏造を絶対禁止。【要事実確認】マーカー必須・出典セクション必須・リナ全件抽出検証手順固定（2026-04-28 レン捏造事故から起票）
 
+## reference
+- [prereview-log.md](prereview-log.md) — Rina Pre-Review Gate（CLAUDE.md・2026-05-02 追加）の事前レビュー履歴・対象外判定記録・月1監査記録（3ヶ月後の自己検証バイアス再評価用）
+
 ## project
 - [project_notion_management.md](project_notion_management.md) — Notion DB一本化方針（案件リスト・残件タスク→案件管理に統合、スキーマ設計は持ち越し）
 - [project_slide_workflow.md](project_slide_workflow.md) — スライド制作標準フロー（ソラ→Genspark）と品質向上ポイント
@@ -53,6 +56,7 @@
 
 ## エージェント運用
 - [knowledge/agent-ops/background-agent-permissions.md](../knowledge/agent-ops/background-agent-permissions.md) — バックグラウンドエージェントはファイル書き込み権限プロンプトに応答できない。書き込みタスクはフォアグラウンドで実行する
+- [knowledge/agent-ops/code-edit-guard-and-delegation-routing.md](../knowledge/agent-ops/code-edit-guard-and-delegation-routing.md) — SKILL.md / agents 編集時の委任ルーティング（物理ガード由来）。コードブロック含むなら必ずシュウへ・カナタは物理ガードでブロックされる
 - [knowledge/claude-code-cli/session-continuation.md](../knowledge/claude-code-cli/session-continuation.md) — claude -p --resume の動作仕様・cwd依存・コスト・セッションファイル形式（2026-04-18 実機検証）
 - [knowledge/claude-code-cli/session-resume-troubleshooting.md](../knowledge/claude-code-cli/session-resume-troubleshooting.md) — VSCode Claude で覚えのないセッション再開が起きた時の切り分け手順（jsonl初回メッセージ・permissionMode・USD budgetの3点診断）
 - [knowledge/claude-code-cli/plugins-vs-skills.md](../knowledge/claude-code-cli/plugins-vs-skills.md) — Plugin/Skill/Marketplaceの階層関係、導入ルート3種、公式マーケ、名前空間、シンヤさん環境での選択基準

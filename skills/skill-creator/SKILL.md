@@ -66,6 +66,7 @@ Based on the user interview, fill in these components:
 - **name**: Skill identifier
 - **description**: When to trigger, what it does. This is the primary triggering mechanism - include both what the skill does AND specific contexts for when to use it. All "when to use" info goes here, not in the body. Note: currently Claude has a tendency to "undertrigger" skills -- to not use them when they'd be useful. To combat this, please make the skill descriptions a little bit "pushy". So for instance, instead of "How to build a simple fast dashboard to display internal Anthropic data.", you might write "How to build a simple fast dashboard to display internal Anthropic data. Make sure to use this skill whenever the user mentions dashboards, data visualization, internal metrics, or wants to display any kind of company data, even if they don't explicitly ask for a 'dashboard.'"
 - **compatibility**: Required tools, dependencies (optional, rarely needed)
+- **external_dependencies**: Required field. Declare external dependencies (Notion DBs, APIs, MCP servers, etc.) in YAML array format. See "External Dependencies Declaration" section below.
 - **the rest of the skill :)**
 
 ### 5-State Output Contract (必須チェック / Required for skills matching the failable-operation criteria)
@@ -80,6 +81,73 @@ This rule was added on 2026-04-21 after a kaizen session. Per the CLAUDE.md "ス
 - [ ] Markers appear in the **final user-visible output** — writing errors only to a side log while the main output stays silent is prohibited
 
 Why this matters: Sections that disappear on failure get interpreted as "not applicable" — leading to silent bugs that persist undetected (the 2026-04-21 incident was undetected for 24-26 days because a failed Notion DB query caused the entire section to vanish from morning briefings). Explicit ASCII markers restore visibility and enable correct follow-up decisions.
+
+### External Dependencies Declaration (必須 / Required, Added 2026-05-02 kaizen Phase 2-B)
+
+Why this matters: Skills that call external APIs, query Notion DBs, or rely on environment variables may silently fail if the actual schema (DB property names, API response fields, env var names) drifts from what the skill assumes. Declaring `external_dependencies` in the frontmatter creates a traceable link between the skill and its runtime schema — enabling systematic schema verification before execution and monthly audits (Phase 3). Without this declaration, schema drift is invisible until a production failure occurs.
+
+**Add the following to every new skill's YAML frontmatter:**
+
+```yaml
+---
+name: <skill-name>
+description: <existing>
+tools: <existing>
+external_dependencies:
+  - type: <notion_db | mcp_server | external_api | subprocess | local_file | env_config | none>
+    id_env: <env var name / null if not applicable>
+    schema_source: <path to schema definition / official doc URL / null>
+    verification_method: <method to verify actual schema (command / reference / connectivity check)>
+---
+```
+
+**Concrete examples:**
+
+```yaml
+# Example 1: Notion DB-dependent skill
+external_dependencies:
+  - type: notion_db
+    id_env: NOTION_TASKS_DB_ID
+    schema_source: ~/.claude/scripts/notion_schema.py::TasksDB
+    verification_method: python ~/.claude/scripts/notion-tasks.py --schema-check
+
+# Example 2: No external dependency
+external_dependencies:
+  - type: none
+    reason: Pure template expansion only (e.g., copywriting generation)
+```
+
+**type value decision table (priority order — use the first matching type):**
+
+| Priority | type value | Decision boundary | Example |
+|---|---|---|---|
+| 1 | `notion_db` | Accesses a Notion DB directly or via MCP | Skills reading `NOTION_TASKS_DB_ID` |
+| 2 | `mcp_server` | Calls an external service via MCP protocol (non-Notion) | `mcp__hourei__*`, `mcp__search-analytics__*` |
+| 3 | `external_api` | Calls an HTTP API directly (including via subprocess or cURL) | Anthropic SDK, Gemini API, Webhook |
+| 4 | `subprocess` | Spawns external CLI via subprocess (no external API calls) | `marp` CLI, local-only processing |
+| 5 | `local_file` | Reads a local file with structural assumptions | `clients/<name>/README.md` structural dependency |
+| 6 | `env_config` | Requires specific `.env` variables as prerequisite for non-authentication purposes (API auth keys belong to external_api) | `PC_PLATFORM` required skills |
+| 7 | `none` | No external dependencies (pure template expansion only) | Copy generation, sales talk generation |
+
+- When multiple types apply, use the **highest-priority (lowest number) type**
+- When `type: none`, a `reason` field (1-line explanation) is required
+- Use array format; list multiple objects when multiple dependencies exist
+
+**When type ≠ none for at least one entry, the skill body MUST include these two sections (headings in English, fixed):**
+
+- `## Schema Verification Steps` — concrete commands or steps to verify the actual schema matches assumptions
+- `## Assumed Schema` — the property names / field names / env var names the skill depends on
+
+**Pre-generation checklist (6 items):**
+
+- [ ] frontmatter contains the `external_dependencies` field
+- [ ] each entry has all required keys: `type` / `id_env` / `schema_source` / `verification_method`
+- [ ] `type` is one of the discrete enum values: `notion_db` / `mcp_server` / `external_api` / `subprocess` / `local_file` / `env_config` / `none`
+- [ ] if `type: none`, the `reason` field is present with a 1-line explanation
+- [ ] if any entry has `type ≠ none`, both `## Schema Verification Steps` and `## Assumed Schema` sections exist in the skill body
+- [ ] `verification_method` values do not contain NG words: `"コマンドまたは参照先"`, `"TODO"`, `"TBD"`, `"未定"`, `"後で記入"`, `"<記入>"`, `"プレースホルダー"`
+
+> Note: This checklist activates only at skill generation time. It does NOT retroactively apply to existing ~70 skills. Existing skills without `external_dependencies` continue to function. Retroactive application is handled by the Phase 3 monthly audit.
 
 ### Skill Writing Guide
 
