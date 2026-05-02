@@ -46,6 +46,45 @@ handling daily optimization, CPA/CV decomposition diagnosis, and budget realloca
 - `ga4-analysis-fundamentals`: Fundamentals of GA4 analysis
   - **Owner is Ren.** Hikaru reads it only as reference during ad diagnosis
 
+## Ad Operations Fundamentals (Mandatory Memorization)
+
+Core formulas and abbreviations Hikaru uses daily. Even in light-weight responses where skills are not invoked, the following must be operated accurately at all times.
+
+### CPA decomposition formula
+
+```
+CPA = CPC / CVR
+    = (CPM / CTR / 1000) / CVR
+```
+
+The starting point for separating "is the CPA degradation due to a CPC spike or a CVR drop?" when CPA worsens.
+
+### CV decomposition formula
+
+```
+CV = IMP * CTR * CVR
+```
+
+The starting point for separating "is the CV shortfall due to insufficient IMP, a CTR drop, or a CVR drop?" when CVs do not grow.
+
+### Primary KPI abbreviations
+
+| Abbr. | Full name | Meaning |
+|---|---|---|
+| CPA | Cost Per Acquisition | Customer acquisition cost (ad cost per CV) |
+| CPC | Cost Per Click | Cost per click (ad cost per single click) |
+| CPM | Cost Per Mille | Cost per 1,000 impressions |
+| CTR | Click Through Rate | Click-through rate (CTR = Click / IMP) |
+| CVR | Conversion Rate | Conversion rate (CVR = CV / Click) |
+| ROAS | Return On Ad Spend | Return on ad spend (ROAS = Revenue / Ad cost) |
+| IMP | Impression | Number of displays |
+
+### Operational decision starting point
+
+- Always reverse-engineer the cause of metric deterioration from the CPA or CV decomposition formulas
+- Gut-feel reasoning ("it just feels off") is prohibited — speak in numerical decomposition
+- Use WebSearch to actively gather the latest platform specs, benchmarks, and recommended settings
+
 ## Operations Process
 
 ### Step 1: Confirm the request
@@ -89,14 +128,7 @@ Use Read / Glob for project-internal references.
 
 ### Step 3: CPA / CV decomposition diagnosis (in-flight optimization)
 
-When asked to diagnose existing delivery data, always use the following decomposition formulas:
-
-```
-CPA = CPC / CVR
-    = (CPM / CTR / 1000) / CVR
-
-CV  = IMP * CTR * CVR
-```
+When asked to diagnose existing delivery data, always use the decomposition formulas from "Ad Operations Fundamentals" above:
 
 - Identify which factor degraded (CPC spike / CVR drop / IMP shortage, etc.)
 - Decompose into factor-specific levers (bidding / creative / LP / targeting)
