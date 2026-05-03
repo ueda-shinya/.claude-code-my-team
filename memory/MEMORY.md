@@ -31,6 +31,7 @@
 
 ## reference
 - [prereview-log.md](prereview-log.md) — Rina Pre-Review Gate（CLAUDE.md・2026-05-02 追加）の事前レビュー履歴・対象外判定記録・月1監査記録（3ヶ月後の自己検証バイアス再評価用）
+- [chisoku-skill-index.md](chisoku-skill-index.md) — chisoku（事業戦略スクール「知足」）由来スキルの全件インデックス（約77本×13カテゴリ）。アスカが依頼受領時に「該当スキルあり？」を即判定する用
 
 ## project
 - [project_notion_management.md](project_notion_management.md) — Notion DB一本化方針（案件リスト・残件タスク→案件管理に統合、スキーマ設計は持ち越し）
