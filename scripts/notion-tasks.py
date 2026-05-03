@@ -38,6 +38,7 @@ Notion 案件管理スクリプト
 
 import json
 import os
+import re
 import ssl
 import sys
 import argparse
@@ -48,6 +49,7 @@ from datetime import datetime, timezone, timedelta
 
 # Windows環境での文字化け対策
 sys.stdout.reconfigure(encoding='utf-8')
+sys.stderr.reconfigure(encoding='utf-8')
 
 # Notion DBプロパティ名定数
 from notion_schema import TasksDB
@@ -514,9 +516,33 @@ def cmd_create_db(parent_page_id, token, env, force=False, reuse=False):
 
 # ---- --list ----
 
+def parse_since(since_str):
+    """
+    '--since' オプション値をパースして cutoff の datetime（JST aware）を返す。
+    書式: "Nd"（N日前）のみサポート。パース失敗時は stderr にエラーを出力して sys.exit(1)。
+    例: "30d" → datetime.now(JST) - timedelta(days=30)
+    """
+    if since_str is None:
+        return None
+    m = re.match(r'^(\d+)d$', since_str.strip())
+    if not m:
+        print(f'[ERROR] --since の書式が不正です: {since_str!r}（例: 30d）', file=sys.stderr)
+        sys.exit(1)
+    days = int(m.group(1))
+    if days <= 0:
+        print(f'[ERROR] --since の日数は正の整数を指定してください: {since_str!r}', file=sys.stderr)
+        sys.exit(1)
+    return datetime.now(JST) - timedelta(days=days)
+
+
 def cmd_list(token, db_id, filter_status=None, filter_type=None,
-             filter_env=None, filter_client=None, filter_priority=None):
-    """案件一覧をステータス順で表示"""
+             filter_env=None, filter_client=None, filter_priority=None,
+             since=None):
+    """案件一覧をステータス順で表示
+
+    since: '--since' オプションの文字列（例: "30d"）。
+           指定時は最終編集日時が cutoff 以降の案件のみ表示する。
+    """
     # フィルター条件を構築
     filters = []
     if filter_status:
@@ -544,6 +570,28 @@ def cmd_list(token, db_id, filter_status=None, filter_type=None,
 
     items = [page_to_item(p) for p in pages]
     items.sort(key=status_sort_key)
+
+    # --since フィルタ（Pythonレベルの後処理。last_edited_time ベース）
+    cutoff = parse_since(since)
+    if cutoff is not None:
+        filtered = []
+        for item in items:
+            last_edited_str = item.get('最終編集日時', '')
+            if not last_edited_str:
+                # 日時が取れない場合はフィルタ対象外として除外
+                continue
+            try:
+                last_edited_utc = datetime.fromisoformat(last_edited_str.replace('Z', '+00:00'))
+                last_edited_jst = last_edited_utc.astimezone(JST)
+            except ValueError:
+                continue
+            if last_edited_jst >= cutoff:
+                filtered.append(item)
+        items = filtered
+
+    if not items:
+        print('案件がありません。')
+        return
 
     for item in items:
         priority_str = item[TasksDB.PRIORITY] if item[TasksDB.PRIORITY] else '-'
@@ -984,6 +1032,8 @@ def main():
                         help='クライアントでフィルター')
     parser.add_argument('--filter-priority', metavar='優先度',
                         help='優先度でフィルター')
+    parser.add_argument('--since', metavar='期間',
+                        help='最終編集日時が指定期間以降の案件のみ表示（例: 30d = 直近30日）')
 
     args = parser.parse_args()
 
@@ -1021,6 +1071,7 @@ def main():
             filter_env=args.filter_env,
             filter_client=args.filter_client,
             filter_priority=args.filter_priority,
+            since=args.since,
         )
 
     elif args.add:

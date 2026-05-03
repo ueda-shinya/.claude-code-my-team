@@ -531,6 +531,121 @@ print('IS_SECOND_SUNDAY:', str(today.day == second_sunday))
 - `IS_SECOND_SUNDAY: True` の場合 → 報告に `## 定期タスク` セクションを追加する
 - `IS_SECOND_SUNDAY: False` の場合 → スキップ
 
+### ステップ 4.9: chisoku スキル月次棚卸し（第1日曜のみ）
+
+※ 毎日版（morning-briefing）には組み込まない（weekly 版限定）
+
+今日の日付から「毎月第1日曜日」かどうかを判定する。
+
+```bash
+python3 -c "
+from datetime import date
+today = date.today()
+# 今月の第1日曜日を計算
+first_day = today.replace(day=1)
+weekday = first_day.weekday()  # 0=月曜
+days_to_sunday = (6 - weekday) % 7
+first_sunday_day = first_day.day + days_to_sunday
+print('TODAY:', today.day)
+print('FIRST_SUNDAY:', first_sunday_day)
+print('IS_FIRST_SUNDAY:', str(today.day == first_sunday_day))
+" 2>&1
+```
+
+- `IS_FIRST_SUNDAY: False` の場合 → スキップ（報告に当該セクションを追加しない）
+- `IS_FIRST_SUNDAY: True` の場合 → 以下の処理を続行
+
+#### (1) chisoku-skill-index.md からスキル一覧を取得
+
+この手順はステップ (3) の集計スクリプト内に統合されているため、別途実行不要。
+
+#### (2) Notion 案件管理から直近30日に編集された完了案件を取得（厳密：last_edited_time ベース）
+
+この手順はステップ (3) の集計スクリプト内に統合されているため、別途実行不要。
+
+#### (3) スキル使用状況の集計（(1)(2) を内包した統合スクリプト）
+
+以下の Python スクリプトを実行する。
+
+```bash
+python3 -c "
+import subprocess, sys, os, re
+
+home = os.path.expanduser('~')
+py = sys.executable
+index_path = os.path.join(home, '.claude', 'memory', 'chisoku-skill-index.md')
+
+# スキル一覧取得
+try:
+    with open(index_path, encoding='utf-8') as f:
+        lines = f.readlines()
+    skills = []
+    for line in lines:
+        m = re.match(r'\|\s*\x60([^\x60]+)\x60\s*\|', line)
+        if m:
+            skills.append(m.group(1))
+    if not skills:
+        print('ERROR: スキルが1件も抽出できませんでした')
+        sys.exit(1)
+    print('SKILL_COUNT:', len(skills))
+except Exception as e:
+    print('INDEX_FAIL:', str(e))
+    sys.exit(1)
+
+# Notion 完了案件取得（直近30日フィルタ付き。Windows: cp932 フォールバック付き）
+script = os.path.join(home, '.claude', 'scripts', 'notion-tasks.py')
+try:
+    result = subprocess.run(
+        [py, script, '--list', '--filter-status', '完了', '--since', '30d'],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        timeout=30
+    )
+except subprocess.TimeoutExpired:
+    print('NOTION_FAIL: Notion API タイムアウト（30秒）')
+    sys.exit(1)
+if result.returncode != 0:
+    stderr = result.stderr.decode('utf-8', errors='replace')
+    print('NOTION_FAIL:', stderr[:200])
+    sys.exit(1)
+try:
+    notion_text = result.stdout.decode('utf-8')
+except UnicodeDecodeError:
+    notion_text = result.stdout.decode('cp932', errors='replace')
+
+# 集計（スキル名はASCII英数字のみ。バッククォート込みで固定文字列照合）
+skill_counts = {}
+for skill in skills:
+    target = '\x60' + skill + '\x60'
+    skill_counts[skill] = notion_text.count(target)
+
+used = {k: v for k, v in skill_counts.items() if v > 0}
+unused = [k for k, v in skill_counts.items() if v == 0]
+total = len(skills)
+used_count = len(used)
+
+print('TOTAL_SKILLS:', total)
+print('USED_COUNT:', used_count)
+print('UNUSED_COUNT:', len(unused))
+
+top3 = sorted(used.items(), key=lambda x: x[1], reverse=True)[:3]
+top3_str = ' / '.join(['\x60' + k + '\x60 (' + str(v) + '回)' for k, v in top3]) if top3 else 'なし'
+print('TOP3:', top3_str)
+print('UNUSED_SKILLS:', ', '.join(['\x60' + s + '\x60' for s in unused]) if unused else 'なし')
+" 2>&1
+```
+
+- `INDEX_FAIL:` または `NOTION_FAIL:` が含まれる場合 → `[FAIL]` を記録し中断
+- 正常な場合 → 集計結果を報告フォーマット用に記録
+
+#### (4) 結果を報告フォーマットに反映
+
+集計結果に基づき、以下のルールで報告セクションを構成する：
+
+- chisoku-skill-index.md 読込失敗 または Notion API 失敗 → `[FAIL] <エラー要約>（ログなし）` を表示
+- 両方成功し used_count > 0 → `[OK:N件]` を表示
+- 両方成功し used_count = 0 → `[OK:0件]` を表示
+- IS_FIRST_SUNDAY: False → セクション自体を省略（`[SKIP]` も表示しない）
+
 ### ステップ 5: セッション引き継ぎ確認
 
 まず Bash で `cd ~/.claude && pwd` を実行してパスを取得し、そのパスに `/session-handoff.md` を付けた絶対パスで Read ツールを使ってください。
@@ -610,6 +725,26 @@ Organic Search: X  /  Direct: X  /  Paid Social: X  /  Paid Search: X
 ## 定期タスク（※ 第2日曜日のみ表示）
 今日は **月次ルール棚卸し** の日です。
 `/rule-review` で実行できます（リナ＋Gemini＋全員参加。所要時間：15〜20分）
+
+## chisoku スキル月次棚卸し（※ 第1日曜日のみ表示）
+
+※ 以下のテンプレ内の `{USED_COUNT}` `{TOTAL_SKILLS}` `{UNUSED_COUNT}` `{TOP3}` `{USED_RATE}` は集計スクリプト出力（L621-628 の `TOTAL_SKILLS` `USED_COUNT` `UNUSED_COUNT` `TOP3` および `USED_COUNT / TOTAL_SKILLS * 100`）の動的値で置換すること。固定値で転記しないこと。
+
+### 利用状況（直近30日）
+- 利用された chisoku スキル: {USED_COUNT}件 / 全{TOTAL_SKILLS}件
+- 上位3件: {TOP3}
+
+### 未使用スキル（直近30日）
+全{UNUSED_COUNT}件の chisoku スキルが直近30日で1度も使われていません。
+（ただし「使うべき場面がなかった」可能性も含むため、即座に問題視するものではない）
+
+### 利用率の参考値
+- 利用率: {USED_COUNT} / {TOTAL_SKILLS} = {USED_RATE}%（月次基準値: 仮 20%）
+- 利用率20%未満 → 利用シーンが少ないスキルが多い可能性。インデックス再分類検討
+
+[OK:{USED_COUNT}件] / [OK:0件] / [FAIL: <エラー要約>（ログなし）]
+
+※ `IS_FIRST_SUNDAY: False` の場合は本セクション全体を省略する（既存ステップ4.8「定期タスク」の第2日曜運用と同じパターン）。`[SKIP]` マーカーは表示しない（実行条件不一致＝「実行しない」が仕様のため）。
 
 ## リポジトリ更新（※ 新しいコミットがあった場合のみ表示）
 前回から X 件の変更を確認しました。
