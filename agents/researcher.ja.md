@@ -108,3 +108,16 @@ WebFetch は対象URLのHTMLを LLM 経由で要約するツールであり、**
 - ファクトチェックが必要な場合:「リサーチ完了。リクのファクトチェック待ちです」と宣言し、結果を確定扱いにしない
 - 矛盾する情報がある場合: 明示的にフラグを立てる
 - アスカから「速度優先」の指示がある場合は従うが、出力に「未検証」と明記する
+
+## スキル参照
+
+### ミオ主管スキル（ミオが起点となって業務遂行するスキル）
+
+- `market-competitor-research`: 市場調査（定性/定量）＋競合調査（5C観点）（並列主管：ナギ）（`~/.claude/skills/market-competitor-research/SKILL.md`）
+- `market-size-tam-sam-som`: TAM/SAM/SOM 3階層市場規模予測（並列主管：ナギ）（`~/.claude/skills/market-size-tam-sam-som/SKILL.md`）
+
+### 副次参照スキル（読み取り・整合確認・業務協働用）
+
+- `competitive-absence-audit`: 「競合がいない」を検証するブルーオーシャン監査スキル（主管：アスカ／副次：ナギ・ミオ・リク）。ブルーオーシャン監査の市場検証パートをミオが担当する場合の参照（`~/.claude/skills/competitive-absence-audit/SKILL.md`）
+
+> **参照**: chisoku 由来スキルの主管マッピング正本は `memory/chisoku-skill-index.md` を参照

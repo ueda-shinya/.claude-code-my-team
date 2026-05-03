@@ -290,3 +290,56 @@ Read the task file and resume from incomplete steps. Keep the explanation brief:
 | logic-verifier | リナ | Rule verification, logic checks, contradiction detection |
 | slide-designer | ソラ | Slide structure, presentation material design |
 | legal-advisor | ケン | Legal advice, contract review, legal risk management |
+
+## Skill References
+
+### Owned skills (Asuka is the primary operator)
+
+**[Organization, HR, evaluation]**
+
+- `ms-matrix-talent-grid`: Mind x Skill Matrix for 4-quadrant talent classification (reference: Nagi) (`~/.claude/skills/ms-matrix-talent-grid/SKILL.md`)
+- `success-cycle-relationship-quality`: Daniel Kim's success cycle + 13 relationship-quality properties (reference: Nagi) (`~/.claude/skills/success-cycle-relationship-quality/SKILL.md`)
+- `credo-language-design`: Credo (culture / promise) verbalization 8 steps + voting sheet (reference: Nagi) (`~/.claude/skills/credo-language-design/SKILL.md`)
+- `goal-cascade-kpt-1on1`: Company-wide -> dept -> team -> individual cascade + KPT 1on1 (reference: Nagi) (`~/.claude/skills/goal-cascade-kpt-1on1/SKILL.md`)
+- `teaching-coaching-leading`: 3 instructional approaches (Teaching / Coaching / Leading) differentiated use (reference: all agents) (`~/.claude/skills/teaching-coaching-leading/SKILL.md`)
+
+**[Project management]**
+
+- `schedule-management`: Schedule management (3 objectives x 5 processes x 3 methods: Gantt / CPM / Agile) (reference: all agents) (`~/.claude/skills/schedule-management/SKILL.md`)
+- `gantt-chart-design`: Gantt chart design (4 basic components x 5 steps x WBS numbering) (reference: all agents) (`~/.claude/skills/gantt-chart-design/SKILL.md`)
+- `project-team-structure`: PM structure management 5 elements + org chart + RACI + execution diagram (reference: Tsumugi) (`~/.claude/skills/project-team-structure/SKILL.md`)
+- `delivery-build`: Delivery build (customer service-delivery systematization) 5 processes (reference: Taku) (`~/.claude/skills/delivery-build/SKILL.md`)
+
+**[Sales / project management]**
+
+- `project-level-definition`: Client project level definition (5 stages x 5 indicators) (reference: Taku, Ren) (`~/.claude/skills/project-level-definition/SKILL.md`)
+
+**[Environment-analysis audit]**
+
+- `competitive-absence-audit`: Blue-ocean audit verifying "no competitors" (reference: Nagi, Mio, Riku) (`~/.claude/skills/competitive-absence-audit/SKILL.md`)
+
+### Reference-only skills (read-only, alignment & collaboration)
+
+**[Sales / org collaboration]**
+
+- `client-expectation-management`: Client expectation management (4 objectives x 5 processes x 5 skills) (owner: Taku) (`~/.claude/skills/client-expectation-management/SKILL.md`)
+- `decision-making-framework`: 3 decision-making methods (5-process / Importance x Urgency / Scoring) (owner: Nagi) (`~/.claude/skills/decision-making-framework/SKILL.md`)
+- `meeting-cadence-design`: Meeting cadence 4 objectives x 5 types x 5 design elements x 9-column meeting-list template (owner: Nagi) (`~/.claude/skills/meeting-cadence-design/SKILL.md`)
+
+**[Organization & HR]**
+
+- `organization-planning`: 3 organizational structures x Quarterly organization roadmap x Named (by-name) org chart (owner: Nagi) (`~/.claude/skills/organization-planning/SKILL.md`)
+- `roles-responsibilities`: Role / Responsibility / Authority / Reporting line x 6 steps x 6-column output table (owner: Nagi) (`~/.claude/skills/roles-responsibilities/SKILL.md`)
+- `evaluation-system-design`: Evaluation system (5 objectives x 7 steps x 3-axis grand design) (owner: Nagi) (`~/.claude/skills/evaluation-system-design/SKILL.md`)
+- `salary-range-design`: Salary range design (3-tier composition x 6-process flow) (owner: Nagi) (`~/.claude/skills/salary-range-design/SKILL.md`)
+- `katz-three-skill-approach`: Katz model 3 skills x 3 management layers diagnosis + 3-element growth strategy (owner: Nagi) (`~/.claude/skills/katz-three-skill-approach/SKILL.md`)
+
+**[Finance / management strategy]**
+
+- `financial-statements-fundamentals`: BS/PL/CF basic structure + 8-item cash-flow checklist + labor distribution ratio (owner: Nagi) (`~/.claude/skills/financial-statements-fundamentals/SKILL.md`)
+- `ma-strategy-basics`: M&A 2 categories x 5 objectives x 4 risks x 5 schemes (owner: Nagi) (`~/.claude/skills/ma-strategy-basics/SKILL.md`)
+- `financing-strategy`: 3 debt merits x bank-negotiation order x 3 equity merits x 6 comparison axes (owner: Nagi) (`~/.claude/skills/financing-strategy/SKILL.md`)
+- `growth-phase-strategy`: 4 phases (Initial / Growth / Expansion / Maturity) x shifts in management challenges (owner: Nagi) (`~/.claude/skills/growth-phase-strategy/SKILL.md`)
+- `yony-sales-simulation`: 4 insights x 5 design points x 3 scenarios sales simulation (owner: Nagi) (`~/.claude/skills/yony-sales-simulation/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

@@ -553,7 +553,9 @@ Synopsis: XX
 
 ## Skill References
 
-### Skills owned by Koto
+### Owned skills (Koto is the primary operator)
 
 - `ad-copy-7-angles`: Generates ad copy (banners / SNS ads / listing ads / LP first views, etc.) across 7 angles (benefit / need / problem / comparison / change / trust / time-efficiency) x supplementary elements x media character-count filters x A/B pairs. **Owned by Koto.** This is the reference skill for when Koto is commissioned by Hikaru (ad-operator) to produce ad copy (Hikaru does not own this skill; Hikaru commissions Koto) (`~/.claude/skills/ad-copy-7-angles/SKILL.md`)
-- `concept-message-tonemanner`: Designs brand/business concept -> messaging -> tone & manner end-to-end. Outputs 10-20 core keywords, 3 tone elements, 8-axis dual-pole gauges, and a moodboard (`~/.claude/skills/concept-message-tonemanner/SKILL.md`)
+- `concept-message-tonemanner`: Designs brand/business concept -> messaging -> tone & manner end-to-end. Outputs 10-20 core keywords, 3 tone elements, 8-axis dual-pole gauges, and a moodboard (reference: Yui, Kai, Nozomi) (`~/.claude/skills/concept-message-tonemanner/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

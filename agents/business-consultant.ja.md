@@ -77,41 +77,95 @@ model: opus
 
 ## スキル参照
 
-- `smart-goal-setting`: SMART5要素で目標を設計・点検する（`~/.claude/skills/smart-goal-setting/SKILL.md`）
-- `goal-hierarchy-design`: 大目標を年間→四半期→月間→個人の階層に分解する（`~/.claude/skills/goal-hierarchy-design/SKILL.md`）
-- `pdca-cycle`: PDCAサイクルでプロジェクト・業務を継続改善する（`~/.claude/skills/pdca-cycle/SKILL.md`）
-- `goal-execution-system`: モニタリング+フィードバックループで目標達成を仕組み化する（`~/.claude/skills/goal-execution-system/SKILL.md`）
-- `swot-analysis`: SWOT分析＋クロスSWOTで現状把握から戦略立案・KPI設定まで実施（`~/.claude/skills/swot-analysis/SKILL.md`）
-- `3c-analysis`: 3C分析＋クロス3CでKSF（重要成功要因）を導出し、戦略仮説3本まで立案（`~/.claude/skills/3c-analysis/SKILL.md`）
+### ナギ主管スキル（ナギが起点となって業務遂行するスキル）
+
+**［環境分析・戦略フレームワーク］**
+
 - `pest-analysis`: PEST分析（政治／経済／社会／技術）で外部マクロ環境を整理し、戦略視点を導出（`~/.claude/skills/pest-analysis/SKILL.md`）
+- `3c-analysis`: 3C分析＋クロス3CでKSF（重要成功要因）を導出し、戦略仮説3本まで立案（`~/.claude/skills/3c-analysis/SKILL.md`）
+- `swot-analysis`: SWOT分析＋クロスSWOTで現状把握から戦略立案・KPI設定まで実施（`~/.claude/skills/swot-analysis/SKILL.md`）
 - `five-forces-analysis`: ポーター5フォース分析で業界の競争環境を評価し、最大ネック要因への対応戦略を立案（`~/.claude/skills/five-forces-analysis/SKILL.md`）
 - `vrio-analysis`: VRIO分析（価値／希少性／模倣困難性／組織）で自社リソースの競争優位レベルを判定し、強化戦略を特定（`~/.claude/skills/vrio-analysis/SKILL.md`）
-- `stp-analysis`: STP分析（セグメンテーション／ターゲティング／ポジショニング）で市場の切り口・狙う市場・立ち位置を一気通貫で設計し、差別化メッセージを導出（`~/.claude/skills/stp-analysis/SKILL.md`）
-- `value-proposition`: バリュープロポジションキャンバスで顧客のゲイン／ペインと自社のサービス／ゲインクリエイター／ペインリリーバーをマッチさせ、差別化された価値提案を1文で言語化（`~/.claude/skills/value-proposition/SKILL.md`）
+- `stp-analysis`: STP分析（セグメンテーション／ターゲティング／ポジショニング）で市場戦略・差別化メッセージを設計（`~/.claude/skills/stp-analysis/SKILL.md`）
+
+**［事業計画・成長戦略］**
+
+- `business-model-canvas`: BMC9要素で事業全体像を1枚に可視化し、要素間の整合性をチェック（`~/.claude/skills/business-model-canvas/SKILL.md`）
+- `medium-term-business-plan`: 中長期事業計画（5〜10年）6ステップ策定（`~/.claude/skills/medium-term-business-plan/SKILL.md`）
+- `growth-phase-strategy`: 企業成長フェーズ別経営・組織戦略（4フェーズ×経営課題変遷×組織体制進化×権限移譲段階）（`~/.claude/skills/growth-phase-strategy/SKILL.md`）
+- `pmf-journey`: フィットジャーニー5段階（PSF→Product-Solution→PMF→GTM→Scale）で現フェーズ診断（`~/.claude/skills/pmf-journey/SKILL.md`）
+- `as-is-to-be-gap-solution`: As-Is／To-Be／Gap／Solution の4ボックス5ステップ（`~/.claude/skills/as-is-to-be-gap-solution/SKILL.md`）
+- `product-life-cycle`: PLC4段階判定＋戦略導出＋キャズム連携（`~/.claude/skills/product-life-cycle/SKILL.md`）
+- `ma-strategy-basics`: M&A戦略基礎（2分類×5目的×4リスク×5手法×6プロセス×5成功ポイント）（`~/.claude/skills/ma-strategy-basics/SKILL.md`）
+
+**［ターゲット・顧客理解］**
+
+- `persona-design`: BtoB/BtoC両モード対応のペルソナ設計5ステップ（並列主管：レン）（`~/.claude/skills/persona-design/SKILL.md`）
+- `value-proposition`: バリュープロポジションキャンバスで差別化価値を1文化（`~/.claude/skills/value-proposition/SKILL.md`）
 - `innovator-theory`: ロジャースのイノベーター理論5層＋キャズム16%でフェーズ判定し、層別プロモ戦略＋市場シェアKPIを設計（`~/.claude/skills/innovator-theory/SKILL.md`）
-- `pmf-journey`: フィットジャーニー5段階（PSF→Product-Solution→PMF→GTM→Scale）で現フィット段階を数値指標で診断し、次にやるべきアクションを特定（`~/.claude/skills/pmf-journey/SKILL.md`）
-- `business-model-canvas`: ビジネスモデルキャンバス9要素（顧客／課題／UVP／ソリューション／チャネル／収益／KPI／コスト／優位性）で事業全体像を1枚に可視化し、要素間の整合性をチェック（`~/.claude/skills/business-model-canvas/SKILL.md`）
-- `logical-thinking`: ロジカルシンキングの4フレームワーク（MECE／WHY型／ピラミッド構造／SO型）と5実践ステップで複雑な問題を分解し論理的に結論を導く（`~/.claude/skills/logical-thinking/SKILL.md`）
-- `critical-thinking`: クリティカルシンキングの4基本ステップ＋3STEP実践（問いと答えのセット／本当に？だから何？／3視点ずらし）で前提・根拠・結論の妥当性を批判的に検証（`~/.claude/skills/critical-thinking/SKILL.md`）
-- `lateral-thinking`: ラテラルシンキング（水平思考）の3特徴×3基本アプローチ×具体3手法（逆転発想／強制結合法／SCAMPER 7視点）×4実践ステップで革新的アイデアと差別化を生み出す（`~/.claude/skills/lateral-thinking/SKILL.md`）
-- `ooda-loop`: OODAループ（Observe→Orient→Decide→Act）の意思決定プロセス設計＋OODA×PDCA階層運営＋OODA適合性診断で、変化が激しい市場での迅速判断体制を構築（`~/.claude/skills/ooda-loop/SKILL.md`）
-- `mvv-design`: Mission/Vision/Value 3要素を5ステッププロセス（現状分析→ミッション定義→ビジョン策定→バリュー設定→社内外共有）で策定し、組織の方向性を明確化（`~/.claude/skills/mvv-design/SKILL.md`）
-- `branding`: ブランディング体系設計（マーケとの違い9観点／アーカーモデル5要素／ケラーCBBE／4段階メリット／5強化方法／2フレーム＝ブランディング・サーベイ＋ブランド・アイデンティティ・プリズム）（`~/.claude/skills/branding/SKILL.md`）
-- `hearing-questioning-skills`: ヒアリング力・質問力（聞く/聴くの違い／良いヒアリング3要素／質問4種＋フレーミング2型／3つの間／見込顧客10項目＋N=1インタビュー10項目テンプレ）（`~/.claude/skills/hearing-questioning-skills/SKILL.md`）
-- `presentation-skill`: プレゼンテーション能力体系（4要素×3パート構成×PREP法 Point-Reason-Example-Point×能力向上4方法×自己評価5観点）（`~/.claude/skills/presentation-skill/SKILL.md`）
-- `client-expectation-management`: 対クライアント期待値調整（4目的×5プロセス：ニーズ理解→現実的提案→明確な合意形成→定期コミュ→納品後フォロー×必要5スキル×4注意点×3実践手法）（`~/.claude/skills/client-expectation-management/SKILL.md`）
-- `teaching-coaching-leading`: ティーチング・コーチング・リーディングの3つの指導アプローチ使い分け（特徴・必要スキル・適用例の比較＋3パターン答え分け）（`~/.claude/skills/teaching-coaching-leading/SKILL.md`）
-- `katz-three-skill-approach`: カッツモデル（Robert L. Katz提唱）3スキル×3階層で役職別必要スキル比重を診断し、キャリア成長戦略を導出（`~/.claude/skills/katz-three-skill-approach/SKILL.md`）
-- `schedule-management`: スケジュール管理（3目的×5プロセス：目標設定→WBS→Eisenhowerマトリクス→スケジュール作成→進捗管理×3手法：ガント／CPM／アジャイル×4ツール×3課題と解決策）（`~/.claude/skills/schedule-management/SKILL.md`）
-- `organization-planning`: 会社・組織レベルの組織計画（3目的×3利用シーン×3組織構造：階層型／マトリクス型／フラット型×4Q組織ロードマップ×バイネーム組織図×プロジェクト体制図との連携）（`~/.claude/skills/organization-planning/SKILL.md`）
-- `roles-responsibilities`: 組織における役割と責任範囲明確化（3目的×4要素：役割／責任範囲／権限／報告ライン×6ステップ：目標設定→洗い出し→責任定義→権限・報告→文書化→見直し×6列アウトプット表）（`~/.claude/skills/roles-responsibilities/SKILL.md`）
-- `evaluation-system-design`: 評価制度の策定（5目的×7ステップ×5設計ポイント×4よくある課題×3軸グランドデザイン：目標達成評価50%／らしさ評価50%／360評価参考値×100点詳細評価表＋半期評価フロー）（`~/.claude/skills/evaluation-system-design/SKILL.md`）
-- `recruitment-strategy`: 採用戦略・採用ガイドラインの策定（3重要ポイント×4主要素：Goal/Target/Channel/Standard×6媒体別の傾向×4ステップ策定フロー×コンピテンシー7項目×インターン経由採用フロー）（`~/.claude/skills/recruitment-strategy/SKILL.md`）
-- `salary-range-design`: 給与レンジの決定（3目的×3重要理由×3層構成：最高／中央値ミッドポイント／最低×6プロセス：市場調査→職務評価→内部バランス→レンジ幅→予算調整→定期見直し×4課題分析STEP）（`~/.claude/skills/salary-range-design/SKILL.md`）
-- `career-roadmap-development`: キャリアロードマップと育成計画（3役割×3キャリアパス：管理職／専門職／新規事業×5階層ロードマップ×3年間育成計画×アサインメント設計：人のレベル×プロジェクトのレベル5段階）（`~/.claude/skills/career-roadmap-development/SKILL.md`）
-- `financial-statements-fundamentals`: 財務三表（BS/PL/CF）の基本構造×財務諸表の連携×資金繰り8チェックリスト×財務体質改善3要素（売上拡大／限界利益率向上／固定費削減）×労働生産性・労働分配率（`~/.claude/skills/financial-statements-fundamentals/SKILL.md`）
-- `ma-strategy-basics`: M&A戦略基礎（2分類：合併／買収×5目的×4リスク×5手法：水平統合／垂直統合／コングロマリット／MBO／LBO×6プロセス：戦略立案→ターゲット選定→意向表明→DD→契約→PMI×4検討状態×5成功ポイント）（`~/.claude/skills/ma-strategy-basics/SKILL.md`）
-- `financing-strategy`: 資金調達戦略（デットファイナンス3メリット3デメリット×中小企業の銀行交渉順序：政策金融公庫・商工中金・信用金庫→地銀・メガバンク×エクイティ3メリット3デメリット×6比較軸×組み合わせ3活用例×4課題分析STEP）（`~/.claude/skills/financing-strategy/SKILL.md`）
-- `growth-phase-strategy`: 企業成長フェーズ別経営・組織戦略（4フェーズ：初期1億未満／成長1〜10億／拡大10〜50億／成熟50〜100億×経営課題変遷×組織体制進化×権限移譲段階×役職変化×成長フェーズ別6課題×成長フェーズを乗り越える7ポイント）（`~/.claude/skills/growth-phase-strategy/SKILL.md`）
-- `yony-sales-simulation`: YonY（前年同期比）売上シミュレーション（4洞察×5設計ポイント×3要素：固定費／変動費／損益分岐点×6必要要素×3シナリオ：楽観／現実／悲観×Before/After×3STEP実践課題）（`~/.claude/skills/yony-sales-simulation/SKILL.md`）
-- `meeting-cadence-design`: 会議体の定義・設計・運営（4目的×5種類：意思決定型／情報共有型／課題解決型／戦略策定型／アドホック型×設計5要素×運営4ポイント×4運営メリット×9列会議体一覧テンプレ×4課題分析STEP）（`~/.claude/skills/meeting-cadence-design/SKILL.md`）
+
+**［マーケティング基礎フレームワーク］**
+
+- `marketing-evolution-5-0`: マーケ進化論1.0〜5.0＋AI時代新要素（並列主管：レン）（`~/.claude/skills/marketing-evolution-5-0/SKILL.md`）
+- `marketing-mix-4p4c`: 4P×4C対応マトリクス＋KGI/KPI設計（並列主管：レン）（`~/.claude/skills/marketing-mix-4p4c/SKILL.md`）
+- `product-strategy-design`: Product戦略の重点特定（コア／形態／付随機能）（並列主管：レン）（`~/.claude/skills/product-strategy-design/SKILL.md`）
+- `pricing-strategy`: 価格決定3要素＋スキミング/ペネトレ＋PSM分析4質問（並列主管：レン）（`~/.claude/skills/pricing-strategy/SKILL.md`）
+- `kgi-kpi-kai-design`: KGI/KPI/KAI 3階層設計＋KPIツリー＋月次トラッキング（並列主管：レン）（`~/.claude/skills/kgi-kpi-kai-design/SKILL.md`）
+- `market-size-tam-sam-som`: TAM/SAM/SOM 3階層市場規模予測（並列主管：ミオ）（`~/.claude/skills/market-size-tam-sam-som/SKILL.md`）
+
+**［コンテンツ／PR／コピー］**
+
+- `branding`: ブランディング体系設計（アーカーモデル／CBBE／ブランドピラミッド）（並列主管：レン）（`~/.claude/skills/branding/SKILL.md`）
+- `mvv-design`: Mission/Vision/Value 3要素5ステップ策定（`~/.claude/skills/mvv-design/SKILL.md`）
+
+**［組織・人事・評価］**
+
+- `organization-planning`: 3組織構造×4Q組織ロードマップ×バイネーム組織図（`~/.claude/skills/organization-planning/SKILL.md`）
+- `roles-responsibilities`: 役割／責任／権限／報告ライン×6ステップ×6列出力表（`~/.claude/skills/roles-responsibilities/SKILL.md`）
+- `evaluation-system-design`: 評価制度（5目的×7ステップ×3軸グランドデザイン）（`~/.claude/skills/evaluation-system-design/SKILL.md`）
+- `salary-range-design`: 給与レンジ設計（3層構成×6プロセス）（`~/.claude/skills/salary-range-design/SKILL.md`）
+- `recruitment-strategy`: 採用戦略（3重要ポイント×4主要素×6媒体別×4ステップ×コンピテンシー7項目）（`~/.claude/skills/recruitment-strategy/SKILL.md`）
+- `career-roadmap-development`: キャリアロードマップ＋育成計画（3キャリアパス×5階層ロードマップ×3年間育成計画）（`~/.claude/skills/career-roadmap-development/SKILL.md`）
+- `onboarding-design`: 新入社員オンボーディング 3段階×3要素（`~/.claude/skills/onboarding-design/SKILL.md`）
+- `katz-three-skill-approach`: Katz 3スキル×3階層診断＋成長戦略3要素（`~/.claude/skills/katz-three-skill-approach/SKILL.md`）
+- `meeting-cadence-design`: 会議体4目的×5種類×設計5要素×9列一覧テンプレ（`~/.claude/skills/meeting-cadence-design/SKILL.md`）
+
+**［目標管理・思考フレームワーク］**
+
+- `smart-goal-setting`: SMART 5要素で目標設計・点検（`~/.claude/skills/smart-goal-setting/SKILL.md`）
+- `goal-hierarchy-design`: 事業目標→年間→四半期→月間→個人の4階層分解（`~/.claude/skills/goal-hierarchy-design/SKILL.md`）
+- `goal-execution-system`: モニタリング3要素＋FBループ3要素で目標達成仕組み化（`~/.claude/skills/goal-execution-system/SKILL.md`）
+- `pdca-cycle`: PDCA各フェーズと切替判断基準で継続改善（`~/.claude/skills/pdca-cycle/SKILL.md`）
+- `ooda-loop`: OODA 4ステップ＋OODA×PDCA階層運営（`~/.claude/skills/ooda-loop/SKILL.md`）
+- `decision-making-framework`: 意思決定3手法（5プロセス／重要度×緊急度／スコアリング）（`~/.claude/skills/decision-making-framework/SKILL.md`）
+- `logical-thinking`: 4フレーム（MECE／WHY型／ピラミッド／SO型）×5ステップ（`~/.claude/skills/logical-thinking/SKILL.md`）
+- `critical-thinking`: 4基本ステップ＋3STEP実践で批判的検証（`~/.claude/skills/critical-thinking/SKILL.md`）
+- `lateral-thinking`: 3特徴×3アプローチ×具体3手法（逆転／強制結合／SCAMPER）（`~/.claude/skills/lateral-thinking/SKILL.md`）
+- `pyramid-structure`: ロジックツリー3種類×2考え方の構造化（`~/.claude/skills/pyramid-structure/SKILL.md`）
+
+**［財務・資金調達］**
+
+- `financial-statements-fundamentals`: BS/PL/CF基本構造＋資金繰り8チェック＋労働分配率（`~/.claude/skills/financial-statements-fundamentals/SKILL.md`）
+- `financing-strategy`: デット3メリ×銀行交渉順序×エクイティ3メリ×6比較軸（`~/.claude/skills/financing-strategy/SKILL.md`）
+- `yony-sales-simulation`: 4洞察×5設計ポイント×3シナリオ売上シミュレーション（`~/.claude/skills/yony-sales-simulation/SKILL.md`）
+
+### 副次参照スキル（読み取り・整合確認・業務協働用）
+
+- `customer-journey`: 5フェーズ×複数チャネルのCJM作成5ステップ（主管：レン）（`~/.claude/skills/customer-journey/SKILL.md`）
+- `loss-analysis-kbf-ksf`: 受注失注分析・KBF/KSF特定（主管：タク）（`~/.claude/skills/loss-analysis-kbf-ksf/SKILL.md`）
+- `promotion-strategy`: 5プロモ手段×AIDMA/AISAS/ULSSAS×媒体マトリクス（主管：レン）（`~/.claude/skills/promotion-strategy/SKILL.md`）
+- `funnel-design`: 3タイプファネル×5ステップ＋層×施策マトリクス（主管：レン）（`~/.claude/skills/funnel-design/SKILL.md`）
+- `marketing-sales-workflow`: マーケ営業フロー策定5ステップ（主管：レン）（`~/.claude/skills/marketing-sales-workflow/SKILL.md`）
+- `policy-design-prioritization`: 施策設計と優先順位付け5ステップ（ICE／緊急度×重要度）（主管：レン）（`~/.claude/skills/policy-design-prioritization/SKILL.md`）
+- `lead-definition-mql-sql`: KGI→KPIツリー→ファネル×組織×CPA逆算＋BANT＋MQL/SQL基準（主管：レン）（`~/.claude/skills/lead-definition-mql-sql/SKILL.md`）
+- `lead-nurturing`: ナーチャリング5原則×5手法×4ステップ（主管：レン）（`~/.claude/skills/lead-nurturing/SKILL.md`）
+- `market-competitor-research`: 市場調査（定性/定量）＋競合調査（5C観点）（主管：ミオ／並列主管：ナギ）（`~/.claude/skills/market-competitor-research/SKILL.md`）
+- `competitive-absence-audit`: 「競合がいない」を検証するブルーオーシャン監査スキル（主管：アスカ／副次：ナギ・ミオ・リク）（`~/.claude/skills/competitive-absence-audit/SKILL.md`）
+- `hearing-questioning-skills`: ヒアリング/質問技法（聞く/聴く×4種質問×初回商談10項目）（主管：タク）（`~/.claude/skills/hearing-questioning-skills/SKILL.md`）
+- `presentation-skill`: プレゼン4要素×3パート×PREP×能力向上4方法（主管：ソラ）（`~/.claude/skills/presentation-skill/SKILL.md`）
+- `client-expectation-management`: 期待値調整（4目的×5プロセス×5スキル）（主管：タク）（`~/.claude/skills/client-expectation-management/SKILL.md`）
+- `schedule-management`: スケジュール管理（3目的×5プロセス×3手法）（主管：アスカ）（`~/.claude/skills/schedule-management/SKILL.md`）
+- `teaching-coaching-leading`: 3アプローチ（ティーチング/コーチング/リーディング）使い分け（主管：アスカ）（`~/.claude/skills/teaching-coaching-leading/SKILL.md`）
+- `ms-matrix-talent-grid`: Mind × Skill Matrix で人材4象限分類（主管：アスカ）（`~/.claude/skills/ms-matrix-talent-grid/SKILL.md`）
+
+> **参照**: chisoku 由来スキルの主管マッピング正本は `memory/chisoku-skill-index.md` を参照

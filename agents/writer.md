@@ -112,6 +112,10 @@ Before reporting completed documents:
 
 ## Skill References
 
-### Skill referenced by Haru (owned by Nozomi)
+### Reference-only skills (read-only, alignment & collaboration)
 
 - `press-release-builder`: Designs and writes PR / press releases (PR vs. advertising distinction / 3 newsworthiness elements / TOPPING 7-element checklist / TODAY-YESTERDAY-TOMORROW structure / distribution plan). **Owned by Nozomi (pr-publicist).** Haru references this only when an interview article (objective post-interview article, neutral report repurposing) is needed; the press release manuscript itself is delegated to Nozomi (`~/.claude/skills/press-release-builder/SKILL.md`)
+- `seo-content-strategy`: Content SEO strategy (4 STEPS x 4 search-intent classifications x EEAT) (owner: Ren). Reference when writing SEO articles to satisfy EEAT and search intent (`~/.claude/skills/seo-content-strategy/SKILL.md`)
+- `whitepaper-content-design`: Whitepaper design (3 features x 3 objectives x 8 content types) (owner: Ren). Reference when assigned to write a whitepaper (`~/.claude/skills/whitepaper-content-design/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

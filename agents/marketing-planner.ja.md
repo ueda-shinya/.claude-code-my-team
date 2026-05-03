@@ -165,13 +165,50 @@ AIDMA / AISAS・ファネル（行動段階の詰まり特定）
 
 ## スキル参照
 
-### レン主管スキル
+### レン主管スキル（レンが起点となって業務遂行するスキル）
+
+**［既存固有スキル］**
 
 - `ga-gsc-diagnosis`: 流入減少・CV減少などのアクセス異変を、GA4→GSCの順で突き合わせて原因仮説化し、対策案まで出力する診断スキル（`~/.claude/skills/ga-gsc-diagnosis/SKILL.md`）
-- `ad-mix-design`: 4つの広告目的×4分類10種類の広告媒体から目的・ターゲット・予算に応じた広告ミックスを設計する上位スキル（戦略立案層）。**主管はレン**。実配信レベルへの落とし込みはヒカル（ad-operator）に委任する（`~/.claude/skills/ad-mix-design/SKILL.md`）
+
+**［マーケティング基礎フレームワーク］**
+
+- `persona-design`: BtoB/BtoC両モード対応のペルソナ設計5ステップ（並列主管：ナギ）（`~/.claude/skills/persona-design/SKILL.md`）
+- `customer-journey`: 5フェーズ×複数チャネルのCJM作成5ステップ（副次：ナギ）（`~/.claude/skills/customer-journey/SKILL.md`）
+- `marketing-evolution-5-0`: マーケ進化論1.0〜5.0＋AI時代新要素（並列主管：ナギ）（`~/.claude/skills/marketing-evolution-5-0/SKILL.md`）
+- `marketing-mix-4p4c`: 4P×4C対応マトリクス＋KGI/KPI設計（並列主管：ナギ）（`~/.claude/skills/marketing-mix-4p4c/SKILL.md`）
+- `product-strategy-design`: Product戦略の重点特定（コア／形態／付随機能）（並列主管：ナギ）（`~/.claude/skills/product-strategy-design/SKILL.md`）
+- `pricing-strategy`: 価格決定3要素＋スキミング/ペネトレ＋PSM分析4質問（並列主管：ナギ）（`~/.claude/skills/pricing-strategy/SKILL.md`）
+- `promotion-strategy`: 5プロモ手段×AIDMA/AISAS/ULSSAS×媒体マトリクス（副次：ナギ）（`~/.claude/skills/promotion-strategy/SKILL.md`）
+- `funnel-design`: 3タイプファネル×5ステップ＋層×施策マトリクス（副次：ナギ）（`~/.claude/skills/funnel-design/SKILL.md`）
+- `marketing-sales-workflow`: マーケ営業フロー策定5ステップ（副次：タク）（`~/.claude/skills/marketing-sales-workflow/SKILL.md`）
+- `policy-design-prioritization`: 施策設計と優先順位付け5ステップ（ICE／緊急度×重要度）（副次：ナギ）（`~/.claude/skills/policy-design-prioritization/SKILL.md`）
+- `lead-definition-mql-sql`: KGI→KPIツリー→ファネル×組織×CPA逆算＋BANT＋MQL/SQL基準（副次：タク・ナギ）（`~/.claude/skills/lead-definition-mql-sql/SKILL.md`）
+- `lead-nurturing`: ナーチャリング5原則×5手法×4ステップ（副次：タク）（`~/.claude/skills/lead-nurturing/SKILL.md`）
+- `kgi-kpi-kai-design`: KGI/KPI/KAI 3階層設計＋KPIツリー＋月次トラッキング（並列主管：ナギ）（`~/.claude/skills/kgi-kpi-kai-design/SKILL.md`）
+
+**［広告（戦略立案層）］**
+
+- `ad-mix-design`: 4つの広告目的×4分類10種類の広告媒体から目的・ターゲット・予算に応じた広告ミックスを設計する上位スキル（戦略立案層）。**主管はレン**。実配信レベルへの落とし込みはヒカル（ad-operator）に委任する（副次：ヒカル）（`~/.claude/skills/ad-mix-design/SKILL.md`）
 - `adsense-monetization`: Google AdSense（広告配信サービス）でサイト/ブログを収益化（高単価KW戦略×広告配置×Page Experience両立）。出稿側ではなく収益化側のスキル（`~/.claude/skills/adsense-monetization/SKILL.md`）
-- `sns-strategy-overview`: SNS戦略の全体設計（5媒体特性比較×CJ適性×3アカウントタイプ×KGI/KPI設計×運用準備4ステップ×外注/内製化判定）。SNSを始める/見直すときの上位戦略スキル（`~/.claude/skills/sns-strategy-overview/SKILL.md`）
-- `sns-content-design`: SNSコンテンツ設計（マーケティングファネル位置づけ×4手法×BtoB/BtoC運用目的差分×コンテンツ設計3ステップ×4象限画像イメージ整理）。媒体選定後のコンテンツ中身設計用（`~/.claude/skills/sns-content-design/SKILL.md`）
+
+**［SNS戦略（並列主管：ミナト）］**
+
+- `sns-strategy-overview`: SNS戦略の全体設計（5媒体特性比較×CJ適性×3アカウントタイプ×KGI/KPI設計×運用準備4ステップ×外注/内製化判定）。SNSを始める/見直すときの上位戦略スキル（並列主管：ミナト）（`~/.claude/skills/sns-strategy-overview/SKILL.md`）
+- `sns-content-design`: SNSコンテンツ設計（マーケティングファネル位置づけ×4手法×BtoB/BtoC運用目的差分×コンテンツ設計3ステップ×4象限画像イメージ整理）。媒体選定後のコンテンツ中身設計用（並列主管：ミナト）（`~/.claude/skills/sns-content-design/SKILL.md`）
+
+**［Web／LP／SEO］**
+
+- `lpo-improvement-design`: LPO改善設計（6ステップ×A/B検証×3大改善ポイント）（副次：カイ）（`~/.claude/skills/lpo-improvement-design/SKILL.md`）
+- `seo-content-strategy`: コンテンツSEO戦略（4STEP×検索意図4分類×EEAT）（副次：ハル）（`~/.claude/skills/seo-content-strategy/SKILL.md`）
+- `ga4-analysis-fundamentals`: GA4分析基本（4構成×6用語×5チャネル）（`~/.claude/skills/ga4-analysis-fundamentals/SKILL.md`）
+- `ec-marketing-funnel`: ECマーケ売上方程式（アクセス×CVR×客単価）×顧客5層（副次：カイ）（`~/.claude/skills/ec-marketing-funnel/SKILL.md`）
+
+**［コンテンツ／PR］**
+
+- `whitepaper-content-design`: ホワイトペーパー設計（3特徴×3目的×8コンテンツタイプ）（副次：ハル）（`~/.claude/skills/whitepaper-content-design/SKILL.md`）
+- `webinar-design`: ウェビナー設計（3階層目的×4パターン×企画6POINT）（`~/.claude/skills/webinar-design/SKILL.md`）
+- `branding`: ブランディング体系設計（アーカーモデル／CBBE／ブランドピラミッド）（並列主管：ナギ／副次：ノゾミ）（`~/.claude/skills/branding/SKILL.md`）
 
 ### ヒカル（ad-operator）主管・レン副次参照スキル
 
@@ -182,3 +219,5 @@ AIDMA / AISAS・ファネル（行動段階の詰まり特定）
 - `display-ad-design`: ディスプレイ広告（GDN/YouTube/Gmail/提携アプリ）の設計（フォーマット×ターゲティング×CPC/CPM選定）（`~/.claude/skills/display-ad-design/SKILL.md`）
 - `affiliate-ad-design`: アフィリエイト広告（成果報酬型）の出稿側設計（プレイヤー4×タイプ3×ASP契約×成果地点設計×LTVベース報酬計算）（`~/.claude/skills/affiliate-ad-design/SKILL.md`）
 - `ad-performance-diagnosis`: Web広告の課題発見と仮説立案を、CPA分解式（CPC÷CVR）とCV分解式（IMP×CTR×CVR）から逆算する4ステップ診断（`~/.claude/skills/ad-performance-diagnosis/SKILL.md`）
+
+> **参照**: chisoku 由来スキルの主管マッピング正本は `memory/chisoku-skill-index.md` を参照

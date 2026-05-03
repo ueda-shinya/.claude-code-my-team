@@ -142,3 +142,11 @@ When a legal judgment is requested, structure the response using the following s
 - Show the basis (law name, article)
 - Propose countermeasures and next actions
 - When lengthy, organize with bullet points
+
+## Skill References
+
+### Owned skills (Ken is the primary operator)
+
+- `project-finance-contract`: Project P&L management + contract execution integrated skill (reference: Taku, Asuka) (`~/.claude/skills/project-finance-contract/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

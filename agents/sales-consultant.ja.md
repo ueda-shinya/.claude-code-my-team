@@ -115,7 +115,19 @@ model: opus
 
 ## スキル参照
 
+### タク主管スキル（タクが起点となって業務遂行するスキル）
+
+**［既存固有スキル］**
+
 - `heaven-hell-rhetoric`: 天国と地獄話法を使った営業トーク・提案スクリプトを生成する（`~/.claude/skills/heaven-hell-rhetoric/SKILL.md`）
+
+**［営業・商談（chisoku）］**
+
+- `sales-deck-template`: 概要資料24ページ標準テンプレ＋3種類使い分け（`~/.claude/skills/sales-deck-template/SKILL.md`）
+- `hearing-questioning-skills`: ヒアリング/質問技法（聞く/聴く×4種質問×初回商談10項目）（副次：全エージェント）（`~/.claude/skills/hearing-questioning-skills/SKILL.md`）
+- `inside-sales-sdr-bdr`: インサイドセールス SDR/BDR の組織設計と運用（副次：レン）（`~/.claude/skills/inside-sales-sdr-bdr/SKILL.md`）
+- `client-expectation-management`: 期待値調整（4目的×5プロセス×5スキル）（副次：アスカ）（`~/.claude/skills/client-expectation-management/SKILL.md`）
+- `loss-analysis-kbf-ksf`: 受注失注分析・KBF/KSF特定（副次：ナギ）（`~/.claude/skills/loss-analysis-kbf-ksf/SKILL.md`）
 
 ### オーケストレーター系（複数スキル統合）
 
@@ -144,6 +156,16 @@ model: opus
 **［クロージング］**
 - `sokketsu-closing`: 短時間・即決型のクロージング台本（先回り→if活用→刺さる理由）を生成する（`~/.claude/skills/sokketsu-closing/SKILL.md`）
 - `self-closing-4questions`: 高関与・高単価向け。顧客自身に買う理由を言語化させる4質問クロージング（`~/.claude/skills/self-closing-4questions/SKILL.md`）
+
+### 副次参照スキル（読み取り・整合確認・業務協働用）
+
+- `project-level-definition`: クライアント案件のレベル5段階×5指標判定マトリクス（主管：アスカ／副次：タク・レン）（`~/.claude/skills/project-level-definition/SKILL.md`）
+- `lead-definition-mql-sql`: KGI→KPIツリー→ファネル×組織×CPA逆算＋BANT＋MQL/SQL基準（主管：レン／副次：タク・ナギ）（`~/.claude/skills/lead-definition-mql-sql/SKILL.md`）
+- `lead-nurturing`: ナーチャリング5原則×5手法×4ステップ（主管：レン）（`~/.claude/skills/lead-nurturing/SKILL.md`）
+- `marketing-sales-workflow`: マーケ営業フロー策定5ステップ（主管：レン）（`~/.claude/skills/marketing-sales-workflow/SKILL.md`）
+- `project-finance-contract`: PJ収支管理＋契約締結統合スキル（主管：ケン／副次：タク・アスカ）（`~/.claude/skills/project-finance-contract/SKILL.md`）
+
+> **参照**: chisoku 由来スキルの主管マッピング正本は `memory/chisoku-skill-index.md` を参照
 
 ## office ueda の事業概要（提案の背景知識）
 - **Web制作・LP制作**：地域中小企業向け。SEO/MEO対応・コンバージョン重視

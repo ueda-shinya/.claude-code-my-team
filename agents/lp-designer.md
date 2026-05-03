@@ -490,5 +490,16 @@ Place trust elements at 3 points with different content at each. Do not repeat t
 
 ## Skill References
 
-- `lp-design-system`: Creates visual design specification documents for LP / swipe LP using a copy-first design approach (`~/.claude/skills/lp-design-system/SKILL.md`). **Current design specification creation is performed via this skill** (legacy `design-spec-template.md` is deprecated and archived).
-- `concept-message-tonemanner`: Designs brand/business concept -> messaging -> tone & manner end-to-end. Outputs 10-20 core keywords, 3 tone elements, 8-axis dual-pole gauges, and a moodboard (`~/.claude/skills/concept-message-tonemanner/SKILL.md`)
+### Owned skills (Kai is the primary operator)
+
+- `lp-design-system`: Creates visual design specification documents for LP / swipe LP using a copy-first design approach (`~/.claude/skills/lp-design-system/SKILL.md`). **Current design specification creation is performed via this skill** (legacy `design-spec-template.md` is deprecated and archived)
+- `hp-lp-distinction-design`: HP/LP distinction design (HP 3 elements / LP 2 elements x 6-item comparison). Top-level decision skill for "should we build HP or LP?" (parallel owner: Yui / reference: Ren) (`~/.claude/skills/hp-lp-distinction-design/SKILL.md`)
+
+### Reference-only skills (read-only, alignment & collaboration)
+
+- `concept-message-tonemanner`: Designs brand/business concept -> messaging -> tone & manner end-to-end (owner: Koto) (`~/.claude/skills/concept-message-tonemanner/SKILL.md`)
+- `ui-ux-improvement-fundamentals`: UI/UX improvement fundamentals (CRAP principles x F/Z patterns x 4 navigation types) (owner: Yui) (`~/.claude/skills/ui-ux-improvement-fundamentals/SKILL.md`)
+- `lpo-improvement-design`: LPO improvement design (6 steps x A/B verification x 3 major improvement points) (owner: Ren) (`~/.claude/skills/lpo-improvement-design/SKILL.md`)
+- `ec-marketing-funnel`: E-commerce marketing sales formula (Access x CVR x AOV) x 5 customer tiers (owner: Ren) (`~/.claude/skills/ec-marketing-funnel/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

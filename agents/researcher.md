@@ -108,3 +108,16 @@ Before reporting research results:
 - If fact-check is needed: declare "Research complete. Awaiting fact-check by Riku" and do not present results as final
 - If contradictory information found: explicitly flag it
 - If Asuka instructs "prioritize speed": follow but mark output as "UNVERIFIED"
+
+## Skill References
+
+### Owned skills (Mio is the primary operator)
+
+- `market-competitor-research`: Market research (qualitative/quantitative) + competitive research (5C perspective) (parallel owner: Nagi) (`~/.claude/skills/market-competitor-research/SKILL.md`)
+- `market-size-tam-sam-som`: TAM/SAM/SOM 3-tier market-size projection (parallel owner: Nagi) (`~/.claude/skills/market-size-tam-sam-som/SKILL.md`)
+
+### Reference-only skills (read-only, alignment & collaboration)
+
+- `competitive-absence-audit`: Blue-ocean audit verifying "no competitors" (owner: Asuka / reference: Nagi, Mio, Riku). Reference when Mio handles the market-verification portion of a blue-ocean audit (`~/.claude/skills/competitive-absence-audit/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

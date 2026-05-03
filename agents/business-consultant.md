@@ -77,41 +77,95 @@ Framework storage location: `~/.claude/knowledge/business-frameworks/`
 
 ## Skill References
 
-- `smart-goal-setting`: Design and check goals using the 5 SMART elements (`~/.claude/skills/smart-goal-setting/SKILL.md`)
-- `goal-hierarchy-design`: Break down a top-level goal into annual → quarterly → monthly → individual layers (`~/.claude/skills/goal-hierarchy-design/SKILL.md`)
-- `pdca-cycle`: Continuously improve projects and operations through the PDCA cycle (`~/.claude/skills/pdca-cycle/SKILL.md`)
-- `goal-execution-system`: Operationalize goal achievement with a monitoring + feedback loop system (`~/.claude/skills/goal-execution-system/SKILL.md`)
-- `swot-analysis`: Run SWOT analysis + Cross-SWOT to move from current-state assessment to strategy formulation and KPI setting (`~/.claude/skills/swot-analysis/SKILL.md`)
-- `3c-analysis`: Run 3C analysis + Cross-3C to derive KSFs (Key Success Factors) and formulate up to 3 strategic hypotheses (`~/.claude/skills/3c-analysis/SKILL.md`)
-- `pest-analysis`: Use PEST analysis (Political / Economic / Social / Technological) to organize the external macro environment and derive strategic perspectives (`~/.claude/skills/pest-analysis/SKILL.md`)
-- `five-forces-analysis`: Use Porter's Five Forces analysis to evaluate the industry's competitive landscape and design responses to the most critical bottleneck factor (`~/.claude/skills/five-forces-analysis/SKILL.md`)
-- `vrio-analysis`: Use VRIO analysis (Value / Rarity / Imitability / Organization) to assess the competitive advantage level of internal resources and identify reinforcement strategies (`~/.claude/skills/vrio-analysis/SKILL.md`)
-- `stp-analysis`: Use STP analysis (Segmentation / Targeting / Positioning) to design market segments, target market, and positioning end-to-end, and derive a differentiated message (`~/.claude/skills/stp-analysis/SKILL.md`)
-- `value-proposition`: Use the Value Proposition Canvas to match customer Gains/Pains with the company's Products & Services / Gain Creators / Pain Relievers, and articulate a differentiated value proposition in one sentence (`~/.claude/skills/value-proposition/SKILL.md`)
-- `innovator-theory`: Use Rogers' 5-layer Innovator Theory + 16% Chasm to diagnose the current phase, and design layer-specific promotion strategies and market-share KPIs (`~/.claude/skills/innovator-theory/SKILL.md`)
-- `pmf-journey`: Use the 5-stage Fit Journey (PSF → Product-Solution → PMF → GTM → Scale) to diagnose the current fit stage with quantitative indicators and identify the next action to take (`~/.claude/skills/pmf-journey/SKILL.md`)
-- `business-model-canvas`: Use the 9 elements of the Business Model Canvas (Customer / Problem / UVP / Solution / Channels / Revenue / KPI / Cost / Unfair Advantage) to visualize the entire business on one page and check inter-element consistency (`~/.claude/skills/business-model-canvas/SKILL.md`)
-- `logical-thinking`: Decompose complex problems and reach logical conclusions using the 4 frameworks of logical thinking (MECE / WHY-type / Pyramid Structure / SO-type) and 5 practical steps (`~/.claude/skills/logical-thinking/SKILL.md`)
-- `critical-thinking`: Critically verify the validity of premises, evidence, and conclusions using the 4 fundamental steps of critical thinking + 3-STEP practice (Question-Answer Set / Really? & So What? / 3-Perspective Shift) (`~/.claude/skills/critical-thinking/SKILL.md`)
-- `lateral-thinking`: Generate innovative ideas and differentiation through lateral (horizontal) thinking — 3 traits × 3 basic approaches × 3 concrete techniques (Reverse Thinking / Forced Combination / SCAMPER 7 viewpoints) × 4 practical steps (`~/.claude/skills/lateral-thinking/SKILL.md`)
-- `ooda-loop`: Build a rapid decision-making system for fast-changing markets via OODA loop (Observe → Orient → Decide → Act) process design + OODA × PDCA hierarchical operation + OODA suitability diagnosis (`~/.claude/skills/ooda-loop/SKILL.md`)
-- `mvv-design`: Formulate Mission / Vision / Value through a 5-step process (Current-state analysis → Mission definition → Vision formulation → Value setting → Internal & external sharing) to clarify organizational direction (`~/.claude/skills/mvv-design/SKILL.md`)
-- `branding`: Design a branding system using 9 perspectives differentiating it from marketing / Aaker's 5-element model / Keller's CBBE / 4-stage benefits / 5 reinforcement methods / 2 frames (Branding Survey + Brand Identity Prism) (`~/.claude/skills/branding/SKILL.md`)
-- `hearing-questioning-skills`: Hearing & questioning skills (difference between "kiku/聞く" and "kiku/聴く" / 3 elements of good hearing / 4 question types + 2 framing patterns / 3 types of pauses / 10-item prospect interview + 10-item N=1 interview templates) (`~/.claude/skills/hearing-questioning-skills/SKILL.md`)
-- `presentation-skill`: Presentation capability system (4 elements × 3-part structure × PREP method [Point-Reason-Example-Point] × 4 improvement methods × 5 self-evaluation perspectives) (`~/.claude/skills/presentation-skill/SKILL.md`)
-- `client-expectation-management`: Client expectation management (4 objectives × 5 processes: needs understanding → realistic proposal → clear agreement → regular communication → post-delivery follow-up × 5 required skills × 4 cautions × 3 practical methods) (`~/.claude/skills/client-expectation-management/SKILL.md`)
-- `teaching-coaching-leading`: Differentiated use of the 3 instructional approaches — Teaching, Coaching, and Leading (comparison of traits, required skills, application examples + 3-pattern answer differentiation) (`~/.claude/skills/teaching-coaching-leading/SKILL.md`)
-- `katz-three-skill-approach`: Use Katz's model (proposed by Robert L. Katz) — 3 skills × 3 management layers — to diagnose the required skill mix per role and derive a career growth strategy (`~/.claude/skills/katz-three-skill-approach/SKILL.md`)
-- `schedule-management`: Schedule management (3 objectives × 5 processes: goal setting → WBS → Eisenhower Matrix → schedule creation → progress tracking × 3 methods: Gantt / CPM / Agile × 4 tools × 3 challenges and solutions) (`~/.claude/skills/schedule-management/SKILL.md`)
-- `organization-planning`: Company-wide / organization-level organizational planning (3 objectives × 3 use scenarios × 3 organization structures: Hierarchical / Matrix / Flat × Quarterly organization roadmap × Named (by-name) org chart × Linkage with project structure diagrams) (`~/.claude/skills/organization-planning/SKILL.md`)
-- `roles-responsibilities`: Clarification of roles and responsibilities within an organization (3 objectives × 4 elements: Role / Scope of Responsibility / Authority / Reporting Line × 6 steps: goal setting → enumeration → responsibility definition → authority & reporting → documentation → review × 6-column output table) (`~/.claude/skills/roles-responsibilities/SKILL.md`)
-- `evaluation-system-design`: Design of an evaluation system (5 objectives × 7 steps × 5 design points × 4 common challenges × 3-axis grand design: Goal Achievement Evaluation 50% / Character ("rashisa") Evaluation 50% / 360-Evaluation as Reference × 100-point detailed evaluation table + half-year evaluation flow) (`~/.claude/skills/evaluation-system-design/SKILL.md`)
-- `recruitment-strategy`: Recruitment strategy and recruitment guideline formulation (3 key points × 4 main elements: Goal / Target / Channel / Standard × 6-channel-specific tendencies × 4-step formulation flow × 7 competency items × intern-route hiring flow) (`~/.claude/skills/recruitment-strategy/SKILL.md`)
-- `salary-range-design`: Salary range determination (3 objectives × 3 reasons it matters × 3-tier composition: Maximum / Median midpoint / Minimum × 6-process flow: market research → job evaluation → internal balance → range width → budget adjustment → periodic review × 4-STEP issue analysis) (`~/.claude/skills/salary-range-design/SKILL.md`)
-- `career-roadmap-development`: Career roadmap and development planning (3 roles × 3 career paths: Management / Specialist / New Business × 5-tier roadmap × 3-year development plan × Assignment design: person level × project level, 5 stages) (`~/.claude/skills/career-roadmap-development/SKILL.md`)
-- `financial-statements-fundamentals`: Fundamentals of the three financial statements (BS / PL / CF) — basic structure × inter-statement linkage × 8-item cash-flow checklist × 3 elements of financial-health improvement (revenue expansion / contribution-margin uplift / fixed-cost reduction) × labor productivity & labor distribution ratio (`~/.claude/skills/financial-statements-fundamentals/SKILL.md`)
-- `ma-strategy-basics`: M&A strategy fundamentals (2 categories: Merger / Acquisition × 5 objectives × 4 risks × 5 schemes: Horizontal Integration / Vertical Integration / Conglomerate / MBO / LBO × 6 processes: strategy formulation → target selection → letter of intent → due diligence → contract → PMI × 4 examination states × 5 success points) (`~/.claude/skills/ma-strategy-basics/SKILL.md`)
-- `financing-strategy`: Financing strategy (3 merits / 3 demerits of debt finance × bank-negotiation order for SMEs: Japan Finance Corporation & Shoko Chukin & Shinkin → regional banks & megabanks × 3 merits / 3 demerits of equity × 6 comparison axes × 3 combined-use cases × 4-STEP issue analysis) (`~/.claude/skills/financing-strategy/SKILL.md`)
-- `growth-phase-strategy`: Phase-specific management & organizational strategy by company growth stage (4 phases: Initial < ¥100M / Growth ¥100M–¥1B / Expansion ¥1B–¥5B / Maturity ¥5B–¥10B × shifts in management challenges × organizational evolution × delegation stages × role-title transitions × 6 challenges per phase × 7 points to clear each phase) (`~/.claude/skills/growth-phase-strategy/SKILL.md`)
-- `yony-sales-simulation`: YonY (Year-over-Year) sales simulation (4 insights × 5 design points × 3 elements: fixed cost / variable cost / break-even point × 6 required inputs × 3 scenarios: optimistic / realistic / pessimistic × Before/After × 3-STEP practice exercise) (`~/.claude/skills/yony-sales-simulation/SKILL.md`)
-- `meeting-cadence-design`: Definition, design, and operation of meeting cadences (4 objectives × 5 types: decision-making / information-sharing / problem-solving / strategy-formulation / ad-hoc × 5 design elements × 4 operational points × 4 operational benefits × 9-column meeting-list template × 4-STEP issue analysis) (`~/.claude/skills/meeting-cadence-design/SKILL.md`)
+### Owned skills (Nagi is the primary operator)
+
+**[Environment analysis & strategy frameworks]**
+
+- `pest-analysis`: PEST analysis (Politics / Economy / Society / Technology) to organize the macro environment and derive strategic perspectives (`~/.claude/skills/pest-analysis/SKILL.md`)
+- `3c-analysis`: 3C analysis + Cross-3C to derive KSFs (Key Success Factors) and formulate up to 3 strategic hypotheses (`~/.claude/skills/3c-analysis/SKILL.md`)
+- `swot-analysis`: SWOT analysis + Cross-SWOT to move from current-state assessment to strategy formulation and KPI setting (`~/.claude/skills/swot-analysis/SKILL.md`)
+- `five-forces-analysis`: Porter's Five Forces analysis to evaluate the industry's competitive landscape and design responses to the most critical bottleneck factor (`~/.claude/skills/five-forces-analysis/SKILL.md`)
+- `vrio-analysis`: VRIO analysis (Value / Rarity / Imitability / Organization) to assess competitive-advantage level of internal resources and identify reinforcement strategies (`~/.claude/skills/vrio-analysis/SKILL.md`)
+- `stp-analysis`: STP analysis (Segmentation / Targeting / Positioning) to design market strategy and a differentiated message end-to-end (`~/.claude/skills/stp-analysis/SKILL.md`)
+
+**[Business plan & growth strategy]**
+
+- `business-model-canvas`: BMC 9 elements to visualize the entire business on one page and check inter-element consistency (`~/.claude/skills/business-model-canvas/SKILL.md`)
+- `medium-term-business-plan`: Mid-to-long-term business plan (5-10 years), 6-step formulation (`~/.claude/skills/medium-term-business-plan/SKILL.md`)
+- `growth-phase-strategy`: Phase-specific management & organizational strategy by company growth stage (4 phases × shifts in management challenges × organizational evolution × delegation stages) (`~/.claude/skills/growth-phase-strategy/SKILL.md`)
+- `pmf-journey`: 5-stage Fit Journey (PSF → Product-Solution → PMF → GTM → Scale) to diagnose the current phase (`~/.claude/skills/pmf-journey/SKILL.md`)
+- `as-is-to-be-gap-solution`: As-Is / To-Be / Gap / Solution 4-box, 5-step framework (`~/.claude/skills/as-is-to-be-gap-solution/SKILL.md`)
+- `product-life-cycle`: PLC 4-stage diagnosis + strategy derivation + Chasm linkage (`~/.claude/skills/product-life-cycle/SKILL.md`)
+- `ma-strategy-basics`: M&A fundamentals (2 categories × 5 objectives × 4 risks × 5 schemes × 6 processes × 5 success points) (`~/.claude/skills/ma-strategy-basics/SKILL.md`)
+
+**[Target & customer understanding]**
+
+- `persona-design`: Persona design 5 steps supporting both BtoB and BtoC modes (parallel owner: Ren) (`~/.claude/skills/persona-design/SKILL.md`)
+- `value-proposition`: Value Proposition Canvas to articulate a differentiated value in one sentence (`~/.claude/skills/value-proposition/SKILL.md`)
+- `innovator-theory`: Rogers' 5-layer Innovator Theory + 16% Chasm to diagnose phase, design layer-specific promotion strategies and market-share KPIs (`~/.claude/skills/innovator-theory/SKILL.md`)
+
+**[Marketing fundamentals frameworks]**
+
+- `marketing-evolution-5-0`: Marketing evolution 1.0-5.0 + AI-era new elements (parallel owner: Ren) (`~/.claude/skills/marketing-evolution-5-0/SKILL.md`)
+- `marketing-mix-4p4c`: 4P × 4C correspondence matrix + KGI/KPI design (parallel owner: Ren) (`~/.claude/skills/marketing-mix-4p4c/SKILL.md`)
+- `product-strategy-design`: Product strategy focus identification (core / form / augmented features) (parallel owner: Ren) (`~/.claude/skills/product-strategy-design/SKILL.md`)
+- `pricing-strategy`: Pricing 3 elements + Skimming/Penetration + PSM 4-question analysis (parallel owner: Ren) (`~/.claude/skills/pricing-strategy/SKILL.md`)
+- `kgi-kpi-kai-design`: KGI/KPI/KAI 3-tier design + KPI tree + monthly tracking (parallel owner: Ren) (`~/.claude/skills/kgi-kpi-kai-design/SKILL.md`)
+- `market-size-tam-sam-som`: TAM/SAM/SOM 3-tier market-size projection (parallel owner: Mio) (`~/.claude/skills/market-size-tam-sam-som/SKILL.md`)
+
+**[Content / PR / copy]**
+
+- `branding`: Branding system design (Aaker Model / CBBE / Brand Pyramid) (parallel owner: Ren) (`~/.claude/skills/branding/SKILL.md`)
+- `mvv-design`: Mission/Vision/Value 3 elements, 5-step formulation (`~/.claude/skills/mvv-design/SKILL.md`)
+
+**[Organization, HR, evaluation]**
+
+- `organization-planning`: 3 organizational structures × Quarterly organization roadmap × Named (by-name) org chart (`~/.claude/skills/organization-planning/SKILL.md`)
+- `roles-responsibilities`: Role / Responsibility / Authority / Reporting line × 6 steps × 6-column output table (`~/.claude/skills/roles-responsibilities/SKILL.md`)
+- `evaluation-system-design`: Evaluation system (5 objectives × 7 steps × 3-axis grand design) (`~/.claude/skills/evaluation-system-design/SKILL.md`)
+- `salary-range-design`: Salary range design (3-tier composition × 6-process flow) (`~/.claude/skills/salary-range-design/SKILL.md`)
+- `recruitment-strategy`: Recruitment strategy (3 key points × 4 main elements × 6-channel tendencies × 4-step flow × 7 competencies) (`~/.claude/skills/recruitment-strategy/SKILL.md`)
+- `career-roadmap-development`: Career roadmap + development plan (3 career paths × 5-tier roadmap × 3-year development plan) (`~/.claude/skills/career-roadmap-development/SKILL.md`)
+- `onboarding-design`: New-hire onboarding 3 stages × 3 elements (`~/.claude/skills/onboarding-design/SKILL.md`)
+- `katz-three-skill-approach`: Katz model 3 skills × 3 management layers diagnosis + 3-element growth strategy (`~/.claude/skills/katz-three-skill-approach/SKILL.md`)
+- `meeting-cadence-design`: Meeting cadence 4 objectives × 5 types × 5 design elements × 9-column meeting-list template (`~/.claude/skills/meeting-cadence-design/SKILL.md`)
+
+**[Goal management & thinking frameworks]**
+
+- `smart-goal-setting`: SMART 5 elements for goal design / inspection (`~/.claude/skills/smart-goal-setting/SKILL.md`)
+- `goal-hierarchy-design`: Annual → quarterly → monthly → individual 4-tier breakdown of business goals (`~/.claude/skills/goal-hierarchy-design/SKILL.md`)
+- `goal-execution-system`: 3 monitoring elements + 3 feedback-loop elements to operationalize goal achievement (`~/.claude/skills/goal-execution-system/SKILL.md`)
+- `pdca-cycle`: PDCA phase actions and phase-switch judgment criteria for continuous improvement (`~/.claude/skills/pdca-cycle/SKILL.md`)
+- `ooda-loop`: OODA 4 steps + OODA × PDCA hierarchical operation (`~/.claude/skills/ooda-loop/SKILL.md`)
+- `decision-making-framework`: 3 decision-making methods (5-process / Importance × Urgency / Scoring) (`~/.claude/skills/decision-making-framework/SKILL.md`)
+- `logical-thinking`: 4 frameworks (MECE / WHY-type / Pyramid / SO-type) × 5 practical steps (`~/.claude/skills/logical-thinking/SKILL.md`)
+- `critical-thinking`: 4 fundamental steps + 3-STEP practice for critical verification (`~/.claude/skills/critical-thinking/SKILL.md`)
+- `lateral-thinking`: 3 traits × 3 approaches × 3 concrete techniques (Reverse / Forced Combination / SCAMPER) (`~/.claude/skills/lateral-thinking/SKILL.md`)
+- `pyramid-structure`: Logic-tree 3 types × 2 ways of thinking, structuring (`~/.claude/skills/pyramid-structure/SKILL.md`)
+
+**[Finance & financing]**
+
+- `financial-statements-fundamentals`: BS/PL/CF basic structure + 8-item cash-flow checklist + labor distribution ratio (`~/.claude/skills/financial-statements-fundamentals/SKILL.md`)
+- `financing-strategy`: 3 debt merits × bank-negotiation order × 3 equity merits × 6 comparison axes (`~/.claude/skills/financing-strategy/SKILL.md`)
+- `yony-sales-simulation`: 4 insights × 5 design points × 3 scenarios sales simulation (`~/.claude/skills/yony-sales-simulation/SKILL.md`)
+
+### Reference-only skills (read-only, alignment & collaboration)
+
+- `customer-journey`: 5 phases × multi-channel CJM creation, 5 steps (owner: Ren) (`~/.claude/skills/customer-journey/SKILL.md`)
+- `loss-analysis-kbf-ksf`: Win-loss analysis & KBF/KSF identification (owner: Taku) (`~/.claude/skills/loss-analysis-kbf-ksf/SKILL.md`)
+- `promotion-strategy`: 5 promotion methods × AIDMA/AISAS/ULSSAS × media matrix (owner: Ren) (`~/.claude/skills/promotion-strategy/SKILL.md`)
+- `funnel-design`: 3 funnel types × 5 steps + tier × initiative matrix (owner: Ren) (`~/.claude/skills/funnel-design/SKILL.md`)
+- `marketing-sales-workflow`: Marketing-sales workflow formulation, 5 steps (owner: Ren) (`~/.claude/skills/marketing-sales-workflow/SKILL.md`)
+- `policy-design-prioritization`: Initiative design and prioritization, 5 steps (ICE / Urgency × Importance) (owner: Ren) (`~/.claude/skills/policy-design-prioritization/SKILL.md`)
+- `lead-definition-mql-sql`: KGI → KPI tree → funnel × organization × CPA reverse-engineering + BANT + MQL/SQL criteria (owner: Ren) (`~/.claude/skills/lead-definition-mql-sql/SKILL.md`)
+- `lead-nurturing`: Nurturing 5 principles × 5 methods × 4 steps (owner: Ren) (`~/.claude/skills/lead-nurturing/SKILL.md`)
+- `market-competitor-research`: Market research (qualitative/quantitative) + competitive research (5C perspective) (owner: Mio / parallel owner: Nagi) (`~/.claude/skills/market-competitor-research/SKILL.md`)
+- `competitive-absence-audit`: Blue-ocean audit verifying "no competitors" (owner: Asuka / reference: Nagi, Mio, Riku) (`~/.claude/skills/competitive-absence-audit/SKILL.md`)
+- `hearing-questioning-skills`: Hearing & questioning skills (聞く/聴く × 4 question types × 10-item first-meeting template) (owner: Taku) (`~/.claude/skills/hearing-questioning-skills/SKILL.md`)
+- `presentation-skill`: Presentation 4 elements × 3-part structure × PREP × 4 improvement methods (owner: Sora) (`~/.claude/skills/presentation-skill/SKILL.md`)
+- `client-expectation-management`: Client expectation management (4 objectives × 5 processes × 5 skills) (owner: Taku) (`~/.claude/skills/client-expectation-management/SKILL.md`)
+- `schedule-management`: Schedule management (3 objectives × 5 processes × 3 methods) (owner: Asuka) (`~/.claude/skills/schedule-management/SKILL.md`)
+- `teaching-coaching-leading`: 3 instructional approaches (Teaching / Coaching / Leading) differentiated use (owner: Asuka) (`~/.claude/skills/teaching-coaching-leading/SKILL.md`)
+- `ms-matrix-talent-grid`: Mind × Skill Matrix for 4-quadrant talent classification (owner: Asuka) (`~/.claude/skills/ms-matrix-talent-grid/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

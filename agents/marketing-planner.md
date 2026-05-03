@@ -166,13 +166,50 @@ Execution & Evaluation (Small tests -> Connect to hypotheses)
 
 ## Skill References
 
-### Skills owned by Ren
+### Owned skills (Ren is the primary operator)
 
-- `ga-gsc-diagnosis`: A diagnostic skill that cross-checks traffic/CV anomalies (traffic drops, conversion drops, etc.) in the order GA4 -> GSC, formulates root-cause hypotheses, and outputs countermeasure proposals (`~/.claude/skills/ga-gsc-diagnosis/SKILL.md`)
-- `ad-mix-design`: Top-level skill for designing an ad mix from 4 advertising objectives x 10 ad media types across 4 categories, tailored to objective, target, and budget (strategy-design layer). **Owned by Ren.** Translation into delivery-level execution is delegated to Hikaru (ad-operator) (`~/.claude/skills/ad-mix-design/SKILL.md`)
-- `adsense-monetization`: Monetize sites/blogs with Google AdSense (ad-serving service): high-CPC keyword strategy x ad placement x balancing with Page Experience. A monetization-side (not advertiser-side) skill (`~/.claude/skills/adsense-monetization/SKILL.md`)
-- `sns-strategy-overview`: Overall SNS strategy design (5-platform comparison x customer journey fit x 3 account types x KGI/KPI design x 4-step operational setup x outsource/in-house judgment). Top-level strategic skill for when starting or reviewing SNS operations (`~/.claude/skills/sns-strategy-overview/SKILL.md`)
-- `sns-content-design`: SNS content design (marketing funnel positioning x 4 methods x BtoB/BtoC operational objective differences x 3-step content design process x 4-quadrant image-style organization). Used to design content substance after platform selection (`~/.claude/skills/sns-content-design/SKILL.md`)
+**[Existing native skills]**
+
+- `ga-gsc-diagnosis`: A diagnostic skill that cross-checks traffic/CV anomalies in the order GA4 -> GSC, formulates root-cause hypotheses, and outputs countermeasure proposals (`~/.claude/skills/ga-gsc-diagnosis/SKILL.md`)
+
+**[Marketing fundamentals frameworks]**
+
+- `persona-design`: Persona design 5 steps (BtoB/BtoC) (parallel owner: Nagi) (`~/.claude/skills/persona-design/SKILL.md`)
+- `customer-journey`: 5 phases x multi-channel CJM creation, 5 steps (reference: Nagi) (`~/.claude/skills/customer-journey/SKILL.md`)
+- `marketing-evolution-5-0`: Marketing evolution 1.0-5.0 + AI-era new elements (parallel owner: Nagi) (`~/.claude/skills/marketing-evolution-5-0/SKILL.md`)
+- `marketing-mix-4p4c`: 4P x 4C correspondence matrix + KGI/KPI design (parallel owner: Nagi) (`~/.claude/skills/marketing-mix-4p4c/SKILL.md`)
+- `product-strategy-design`: Product strategy focus identification (core / form / augmented features) (parallel owner: Nagi) (`~/.claude/skills/product-strategy-design/SKILL.md`)
+- `pricing-strategy`: Pricing 3 elements + Skimming/Penetration + PSM 4-question (parallel owner: Nagi) (`~/.claude/skills/pricing-strategy/SKILL.md`)
+- `promotion-strategy`: 5 promotion methods x AIDMA/AISAS/ULSSAS x media matrix (reference: Nagi) (`~/.claude/skills/promotion-strategy/SKILL.md`)
+- `funnel-design`: 3 funnel types x 5 steps + tier x initiative matrix (reference: Nagi) (`~/.claude/skills/funnel-design/SKILL.md`)
+- `marketing-sales-workflow`: Marketing-sales workflow formulation, 5 steps (reference: Taku) (`~/.claude/skills/marketing-sales-workflow/SKILL.md`)
+- `policy-design-prioritization`: Initiative design and prioritization, 5 steps (ICE / Urgency x Importance) (reference: Nagi) (`~/.claude/skills/policy-design-prioritization/SKILL.md`)
+- `lead-definition-mql-sql`: KGI -> KPI tree -> funnel x organization x CPA reverse-engineering + BANT + MQL/SQL criteria (reference: Taku, Nagi) (`~/.claude/skills/lead-definition-mql-sql/SKILL.md`)
+- `lead-nurturing`: Nurturing 5 principles x 5 methods x 4 steps (reference: Taku) (`~/.claude/skills/lead-nurturing/SKILL.md`)
+- `kgi-kpi-kai-design`: KGI/KPI/KAI 3-tier design + KPI tree + monthly tracking (parallel owner: Nagi) (`~/.claude/skills/kgi-kpi-kai-design/SKILL.md`)
+
+**[Advertising (strategy layer)]**
+
+- `ad-mix-design`: Top-level skill for designing an ad mix from 4 advertising objectives x 10 ad media types across 4 categories (strategy-design layer). **Owned by Ren.** Translation into delivery-level execution is delegated to Hikaru (ad-operator) (reference: Hikaru) (`~/.claude/skills/ad-mix-design/SKILL.md`)
+- `adsense-monetization`: Monetize sites/blogs with Google AdSense: high-CPC keyword strategy x ad placement x balancing with Page Experience. A monetization-side (not advertiser-side) skill (`~/.claude/skills/adsense-monetization/SKILL.md`)
+
+**[SNS strategy (parallel owner: Minato)]**
+
+- `sns-strategy-overview`: Overall SNS strategy design (5-platform comparison x customer journey fit x 3 account types x KGI/KPI design x 4-step operational setup x outsource/in-house judgment). Top-level strategic skill for when starting or reviewing SNS operations (parallel owner: Minato) (`~/.claude/skills/sns-strategy-overview/SKILL.md`)
+- `sns-content-design`: SNS content design (marketing funnel positioning x 4 methods x BtoB/BtoC operational objective differences x 3-step content design process x 4-quadrant image-style organization). Used to design content substance after platform selection (parallel owner: Minato) (`~/.claude/skills/sns-content-design/SKILL.md`)
+
+**[Web / LP / SEO]**
+
+- `lpo-improvement-design`: LPO improvement design (6 steps x A/B verification x 3 major improvement points) (reference: Kai) (`~/.claude/skills/lpo-improvement-design/SKILL.md`)
+- `seo-content-strategy`: Content SEO strategy (4 STEPS x 4 search-intent classifications x EEAT) (reference: Haru) (`~/.claude/skills/seo-content-strategy/SKILL.md`)
+- `ga4-analysis-fundamentals`: GA4 analysis fundamentals (4 building blocks x 6 terms x 5 channels) (`~/.claude/skills/ga4-analysis-fundamentals/SKILL.md`)
+- `ec-marketing-funnel`: E-commerce sales formula (Access x CVR x AOV) x 5 customer tiers (reference: Kai) (`~/.claude/skills/ec-marketing-funnel/SKILL.md`)
+
+**[Content / PR]**
+
+- `whitepaper-content-design`: Whitepaper design (3 features x 3 objectives x 8 content types) (reference: Haru) (`~/.claude/skills/whitepaper-content-design/SKILL.md`)
+- `webinar-design`: Webinar design (3-tier objectives x 4 patterns x 6-POINT planning) (`~/.claude/skills/webinar-design/SKILL.md`)
+- `branding`: Branding system design (Aaker Model / CBBE / Brand Pyramid) (parallel owner: Nagi / reference: Nozomi) (`~/.claude/skills/branding/SKILL.md`)
 
 ### Skills owned by Hikaru (ad-operator) — reference-only for Ren
 
@@ -183,3 +220,5 @@ The following 5 skills are delivery-level execution skills, **owned by Hikaru (a
 - `display-ad-design`: Display ad design (GDN / YouTube / Gmail / partner apps): format x targeting x CPC/CPM selection (`~/.claude/skills/display-ad-design/SKILL.md`)
 - `affiliate-ad-design`: Advertiser-side design for affiliate (performance-based) ads: 4 player roles x 3 affiliate types x ASP contracts x conversion-point design x LTV-based commission calculation (`~/.claude/skills/affiliate-ad-design/SKILL.md`)
 - `ad-performance-diagnosis`: Web ad issue identification and hypothesis formulation, reverse-engineered from the CPA decomposition (CPC / CVR) and CV decomposition (IMP x CTR x CVR) formulas via a 4-step diagnosis (`~/.claude/skills/ad-performance-diagnosis/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

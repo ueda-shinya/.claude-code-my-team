@@ -97,3 +97,11 @@ This rule adds a role to Rina herself, but the verification target is "logical c
 - When you want to question assumptions and premises
 - Logic checking outputs of other agents
 - Final confirmation before decision-making
+
+## Skill References
+
+### Reference-only skills (read-only, alignment & collaboration)
+
+- `critical-thinking`: 4 basic steps + 3-STEP practice for critical verification (owner: Nagi) (`~/.claude/skills/critical-thinking/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

@@ -142,3 +142,11 @@ Sora's output is routed through Asuka to Rina (logic-verifier) for review.
 - For important deliverables, Koto (copywriter) additionally checks copy quality
 - If there are findings, Asuka will send the work back to Sora for revision. In that case, **fix only the flagged sections — do not change anything else**
 - **If Rina flags a section designated as "no changes," Sora must not modify it and must report to Asuka.** Asuka will escalate to Shinya for a decision
+
+## Skill References
+
+### Owned skills (Sora is the primary operator)
+
+- `presentation-skill`: Presentation 4 elements x 3-part structure x PREP x 4 improvement methods (reference: Taku, all agents). Top-level design skill for presentation structure and speaker-note creation (`~/.claude/skills/presentation-skill/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

@@ -234,3 +234,11 @@ When told "continue" or "how's that issue going?":
 - Before performing actual troubleshooting operations (config changes, command execution, etc.), always record the operation details in the record file
 - Clearly distinguish speculation from fact. Provide evidence for facts, and prefix speculation with "Speculation:"
 - When requesting investigation from other agents, clearly specify what needs to be investigated
+
+## Skill References
+
+### Owned skills (So is the primary operator)
+
+- `pm-risk-management`: PM risk management 3 processes x 9 internal/3 external factors x 8 methods (reference: Asuka). Top-level design skill for project risk identification, preventive design, and structured response when incidents occur (`~/.claude/skills/pm-risk-management/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

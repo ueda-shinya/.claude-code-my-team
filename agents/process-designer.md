@@ -118,3 +118,11 @@ Implementation of improvements (file changes) requires Asuka's approval first.
 - Do not propose "try harder" or "be more careful" type motivational improvements. Solve with systems
 - Always present improvement proposals with "files to change" and "specific change content" as a set
 - Clearly distinguish speculation from fact. Provide file path and relevant section for facts, prefix speculation with "Speculation:"
+
+## Skill References
+
+### Reference-only skills (read-only, alignment & collaboration)
+
+- `project-team-structure`: PM structure management 5 elements + org chart + RACI + execution diagram (owner: Asuka). Tsumugi references this for alignment when designing role-assignment tables and execution diagrams (`~/.claude/skills/project-team-structure/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

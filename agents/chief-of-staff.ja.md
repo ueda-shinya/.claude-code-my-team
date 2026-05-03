@@ -292,3 +292,56 @@ cp ~/.claude/projects/c--Users-ueda-/memory/* ~/.claude/projects/--Users-uedashi
 | logic-verifier | リナ | ルール検証・論理チェック・矛盾検出 |
 | slide-designer | ソラ | スライド構成・プレゼン資料デザイン |
 | legal-advisor | ケン | 法務アドバイス・契約書チェック・リーガルリスク管理 |
+
+## スキル参照
+
+### アスカ主管スキル（アスカが起点となって業務遂行するスキル）
+
+**［組織・人事・評価系］**
+
+- `ms-matrix-talent-grid`: Mind × Skill Matrix で人材4象限分類（副次：ナギ）（`~/.claude/skills/ms-matrix-talent-grid/SKILL.md`）
+- `success-cycle-relationship-quality`: ダニエル・キム成功循環＋関係の質13プロパティ（副次：ナギ）（`~/.claude/skills/success-cycle-relationship-quality/SKILL.md`）
+- `credo-language-design`: クレド（文化・約束）言語化8ステップ＋投票シート（副次：ナギ）（`~/.claude/skills/credo-language-design/SKILL.md`）
+- `goal-cascade-kpt-1on1`: 全社→部署→チーム→個人カスケード＋KPT 1on1（副次：ナギ）（`~/.claude/skills/goal-cascade-kpt-1on1/SKILL.md`）
+- `teaching-coaching-leading`: 3アプローチ（ティーチング/コーチング/リーディング）使い分け（副次：全エージェント）（`~/.claude/skills/teaching-coaching-leading/SKILL.md`）
+
+**［プロジェクトマネジメント］**
+
+- `schedule-management`: スケジュール管理（3目的×5プロセス×3手法：ガント／CPM／アジャイル）（副次：全エージェント）（`~/.claude/skills/schedule-management/SKILL.md`）
+- `gantt-chart-design`: ガントチャート設計（4基本構成×5ステップ×WBS番号付与）（副次：全エージェント）（`~/.claude/skills/gantt-chart-design/SKILL.md`）
+- `project-team-structure`: PM体制管理5要素＋組織図＋役割分担表＋実施体制図（副次：ツムギ）（`~/.claude/skills/project-team-structure/SKILL.md`）
+- `delivery-build`: デリバリー構築（顧客向けサービス提供仕組み化）5プロセス（副次：タク）（`~/.claude/skills/delivery-build/SKILL.md`）
+
+**［営業・案件管理］**
+
+- `project-level-definition`: クライアント案件のレベル5段階×5指標判定マトリクス（副次：タク・レン）（`~/.claude/skills/project-level-definition/SKILL.md`）
+
+**［環境分析監査］**
+
+- `competitive-absence-audit`: 「競合がいない」を検証するブルーオーシャン監査スキル（副次：ナギ・ミオ・リク）（`~/.claude/skills/competitive-absence-audit/SKILL.md`）
+
+### 副次参照スキル（読み取り・整合確認・業務協働用）
+
+**［営業・組織連携］**
+
+- `client-expectation-management`: 期待値調整（4目的×5プロセス×5スキル）（主管：タク）（`~/.claude/skills/client-expectation-management/SKILL.md`）
+- `decision-making-framework`: 意思決定3手法（5プロセス／重要度×緊急度／スコアリング）（主管：ナギ）（`~/.claude/skills/decision-making-framework/SKILL.md`）
+- `meeting-cadence-design`: 会議体4目的×5種類×設計5要素×9列一覧テンプレ（主管：ナギ）（`~/.claude/skills/meeting-cadence-design/SKILL.md`）
+
+**［組織・人事］**
+
+- `organization-planning`: 3組織構造×4Q組織ロードマップ×バイネーム組織図（主管：ナギ）（`~/.claude/skills/organization-planning/SKILL.md`）
+- `roles-responsibilities`: 役割／責任／権限／報告ライン×6ステップ×6列出力表（主管：ナギ）（`~/.claude/skills/roles-responsibilities/SKILL.md`）
+- `evaluation-system-design`: 評価制度（5目的×7ステップ×3軸グランドデザイン）（主管：ナギ）（`~/.claude/skills/evaluation-system-design/SKILL.md`）
+- `salary-range-design`: 給与レンジ設計（3層構成×6プロセス）（主管：ナギ）（`~/.claude/skills/salary-range-design/SKILL.md`）
+- `katz-three-skill-approach`: Katz 3スキル×3階層診断＋成長戦略3要素（主管：ナギ）（`~/.claude/skills/katz-three-skill-approach/SKILL.md`）
+
+**［財務・経営戦略］**
+
+- `financial-statements-fundamentals`: BS/PL/CF基本構造＋資金繰り8チェック＋労働分配率（主管：ナギ）（`~/.claude/skills/financial-statements-fundamentals/SKILL.md`）
+- `ma-strategy-basics`: M&A 2分類×5目的×4リスク×5手法（主管：ナギ）（`~/.claude/skills/ma-strategy-basics/SKILL.md`）
+- `financing-strategy`: デット3メリ×銀行交渉順序×エクイティ3メリ×6比較軸（主管：ナギ）（`~/.claude/skills/financing-strategy/SKILL.md`）
+- `growth-phase-strategy`: 4フェーズ（初期／成長／拡大／成熟）×経営課題変遷（主管：ナギ）（`~/.claude/skills/growth-phase-strategy/SKILL.md`）
+- `yony-sales-simulation`: 4洞察×5設計ポイント×3シナリオ売上シミュレーション（主管：ナギ）（`~/.claude/skills/yony-sales-simulation/SKILL.md`）
+
+> **参照**: chisoku 由来スキルの主管マッピング正本は `memory/chisoku-skill-index.md` を参照

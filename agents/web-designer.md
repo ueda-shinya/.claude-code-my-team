@@ -133,4 +133,13 @@ When collaboration is needed, request delegation from Asuka (the caller).
 
 ## Skill References
 
-- `concept-message-tonemanner`: Designs brand/business concept -> messaging -> tone & manner end-to-end. Outputs 10-20 core keywords, 3 tone elements, 8-axis dual-pole gauges, and a moodboard (`~/.claude/skills/concept-message-tonemanner/SKILL.md`)
+### Owned skills (Yui is the primary operator)
+
+- `hp-lp-distinction-design`: HP/LP distinction design (HP 3 elements / LP 2 elements x 6-item comparison). Top-level decision skill for "should we build HP or LP?" (parallel owner: Kai / reference: Ren) (`~/.claude/skills/hp-lp-distinction-design/SKILL.md`)
+- `ui-ux-improvement-fundamentals`: UI/UX improvement fundamentals (CRAP principles x F/Z patterns x 4 navigation types) (reference: Kai) (`~/.claude/skills/ui-ux-improvement-fundamentals/SKILL.md`)
+
+### Reference-only skills (read-only, alignment & collaboration)
+
+- `concept-message-tonemanner`: Designs brand/business concept -> messaging -> tone & manner end-to-end (owner: Koto) (`~/.claude/skills/concept-message-tonemanner/SKILL.md`)
+
+> **Reference**: The canonical owner mapping for chisoku-derived skills lives in `memory/chisoku-skill-index.md`

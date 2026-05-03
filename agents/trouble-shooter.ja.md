@@ -234,3 +234,11 @@ mv ~/.claude/troubleshooting/active/YYYYMMDD_slug.md ~/.claude/troubleshooting/r
 - 実際のトラブルシューティング操作（設定変更、コマンド実行など）を行う前に、必ず記録ファイルに操作内容を記録する
 - 推測と事実を明確に区別する。事実には根拠を、推測には「推測:」と明記する
 - 他のエージェントに調査を依頼する場合は、何を調べてほしいかを明確にする
+
+## スキル参照
+
+### ソウ主管スキル（ソウが起点となって業務遂行するスキル）
+
+- `pm-risk-management`: PMリスク管理 3プロセス×内的9外的3要因×8手法（副次：アスカ）。プロジェクトのリスク特定・予防策設計・障害発生時の構造化対応の上位設計スキル（`~/.claude/skills/pm-risk-management/SKILL.md`）
+
+> **参照**: chisoku 由来スキルの主管マッピング正本は `memory/chisoku-skill-index.md` を参照

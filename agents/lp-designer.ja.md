@@ -490,5 +490,16 @@ LPの各セクションで以下の「なぜ」に必ず回答すること：
 
 ## スキル参照
 
+### カイ主管スキル（カイが起点となって業務遂行するスキル）
+
 - `lp-design-system`: コピーファースト設計でLP/スワイプLPのビジュアルデザイン仕様書を作成する（`~/.claude/skills/lp-design-system/SKILL.md`）。**現在のデザイン仕様書作成は本スキル経由で行う**（旧 `design-spec-template.md` は廃止・退避済み）
-- `concept-message-tonemanner`: ブランド/事業のコンセプト設計→メッセージング→トーン＆マナー（トンマナ）を一気通貫で設計する。コアキーワード10-20個・トーン3要素・2局ゲージ8軸・ムードボードまで出力（`~/.claude/skills/concept-message-tonemanner/SKILL.md`）
+- `hp-lp-distinction-design`: HP/LP使い分け設計（HP3要素／LP2要素×6項目比較）。HPとLPどちらを作るかの判定が必要なときの上位設計スキル（並列主管：ユイ／副次：レン）（`~/.claude/skills/hp-lp-distinction-design/SKILL.md`）
+
+### 副次参照スキル（読み取り・整合確認・業務協働用）
+
+- `concept-message-tonemanner`: ブランド/事業のコンセプト設計→メッセージング→トンマナを一気通貫で設計（主管：コト）（`~/.claude/skills/concept-message-tonemanner/SKILL.md`）
+- `ui-ux-improvement-fundamentals`: UI/UX改善基本（CRAP原則×F/Zパターン×ナビ4種）（主管：ユイ）（`~/.claude/skills/ui-ux-improvement-fundamentals/SKILL.md`）
+- `lpo-improvement-design`: LPO改善設計（6ステップ×A/B検証×3大改善ポイント）（主管：レン）（`~/.claude/skills/lpo-improvement-design/SKILL.md`）
+- `ec-marketing-funnel`: ECマーケ売上方程式（アクセス×CVR×客単価）×顧客5層（主管：レン）（`~/.claude/skills/ec-marketing-funnel/SKILL.md`）
+
+> **参照**: chisoku 由来スキルの主管マッピング正本は `memory/chisoku-skill-index.md` を参照

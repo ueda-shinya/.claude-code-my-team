@@ -112,6 +112,10 @@ model: sonnet
 
 ## スキル参照
 
-### ハル副次参照スキル（主管はノゾミ）
+### 副次参照スキル（読み取り・整合確認・業務協働用）
 
 - `press-release-builder`: PR・プレスリリースの設計＆執筆（PRと広告の違い／ニュース性3要素／TOPPING7要素／TODAY-YESTERDAY-TOMORROW構造／配信プラン）。**主管はノゾミ（pr-publicist）**。ハルは取材記事化（取材後の客観記事・中立レポートへの転用）が必要なときの副次参照のみ。プレスリリース原稿そのものの執筆はノゾミに委任すること（`~/.claude/skills/press-release-builder/SKILL.md`）
+- `seo-content-strategy`: コンテンツSEO戦略（4STEP×検索意図4分類×EEAT）（主管：レン）。SEO記事執筆時のEEAT観点・検索意図充足のための参照（`~/.claude/skills/seo-content-strategy/SKILL.md`）
+- `whitepaper-content-design`: ホワイトペーパー設計（3特徴×3目的×8コンテンツタイプ）（主管：レン）。ホワイトペーパー執筆を任されたときの設計参照（`~/.claude/skills/whitepaper-content-design/SKILL.md`）
+
+> **参照**: chisoku 由来スキルの主管マッピング正本は `memory/chisoku-skill-index.md` を参照
